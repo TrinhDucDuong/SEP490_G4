@@ -1,47 +1,51 @@
+
+
+```text
 quangvinh-store/
-├── public/                     # Các tệp tĩnh (favicon, images, fonts, etc.)
-│   ├── assets/                 # Hình ảnh, biểu tượng, hoặc các tệp tĩnh khác
-│   │   ├── images/             # Hình ảnh sản phẩm, banner, logo, etc.
-│   │   └── fonts/              # Font tùy chỉnh (nếu có)
-│   └── favicon.ico             # Biểu tượng favicon
-├── src/                        # Thư mục chính chứa mã nguồn
-│   ├── assets/                 # Các tài nguyên tĩnh dùng trong code
-│   │   ├── images/             # Hình ảnh được import trong code
-│   │   └── styles/             # Các file CSS/SCSS tùy chỉnh (nếu không dùng Tailwind hoàn toàn)
-│   ├── components/             # Các component tái sử dụng
-│   │   ├── common/             # Các component chung (Button, Input, Modal, etc.)
-│   │   ├── layout/             # Các component bố cục (Header, Footer, Sidebar, etc.)
-│   │   └── ui/                 # Các component giao diện (Card, ProductItem, Carousel, etc.)
-│   ├── pages/                  # Các trang chính của ứng dụng
-│   │   ├── Home.jsx            # Trang chủ
-│   │   ├── ProductList.jsx     # Trang danh sách sản phẩm
-│   │   ├── ProductDetail.jsx   # Trang chi tiết sản phẩm
-│   │   ├── Cart.jsx            # Trang giỏ hàng
-│   │   ├── Checkout.jsx        # Trang thanh toán
-│   │   ├── Login.jsx           # Trang đăng nhập
-│   │   ├── Register.jsx        # Trang đăng ký
-│   │   └── NotFound.jsx        # Trang 404
-│   ├── hooks/                  # Các custom hooks
-│   │   ├── useCart.js          # Hook quản lý giỏ hàng
-│   │   ├── useAuth.js          # Hook quản lý xác thực
-│   │   └── useFetch.js         # Hook gọi API
-│   ├── context/                # Các context để quản lý trạng thái toàn cục
-│   │   ├── CartContext.js      # Context cho giỏ hàng
-│   │   └── AuthContext.js      # Context cho xác thực
-│   ├── utils/                  # Các hàm tiện ích
-│   │   ├── api.js              # Hàm gọi API (axios/fetch)
-│   │   ├── formatPrice.js      # Hàm format giá tiền
-│   │   └── constants.js        # Các hằng số (API endpoints, config, etc.)
-│   ├── routes/                 # Quản lý định tuyến
-│   │   └── index.js            # Cấu hình routes (React Router)
-│   ├── App.jsx                 # Component chính của ứng dụng
-│   ├── main.jsx                # Điểm vào của ứng dụng
-│   └── index.css               # File CSS chính (import Tailwind)
-├── .gitignore                  # File cấu hình git ignore
-├── package.json                # File cấu hình npm/yarn
-├── vite.config.js              # File cấu hình Vite
-├── tailwind.config.js          # File cấu hình TailwindCSS
-└── README.md                   # Tài liệu mô tả dự án
+├── public/                     # Static assets
+│   ├── assets/                 # Images, fonts, etc.
+│   │   ├── images/             # Product images, banners, logos
+│   │   └── fonts/              # Custom fonts (if any)
+│   └── favicon.ico             # Favicon
+├── src/                        # Source code
+│   ├── assets/                 # Assets used in code
+│   │   ├── images/             # Images imported in code
+│   │   └── styles/             # Custom CSS/SCSS (if needed)
+│   ├── components/             # Reusable components
+│   │   ├── common/             # Generic components (Button, Input, Modal)
+│   │   ├── layout/             # Layout components (Header, Footer, Sidebar)
+│   │   └── ui/                 # UI components (ProductCard, Carousel)
+│   ├── pages/                  # Page components
+│   │   ├── Home.jsx            # Homepage
+│   │   ├── ProductList.jsx     # Product listing page
+│   │   ├── ProductDetail.jsx   # Product detail page
+│   │   ├── Cart.jsx            # Shopping cart page
+│   │   ├── Checkout.jsx        # Checkout page
+│   │   ├── Login.jsx           # Login page
+│   │   ├── Register.jsx        # Registration page
+│   │   └── NotFound.jsx        # 404 page
+│   ├── hooks/                  # Custom hooks
+│   │   ├── useCart.js          # Cart management hook
+│   │   ├── useAuth.js          # Authentication hook
+│   │   └── useFetch.js         # API fetch hook
+│   ├── context/                # React context for state management
+│   │   ├── CartContext.js      # Cart context
+│   │   └── AuthContext.js      # Auth context
+│   ├── utils/                  # Utility functions
+│   │   ├── api.js              # API request functions
+│   │   ├── formatPrice.js      # Price formatting utility
+│   │   └── constants.js        # Constants (API endpoints, configs)
+│   ├── routes/                 # Route configuration
+│   │   └── index.js            # React Router routes
+│   ├── App.jsx                 # Main app component
+│   ├── main.jsx                # Entry point
+│   └── index.css               # Main CSS (Tailwind imports)
+├── .gitignore                  # Git ignore file
+├── package.json                # Project dependencies and scripts
+├── vite.config.js              # Vite configuration
+├── tailwind.config.js          # TailwindCSS configuration
+└── README.md                   # Project documentation
+
 
 
 
