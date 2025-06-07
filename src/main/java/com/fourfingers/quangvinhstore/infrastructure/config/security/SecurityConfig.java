@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,6 +33,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/**").permitAll();
                     auth.requestMatchers("/home").permitAll();
+                    auth.requestMatchers(HttpMethod.GET,"/policy").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/policy").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/policy/**").permitAll();
+                    auth.requestMatchers(HttpMethod.PUT, "/policy/**").permitAll();
+                    auth.requestMatchers(HttpMethod.DELETE, "/policy/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

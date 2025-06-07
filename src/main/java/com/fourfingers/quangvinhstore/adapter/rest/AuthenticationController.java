@@ -1,8 +1,8 @@
 package com.fourfingers.quangvinhstore.adapter.rest;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.AuthenticationInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.input.AuthenticationInputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.AuthenticationOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.input.auth.AuthenticationInputData;
+import com.fourfingers.quangvinhstore.usecase.data.output.auth.AuthenticationOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class AuthenticationController {
     private final AuthenticationInputBoundary authenticationInputBoundary;
     private final AuthenticationManager authenticationManager;

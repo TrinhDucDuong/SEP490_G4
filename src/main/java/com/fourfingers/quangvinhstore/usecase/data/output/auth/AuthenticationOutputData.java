@@ -1,4 +1,4 @@
-package com.fourfingers.quangvinhstore.usecase.data.output;
+package com.fourfingers.quangvinhstore.usecase.data.output.auth;
 
 import com.fourfingers.quangvinhstore.domain.model.Account;
 import lombok.*;
