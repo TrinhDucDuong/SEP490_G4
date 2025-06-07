@@ -1,11 +1,17 @@
 package com.fourfingers.quangvinhstore.infrastructure.schema;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "product_variants")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ProductVariantEntity {
     @Id
     @Column(name = "product_variant_id")

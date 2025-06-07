@@ -1,12 +1,18 @@
 package com.fourfingers.quangvinhstore.infrastructure.schema;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "categories")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CategoryEntity {
     @Id
     @Column(name = "category_id")

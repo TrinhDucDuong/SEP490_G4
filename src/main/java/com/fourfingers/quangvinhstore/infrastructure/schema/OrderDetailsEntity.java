@@ -1,6 +1,7 @@
 package com.fourfingers.quangvinhstore.infrastructure.schema;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -8,6 +9,11 @@ import java.math.BigDecimal;
 @Table(name = "order_details",
     uniqueConstraints = @UniqueConstraint(columnNames = {"order_id", "product_id"})
 )
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class OrderDetailsEntity {
     @Id
     @Column(name = "order_details_id")

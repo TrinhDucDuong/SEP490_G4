@@ -1,6 +1,7 @@
 package com.fourfingers.quangvinhstore.infrastructure.schema;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -8,6 +9,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "discounts")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class DiscountEntity {
     @Id
     @Column(name = "discount_id")

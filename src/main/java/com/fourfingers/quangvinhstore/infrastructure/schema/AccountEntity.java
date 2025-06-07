@@ -2,6 +2,7 @@ package com.fourfingers.quangvinhstore.infrastructure.schema;
 
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,6 +12,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "accounts")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class AccountEntity implements UserDetails {
     @Id
     @Column(name = "account_id")
@@ -23,7 +29,7 @@ public class AccountEntity implements UserDetails {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 60)
+    @Column(name = "password", nullable = false, length = 68)
     private String password;
 
     @Column(name = "created_at")

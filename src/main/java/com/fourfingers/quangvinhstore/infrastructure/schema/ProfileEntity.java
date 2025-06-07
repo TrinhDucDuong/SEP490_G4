@@ -1,9 +1,15 @@
 package com.fourfingers.quangvinhstore.infrastructure.schema;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "profiles")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ProfileEntity {
     @Id
     @Column(name = "profile_id")
