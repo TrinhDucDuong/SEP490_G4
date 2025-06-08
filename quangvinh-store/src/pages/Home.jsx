@@ -7,7 +7,7 @@ function Home() {
     if (loading) return <div className="text-center my-6">Loading...</div>;
     if (error) return <div className="text-center my-6 text-red-500">Error: {error}</div>;
     return (
-        <div className="bg-black text-white">
+        <div className="bg-[#F2F2EE] text-black">
             <Carousel />
             <h2 className="text-2xl font-bold my-6">Featured Products</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
@@ -29,5 +29,7 @@ function Home() {
         </div>
     );
 }
+
+// bg-[#F2F2EE] text-black
 
 export default Home;
