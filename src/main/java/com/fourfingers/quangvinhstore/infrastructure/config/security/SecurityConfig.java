@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     @Bean
@@ -38,6 +38,14 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/policy/**").permitAll();
                     auth.requestMatchers(HttpMethod.PUT, "/policy/**").permitAll();
                     auth.requestMatchers(HttpMethod.DELETE, "/policy/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/about-us").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/staff/**").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/staff/**").permitAll();
+                    auth.requestMatchers(HttpMethod.DELETE, "/staff/**").permitAll();
+                    auth.requestMatchers(HttpMethod.PUT, "/staff/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/store").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/store/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/instruction").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -48,7 +56,7 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    };
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
