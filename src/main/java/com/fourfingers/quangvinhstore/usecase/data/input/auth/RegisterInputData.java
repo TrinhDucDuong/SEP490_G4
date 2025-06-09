@@ -1,4 +1,4 @@
-package com.fourfingers.quangvinhstore.usecase.data.input;
+package com.fourfingers.quangvinhstore.usecase.data.input.auth;
 
 import lombok.*;
 
@@ -7,7 +7,8 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class AuthenticationInputData {
+public class RegisterInputData {
     private String username;
     private String password;
+    private String email;
 }

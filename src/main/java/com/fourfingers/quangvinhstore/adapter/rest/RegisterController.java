@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.adapter.rest;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.RegisterInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.input.RegisterInputData;
+import com.fourfingers.quangvinhstore.usecase.data.input.auth.RegisterInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

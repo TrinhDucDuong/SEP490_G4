@@ -18,8 +18,14 @@ public class StoreEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long storeId;
 
-    @Column(name = "store_name", nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Column(name = "store_name", columnDefinition = "NVARCHAR(50)", nullable = false)
+    private String storeName;
+
+    @Column(name = "store_address", nullable = false, columnDefinition = "NVARCHAR(255)")
     private String storeAddress;
+
+    @Column(name = "is_active", nullable = false, columnDefinition = "BIT DEFAULT 1")
+    private Boolean isActive;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "workingAt")
     private List<AccountEntity> staffs;
