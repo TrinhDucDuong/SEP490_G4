@@ -21,7 +21,7 @@ public class ViewInstructionUseCaseInteraction implements InstructionInputBounda
     @Override
     public ListInstructionOutputData getListInstruction() {
         return instructionOutputBoundary.convertToListInstructionOutputData(
-                List.of(instructionRepository.findAll()
+                List.of(instructionRepository.findAllByIsActiveTrue()
                         .stream()
                         .map(instructionMapper::toInstruction)
                         .toArray(Instruction[]::new)
