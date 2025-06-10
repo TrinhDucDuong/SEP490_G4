@@ -6,13 +6,16 @@ import '@fontsource/poppins';
 
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        <BrowserRouter>
-            <ThemeProvider>
-                <App />
-            </ThemeProvider>
-        </BrowserRouter>
+        <GoogleOAuthProvider clientId="677057298535-b4j78u3vhem3nngcbav939teijdbht3d.apps.googleusercontent.com">
+            <BrowserRouter>
+                <ThemeProvider>
+                    <App />
+                </ThemeProvider>
+            </BrowserRouter>
+        </GoogleOAuthProvider>
     </React.StrictMode>
 );

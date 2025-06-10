@@ -7,7 +7,6 @@ function ProductCard({ product }) {
     const [imageIndex, setImageIndex] = useState(0);
     const [hovered, setHovered] = useState(false);
     const intervalRef = useRef(null);
-    console.log(product.images);
     const images = product.images?.length ? product.images : [product.image];
     const currentImage = images[imageIndex];
     const rating = product.rating || 0;

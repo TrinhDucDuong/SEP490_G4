@@ -1,5 +1,7 @@
 import HeaderNoHover from "../components/layout/HeaderNoHover.jsx";
 import loginBg from "../assets/images/login-background.jpg";
+import { GoogleLogin } from '@react-oauth/google';
+
 
 function Login() {
     return (
@@ -21,6 +23,17 @@ function Login() {
                         <button type="submit" className="w-[60%] bg-black text-white p-4 mt-8 rounded-md hover:bg-gray-800 transition">
                             Đăng Nhập
                         </button>
+
+                        <div className="mt-4 w-[60%] bg-white mx-auto rounded-xl shadow-md hover:bg-gray-100 focus:outline-none transition">
+                            <GoogleLogin
+                                onSuccess={(credentialResponse) => {
+                                    console.log("Google Login Success:", credentialResponse);
+                                }}
+                                onError={() => {
+                                    console.log("Google Login Failed");
+                                }}
+                            />
+                        </div>
                     </form>
                 </div>
             </div>
