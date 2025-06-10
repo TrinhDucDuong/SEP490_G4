@@ -5,7 +5,8 @@ import Home from './pages/Home';
 import ProductList from './pages/ProductList';
 import NotFound from './pages/NotFound';
 import ThemeSettings from './pages/ThemeSettings';
-import Login from "./pages/Login.jsx";
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx'; // Thêm import
 
 function App() {
     return (
@@ -16,7 +17,8 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/products" element={<ProductList />} />
                     <Route path="/settings" element={<ThemeSettings />} />
-                    <Route path="/login" element={<Login/>} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>
