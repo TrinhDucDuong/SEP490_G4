@@ -31,4 +31,7 @@ public class ProductVariantEntity {
 
     @OneToMany(mappedBy = "productVariant")
     private List<OrderDetailsEntity> orderDetails;
+
+    @OneToMany(mappedBy = "productVariant")
+    private List<CartEntity> carts;
 }

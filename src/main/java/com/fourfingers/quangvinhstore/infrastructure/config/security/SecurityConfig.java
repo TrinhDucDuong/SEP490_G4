@@ -46,6 +46,7 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/store").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/store/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/instruction").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/home").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -76,6 +76,15 @@ public class AccountEntity implements UserDetails {
     @OneToMany(mappedBy = "createdBy")
     private List<ProductEntity> createdProducts;
 
+    @OneToMany(mappedBy = "owner")
+    private List<CartEntity> carts;
+
+    @OneToMany(mappedBy = "account")
+    private List<CommentEntity> comments;
+
+    @OneToMany(mappedBy = "account")
+    private List<StarRateEntity> starRates;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -55,4 +56,10 @@ public class ProductEntity {
     @ManyToOne
     @JoinColumn(name = "discount_id", referencedColumnName = "discount_id")
     private DiscountEntity discounts;
+
+    @OneToMany(mappedBy = "product")
+    private List<CommentEntity> comments;
+
+    @OneToMany(mappedBy = "product")
+    private List<StarRateEntity> starRates;
 }
