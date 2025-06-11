@@ -26,9 +26,6 @@ public class ProductEntity {
     @Column(name = "product_description", nullable = false, columnDefinition = "NVARCHAR(255)")
     private String productDescription;
 
-    @Column(name = "product_image_url", nullable = false, length = 255)
-    private String productImageUrl;
-
     @Column(name = "unit_price", nullable = false, precision = 19 , scale = 2)
     private BigDecimal unitPrice;
 
@@ -37,6 +34,9 @@ public class ProductEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "is_active", columnDefinition = "BIT DEFAULT TRUE")
+    private Boolean isActive;
 
     @ManyToOne
     @JoinColumn(name = "created_by", referencedColumnName = "account_id")
@@ -62,4 +62,7 @@ public class ProductEntity {
 
     @OneToMany(mappedBy = "product")
     private List<StarRateEntity> starRates;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<ProductImageEntity> productImages;
 }

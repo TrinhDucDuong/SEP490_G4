@@ -14,4 +14,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
             "JOIN p.starRates s GROUP BY p " +
             "ORDER BY AVG(s.starRate) DESC")
     List<ProductEntity> findTop10ProductWithHighestStarRate(Pageable pageable);
+
+    List<ProductEntity> findAllByIsActiveTrue();
 }
