@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.usecase.boundary;
 
 import com.fourfingers.quangvinhstore.domain.model.Product;
-import com.fourfingers.quangvinhstore.usecase.data.output.ListProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.output.product.ListProductOutputData;
 
 import java.util.List;
 

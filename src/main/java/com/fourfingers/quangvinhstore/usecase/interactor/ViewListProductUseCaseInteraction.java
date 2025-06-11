@@ -7,7 +7,7 @@ import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductM
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.output.ListProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.output.product.ListProductOutputData;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
