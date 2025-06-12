@@ -1,9 +1,8 @@
-// src/pages/Home.jsx
 import Carousel from '../components/ui/Carousel';
 import ProductCard from '../components/ui/ProductCard';
 import { useFetchProducts } from '../hooks/useFetch';
 import { useMemo } from 'react';
-import banner from '../assets/images/meobanner.png'; // Điều chỉnh đường dẫn
+import banner from '../assets/images/meobanner.png';
 
 function Home() {
     const { products, loading, error } = useFetchProducts();
