@@ -45,9 +45,7 @@ public class AuthenticationUseCaseInteraction implements AuthenticationInputBoun
         List<Authority> authorities = List.of(
                 accountEntity.getAuthorities()
                         .stream()
-                        .map((authorityEntity) -> {
-                            return authorityMapper.toModel((AuthorityEntity) authorityEntity);
-                        })
+                        .map((authorityEntity) -> authorityMapper.toModel((AuthorityEntity) authorityEntity))
                         .toArray(Authority[]::new)
         );
         Account userAccount = accountMapper.toAccount(accountEntity);
