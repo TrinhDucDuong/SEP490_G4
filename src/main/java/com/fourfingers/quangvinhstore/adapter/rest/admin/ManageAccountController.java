@@ -36,4 +36,10 @@ public class ManageAccountController {
                                            @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(accountManagementInputBoundary.save(id, accountInputData, userDetails));
     }
+
+    @DeleteMapping("/account/{id}")
+    public ResponseEntity<?> deleteAccount(@PathVariable String id,
+                                           @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(accountManagementInputBoundary.delete(id, userDetails));
+    }
 }

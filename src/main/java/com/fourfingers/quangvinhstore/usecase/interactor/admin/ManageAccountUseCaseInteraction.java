@@ -3,6 +3,7 @@ package com.fourfingers.quangvinhstore.usecase.interactor.admin;
 import com.fourfingers.quangvinhstore.adapter.exception.AccountExistException;
 import com.fourfingers.quangvinhstore.adapter.exception.AccountNotFoundException;
 import com.fourfingers.quangvinhstore.adapter.exception.AuthorityNotFoundException;
+import com.fourfingers.quangvinhstore.domain.model.Account;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.AccountMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.AccountRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.AuthorityRepository;
@@ -15,6 +16,7 @@ import com.fourfingers.quangvinhstore.usecase.data.output.account.AccountOutputD
 import com.fourfingers.quangvinhstore.usecase.data.output.account.ListAccountOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -68,16 +70,15 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
                         accountInputData.getAuthorityName()
                 ).orElseThrow(() -> new AuthorityNotFoundException("Authority not found"));
                 authorityEntities.add(authorityEntity);
-                AccountEntity needToUpdateAccount = AccountEntity.builder()
-                        .accountId(Long.valueOf(id))
-                        .username(accountInputData.getUsername())
-                        .password(passwordEncoder.encode(accountInputData.getPassword()))
-                        .email(accountInputData.getEmail())
-                        .updatedBy((AccountEntity) userDetails)
-                        .updatedAt(LocalDateTime.now())
-                        .authorities(authorityEntities)
-                        .isActive(true)
-                        .build();
+                AccountEntity needToUpdateAccount = accountRepository.findById(accountId).orElseThrow(
+                        () -> new AccountNotFoundException("Account not found")
+                );
+                needToUpdateAccount.setEmail(accountInputData.getEmail());
+                needToUpdateAccount.setUsername(accountInputData.getUsername());
+                needToUpdateAccount.setPassword(passwordEncoder.encode(accountInputData.getPassword()));
+                needToUpdateAccount.setAuthorities(authorityEntities);
+                needToUpdateAccount.setUpdatedAt(LocalDateTime.now());
+                needToUpdateAccount.setUpdatedBy((AccountEntity) userDetails);
                 return accountManagementOutputBoundary.convertToAccountOutputData(
                         accountMapper.toAccount(accountRepository.save(needToUpdateAccount))
                 );
@@ -111,6 +112,24 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
             );
         } else {
             throw new AccountExistException("Email or Username is already in use");
+        }
+    }
+
+    @Override
+    public AccountOutputData delete(String id, UserDetails userDetails) {
+        try {
+            Long accountId = Long.valueOf(id);
+            AccountEntity accountEntity = accountRepository.findById(accountId).orElseThrow(
+                    () -> new AccountNotFoundException("Account not found")
+            );
+            accountEntity.setActive(false);
+            accountEntity.setUpdatedBy((AccountEntity) userDetails);
+            accountEntity.setUpdatedAt(LocalDateTime.now());
+            return accountManagementOutputBoundary.convertToAccountOutputData(
+                    accountMapper.toAccount(accountRepository.save(accountEntity))
+            );
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid account id");
         }
     }
 
