@@ -2,6 +2,8 @@ package com.fourfingers.quangvinhstore.domain.model;
 
 import lombok.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -11,4 +13,5 @@ public class Account {
     private String username;
     private String email;
     private Boolean isActive;
+    private List<Authority> authorities;
 }
