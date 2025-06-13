@@ -10,4 +10,5 @@ public interface AccountManagementInputBoundary {
     ListAccountOutputData getAllAccounts();
     AccountOutputData save(String id, AccountInputData accountInputData, UserDetails userDetails);
     AccountOutputData save(AccountInputData accountInputData, UserDetails userDetails);
+    AccountOutputData delete(String id, UserDetails userDetails);
 }
