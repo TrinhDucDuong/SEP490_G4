@@ -58,7 +58,39 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
     }
 
     @Override
-    public AccountOutputData createAccount(AccountInputData accountInputData, UserDetails userDetails) {
+    public AccountOutputData save(String id, AccountInputData accountInputData, UserDetails userDetails) {
+        try {
+            Long accountId = Long.valueOf(id);
+            if (checkNotUpdateEmail(accountInputData.getEmail(), accountId)
+                    && checkNotUpdateUsername(accountInputData.getUsername(), accountId)) {
+                List<AuthorityEntity> authorityEntities = new ArrayList<>();
+                AuthorityEntity authorityEntity = authorityRepository.findByAuthorityName(
+                        accountInputData.getAuthorityName()
+                ).orElseThrow(() -> new AuthorityNotFoundException("Authority not found"));
+                authorityEntities.add(authorityEntity);
+                AccountEntity needToUpdateAccount = AccountEntity.builder()
+                        .accountId(Long.valueOf(id))
+                        .username(accountInputData.getUsername())
+                        .password(passwordEncoder.encode(accountInputData.getPassword()))
+                        .email(accountInputData.getEmail())
+                        .updatedBy((AccountEntity) userDetails)
+                        .updatedAt(LocalDateTime.now())
+                        .authorities(authorityEntities)
+                        .isActive(true)
+                        .build();
+                return accountManagementOutputBoundary.convertToAccountOutputData(
+                        accountMapper.toAccount(accountRepository.save(needToUpdateAccount))
+                );
+            } else {
+                throw new AccountExistException("Email or Username is already in use");
+            }
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid account id");
+        }
+    }
+
+    @Override
+    public AccountOutputData save(AccountInputData accountInputData, UserDetails userDetails) {
         if (checkUniqueEmail(accountInputData.getEmail()) && checkUniqueUsername(accountInputData.getUsername())) {
             List<AuthorityEntity> authorityEntities = new ArrayList<>();
             AuthorityEntity authorityEntity = authorityRepository.findByAuthorityName(
@@ -88,5 +120,27 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
 
     private boolean checkUniqueEmail(String email) {
         return accountRepository.findByEmail(email).isEmpty();
+    }
+
+    /*
+    * Using to check for updating account
+    * Case if email existed with the same id: it shows that not updating new email for this account
+    * Case if email existed with the different id: it shows that other account used this email
+    * @Return: true when not updating email
+    * @Return: false when other account used same email
+    */
+    private boolean checkNotUpdateEmail(String email, Long accountId) {
+        return accountRepository.findByEmailAndAccountIdNot(email, accountId).isEmpty();
+    }
+
+    /*
+     * Using to check for updating account
+     * Case if username existed with the same id: it shows that not updating new username for this account
+     * Case if username existed with the different id: it shows that other account used this username
+     * @Return: true when not updating username
+     * @Return: false when other account used same username
+     */
+    private boolean checkNotUpdateUsername(String username, Long accountId) {
+        return accountRepository.findByUsernameAndAccountIdNot(username, accountId).isEmpty();
     }
 }

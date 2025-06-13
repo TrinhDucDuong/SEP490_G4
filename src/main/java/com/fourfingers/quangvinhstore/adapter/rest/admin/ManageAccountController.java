@@ -22,11 +22,18 @@ public class ManageAccountController {
     @PostMapping("/account")
     public ResponseEntity<?> createAccount(@RequestBody AccountInputData accountInputData,
                                            @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(accountManagementInputBoundary.createAccount(accountInputData, userDetails));
+        return ResponseEntity.ok(accountManagementInputBoundary.save(accountInputData, userDetails));
     }
 
     @GetMapping("/account/{id}")
     public ResponseEntity<?> getAccount(@PathVariable String id) {
         return ResponseEntity.ok(accountManagementInputBoundary.getAccount(id));
+    }
+
+    @PutMapping("/account/{id}")
+    public ResponseEntity<?> updateAccount(@PathVariable String id,
+                                           @RequestBody AccountInputData accountInputData,
+                                           @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(accountManagementInputBoundary.save(id, accountInputData, userDetails));
     }
 }
