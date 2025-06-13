@@ -8,6 +8,8 @@ import ThemeSettings from './pages/ThemeSettings';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
+import Cart from "./pages/Cart.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
 
 function App() {
     return (
@@ -21,6 +23,8 @@ function App() {
                         <Route path="/settings" element={<ThemeSettings />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/forgot-password" element={<ForgotPassword />} />
+                        <Route path="/cart" element={<Cart />} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
                 </main>

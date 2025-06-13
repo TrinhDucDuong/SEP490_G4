@@ -87,7 +87,6 @@ function Login() {
 
     return (
         <>
-            <HeaderNoHover />
             <div
                 className="bg-cover bg-center flex justify-center items-center min-h-screen"
                 style={{ backgroundImage: `url(${loginBg})` }}
