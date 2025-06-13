@@ -1,6 +1,7 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.admin;
 
 import com.fourfingers.quangvinhstore.adapter.exception.AccountExistException;
+import com.fourfingers.quangvinhstore.adapter.exception.AccountNotFoundException;
 import com.fourfingers.quangvinhstore.adapter.exception.AuthorityNotFoundException;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.AccountMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.AccountRepository;
@@ -33,7 +34,17 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
 
     @Override
     public AccountOutputData getAccount(String id) {
-        return null;
+        try {
+            Long accountId = Long.valueOf(id);
+            AccountEntity accountEntity = accountRepository.findById(accountId).orElseThrow(
+                    () -> new AccountNotFoundException("Account not found")
+            );
+            return accountManagementOutputBoundary.convertToAccountOutputData(
+                    accountMapper.toAccount(accountEntity)
+            );
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid account id");
+        }
     }
 
     @Override

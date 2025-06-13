@@ -24,4 +24,9 @@ public class ManageAccountController {
                                            @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(accountManagementInputBoundary.createAccount(accountInputData, userDetails));
     }
+
+    @GetMapping("/account/{id}")
+    public ResponseEntity<?> getAccount(@PathVariable String id) {
+        return ResponseEntity.ok(accountManagementInputBoundary.getAccount(id));
+    }
 }
