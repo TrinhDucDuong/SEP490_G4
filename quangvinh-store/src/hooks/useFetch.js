@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchProducts } from '../utils/api';
+import { fetchCategory, fetchProducts } from '../utils/api';
 
 export const useFetchProducts = () => {
     const [products, setProducts] = useState([]);
@@ -22,4 +22,27 @@ export const useFetchProducts = () => {
     }, []);
 
     return { products, loading, error };
+};
+
+export const useFetchCategories = () => {
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const getCategories = async () => {
+            setLoading(true);
+            try {
+                const data = await fetchCategory();
+                setCategories(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        getCategories();
+    }, []);
+
+    return { categories, loading, error };
 };

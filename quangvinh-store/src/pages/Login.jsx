@@ -1,5 +1,4 @@
 import React, { useState, useContext } from "react";
-import HeaderNoHover from "../components/layout/HeaderNoHover.jsx";
 import loginBg from "../assets/images/login-background.jpg";
 import { GoogleLogin } from "@react-oauth/google";
 import { AuthContext } from "../context/AuthContext.jsx";
@@ -24,13 +23,11 @@ function Login() {
                     password,
                 }),
             });
-
             if (response.ok) {
                 const data = await response.json();
-                console.log("Phản hồi từ API /auth/login:", data); // In dữ liệu API
-                console.log("Thông tin tài khoản:", data.account); // In thông tin tài khoản
-                console.log("Token:", data.token); // In token
-                // Lưu token và thông tin tài khoản
+                console.log("Phản hồi từ API /auth/login:", data);
+                console.log("Thông tin tài khoản:", data.account);
+                console.log("Token:", data.token);
                 localStorage.setItem("token", data.token);
                 login(data.account);
                 console.log("Dữ liệu localStorage sau khi đăng nhập:", {
@@ -40,11 +37,11 @@ function Login() {
                 window.location.href = "/";
             } else {
                 const errData = await response.json();
-                console.error("Lỗi đăng nhập:", errData); // In lỗi
+                console.error("Lỗi đăng nhập:", errData);
                 setError(errData.message || "Đăng nhập thất bại");
             }
         } catch (err) {
-            console.error("Lỗi mạng:", err); // In lỗi mạng
+            console.error("Lỗi mạng:", err);
             setError("Lỗi kết nối với máy chủ!");
         } finally {
             setLoading(false);
@@ -60,27 +57,25 @@ function Login() {
                     token: credentialResponse.credential,
                 }),
             });
-
             if (res.ok) {
                 const data = await res.json();
-                console.log("Phản hồi Google Login:", data); // In dữ liệu Google Login
-                console.log("Thông tin tài khoản:", data.account); // In thông tin tài khoản
-                console.log("Token:", data.token); // In token
-                // Lưu token và thông tin tài khoản
+                console.log("Phản hồi Google Login:", data);
+                console.log("Thông tin tài khoản:", data.account);
+                console.log("Token:", data.token);
                 localStorage.setItem("token", data.token);
                 login(data.account);
                 console.log("Dữ liệu localStorage sau Google Login:", {
                     user: localStorage.getItem("user"),
                     token: localStorage.getItem("token"),
-                }); // In dữ liệu localStorage
+                });
                 window.location.href = "/";
             } else {
                 const errData = await res.json();
-                console.error("Lỗi Google Login:", errData); // In lỗi
+                console.error("Lỗi Google Login:", errData);
                 setError(errData.message || "Đăng nhập Google thất bại");
             }
         } catch (err) {
-            console.error("Lỗi mạng Google Login:", err); // In lỗi mạng
+            console.error("Lỗi mạng Google Login:", err);
             setError("Không thể kết nối với máy chủ Google.");
         }
     };

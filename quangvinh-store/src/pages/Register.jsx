@@ -1,11 +1,9 @@
-import HeaderNoHover from "../components/layout/HeaderNoHover.jsx";
 import loginBg from "../assets/images/login-background.jpg";
 import { GoogleLogin } from '@react-oauth/google';
 
 function Register() {
     return (
         <>
-            <HeaderNoHover />
             <div className="bg-cover bg-center flex justify-center items-center min-h-screen" style={{ backgroundImage: `url(${loginBg})` }}>
                 <div className="max-w-screen-sm w-full mx-4 bg-white rounded-xl shadow-lg p-16 text-center">
                     <h2 className="text-2xl font-semibold mb-8">ĐĂNG KÝ</h2>
