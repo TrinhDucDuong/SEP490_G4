@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchCategory, fetchProducts } from '../utils/api';
+import { fetchProducts, fetchCategory } from '../utils/api';
 
 export const useFetchProducts = () => {
     const [products, setProducts] = useState([]);
@@ -12,8 +12,9 @@ export const useFetchProducts = () => {
             try {
                 const data = await fetchProducts();
                 setProducts(data.products);
+                // eslint-disable-next-line no-unused-vars
             } catch (err) {
-                setError(err.message);
+                setError('Không thể tải sản phẩm. Vui lòng thử lại sau.');
             } finally {
                 setLoading(false);
             }
@@ -35,8 +36,9 @@ export const useFetchCategories = () => {
             try {
                 const data = await fetchCategory();
                 setCategories(data);
+                // eslint-disable-next-line no-unused-vars
             } catch (err) {
-                setError(err.message);
+                setError('Không thể tải danh mục. Vui lòng thử lại sau.');
             } finally {
                 setLoading(false);
             }

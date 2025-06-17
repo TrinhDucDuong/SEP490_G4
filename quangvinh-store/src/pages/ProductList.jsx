@@ -1,121 +1,87 @@
 import React, { useState, useMemo } from 'react';
-import { useFetchProducts } from '../hooks/useFetch';
+import { useFetchProducts, useFetchCategories } from '../hooks/useFetch';
 import ProductCard from '../components/ui/ProductCard.jsx';
-import Carousel from '../components/ui/Carousel.jsx';
-import ProductFilter from '../components/ui/ProductFilter.jsx';
-import { AnimatePresence } from 'framer-motion';
+import Filter from '../components/ui/ProductFilter.jsx';
 
 const ProductList = () => {
-    const { products, loading, error } = useFetchProducts();
-    const [page, setPage] = useState(1);
-    const [showFilter, setShowFilter] = useState(false);
+    const { products, loading: productsLoading, error: productsError } = useFetchProducts();
+    const { categories, loading: categoriesLoading, error: categoriesError } = useFetchCategories();
     const [filterOptions, setFilterOptions] = useState({
         category: 'all',
         priceRange: [0, 1000],
+        brand: 'all',
+        color: 'all',
+        size: 'all',
     });
-    const productsPerPage = 12;
+    const [sortOption, setSortOption] = useState('price-low-to-high');
 
     const filteredProducts = useMemo(() => {
-        return products.filter(product =>
-            (filterOptions.category === 'all' || product.category === filterOptions.category) &&
-            product.price >= filterOptions.priceRange[0] &&
-            product.price <= filterOptions.priceRange[1]
-        );
-    }, [products, filterOptions]);
+        let result = products.filter(product => {
+            return (
+                (filterOptions.category === 'all' || product.category === filterOptions.category) &&
+                product.price >= filterOptions.priceRange[0] &&
+                product.price <= filterOptions.priceRange[1] &&
+                (filterOptions.brand === 'all' || product.brand === filterOptions.brand) &&
+                (filterOptions.color === 'all' || product.color === filterOptions.color) &&
+                (filterOptions.size === 'all' || product.size === filterOptions.size)
+            );
+        });
 
-    const paginatedProducts = useMemo(() => {
-        return filteredProducts
-            .slice(0, page * productsPerPage)
-            .map(product => ({
-                id: product.id,
-                name: product.title,
-                price: product.price,
-                image: product.thumbnail,
-                images: product.images,
-                rating: product.rating,
-                reviews: product.reviews,
-            }));
-    }, [filteredProducts, page]);
+        if (sortOption === 'price-low-to-high') {
+            result.sort((a, b) => a.price - b.price);
+        } else if (sortOption === 'price-high-to-low') {
+            result.sort((a, b) => b.price - a.price);
+        }
 
-    if (loading) {
-        return (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-4">
-                {[...Array(8)].map((_, i) => (
-                    <div key={i} className="bg-white rounded-2xl shadow-md p-4 animate-pulse">
-                        <div className="w-full aspect-square bg-gray-200 rounded-lg mb-3"></div>
-                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                    </div>
-                ))}
-            </div>
-        );
+        return result;
+    }, [products, filterOptions, sortOption]);
+
+    if (productsLoading || categoriesLoading) {
+        return <div className="text-center py-10 text-gray-600">Đang tải...</div>;
     }
 
-    if (error) {
+    if (productsError || categoriesError) {
         return (
-            <div className="text-center my-6 text-red-500">
-                <p>Đã xảy ra lỗi: {error}</p>
-                <button
-                    onClick={() => window.location.reload()}
-                    className="mt-4 bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800"
-                >
-                    Thử lại
-                </button>
+            <div className="text-center py-10 text-red-500">
+                Lỗi: {productsError || categoriesError}
             </div>
         );
     }
 
     return (
-        <div className="bg-[#F2F2EE]">
-            <Carousel />
-            <div className="mx-4 my-6">
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold">Tất cả sản phẩm</h2>
-                    <button
-                        className="bg-white border rounded-md px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
-                        onClick={() => setShowFilter(true)}
-                    >
-                        <span>Lọc & Sắp xếp</span>
-                    </button>
+        <div className="bg-gray-100 min-h-screen px-4 sm:px-8 py-12">
+            <div className="container mx-auto flex gap-6">
+                <div className="w-full lg:w-1/4">
+                    <Filter
+                        categories={['all', ...categories]}
+                        setFilterOptions={setFilterOptions}
+                        filterOptions={filterOptions}
+                    />
                 </div>
-
-                <AnimatePresence>
-                    {showFilter && (
-                        <>
-                            <div
-                                className="fixed inset-0 bg-black bg-opacity-40 z-40"
-                                onClick={() => setShowFilter(false)}
-                            />
-                            <ProductFilter
-                                initialOptions={filterOptions}
-                                onClose={() => setShowFilter(false)}
-                                onApply={(options) => {
-                                    setFilterOptions(options);
-                                    setPage(1);
-                                    setShowFilter(false);
-                                }}
-                                popularProducts={products.slice(0, 4)}
-                            />
-                        </>
-                    )}
-                </AnimatePresence>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {paginatedProducts.map(product => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-                </div>
-
-                {paginatedProducts.length < filteredProducts.length && (
-                    <div className="mt-6 text-center">
-                        <button
-                            onClick={() => setPage(page + 1)}
-                            className="bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800"
+                <div className="w-full lg:w-3/4">
+                    <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+                        <h2 className="text-2xl font-bold text-gray-800">Tất cả sản phẩm</h2>
+                        <select
+                            value={sortOption}
+                            onChange={e => setSortOption(e.target.value)}
+                            className="mt-2 sm:mt-0 border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                            Tải thêm
-                        </button>
+                            <option value="price-low-to-high">Giá: Thấp đến Cao</option>
+                            <option value="price-high-to-low">Giá: Cao đến Thấp</option>
+                        </select>
                     </div>
-                )}
+                    {filteredProducts.length === 0 ? (
+                        <p className="text-center text-gray-600 mt-8">
+                            Không có sản phẩm nào phù hợp với bộ lọc.
+                        </p>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {filteredProducts.map(product => (
+                                <ProductCard key={product.id} product={product} />
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -21,40 +21,40 @@ function ProductCard({ product }) {
             clearInterval(intervalRef.current);
             setImageIndex(0);
         }
-
         return () => clearInterval(intervalRef.current);
     }, [hovered, images.length]);
 
     return (
         <div
-            className="bg-white rounded-2xl shadow-md p-4 m-2 flex flex-col hover:shadow-xl hover:cursor-pointer transition duration-100"
+            className="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-4 relative"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
         >
-            <div className="w-full aspect-square flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden mb-3">
+            <div className="absolute top-3 left-3 bg-[#FFB800] text-white text-xs font-semibold px-2 py-1 rounded">
+                MỚI
+            </div>
+            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4 flex items-center justify-center">
                 <img
                     src={currentImage || "/assets/images/placeholder.jpg"}
                     alt={product.name}
                     className="object-contain max-h-full max-w-full transition duration-300"
                 />
             </div>
-            <h3 className="text-gray-800 font-semibold text-base truncate">{product.name}</h3>
-            <p className="text-gray-600 font-medium text-sm">${product.price}</p>
-            <div className="flex items-center gap-2 mt-2">
-                <div className="flex text-yellow-400">
-                    {[...Array(5)].map((_, i) => (
-                        <FontAwesomeIcon
-                            key={i}
-                            icon={i < fullStars ? solidStar : regularStar}
-                        />
-                    ))}
-                </div>
-                <span className="text-sm text-gray-500">{reviews} đánh giá</span>
+            <h3 className="text-gray-800 font-medium text-sm truncate mb-1">{product.name}</h3>
+            <p className="text-black text-base font-bold mb-2">{product.price.toLocaleString()} VND</p>
+            <div className="flex items-center gap-1 text-yellow-400 text-sm mb-2">
+                {[...Array(5)].map((_, i) => (
+                    <FontAwesomeIcon key={i} icon={i < fullStars ? solidStar : regularStar} />
+                ))}
+                <span className="text-gray-500 text-xs ml-2">{reviews} đánh giá</span>
             </div>
-            <button className="mt-4 w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
+
+            {/* Nút thêm */}
+            <button className="w-full bg-black text-white text-sm py-2 rounded-md hover:bg-gray-800 transition">
                 Thêm nhanh
             </button>
         </div>
+
     );
 }
 

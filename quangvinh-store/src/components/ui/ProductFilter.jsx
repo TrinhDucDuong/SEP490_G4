@@ -1,144 +1,249 @@
-import { useState, useEffect } from "react";
-import { useFetchCategories } from "../../hooks/useFetch.js";
-import { X, SlidersHorizontal } from "lucide-react";
+import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 
-function ProductFilter({ initialOptions, onApply, onClose }) {
-    const { categories, loading, error } = useFetchCategories();
-    const [category, setCategory] = useState(initialOptions.category || "all");
-    const [priceRange, setPriceRange] = useState(initialOptions.priceRange || [0, 1000]);
-    const [color, setColor] = useState(initialOptions.color || "all");
-    const [size, setSize] = useState(initialOptions.size || "all");
-    const colors = ["all", "Red", "Blue", "Green", "Black", "White"];
-    const sizes = ["all", "XS", "S", "M", "L", "XL"];
+const Filter = ({ categories, setFilterOptions, filterOptions }) => {
+    const [isCategoryOpen, setIsCategoryOpen] = useState(true);
+    const [isBrandOpen, setIsBrandOpen] = useState(false);
+    const [isPriceOpen, setIsPriceOpen] = useState(true);
+    const [isColorOpen, setIsColorOpen] = useState(false);
+    const [isSizeOpen, setIsSizeOpen] = useState(false);
 
-    useEffect(() => {
-        setCategory(initialOptions.category || "all");
-        setPriceRange(initialOptions.priceRange || [0, 1000]);
-        setColor(initialOptions.color || "all");
-        setSize(initialOptions.size || "all");
-    }, [initialOptions]);
+    const brands = ['all', 'Apple', 'Samsung', 'Sony', 'LG'];
+    const priceRanges = [
+        { label: 'Dưới 500.000 VND', value: [0, 500000] },
+        { label: '500.000 - 1.000.000 VND', value: [500000, 1000000] },
+        { label: '1.000.000 - 2.000.000 VND', value: [1000000, 2000000] },
+        { label: 'Trên 2.000.000 VND', value: [2000000, 1000000] },
+    ];
+    const colors = [
+        { name: 'all', code: '' },
+        { name: 'Đen', code: '#000000' },
+        { name: 'Hồng', code: '#bb8d8d' },
+        { name: 'Đỏ', code: '#FF0000' },
+        { name: 'Xanh', code: '#00FF00' },
+    ];
+    const sizes = ['all', 'XS', 'S', 'M', 'L', 'XL'];
 
-    const handleApply = () => {
-        onApply({ category, priceRange, color, size });
+    const handleFilterChange = (key, value) => {
+        setFilterOptions(prev => ({ ...prev, [key]: value }));
     };
 
-    const handlePriceChange = (e, index) => {
-        const newRange = [...priceRange];
-        newRange[index] = Number(e.target.value);
-        if (newRange[0] > newRange[1]) [newRange[0], newRange[1]] = [newRange[1], newRange[0]];
-        setPriceRange(newRange);
+    const handlePriceChange = value => {
+        setFilterOptions(prev => ({ ...prev, priceRange: value }));
     };
 
-    const handleReset = () => {
-        setCategory("all");
-        setPriceRange([0, 1000]);
-        setColor("all");
-        setSize("all");
+    const resetFilters = () => {
+        setFilterOptions({
+            category: 'all',
+            priceRange: [0, 1000],
+            brand: 'all',
+            color: 'all',
+            size: 'all',
+        });
     };
+
     return (
-        <div className="bg-white w-full max-w-sm h-full overflow-y-auto shadow-xl p-6 fixed top-0 left-0 z-50">
-            <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-2">
-                    <SlidersHorizontal className="w-5 h-5 text-gray-700" />
-                    <h3 className="text-xl font-semibold">Bộ lọc sản phẩm</h3>
-                </div>
-                <button onClick={onClose} aria-label="Đóng bộ lọc" className="text-gray-600 hover:text-black">
-                    <X className="w-6 h-6" />
-                </button>
-            </div>
-
-            {loading && <p className="text-gray-500">Đang tải danh mục...</p>}
-            {error && <p className="text-red-500">Lỗi tải danh mục: {error}</p>}
-
-            {!loading && !error && (
+        <div className="flex flex-col p-4 bg-white rounded-xl shadow-lg">
+            <h2 className="text-lg font-semibold mb-4 text-gray-800">Bộ lọc</h2>
+            <div className="space-y-4">
                 <div>
-                    <div className="mb-6">
-                        <label className="block mb-2 text-sm font-medium">Danh mục</label>
-                        <select
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            className="w-full border border-gray-200 rounded-lg py-3 px-4 bg-white text-gray-900"
-                        >
-                            <option value="all">Tất cả</option>
-                            {categories.map((cat) => (
-                                <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                        </select>
+                    <div
+                        className="flex justify-between items-center mb-2 cursor-pointer"
+                        onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                    >
+                        <label className="text-sm font-medium text-gray-700">Danh mục</label>
+                        <FontAwesomeIcon
+                            icon={isCategoryOpen ? faMinus : faPlus}
+                            className="text-gray-500"
+                        />
                     </div>
-                    <div className="mb-6">
-                        <label className="block mb-2 text-sm font-medium">Màu sắc</label>
-                        <select
-                            value={color}
-                            onChange={(e) => setColor(e.target.value)}
-                            className="w-full border border-gray-200 rounded-lg py-3 px-4 bg-white text-gray-900"
-                        >
-                            {colors.map((col) => (
-                                <option key={col} value={col}>{col === "all" ? "Tất cả" : col}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    {/* Kích thước */}
-                    <div className="mb-6">
-                        <label className="block mb-2 text-sm font-medium">Kích thước</label>
-                        <select
-                            value={size}
-                            onChange={(e) => setSize(e.target.value)}
-                            className="w-full border border-gray-200 rounded-lg py-3 px-4 bg-white text-gray-900"
-                        >
-                            {sizes.map((sz) => (
-                                <option key={sz} value={sz}>{sz === "all" ? "Tất cả" : sz}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    {/* Khoảng giá */}
-                    <div className="mb-6">
-                        <label className="block mb-2 text-sm font-medium">
-                            Khoảng giá (${priceRange[0]} - ${priceRange[1]})
-                        </label>
-                        <div className="flex gap-4">
-                            <input
-                                type="range"
-                                min="0"
-                                max="1000"
-                                value={priceRange[0]}
-                                onChange={(e) => handlePriceChange(e, 0)}
-                                className="w-full accent-gray-900"
-                            />
-                            <input
-                                type="range"
-                                min="0"
-                                max="1000"
-                                value={priceRange[1]}
-                                onChange={(e) => handlePriceChange(e, 1)}
-                                className="w-full accent-gray-900"
-                            />
-                        </div>
-                        <div className="flex justify-between text-sm text-gray-600 mt-2">
-                            <span>${priceRange[0]}</span>
-                            <span>${priceRange[1]}</span>
-                        </div>
-                    </div>
-
-                    <div className="flex gap-2">
-                        <button
-                            onClick={handleApply}
-                            className="flex-1 bg-gray-900 text-white py-3 px-4 rounded-lg hover:bg-gray-800"
-                        >
-                            Áp dụng bộ lọc
-                        </button>
-                        <button
-                            onClick={handleReset}
-                            className="bg-gray-200 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-300"
-                        >
-                            Đặt lại
-                        </button>
+                    <div
+                        className={`overflow-hidden transition-all duration-300 ${
+                            isCategoryOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                        }`}
+                    >
+                        {categories.map(category => (
+                            <div className="flex items-center mb-2 ml-4" key={category}>
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    className="mr-2 text-blue-500 focus:ring-blue-500"
+                                    id={`category-${category}`}
+                                    checked={filterOptions.category === category}
+                                    onChange={() => handleFilterChange('category', category)}
+                                />
+                                <label htmlFor={`category-${category}`} className="text-sm text-gray-600">
+                                    {category === 'all' ? 'Tất cả' : category}
+                                </label>
+                            </div>
+                        ))}
                     </div>
                 </div>
-            )}
+                <div>
+                    <div
+                        className="flex justify-between items-center mb-2 cursor-pointer"
+                        onClick={() => setIsBrandOpen(!isBrandOpen)}
+                    >
+                        <label className="text-sm font-medium text-gray-700">Thương hiệu</label>
+                        <FontAwesomeIcon
+                            icon={isBrandOpen ? faMinus : faPlus}
+                            className="text-gray-500"
+                        />
+                    </div>
+                    <div
+                        className={`overflow-hidden transition-all duration-300 ${
+                            isBrandOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                        }`}
+                    >
+                        {brands.map(brand => (
+                            <div className="flex items-center mb-2 ml-4" key={brand}>
+                                <input
+                                    type="radio"
+                                    name="brand"
+                                    className="mr-2 text-blue-500 focus:ring-blue-500"
+                                    id={`brand-${brand}`}
+                                    checked={filterOptions.brand === brand}
+                                    onChange={() => handleFilterChange('brand', brand)}
+                                />
+                                <label htmlFor={`brand-${brand}`} className="text-sm text-gray-600">
+                                    {brand === 'all' ? 'Tất cả' : brand}
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <div
+                        className="flex justify-between items-center mb-2 cursor-pointer"
+                        onClick={() => setIsPriceOpen(!isPriceOpen)}
+                    >
+                        <label className="text-sm font-medium text-gray-700">Giá</label>
+                        <FontAwesomeIcon
+                            icon={isPriceOpen ? faMinus : faPlus}
+                            className="text-gray-500"
+                        />
+                    </div>
+                    <div
+                        className={`overflow-hidden transition-all duration-300 ${
+                            isPriceOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                        }`}
+                    >
+                        {priceRanges.map(range => (
+                            <div className="flex items-center mb-2 ml-4" key={range.label}>
+                                <input
+                                    type="radio"
+                                    name="price"
+                                    className="mr-2 text-blue-500 focus:ring-blue-500"
+                                    id={`price-${range.value.join('-')}`}
+                                    checked={
+                                        filterOptions.priceRange[0] === range.value[0] &&
+                                        filterOptions.priceRange[1] === range.value[1]
+                                    }
+                                    onChange={() => handlePriceChange(range.value)}
+                                />
+                                <label
+                                    htmlFor={`price-${range.value.join('-')}`}
+                                    className="text-sm text-gray-600"
+                                >
+                                    {range.label}
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <div
+                        className="flex justify-between items-center mb-2 cursor-pointer"
+                        onClick={() => setIsColorOpen(!isColorOpen)}
+                    >
+                        <label className="text-sm font-medium text-gray-700">Màu sắc</label>
+                        <FontAwesomeIcon
+                            icon={isColorOpen ? faMinus : faPlus}
+                            className="text-gray-500"
+                        />
+                    </div>
+                    <div
+                        className={`overflow-hidden transition-all duration-300 ${
+                            isColorOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                        }`}
+                    >
+                        {colors.map(color => (
+                            <div className="flex items-center mb-2 ml-4" key={color.name}>
+                                <input
+                                    type="radio"
+                                    name="color"
+                                    className="mr-2 text-blue-500 focus:ring-blue-500"
+                                    id={`color-${color.name}`}
+                                    checked={filterOptions.color === color.name}
+                                    onChange={() => handleFilterChange('color', color.name)}
+                                />
+                                {color.code && (
+                                    <span
+                                        className="w-4 h-4 rounded-full mr-2"
+                                        style={{ backgroundColor: color.code }}
+                                    />
+                                )}
+                                <label htmlFor={`color-${color.name}`} className="text-sm text-gray-600">
+                                    {color.name === 'all' ? 'Tất cả' : color.name}
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <div
+                        className="flex justify-between items-center mb-2 cursor-pointer"
+                        onClick={() => setIsSizeOpen(!isSizeOpen)}
+                    >
+                        <label className="text-sm font-medium text-gray-700">Kích cỡ</label>
+                        <FontAwesomeIcon
+                            icon={isSizeOpen ? faMinus : faPlus}
+                            className="text-gray-500"
+                        />
+                    </div>
+                    <div
+                        className={`overflow-hidden transition-all duration-300 ${
+                            isSizeOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                        }`}
+                    >
+                        {sizes.map(size => (
+                            <div className="flex items-center mb-2 ml-4" key={size}>
+                                <input
+                                    type="radio"
+                                    name="size"
+                                    className="mr-2 text-blue-500 focus:ring-blue-500"
+                                    id={`size-${size}`}
+                                    checked={filterOptions.size === size}
+                                    onChange={() => handleFilterChange('size', size)}
+                                />
+                                <label htmlFor={`size-${size}`} className="text-sm text-gray-600">
+                                    {size === 'all' ? 'Tất cả' : size}
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex gap-2">
+                    <button
+                        type="button"
+                        onClick={resetFilters}
+                        className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition"
+                    >
+                        Đặt lại
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setFilterOptions({ ...filterOptions })}
+                        className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+                    >
+                        Áp dụng
+                    </button>
+                </div>
+            </div>
         </div>
     );
-}
+};
 
-export default ProductFilter;
+export default Filter;
