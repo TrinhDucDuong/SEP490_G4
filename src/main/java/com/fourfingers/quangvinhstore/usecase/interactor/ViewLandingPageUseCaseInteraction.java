@@ -6,7 +6,6 @@ import com.fourfingers.quangvinhstore.domain.model.ProductWithStarRate;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
-import com.fourfingers.quangvinhstore.infrastructure.schema.ProductEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.StarRateEntity;
 import com.fourfingers.quangvinhstore.usecase.boundary.LandingPageInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.LandingPageOutputBoundary;

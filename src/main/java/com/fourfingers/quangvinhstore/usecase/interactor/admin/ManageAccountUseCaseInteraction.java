@@ -3,7 +3,6 @@ package com.fourfingers.quangvinhstore.usecase.interactor.admin;
 import com.fourfingers.quangvinhstore.adapter.exception.AccountExistException;
 import com.fourfingers.quangvinhstore.adapter.exception.AccountNotFoundException;
 import com.fourfingers.quangvinhstore.adapter.exception.AuthorityNotFoundException;
-import com.fourfingers.quangvinhstore.domain.model.Account;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.AccountMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.AccountRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.AuthorityRepository;
@@ -16,7 +15,6 @@ import com.fourfingers.quangvinhstore.usecase.data.output.account.AccountOutputD
 import com.fourfingers.quangvinhstore.usecase.data.output.account.ListAccountOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
