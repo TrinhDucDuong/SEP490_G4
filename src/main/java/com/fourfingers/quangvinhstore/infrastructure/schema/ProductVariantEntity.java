@@ -1,5 +1,6 @@
 package com.fourfingers.quangvinhstore.infrastructure.schema;
 
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ProductSizeEnumEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,9 +19,9 @@ public class ProductVariantEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productVariantId;
 
-    @ManyToOne
-    @JoinColumn(name = "size_code", referencedColumnName = "size_code")
-    private SizeEntity size;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "size_code")
+    private ProductSizeEnumEntity productSize;
 
     @ManyToOne
     @JoinColumn(name = "color_code", referencedColumnName = "color_code")
@@ -34,4 +35,8 @@ public class ProductVariantEntity {
 
     @OneToMany(mappedBy = "productVariant")
     private List<CartEntity> carts;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
+    private ProductEntity product;
 }

@@ -65,4 +65,7 @@ public class ProductEntity {
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<ProductImageEntity> productImages;
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductVariantEntity> productVariants;
 }
