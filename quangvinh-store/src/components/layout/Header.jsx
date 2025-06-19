@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../../context/AuthContext.jsx';
-import Cart from "../../pages/Cart.jsx";
-import Search from "../../pages/Search.jsx";
+import Cart from "../../pages/Admin/Cart.jsx";
+import Search from "../../pages/Admin/Search.jsx";
 
 function Header() {
     const [isSidebarOpen, setSidebarOpen] = useState(false);

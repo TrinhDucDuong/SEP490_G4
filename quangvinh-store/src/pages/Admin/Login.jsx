@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
-import loginBg from "../assets/images/login-background.jpg";
+import loginBg from "../../assets/images/login-background.jpg";
 import { GoogleLogin } from "@react-oauth/google";
-import { AuthContext } from "../context/AuthContext.jsx";
+import { AuthContext } from "../../context/AuthContext.jsx";
 
 function Login() {
     const { login } = useContext(AuthContext);
@@ -109,7 +109,7 @@ function Login() {
                         <div className="flex justify-between text-sm text-gray-600">
                             <span>
                                 Bạn chưa có tài khoản?{" "}
-                                <a href="/register" className="text-black hover:underline">
+                                <a href="/src/pages/Admin/Register" className="text-black hover:underline">
                                     Đăng ký
                                 </a>
                             </span>

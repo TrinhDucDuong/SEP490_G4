@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { useFetchProducts, useFetchCategories } from '../hooks/useFetch';
-import ProductCard from '../components/ui/ProductCard.jsx';
-import Filter from '../components/ui/ProductFilter.jsx';
+import { useFetchProducts, useFetchCategories } from '../../hooks/useFetch.js';
+import ProductCard from '../../components/ui/ProductCard.jsx';
+import Filter from '../../components/ui/ProductFilter.jsx';
 
 const ProductList = () => {
     const { products, loading: productsLoading, error: productsError } = useFetchProducts();
@@ -49,7 +49,7 @@ const ProductList = () => {
     }
 
     return (
-        <div className="bg-gray-100 min-h-screen px-4 sm:px-8 py-12">
+        <div className="bg-[#F2F2EE] min-h-screen px-4 sm:px-8 py-12 ">
             <div className="container mx-auto flex gap-6">
                 <div className="w-full lg:w-1/4">
                     <Filter

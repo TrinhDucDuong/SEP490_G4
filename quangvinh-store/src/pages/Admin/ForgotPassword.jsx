@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import HeaderNoHover from "../components/layout/HeaderNoHover.jsx";
-import loginBg from "../assets/images/login-background.jpg";
+import HeaderNoHover from "../../components/layout/HeaderNoHover.jsx";
+import loginBg from "../../assets/images/login-background.jpg";
 
 function ForgotPassword() {
     const [emailOrUsername, setEmailOrUsername] = useState("");
@@ -73,7 +73,7 @@ function ForgotPassword() {
                     </form>
 
                     <div className="mt-4 text-sm">
-                        <a href="/login" className="text-black hover:underline">
+                        <a href="/src/pages/Admin/Login" className="text-black hover:underline">
                             ← Quay lại trang đăng nhập
                         </a>
                     </div>

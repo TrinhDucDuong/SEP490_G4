@@ -1,4 +1,4 @@
-import loginBg from "../assets/images/login-background.jpg";
+import loginBg from "../../assets/images/login-background.jpg";
 import { GoogleLogin } from '@react-oauth/google';
 
 function Register() {
@@ -16,11 +16,11 @@ function Register() {
                         <div className="flex justify-between text-sm text-gray-600">
                             <span>
                                 Đã có tài khoản?{" "}
-                                <a href="/login" className="text-black hover:underline">
+                                <a href="/src/pages/Admin/Login" className="text-black hover:underline">
                                     Đăng nhập
                                 </a>
                             </span>
-                            <a href="/" className="text-black hover:underline">
+                            <a href="/public" className="text-black hover:underline">
                                 Quay lại cửa hàng
                             </a>
                         </div>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import ProductInCartCard from '../components/ui/ProductInCartCard.jsx';
+import ProductInCartCard from '../../components/ui/productInCartCard.jsx';
 
 function Cart({ isOpen, onClose }) {
     const [cartItems, setCartItems] = useState([
