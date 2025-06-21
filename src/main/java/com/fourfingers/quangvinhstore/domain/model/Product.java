@@ -15,4 +15,6 @@ public class Product {
     private String productName;
     private String productDescription;
     private BigDecimal unitPrice;
+    private Double starRateAvg;
+    private List<Image> images;
 }

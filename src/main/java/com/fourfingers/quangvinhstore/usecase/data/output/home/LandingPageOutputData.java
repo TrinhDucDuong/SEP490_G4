@@ -1,7 +1,6 @@
 package com.fourfingers.quangvinhstore.usecase.data.output.home;
 
-import com.fourfingers.quangvinhstore.domain.model.Product;
-import com.fourfingers.quangvinhstore.domain.model.ProductWithStarRate;
+import com.fourfingers.quangvinhstore.domain.model.*;
 import lombok.*;
 
 import java.util.List;
@@ -12,6 +11,11 @@ import java.util.List;
 @Setter
 @Builder
 public class LandingPageOutputData {
-    private List<Product> products;
-    private List<ProductWithStarRate> topSellingProducts;
+    private List<Product> newestProducts;
+    private List<Product> topSellingProducts;
+    private List<Brand> brands;
+    private List<Category> categories;
+    private List<Blog> blogs;
+    private List<Feedback> feedbacks;
+    private List<Image> bannerImages;
 }

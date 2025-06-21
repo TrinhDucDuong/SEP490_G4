@@ -7,7 +7,6 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class ProductWithStarRate {
-    private Product product;
-    private Double starRate;
+public class Image {
+    private String imageUrl;
 }
