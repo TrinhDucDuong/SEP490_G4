@@ -32,7 +32,7 @@ public class CategoryEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
     private List<ProductEntity> products;
 
-    @OneToMany(mappedBy = "parent_id")
+    @OneToMany(mappedBy = "parentCategoryEntity")
     private List<CategoryEntity> subCategoryEntities;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -36,7 +36,7 @@ public class ProductEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "is_active", columnDefinition = "BIT DEFAULT TRUE")
+    @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1")
     private Boolean isActive;
 
     @ManyToOne
@@ -66,4 +66,8 @@ public class ProductEntity {
 
     @OneToMany(mappedBy = "product")
     private List<ProductVariantEntity> productVariants;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "brand_id")
+    private BrandEntity brand;
 }
