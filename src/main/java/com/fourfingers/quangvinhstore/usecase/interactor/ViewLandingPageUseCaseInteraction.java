@@ -1,12 +1,9 @@
 package com.fourfingers.quangvinhstore.usecase.interactor;
 
 import com.fourfingers.quangvinhstore.domain.model.Product;
-import com.fourfingers.quangvinhstore.domain.model.ProductImage;
 import com.fourfingers.quangvinhstore.domain.model.ProductWithStarRate;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
-import com.fourfingers.quangvinhstore.infrastructure.schema.ProductEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.StarRateEntity;
 import com.fourfingers.quangvinhstore.usecase.boundary.LandingPageInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.LandingPageOutputBoundary;
@@ -26,7 +23,6 @@ public class ViewLandingPageUseCaseInteraction implements LandingPageInputBounda
     private final ProductRepository productRepository;
     private final LandingPageOutputBoundary landingPageOutputBoundary;
     private final ProductMapper productMapper;
-    private final ProductImageMapper productImageMapper;
     @Override
     @Transactional
     public LandingPageOutputData showLandingPage() {
@@ -41,11 +37,6 @@ public class ViewLandingPageUseCaseInteraction implements LandingPageInputBounda
                             .mapToLong(StarRateEntity::getStarRate)
                             .average()
                             .orElse(0.0);
-                    List<ProductImage> productImages = productEntity.getProductImages()
-                            .stream()
-                            .map(productImageMapper::toModel)
-                            .toList();
-                    product.setProductImages(productImages);
                     return new ProductWithStarRate(product, avgStarRate);
                 })
                 .toList();

@@ -1,8 +1,6 @@
 package com.fourfingers.quangvinhstore.usecase.interactor;
 
 import com.fourfingers.quangvinhstore.domain.model.Product;
-import com.fourfingers.quangvinhstore.domain.model.ProductImage;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductInputBoundary;
@@ -21,22 +19,13 @@ public class ViewListProductUseCaseInteraction implements ProductInputBoundary {
     private final ProductOutputBoundary productOutputBoundary;
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
-    private final ProductImageMapper productImageMapper;
 
     @Override
     @Transactional
     public ListProductOutputData getListProduct() {
         List<Product> products = productRepository.findAllByIsActiveTrue()
                 .stream()
-                .map(productEntity -> {
-                    Product product = productMapper.toModel(productEntity);
-                    List<ProductImage> productImages = productEntity.getProductImages()
-                            .stream()
-                            .map(productImageMapper::toModel)
-                            .toList();
-                    product.setProductImages(productImages);
-                    return product;
-                })
+                .map(productMapper::toModel)
                 .toList();
         return productOutputBoundary.convertToListProductOutputData(products);
     }

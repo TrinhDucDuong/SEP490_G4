@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "stores")
@@ -15,8 +16,8 @@ import java.util.List;
 public class StoreEntity {
     @Id
     @Column(name = "store_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long storeId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID storeId;
 
     @Column(name = "store_name", columnDefinition = "NVARCHAR(50)", nullable = false)
     private String storeName;

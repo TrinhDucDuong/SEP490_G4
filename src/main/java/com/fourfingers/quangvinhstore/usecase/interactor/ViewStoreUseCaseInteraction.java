@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -34,7 +35,8 @@ public class ViewStoreUseCaseInteraction implements StoreInputBoundary {
     @Override
     public StoreOutputData findById(String storeId) {
         try {
-            StoreEntity storeEntity = storeRepository.findById(Long.valueOf(storeId)).orElse(null);
+            UUID storeUuid = UUID.fromString(storeId);
+            StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
             if (storeEntity != null) {
                 return storeOutputBoundary.convertToStoreOutputData(
                         storeMapper.toStore(storeEntity)
@@ -42,7 +44,7 @@ public class ViewStoreUseCaseInteraction implements StoreInputBoundary {
             } else {
                 throw new StoreNotFoundException("Store not found");
             }
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid store id");
         }
     }

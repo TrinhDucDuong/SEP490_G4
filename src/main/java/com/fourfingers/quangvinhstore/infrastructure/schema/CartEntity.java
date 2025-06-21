@@ -3,6 +3,8 @@ package com.fourfingers.quangvinhstore.infrastructure.schema;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "carts")
 @AllArgsConstructor
@@ -13,8 +15,8 @@ import lombok.*;
 public class CartEntity {
     @Id
     @Column(name = "cart_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cartId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID cartId;
 
     @ManyToOne
     @JoinColumn(name = "account_id" , nullable = false)

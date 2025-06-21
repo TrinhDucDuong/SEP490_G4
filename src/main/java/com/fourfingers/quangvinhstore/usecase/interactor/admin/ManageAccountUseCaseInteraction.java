@@ -3,7 +3,6 @@ package com.fourfingers.quangvinhstore.usecase.interactor.admin;
 import com.fourfingers.quangvinhstore.adapter.exception.AccountExistException;
 import com.fourfingers.quangvinhstore.adapter.exception.AccountNotFoundException;
 import com.fourfingers.quangvinhstore.adapter.exception.AuthorityNotFoundException;
-import com.fourfingers.quangvinhstore.domain.model.Account;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.AccountMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.AccountRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.AuthorityRepository;
@@ -16,7 +15,6 @@ import com.fourfingers.quangvinhstore.usecase.data.output.account.AccountOutputD
 import com.fourfingers.quangvinhstore.usecase.data.output.account.ListAccountOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -24,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -37,14 +36,14 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
     @Override
     public AccountOutputData getAccount(String id) {
         try {
-            Long accountId = Long.valueOf(id);
+            UUID accountId = UUID.fromString(id);
             AccountEntity accountEntity = accountRepository.findById(accountId).orElseThrow(
                     () -> new AccountNotFoundException("Account not found")
             );
             return accountManagementOutputBoundary.convertToAccountOutputData(
                     accountMapper.toAccount(accountEntity)
             );
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid account id");
         }
     }
@@ -62,7 +61,7 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
     @Override
     public AccountOutputData save(String id, AccountInputData accountInputData, UserDetails userDetails) {
         try {
-            Long accountId = Long.valueOf(id);
+            UUID accountId = UUID.fromString(id);
             if (checkNotUpdateEmail(accountInputData.getEmail(), accountId)
                     && checkNotUpdateUsername(accountInputData.getUsername(), accountId)) {
                 List<AuthorityEntity> authorityEntities = new ArrayList<>();
@@ -85,7 +84,7 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
             } else {
                 throw new AccountExistException("Email or Username is already in use");
             }
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid account id");
         }
     }
@@ -118,7 +117,7 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
     @Override
     public AccountOutputData delete(String id, UserDetails userDetails) {
         try {
-            Long accountId = Long.valueOf(id);
+            UUID accountId = UUID.fromString(id);
             AccountEntity accountEntity = accountRepository.findById(accountId).orElseThrow(
                     () -> new AccountNotFoundException("Account not found")
             );
@@ -128,7 +127,7 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
             return accountManagementOutputBoundary.convertToAccountOutputData(
                     accountMapper.toAccount(accountRepository.save(accountEntity))
             );
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid account id");
         }
     }
@@ -148,7 +147,7 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
     * @Return: true when not updating email
     * @Return: false when other account used same email
     */
-    private boolean checkNotUpdateEmail(String email, Long accountId) {
+    private boolean checkNotUpdateEmail(String email, UUID accountId) {
         return accountRepository.findByEmailAndAccountIdNot(email, accountId).isEmpty();
     }
 
@@ -159,7 +158,7 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
      * @Return: true when not updating username
      * @Return: false when other account used same username
      */
-    private boolean checkNotUpdateUsername(String username, Long accountId) {
+    private boolean checkNotUpdateUsername(String username, UUID accountId) {
         return accountRepository.findByUsernameAndAccountIdNot(username, accountId).isEmpty();
     }
 }

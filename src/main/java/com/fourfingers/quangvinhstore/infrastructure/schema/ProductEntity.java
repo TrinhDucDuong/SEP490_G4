@@ -6,6 +6,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "products")
@@ -17,8 +18,8 @@ import java.util.List;
 public class ProductEntity {
     @Id
     @Column(name = "product_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID productId;
 
     @Column(name = "product_name", nullable = false, columnDefinition = "NVARCHAR(50)")
     private String productName;
@@ -35,7 +36,7 @@ public class ProductEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "is_active", columnDefinition = "BIT DEFAULT TRUE")
+    @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1")
     private Boolean isActive;
 
     @ManyToOne
@@ -63,6 +64,10 @@ public class ProductEntity {
     @OneToMany(mappedBy = "product")
     private List<StarRateEntity> starRates;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private List<ProductImageEntity> productImages;
+    @OneToMany(mappedBy = "product")
+    private List<ProductVariantEntity> productVariants;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "brand_id")
+    private BrandEntity brand;
 }

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -35,7 +36,7 @@ public class ManagePolicyUseCaseInteraction implements PolicyManagementInputBoun
     @Override
     public PolicyOutputData findById(String id) {
         try {
-            Long policyId = Long.valueOf(id);
+            UUID policyId = UUID.fromString(id);
             PolicyEntity policyEntity = policyRepository.findById(policyId).orElse(null);
             if (policyEntity != null) {
                 return policyOutputBoundary.convertToPolicyOutputData(policyMapper.toPolicy(policyEntity));
@@ -56,8 +57,9 @@ public class ManagePolicyUseCaseInteraction implements PolicyManagementInputBoun
                 .build();
         if(id!=null) {
             try {
-                policyEntity.setPolicyId(Long.valueOf(id));
-            } catch (NumberFormatException e) {
+                UUID policyId = UUID.fromString(id);
+                policyEntity.setPolicyId(policyId);
+            } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Invalid policy id");
             }
         }
@@ -68,7 +70,7 @@ public class ManagePolicyUseCaseInteraction implements PolicyManagementInputBoun
     @Override
     public PolicyOutputData delete(String id) {
         try {
-            Long policyId = Long.valueOf(id);
+            UUID policyId = UUID.fromString(id);
             PolicyEntity policyEntity = policyRepository.findById(policyId).orElse(null);
             if (policyEntity != null) {
                 policyEntity.setIsActive(false);
@@ -77,7 +79,7 @@ public class ManagePolicyUseCaseInteraction implements PolicyManagementInputBoun
             } else {
                 throw new RuntimeException("Policy not found");
             }
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid policy id");
         }
     }

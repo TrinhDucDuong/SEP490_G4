@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -36,13 +37,13 @@ public class ManageStoryUseCaseInteraction implements StoryManagementInputBounda
     @Override
     public StoryOutputData getStory(String id) {
         try {
-            Long storyId = Long.parseLong(id);
+            UUID storyId = UUID.fromString(id);
             return storyOutputBoundary.convertToStoryOutputData(
                     storyMapper.toStory(
                             storyRepository.findById(storyId).orElseThrow(() -> new StoryNotFoundException("Story not found"))
                     )
             );
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid story id");
         }
     }
@@ -50,13 +51,13 @@ public class ManageStoryUseCaseInteraction implements StoryManagementInputBounda
     @Override
     public StoryOutputData deleteStory(String id) {
         try {
-            Long storyId = Long.parseLong(id);
+            UUID storyId = UUID.fromString(id);
             StoryEntity storyEntity = storyRepository.findByStoryIdAndIsActiveTrue(storyId)
                     .orElseThrow(() -> new StoryNotFoundException("Story's not found"));
             storyEntity.setIsActive(false);
             Story deletedStory = storyMapper.toStory(storyRepository.save(storyEntity));
             return storyOutputBoundary.convertToStoryOutputData(deletedStory);
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid story id");
         }
     }
@@ -65,14 +66,14 @@ public class ManageStoryUseCaseInteraction implements StoryManagementInputBounda
     public StoryOutputData saveStory(String id, StoryInputData inputData) {
         if(id != null) {
             try {
-                Long storyId = Long.parseLong(id);
+                UUID storyId = UUID.fromString(id);
                 StoryEntity storyEntity = storyRepository.findByStoryIdAndIsActiveTrue(storyId)
                         .orElseThrow(StoryNotFoundException::new);
                 storyEntity.setTitle(inputData.getTitle());
                 storyEntity.setContent(inputData.getContent());
                 Story updatedStory = storyMapper.toStory(storyRepository.save(storyEntity));
                 return storyOutputBoundary.convertToStoryOutputData(updatedStory);
-            } catch (NumberFormatException e) {
+            } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Invalid story id");
             }
         } else {

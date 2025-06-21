@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -35,7 +36,8 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
     @Override
     public StoreOutputData getStore(String storeId) {
         try {
-            StoreEntity storeEntity = storeRepository.findById(Long.valueOf(storeId)).orElse(null);
+            UUID storeUuid = UUID.fromString(storeId);
+            StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
             if (storeEntity != null) {
                 return storeOutputBoundary.convertToStoreOutputData(
                         storeMapper.toStore(storeEntity)
@@ -43,7 +45,7 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
             } else {
                 throw new StoreNotFoundException("Store not found");
             }
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid store id");
         }
     }
@@ -52,13 +54,14 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
     public StoreOutputData save(String storeId, StoreInputData manageStoreInputData) {
         if(storeId != null) {
             try {
-                StoreEntity storeEntity = storeRepository.findById(Long.valueOf(storeId))
+                UUID storeUuid = UUID.fromString(storeId);
+                StoreEntity storeEntity = storeRepository.findById(storeUuid)
                         .orElseThrow(() -> new StoreNotFoundException("Store not found"));
                 storeEntity.setStoreName(manageStoreInputData.getStoreName());
                 storeEntity.setStoreAddress(manageStoreInputData.getStoreAddress());
                 Store savedStore = storeMapper.toStore(storeRepository.save(storeEntity));
                 return storeOutputBoundary.convertToStoreOutputData(savedStore);
-            } catch (NumberFormatException e) {
+            } catch (IllegalArgumentException e) {
                 throw new NumberFormatException("Invalid store id");
             }
         } else {
@@ -75,8 +78,8 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
     @Override
     public StoreOutputData delete(String storeId) {
         try {
-            Long id = Long.valueOf(storeId);
-            StoreEntity storeEntity = storeRepository.findById(id).orElse(null);
+            UUID storeUuid = UUID.fromString(storeId);
+            StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
             if(storeEntity != null) {
                 storeEntity.setIsActive(false);
                 Store deletedStore = storeMapper.toStore(storeRepository.save(storeEntity));
@@ -84,7 +87,7 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
             } else {
                 throw new StoreNotFoundException("Store not found");
             }
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             throw new NumberFormatException("Invalid store id");
         }
     }
