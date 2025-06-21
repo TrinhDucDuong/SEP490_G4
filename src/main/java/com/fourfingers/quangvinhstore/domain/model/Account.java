@@ -13,6 +13,4 @@ public class Account {
     private String accountId;
     private String username;
     private String email;
-    private Boolean isActive;
-    private List<Authority> authorities;
 }

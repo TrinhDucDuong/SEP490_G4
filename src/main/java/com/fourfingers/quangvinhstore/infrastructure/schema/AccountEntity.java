@@ -20,11 +20,11 @@ import java.util.UUID;
 @Builder
 public class AccountEntity implements UserDetails {
     @Id
-    @Column(name = "account_id", columnDefinition = "BINARY(16)")
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "account_id")
     private UUID accountId;
 
-    @Column(name = "username", unique = true, nullable = false)
+    @Column(name = "username", unique = true, nullable = false, columnDefinition = "CHAR(15)")
     private String username;
 
     @Column(name = "email", unique = true, nullable = false)
