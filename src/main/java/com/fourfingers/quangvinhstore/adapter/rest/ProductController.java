@@ -1,12 +1,11 @@
 package com.fourfingers.quangvinhstore.adapter.rest;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductInputBoundary;
+import com.fourfingers.quangvinhstore.usecase.data.input.product.SearchProductInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/product")
@@ -14,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
     private final ProductInputBoundary productInputBoundary;
 
-    @GetMapping
-    public ResponseEntity<?> getAllProducts() {
-        return ResponseEntity.ok(productInputBoundary.getListProduct());
+    @PostMapping
+    public ResponseEntity<?> getAllProducts(@RequestBody SearchProductInputData searchProductInputData) {
+        return ResponseEntity.ok(productInputBoundary.search(searchProductInputData));
     }
 }

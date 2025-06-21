@@ -51,7 +51,7 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/store/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/instruction").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/home").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/product").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/product").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/admin/account").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/admin/account").permitAll();
                     auth.anyRequest().authenticated();
