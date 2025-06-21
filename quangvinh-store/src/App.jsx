@@ -1,17 +1,20 @@
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
-import Home from './pages/Admin/Home.jsx';
-import ProductList from './pages/Admin/ProductList.jsx';
-import NotFound from './pages/Admin/NotFound.jsx';
-import ThemeSettings from './pages/Admin/ThemeSettings.jsx';
-import Login from './pages/Admin/Login.jsx';
-import Register from './pages/Admin/Register.jsx';
+import Home from './pages/Customer/Home.jsx';
+import ProductList from './pages/Customer/ProductList.jsx';
+import NotFound from './pages/Customer/NotFound.jsx';
+import ThemeSettings from './pages/Customer/ThemeSettings.jsx';
+import Login from './pages/Customer/Login.jsx';
+import Register from './pages/Customer/Register.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
-import Cart from "./pages/Admin/Cart.jsx";
-import ForgotPassword from "./pages/Admin/ForgotPassword.jsx";
-import ProductDetail from "./pages/Admin/ProductDetails.jsx";
-import Payment from "./pages/Admin/Payment.jsx";
+import Cart from "./pages/Customer/Cart.jsx";
+import ForgotPassword from "./pages/Customer/ForgotPassword.jsx";
+import ProductDetail from "./pages/Customer/ProductDetails.jsx";
+import Payment from "./pages/Customer/Payment.jsx";
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
 
 
 function App() {

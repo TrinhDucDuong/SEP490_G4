@@ -109,7 +109,7 @@ function Login() {
                         <div className="flex justify-between text-sm text-gray-600">
                             <span>
                                 Bạn chưa có tài khoản?{" "}
-                                <a href="/src/pages/Admin/Register" className="text-black hover:underline">
+                                <a href="/src/pages/Customer/Register" className="text-black hover:underline">
                                     Đăng ký
                                 </a>
                             </span>

@@ -16,7 +16,7 @@ function Register() {
                         <div className="flex justify-between text-sm text-gray-600">
                             <span>
                                 Đã có tài khoản?{" "}
-                                <a href="/src/pages/Admin/Login" className="text-black hover:underline">
+                                <a href="/src/pages/Customer/Login" className="text-black hover:underline">
                                     Đăng nhập
                                 </a>
                             </span>

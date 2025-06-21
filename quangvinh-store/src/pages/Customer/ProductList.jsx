@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useFetchProducts, useFetchCategories } from '../../hooks/useFetch.js';
-import ProductCard from '../../components/ui/ProductCard.jsx';
-import Filter from '../../components/ui/ProductFilter.jsx';
+import ProductCard from '../../components/ui/product/ProductCard.jsx';
+import Filter from '../../components/ui/product/ProductFilter.jsx';
 
 const ProductList = () => {
     const { products, loading: productsLoading, error: productsError } = useFetchProducts();
