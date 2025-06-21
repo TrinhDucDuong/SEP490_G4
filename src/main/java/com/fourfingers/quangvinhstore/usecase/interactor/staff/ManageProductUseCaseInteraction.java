@@ -1,13 +1,11 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 
-import com.fourfingers.quangvinhstore.domain.model.Product;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductVariantMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
-import com.fourfingers.quangvinhstore.infrastructure.repository.StoreRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.*;
 import com.fourfingers.quangvinhstore.usecase.boundary.BackBlazeBoundary;
+import com.fourfingers.quangvinhstore.usecase.boundary.ProductOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.ProductManagementInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.input.product.ProductInputData;
 import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductOutputData;
@@ -17,18 +15,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ManageProductUseCaseInteraction implements ProductManagementInputBoundary {
-    private ProductRepository productRepository;
-    private ProductMapper productMapper;
-    private BackBlazeBoundary backBlazeBoundary;
-    private ProductVariantMapper productVariantMapper;
-    private ProductImageMapper productImageMapper;
-    private StoreRepository storeRepository;
+    private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
+    private final BackBlazeBoundary backBlazeBoundary;
+    private final ProductVariantMapper productVariantMapper;
+    private final ProductOutputBoundary productOutputBoundary;
 
     @Override
     @Transactional
@@ -38,6 +36,7 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         List<ProductVariantEntity> productVariantEntities = getListVariant(productInputData,
                 performInsertingAccount.getWorkingAt());
         ProductEntity needToCreateProduct = ProductEntity.builder()
+                .unitPrice(BigDecimal.valueOf(Double.parseDouble(productInputData.getUnitPrice())))
                 .createdAt(LocalDateTime.now())
                 .createdBy(performInsertingAccount)
                 .productDescription(productInputData.getProductDescription())
@@ -45,7 +44,9 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                 .productImages(productImageEntities)
                 .productVariants(productVariantEntities)
                 .build();
-        return null;
+        return productOutputBoundary.convertToProductOutputData(
+                productMapper.toModel(productRepository.saveAndFlush(needToCreateProduct))
+        );
     }
 
     private List<ProductVariantEntity> getListVariant(ProductInputData productInputData, StoreEntity storeEntity) {

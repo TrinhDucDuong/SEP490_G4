@@ -15,10 +15,7 @@ import java.util.List;
 public class ColorEntity {
     @Id
     @Column(name = "color_code")
-    private String colorHexCode;
-
-    @Column(name = "color_name", columnDefinition = "NVARCHAR(50)")
-    private String colorName;
+    private String colorHex;
 
     @OneToMany(mappedBy = "color", fetch = FetchType.LAZY)
     private List<ProductVariantEntity> productVariants;

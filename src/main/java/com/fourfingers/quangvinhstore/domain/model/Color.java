@@ -9,5 +9,4 @@ import lombok.*;
 @Builder
 public class Color {
     private String colorHex;
-    private String colorName;
 }
