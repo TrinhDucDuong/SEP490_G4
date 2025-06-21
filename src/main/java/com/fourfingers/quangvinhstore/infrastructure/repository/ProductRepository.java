@@ -7,9 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
+public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
     @Query("SELECT p FROM ProductEntity p " +
             "JOIN p.starRates s GROUP BY p " +
             "ORDER BY AVG(s.starRate) DESC")

@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @Builder
 public class Account {
+    private String accountId;
     private String username;
     private String email;
     private Boolean isActive;

@@ -6,6 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
@@ -17,8 +18,8 @@ import java.util.Locale;
 public class OrderEntity {
     @Id
     @Column(name = "order_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID orderId;
     private LocalDateTime orderDate;
 
     @OneToMany(mappedBy = "order")

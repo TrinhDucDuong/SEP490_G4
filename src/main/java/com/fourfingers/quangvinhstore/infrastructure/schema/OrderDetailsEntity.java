@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 @Table(name = "order_details",
@@ -17,8 +18,8 @@ import java.math.BigDecimal;
 public class OrderDetailsEntity {
     @Id
     @Column(name = "order_details_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderDetailsId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID orderDetailsId;
 
     @ManyToOne
     @JoinColumn(

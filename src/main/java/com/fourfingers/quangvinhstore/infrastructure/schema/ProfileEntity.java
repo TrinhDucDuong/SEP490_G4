@@ -3,6 +3,8 @@ package com.fourfingers.quangvinhstore.infrastructure.schema;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "profiles")
 @Getter
@@ -13,8 +15,8 @@ import lombok.*;
 public class ProfileEntity {
     @Id
     @Column(name = "profile_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long profileId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID profileId;
 
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;

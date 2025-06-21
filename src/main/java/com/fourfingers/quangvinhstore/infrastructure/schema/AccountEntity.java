@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "accounts")
@@ -19,9 +20,9 @@ import java.util.List;
 @Builder
 public class AccountEntity implements UserDetails {
     @Id
-    @Column(name = "account_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long accountId;
+    @Column(name = "account_id", columnDefinition = "BINARY(16)")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID accountId;
 
     @Column(name = "username", unique = true, nullable = false)
     private String username;

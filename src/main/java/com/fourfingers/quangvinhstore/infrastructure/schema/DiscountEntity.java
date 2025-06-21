@@ -6,6 +6,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "discounts")
@@ -17,8 +18,8 @@ import java.util.List;
 public class DiscountEntity {
     @Id
     @Column(name = "discount_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long discountId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID discountId;
 
     @Column(name = "discount_name", nullable = false, columnDefinition = "NVARCHAR(50)")
     private String discountName;

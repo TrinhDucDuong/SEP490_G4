@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "product_variants")
@@ -16,8 +17,8 @@ import java.util.List;
 public class ProductVariantEntity {
     @Id
     @Column(name = "product_variant_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productVariantId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID productVariantId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "size_code")

@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "vouchers")
@@ -15,8 +16,9 @@ import java.time.LocalDateTime;
 @Builder
 public class VoucherEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "voucher_code")
-    private String voucherCode;
+    private UUID voucherCode;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

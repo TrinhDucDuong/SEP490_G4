@@ -3,6 +3,8 @@ package com.fourfingers.quangvinhstore.infrastructure.schema;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "instructions")
 @AllArgsConstructor
@@ -13,8 +15,8 @@ import lombok.*;
 public class InstructionEntity {
     @Id
     @Column(name = "instruction_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long instructionId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID instructionId;
 
     @Column(name = "instruction_name", columnDefinition = "NVARCHAR(50)", nullable = false)
     private String instructionName;

@@ -3,6 +3,8 @@ package com.fourfingers.quangvinhstore.infrastructure.schema;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "star_rates")
 @AllArgsConstructor
@@ -13,8 +15,8 @@ import lombok.*;
 public class StarRateEntity {
     @Id
     @Column(name = "star_rate_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long starRateId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID starRateId;
 
     @ManyToOne
     @JoinColumn(name = "product_id" , nullable = false)

@@ -5,8 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface InstructionRepository extends JpaRepository<InstructionEntity, Long> {
+public interface InstructionRepository extends JpaRepository<InstructionEntity, UUID> {
     List<InstructionEntity> findAllByIsActiveTrue();
 }

@@ -32,7 +32,6 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
     @Transactional
     public ProductOutputData save(ProductInputData productInputData, UserDetails userDetails) {
         AccountEntity performInsertingAccount = (AccountEntity) userDetails;
-        List<ProductImageEntity> productImageEntities = getListImage(productInputData);
         List<ProductVariantEntity> productVariantEntities = getListVariant(productInputData,
                 performInsertingAccount.getWorkingAt());
         ProductEntity needToCreateProduct = ProductEntity.builder()
@@ -41,7 +40,6 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                 .createdBy(performInsertingAccount)
                 .productDescription(productInputData.getProductDescription())
                 .productName(productInputData.getProductName())
-                .productImages(productImageEntities)
                 .productVariants(productVariantEntities)
                 .build();
         return productOutputBoundary.convertToProductOutputData(
@@ -59,13 +57,8 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                 .toList();
     }
 
-    private List<ProductImageEntity> getListImage(ProductInputData productInputData) {
-        return backBlazeBoundary.store(productInputData.getProductImages())
-                .stream()
-                .map(imageUrl -> ProductImageEntity.builder()
-                        .imageUrl(imageUrl)
-                        .build())
-                .toList();
+    private List<ImageEntity> getListImage(ProductInputData productInputData) {
+        return null;
     }
 
 }
