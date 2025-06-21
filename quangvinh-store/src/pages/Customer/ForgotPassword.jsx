@@ -73,7 +73,7 @@ function ForgotPassword() {
                     </form>
 
                     <div className="mt-4 text-sm">
-                        <a href="/src/pages/Admin/Login" className="text-black hover:underline">
+                        <a href="/src/pages/Customer/Login" className="text-black hover:underline">
                             ← Quay lại trang đăng nhập
                         </a>
                     </div>

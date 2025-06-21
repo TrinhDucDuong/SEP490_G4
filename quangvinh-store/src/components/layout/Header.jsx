@@ -1,19 +1,19 @@
-import { useState, useContext } from 'react';
-import { Menu } from 'lucide-react';
+import {useState, useContext} from 'react';
+import {Menu} from 'lucide-react';
 import logo from '../../assets/images/logo_black.png';
 import Sidebar from './Sidebar';
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { AuthContext } from '../../context/AuthContext.jsx';
-import Cart from "../../pages/Admin/Cart.jsx";
-import Search from "../../pages/Admin/Search.jsx";
+import {Link} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCartShopping, faHeart, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
+import {AuthContext} from '../../context/AuthContext.jsx';
+import Cart from "../../pages/Customer/Cart.jsx";
+import Search from "../../pages/Customer/Search.jsx";
 
 function Header() {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [isCartOpen, setCartOpen] = useState(false);
     const [isSearchOpen, setSearchOpen] = useState(false);
-    const { user, logout } = useContext(AuthContext);
+    const {user, logout} = useContext(AuthContext);
 
     const handleLogout = () => {
         logout();
@@ -22,56 +22,81 @@ function Header() {
 
     return (
         <>
-            <header className="bg-white text-black w-full fixed top-0 z-50 shadow-lg">
+            <header className="bg-white text-black w-full fixed top-0 z-50 shadow-md border-b border-gray-200">
                 <div className="container mx-auto flex items-center justify-between h-20 px-4 md:px-8">
-                    <button className="lg:hidden flex items-center justify-center p-2" onClick={() => setSidebarOpen(true)} aria-label="Mở menu">
-                        <Menu size={24} />
+                    <button
+                        className="xl:hidden flex items-center justify-center p-2 hover:bg-gray-100 rounded-md transition"
+                        onClick={() => setSidebarOpen(true)}
+                        aria-label="Mở menu">
+                        <Menu size={24}/>
                     </button>
-                    <div className=" absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 lg:static lg:translate-x-0 lg:translate-y-0 z-10">
-                        <Link to="/">
+                    <div className="w-40 h-16 overflow-hidden relative">
+                        <Link to="/" className="block w-full h-full">
                             <img
                                 src={logo}
                                 alt="Logo"
-                                className="h-28 w-56 md:h-20 object-cover"
+                                className="w-full h-full object-cover"
                                 draggable={false}
                             />
                         </Link>
                     </div>
-                    <nav className="hidden lg:flex flex-1 justify-center">
-                        <ul className="flex gap-6 font-sans text-base font-medium">
+
+                    <nav className="hidden xl:flex flex-1 justify-center max-w-[720px] mx-auto">
+                        <ul className="flex flex-wrap justify-center gap-2 font-sans text-sm font-semibold text-gray-700">
                             <li>
-                                <Link to="/" className="hover:text-yellow-400 transition">Trang chủ</Link>
+                                <Link to="/" className="py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200">Trang chủ</Link>
                             </li>
                             <li>
-                                <Link to="/products" className="hover:text-yellow-400 transition">Sản phẩm</Link>
+                                <Link to="/products" className="py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200">Sản phẩm</Link>
                             </li>
                             <li>
-                                <Link to="/sale" className="hover:text-yellow-400 transition">Sale</Link>
+                                <Link to="/feedbacks" className="py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200">Feedback</Link>
                             </li>
                             <li>
-                                <Link to="/contacts" className="hover:text-yellow-400 transition">Liên hệ</Link>
+                                <Link to="/contacts" className="py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200">Liên hệ</Link>
                             </li>
                             <li>
-                                <Link to="/feedbacks" className="hover:text-yellow-400 transition">Feedback</Link>
+                                <Link to="/sale" className="py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200 relative">
+                                    <span className="absolute -top-1 -right-2 text-[10px] bg-red-600 text-white px-1 rounded">HOT</span>
+                                    Sale
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/blog" className="py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200 text-center">Hàng Auth chuẩn có gì?</Link>
                             </li>
                         </ul>
                     </nav>
-                    <div className="flex items-center gap-4 lg:gap-6">
-                        <button onClick={() => setSearchOpen(true)} className="hover:text-yellow-400 transition" aria-label="Tìm kiếm">
-                            <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" />
+
+                    <div className="flex items-center gap-3 lg:gap-6">
+                        <div className="hidden sm:block">
+                            <div className="border border-gray-300 rounded-full px-3 py-1.5 flex items-center gap-2 transition focus-within:ring-2 focus-within:ring-yellow-400">
+                                <input
+                                    type="text"
+                                    className="outline-none text-sm bg-transparent placeholder-gray-400 w-28 md:w-40"
+                                    placeholder="Tìm sản phẩm..."
+                                />
+                                <button onClick={() => setSearchOpen(true)} className="text-gray-600 hover:text-yellow-500 transition">
+                                    <FontAwesomeIcon icon={faMagnifyingGlass} size="sm"/>
+                                </button>
+                            </div>
+                        </div>
+                        <button onClick={() => setCartOpen(true)} className="hover:text-yellow-400 transition" aria-label="Yêu thích">
+                            <FontAwesomeIcon icon={faHeart} size="lg"/>
                         </button>
                         <button onClick={() => setCartOpen(true)} className="hover:text-yellow-400 transition" aria-label="Giỏ hàng">
-                            <FontAwesomeIcon icon={faCartShopping} size="lg" />
+                            <FontAwesomeIcon icon={faCartShopping} size="lg"/>
                         </button>
                         {user ? (
-                            <div className="hidden lg:flex items-center gap-2">
-                                <span className="text-sm">Xin chào, <b>{user.username || user.email}</b></span>
-                                <button onClick={handleLogout} className="hover:text-yellow-400 text-sm">
+                            <div className="hidden lg:flex items-center gap-3">
+                                <span className="text-sm text-gray-700">Xin chào, <b>{user.username || user.email}</b></span>
+                                <button
+                                    onClick={handleLogout}
+                                    className="text-sm text-gray-700 hover:text-yellow-500 transition">
                                     Đăng xuất
                                 </button>
                             </div>
                         ) : (
-                            <Link to="/login" className="hover:text-yellow-400 text-sm hidden lg:inline">
+                            <Link to="/login" className="text-sm text-gray-700 hover:text-yellow-500 transition hidden lg:inline">
                                 Đăng nhập
                             </Link>
                         )}
@@ -79,9 +104,10 @@ function Header() {
                 </div>
             </header>
 
-            <Sidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
-            <Cart isOpen={isCartOpen} onClose={() => setCartOpen(false)} />
-            <Search isOpen={isSearchOpen} onClose={() => setSearchOpen(false)} />
+
+            <Sidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)}/>
+            <Cart isOpen={isCartOpen} onClose={() => setCartOpen(false)}/>
+            <Search isOpen={isSearchOpen} onClose={() => setSearchOpen(false)}/>
             <div className="h-20"></div>
         </>
     );
