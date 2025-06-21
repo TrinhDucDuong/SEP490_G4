@@ -13,5 +13,5 @@ public class Brand {
     private String brandId;
     private String brandName;
     private String brandDescription;
-    private List<String> imageUrls;
+    private List<Image> images;
 }

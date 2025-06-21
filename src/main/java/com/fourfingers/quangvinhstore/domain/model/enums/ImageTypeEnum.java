@@ -4,5 +4,7 @@ public enum ImageTypeEnum {
     PRODUCT,
     BRAND,
     BANNER,
-    FEEDBACK
+    FEEDBACK,
+    CATEGORY,
+    COMMENT
 }

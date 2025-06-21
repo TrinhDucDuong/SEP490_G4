@@ -19,4 +19,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID>,
     List<ProductEntity> findTop10ProductWithHighestStarRate(Pageable pageable);
 
     List<ProductEntity> findAllByIsActiveTrue();
+
+    List<ProductEntity> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }

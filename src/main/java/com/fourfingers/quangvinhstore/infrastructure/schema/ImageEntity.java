@@ -19,10 +19,11 @@ public class ImageEntity {
     @Column(name = "image_id")
     private UUID imageId;
 
-    @Column(name = "reference_id", nullable = false)
+    @Column(name = "reference_id")
     private UUID referenceId;
 
     @Column(name = "image_type")
+    @Enumerated(EnumType.STRING)
     private ImageType imageType;
 
     @Column(name = "image_url", columnDefinition = "TEXT", nullable = false)

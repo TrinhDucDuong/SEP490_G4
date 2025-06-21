@@ -17,4 +17,5 @@ public class SearchProductInputData {
     private List<ProductSizeEnum> productSizes;
     private List<String> colorHexes;
     private BigDecimal price;
+    private List<OrderByClause> orderByClauses;
 }

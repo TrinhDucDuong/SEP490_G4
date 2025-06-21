@@ -9,8 +9,9 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class Category {
-    private String categoryId;
-    private String categoryName;
-    private List<Image> images;
+public class Feedback {
+    private String feedbackId;
+    private String feedbackTitle;
+    private String feedbackContent;
+    private List<String> imageUrls;
 }
