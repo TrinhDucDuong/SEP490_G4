@@ -7,9 +7,13 @@ import com.fourfingers.quangvinhstore.infrastructure.schema.ProductEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductVariantEntity;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductOutputBoundary;
+import com.fourfingers.quangvinhstore.usecase.data.input.product.OrderByClause;
 import com.fourfingers.quangvinhstore.usecase.data.input.product.SearchProductInputData;
+import com.fourfingers.quangvinhstore.usecase.data.input.product.SortDirection;
 import com.fourfingers.quangvinhstore.usecase.data.output.product.ListProductOutputData;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Path;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import jakarta.persistence.criteria.Predicate;
@@ -80,6 +84,17 @@ public class ViewListProductUseCaseInteraction implements ProductInputBoundary {
             if(searchProductInputData.getPrice() != null) {
                 predicates.add(combine.lessThanOrEqualTo(root.get("unitPrice"),
                         searchProductInputData.getPrice()));
+            }
+
+            if(!CollectionUtils.isEmpty(searchProductInputData.getOrderByClauses())) {
+                List<Order> orders = new ArrayList<>();
+                for(OrderByClause orderByClause : searchProductInputData.getOrderByClauses()) {
+                    Path<?> path = root.get(orderByClause.getField());
+                    Order order = orderByClause.getDirection() == SortDirection.ASC ?
+                            combine.asc(path) : combine.desc(path);
+                    orders.add(order);
+                }
+                query.orderBy(orders);
             }
 
             return combine.and(predicates.toArray(new Predicate[0]));
