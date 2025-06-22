@@ -13,5 +13,5 @@ public class Feedback {
     private String feedbackId;
     private String feedbackTitle;
     private String feedbackContent;
-    private List<String> imageUrls;
+    private List<Image> images;
 }
