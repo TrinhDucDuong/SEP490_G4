@@ -1,11 +1,11 @@
 package com.fourfingers.quangvinhstore.infrastructure.schema;
 
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 @Entity
@@ -20,8 +20,22 @@ public class OrderEntity {
     @Column(name = "order_id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID orderId;
+
+    @Column(name = "order_date")
     private LocalDateTime orderDate;
 
     @OneToMany(mappedBy = "order")
     private List<OrderDetailsEntity> orderDetails;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id", referencedColumnName = "account_id")
+    private AccountEntity owner;
+
+    @ManyToOne
+    @JoinColumn(name = "process_by", referencedColumnName = "account_id")
+    private AccountEntity processBy;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "order_status")
+    private OrderStatusEnum orderStatus;
 }

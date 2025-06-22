@@ -59,6 +59,7 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/category").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/banner").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/feedback").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/staff/order").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

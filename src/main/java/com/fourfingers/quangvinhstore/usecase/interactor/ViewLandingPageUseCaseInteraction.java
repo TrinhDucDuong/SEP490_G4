@@ -59,7 +59,7 @@ public class ViewLandingPageUseCaseInteraction implements LandingPageInputBounda
     }
 
     private List<Product> getNewestProduct() {
-        Pageable pageable = PageRequest.of(0, 10);
+        Pageable pageable = PageRequest.of(0, 2);
         return productRepository.findAllByOrderByCreatedAtDesc(pageable)
                 .stream()
                 .map(productEntity -> {
