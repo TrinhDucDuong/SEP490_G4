@@ -14,7 +14,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
-public class ViewInstructionUseCaseInteraction implements InstructionInputBoundary {
+public class InstructionUseCaseInteraction implements InstructionInputBoundary {
     private final InstructionMapper instructionMapper;
     private final InstructionOutputBoundary instructionOutputBoundary;
     private final InstructionRepository instructionRepository;

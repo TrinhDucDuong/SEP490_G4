@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
-public class ViewStoreUseCaseInteraction implements StoreInputBoundary {
+public class StoreUseCaseInteraction implements StoreInputBoundary {
     private final StoreRepository storeRepository;
     private final StoreOutputBoundary storeOutputBoundary;
     private final StoreMapper storeMapper;

@@ -14,7 +14,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
-public class ViewPolicyUseCaseInteraction implements PolicyInputBoundary {
+public class PolicyUseCaseInteraction implements PolicyInputBoundary {
     private final PolicyRepository policyRepository;
     private final PolicyOutputBoundary policyOutputBoundary;
     private final PolicyMapper policyMapper;
