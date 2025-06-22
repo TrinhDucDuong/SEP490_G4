@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.adapter.rest;
 
-import com.fourfingers.quangvinhstore.usecase.boundary.CategoryInputBoundary;
+import com.fourfingers.quangvinhstore.usecase.boundary.BlogInputBoundary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/blog")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
-public class CategoryController {
-    private final CategoryInputBoundary categoryInputBoundary;
+public class BlogController {
+    private final BlogInputBoundary blogInputBoundary;
 
     @GetMapping
     public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(categoryInputBoundary.getAll());
+        return ResponseEntity.ok(blogInputBoundary.getAll());
     }
 }

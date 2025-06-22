@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
-public class ViewListBrandUseCaseInteraction implements BrandInputBoundary {
+public class BrandUseCaseInteraction implements BrandInputBoundary {
     private final BrandRepository brandRepository;
     private final BrandMapper brandMapper;
     private final BrandOutputBoundary brandOutputBoundary;

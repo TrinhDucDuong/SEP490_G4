@@ -23,13 +23,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
-public class ViewListProductUseCaseInteraction implements ProductInputBoundary {
+public class ProductUseCaseInteraction implements ProductInputBoundary {
     private final ProductOutputBoundary productOutputBoundary;
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;

@@ -9,9 +9,8 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class Blog {
-    private String blogId;
-    private String blogTitle;
-    private List<BlogBlock> blogContents;
-    private List<Image> images;
+public class BlogBlock {
+    private String blockHeader;
+    private String blockContent;
+    private List<BlogBlock> childrenBlocks;
 }
