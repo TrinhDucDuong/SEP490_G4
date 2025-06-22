@@ -6,5 +6,6 @@ public enum ImageType {
     BANNER,
     FEEDBACK,
     CATEGORY,
-    COMMENT
+    COMMENT,
+    BLOG
 }
