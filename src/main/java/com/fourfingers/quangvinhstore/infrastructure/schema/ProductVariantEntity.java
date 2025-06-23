@@ -17,8 +17,8 @@ import java.util.UUID;
 public class ProductVariantEntity {
     @Id
     @Column(name = "product_variant_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID productVariantId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long productVariantId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "size_code")

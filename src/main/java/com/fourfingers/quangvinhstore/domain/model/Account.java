@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @Builder
 public class Account {
-    private String accountId;
+    private Long accountId;
     private String username;
     private String email;
 }

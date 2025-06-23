@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -36,7 +35,7 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
     @Override
     public StoreOutputData getStore(String storeId) {
         try {
-            UUID storeUuid = UUID.fromString(storeId);
+            Long storeUuid = Long.parseLong(storeId);
             StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
             if (storeEntity != null) {
                 return storeOutputBoundary.convertToStoreOutputData(
@@ -54,7 +53,7 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
     public StoreOutputData save(String storeId, StoreInputData manageStoreInputData) {
         if(storeId != null) {
             try {
-                UUID storeUuid = UUID.fromString(storeId);
+                Long storeUuid = Long.parseLong(storeId);
                 StoreEntity storeEntity = storeRepository.findById(storeUuid)
                         .orElseThrow(() -> new StoreNotFoundException("Store not found"));
                 storeEntity.setStoreName(manageStoreInputData.getStoreName());
@@ -78,7 +77,7 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
     @Override
     public StoreOutputData delete(String storeId) {
         try {
-            UUID storeUuid = UUID.fromString(storeId);
+            Long storeUuid = Long.parseLong(storeId);
             StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
             if(storeEntity != null) {
                 storeEntity.setIsActive(false);

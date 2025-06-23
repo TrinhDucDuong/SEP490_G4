@@ -15,9 +15,9 @@ import java.util.UUID;
 @Builder
 public class BlogBlockEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "block_id")
-    private UUID blockId;
+    private Long blockId;
 
     @ManyToOne
     @JoinColumn(name = "blog_id", referencedColumnName = "blog_id", nullable = false)

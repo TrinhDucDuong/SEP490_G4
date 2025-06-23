@@ -15,8 +15,8 @@ import java.util.UUID;
 public class InstructionEntity {
     @Id
     @Column(name = "instruction_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID instructionId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long instructionId;
 
     @Column(name = "instruction_name", columnDefinition = "NVARCHAR(50)", nullable = false)
     private String instructionName;

@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @Builder
 public class Blog {
-    private String blogId;
+    private Long blogId;
     private String blogTitle;
     private List<BlogBlock> blogContents;
     private List<Image> images;

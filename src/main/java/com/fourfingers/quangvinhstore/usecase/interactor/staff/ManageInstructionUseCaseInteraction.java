@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -36,7 +35,7 @@ public class ManageInstructionUseCaseInteraction implements InstructionManagemen
     @Override
     public InstructionOutputData findById(String id) {
         try {
-            UUID instructionId = UUID.fromString(id);
+            Long instructionId = Long.parseLong(id);
             InstructionEntity instructionEntity = instructionRepository.findById(instructionId)
                     .orElseThrow(() -> new InstructionNotFoundException("Instruction not found"));
             return instructionOutputBoundary.convertToOutputData(instructionMapper.toInstruction(instructionEntity));
@@ -49,7 +48,7 @@ public class ManageInstructionUseCaseInteraction implements InstructionManagemen
     public InstructionOutputData save(String id, InstructionInputData instructionInputData) {
         if(id != null) {
             try {
-                UUID instructionId = UUID.fromString(id);
+                Long instructionId = Long.parseLong(id);
                 InstructionEntity instructionEntity = instructionRepository.findById(instructionId)
                         .orElseThrow(() -> new InstructionNotFoundException("Instruction not found"));
                 instructionEntity.setInstructionName(instructionInputData.getInstructionName());
@@ -75,7 +74,7 @@ public class ManageInstructionUseCaseInteraction implements InstructionManagemen
     @Override
     public InstructionOutputData delete(String id) {
         try {
-            UUID instructionId = UUID.fromString(id);
+            Long instructionId = Long.parseLong(id);
             InstructionEntity instructionEntity = instructionRepository.findById(instructionId)
                     .orElseThrow(() -> new InstructionNotFoundException("Instruction not found"));
             instructionEntity.setIsActive(false);

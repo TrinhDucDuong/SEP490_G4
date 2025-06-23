@@ -15,12 +15,12 @@ import java.util.UUID;
 @Builder
 public class ImageEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id")
-    private UUID imageId;
+    private Long imageId;
 
     @Column(name = "reference_id")
-    private UUID referenceId;
+    private Long referenceId;
 
     @Column(name = "image_type")
     @Enumerated(EnumType.STRING)

@@ -1,5 +1,12 @@
 package com.fourfingers.quangvinhstore.adapter.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import com.fourfingers.quangvinhstore.usecase.boundary.AuthenticationInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.input.auth.AuthenticationInputData;
 import com.fourfingers.quangvinhstore.usecase.data.output.auth.AuthenticationOutputData;
@@ -17,12 +24,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@Tag(name = "Authentication", description = "Authentication management APIs")
 public class AuthenticationController {
     private final AuthenticationInputBoundary authenticationInputBoundary;
     private final AuthenticationManager authenticationManager;
 
+    @Operation(
+            summary = "Authenticate user",
+            description = "Authenticates user credentials and returns JWT token"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successfully authenticated",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AuthenticationOutputData.class)
+            )
+    )
+    @ApiResponse(
+            responseCode = "401",
+            description = "Invalid credentials"
+    )
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthenticationInputData authenticationInputData) {
+    public ResponseEntity<?> login(
+            @RequestBody @Parameter(description = "User credentials") AuthenticationInputData authenticationInputData) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationInputData.getUsername(),
@@ -34,3 +59,4 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationOutputData);
     }
 }
+

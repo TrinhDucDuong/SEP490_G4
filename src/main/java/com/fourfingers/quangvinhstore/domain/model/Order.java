@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @Builder
 public class Order {
-    private String orderId;
+    private Long orderId;
     private Account owner;
     private LocalDateTime orderDate;
     private List<OrderDetails> orderDetails;

@@ -18,8 +18,8 @@ import java.util.UUID;
 public class OrderEntity {
     @Id
     @Column(name = "order_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID orderId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderId;
 
     @Column(name = "order_date")
     private LocalDateTime orderDate;

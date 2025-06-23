@@ -8,5 +8,5 @@ import lombok.*;
 @Setter
 @Builder
 public class Authority {
-    private String authorityName;
+    private Long authorityName;
 }

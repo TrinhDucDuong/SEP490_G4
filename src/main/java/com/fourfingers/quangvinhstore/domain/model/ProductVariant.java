@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @Builder
 public class ProductVariant {
-    private String productVariantId;
+    private Long productVariantId;
     private ProductSizeEnum productSize;
     private Color color;
     private Long quantity;

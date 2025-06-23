@@ -15,8 +15,8 @@ import java.util.UUID;
 public class CommentEntity {
     @Id
     @Column(name = "comment_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID commentId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long commentId;
 
     @Column(name = "content", columnDefinition = "NVARCHAR(255)", nullable = false)
     private String content;

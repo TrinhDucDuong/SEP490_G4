@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @Builder
 public class Story {
-    private String storyId;
+    private Long storyId;
     private String title;
     private String content;
 }

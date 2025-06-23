@@ -18,8 +18,8 @@ import java.util.UUID;
 public class OrderDetailsEntity {
     @Id
     @Column(name = "order_details_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID orderDetailsId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderDetailsId;
 
     @ManyToOne
     @JoinColumn(

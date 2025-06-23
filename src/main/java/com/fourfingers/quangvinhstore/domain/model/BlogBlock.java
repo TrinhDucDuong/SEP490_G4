@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @Builder
 public class BlogBlock {
-    private String blockHeader;
+    private Long blockHeader;
     private String blockContent;
     private List<BlogBlock> childrenBlocks;
 }

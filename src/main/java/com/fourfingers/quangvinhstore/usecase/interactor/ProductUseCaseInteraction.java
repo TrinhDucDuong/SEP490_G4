@@ -5,19 +5,20 @@ import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductM
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductVariantEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.StarRateEntity;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.input.product.OrderByClause;
 import com.fourfingers.quangvinhstore.usecase.data.input.product.SearchProductInputData;
-import com.fourfingers.quangvinhstore.usecase.data.input.product.SortDirection;
 import com.fourfingers.quangvinhstore.usecase.data.output.product.ListProductOutputData;
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Order;
-import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -35,12 +36,38 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
 
     @Override
     @Transactional
-    public ListProductOutputData search(SearchProductInputData searchProductInputData) {
-        Specification<ProductEntity> specification = (root, query, combine) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            predicates.add(combine.isFalse(root.get("isDiscontinued")));
+    public ListProductOutputData search(SearchProductInputData searchProductInputData,
+                                        String sortDirection,
+                                        String sortBy,
+                                        String pageNumber,
+                                        String pageSize) {
+        // Create Sort object based on sort direction and field
+        Sort sort = Sort.by(sortDirection.equalsIgnoreCase("asc") ?
+                        Sort.Direction.ASC : Sort.Direction.DESC,
+                sortBy);
 
-            if(!CollectionUtils.isEmpty(searchProductInputData.getCategoryIds())) {
+        // Create Pageable object with page number, size and sort
+        Pageable pageable = PageRequest.of(Integer.parseInt(pageNumber), Integer.parseInt(pageSize), sort);
+
+        // Build specification by combining filter conditions and star rating sort
+        Specification<ProductEntity> specification = buildFilter(searchProductInputData).and(buildSortByAvgStarRage());
+
+        // Execute query with specification and pageable, map results to domain model
+        List<Product> products = productRepository.findAll(specification, pageable)
+                .stream()
+                .map(productMapper::toModel)
+                .toList();
+
+        // Convert list of products to output data
+        return productOutputBoundary.convertToListProductOutputData(products);
+    }
+
+    private Specification<ProductEntity> buildFilter(SearchProductInputData searchProductInputData) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.isFalse(root.get("isDiscontinued")));
+
+            if (!CollectionUtils.isEmpty(searchProductInputData.getCategoryIds())) {
                 List<UUID> categoryUuids = searchProductInputData.getCategoryIds()
                         .stream()
                         .map(UUID::fromString)
@@ -51,7 +78,7 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                         .in(categoryUuids));
             }
 
-            if(!CollectionUtils.isEmpty(searchProductInputData.getBrandIds())) {
+            if (!CollectionUtils.isEmpty(searchProductInputData.getBrandIds())) {
                 List<UUID> brandUuids = searchProductInputData.getBrandIds()
                         .stream()
                         .map(UUID::fromString)
@@ -62,7 +89,7 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                         .in(brandUuids));
             }
 
-            if(!CollectionUtils.isEmpty(searchProductInputData.getProductSizes())) {
+            if (!CollectionUtils.isEmpty(searchProductInputData.getProductSizes())) {
                 Join<ProductEntity, ProductVariantEntity> variantJoin = root
                         .join("productVariants");
                 predicates.add(variantJoin
@@ -71,7 +98,7 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
 
             }
 
-            if(!CollectionUtils.isEmpty(searchProductInputData.getColorHexes())) {
+            if (!CollectionUtils.isEmpty(searchProductInputData.getColorHexes())) {
                 Join<ProductEntity, ProductVariantEntity> variantJoin = root
                         .join("productVariants");
                 predicates.add(variantJoin
@@ -80,29 +107,22 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                         .in(searchProductInputData.getColorHexes()));
             }
 
-            if(searchProductInputData.getPrice() != null) {
-                predicates.add(combine.lessThanOrEqualTo(root.get("unitPrice"),
+            if (searchProductInputData.getPrice() != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("unitPrice"),
                         searchProductInputData.getPrice()));
             }
 
-            if(!CollectionUtils.isEmpty(searchProductInputData.getOrderByClauses())) {
-                List<Order> orders = new ArrayList<>();
-                for(OrderByClause orderByClause : searchProductInputData.getOrderByClauses()) {
-                    Path<?> path = root.get(orderByClause.getField());
-                    Order order = orderByClause.getDirection() == SortDirection.ASC ?
-                            combine.asc(path) : combine.desc(path);
-                    orders.add(order);
-                }
-                query.orderBy(orders);
-            }
-
-            return combine.and(predicates.toArray(new Predicate[0]));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
+    }
 
-        List<Product> products = productRepository.findAll(specification)
-                .stream()
-                .map(productMapper::toModel)
-                .toList();
-        return productOutputBoundary.convertToListProductOutputData(products);
+    private Specification<ProductEntity> buildSortByAvgStarRage() {
+        return ((root, query, criteriaBuilder) -> {
+            Join<ProductEntity, StarRateEntity> productEntityStarRateEntityJoin = root.join("starRates",
+                    JoinType.LEFT);
+            query.groupBy(root.get("productId"));
+            query.orderBy(criteriaBuilder.desc(criteriaBuilder.avg(productEntityStarRateEntityJoin.get("starRate"))));
+            return criteriaBuilder.conjunction();
+        });
     }
 }

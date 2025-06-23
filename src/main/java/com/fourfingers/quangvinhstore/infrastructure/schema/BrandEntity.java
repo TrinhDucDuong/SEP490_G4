@@ -14,9 +14,9 @@ import java.util.UUID;
 @Builder
 public class BrandEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "brand_id", nullable = false, updatable = false, unique = true)
-    public UUID brandId;
+    public Long brandId;
 
     @Column(name = "brand_name", columnDefinition = "NVARCHAR(50)", nullable = false)
     private String brandName;

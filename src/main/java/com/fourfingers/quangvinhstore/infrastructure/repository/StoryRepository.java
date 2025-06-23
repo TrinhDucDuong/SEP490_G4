@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface StoryRepository extends JpaRepository<StoryEntity, UUID> {
+public interface StoryRepository extends JpaRepository<StoryEntity, Long> {
     List<StoryEntity> findAllByIsActiveTrue();
-    Optional<StoryEntity> findByStoryIdAndIsActiveTrue(UUID storyId);
+    Optional<StoryEntity> findByStoryIdAndIsActiveTrue(Long storyId);
 }

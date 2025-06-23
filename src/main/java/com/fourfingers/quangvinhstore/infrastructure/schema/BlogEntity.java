@@ -18,9 +18,9 @@ import java.util.UUID;
 @Setter
 public class BlogEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "blog_id")
-    private UUID blogId;
+    private Long blogId;
 
     @Column(name = "blog_title", nullable = false, columnDefinition = "NVARCHAR(50)")
     private String blogTitle;

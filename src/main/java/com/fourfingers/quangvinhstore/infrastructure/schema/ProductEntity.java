@@ -18,8 +18,8 @@ import java.util.UUID;
 public class ProductEntity {
     @Id
     @Column(name = "product_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID productId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long productId;
 
     @Column(name = "product_name", nullable = false, columnDefinition = "NVARCHAR(50)")
     private String productName;
@@ -46,9 +46,6 @@ public class ProductEntity {
     @ManyToOne
     @JoinColumn(name = "updated_by", referencedColumnName = "account_id")
     private AccountEntity updatedBy;
-
-    @Column(name = "is_discontinued", columnDefinition = "boolean default false")
-    private Boolean isDiscontinued;
 
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")

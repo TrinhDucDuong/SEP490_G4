@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @Builder
 public class Feedback {
-    private String feedbackId;
+    private Long feedbackId;
     private String feedbackTitle;
     private String feedbackContent;
     private List<Image> images;
