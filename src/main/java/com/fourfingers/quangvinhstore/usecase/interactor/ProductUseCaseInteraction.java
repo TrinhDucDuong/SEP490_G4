@@ -1,11 +1,15 @@
 package com.fourfingers.quangvinhstore.usecase.interactor;
 
+import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.domain.model.Product;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductMapper;
+import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductVariantEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.StarRateEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.input.product.SearchProductInputData;
@@ -33,6 +37,8 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
     private final ProductOutputBoundary productOutputBoundary;
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final ImageRepository imageRepository;
+    private final ImageMapper imageMapper;
 
     @Override
     @Transactional
@@ -55,7 +61,18 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
         // Execute query with specification and pageable, map results to domain model
         List<Product> products = productRepository.findAll(specification, pageable)
                 .stream()
-                .map(productMapper::toModel)
+                .map(productEntity -> {
+                    Product product = productMapper.toModel(productEntity);
+                    Double starRateAvg = productEntity.getStarRates().stream()
+                            .mapToDouble(StarRateEntity::getStarRate)
+                            .average()
+                            .orElse(0.0);
+                    product.setStarRateAvg(starRateAvg);
+                    List<Image> images = imageRepository.findAllByReferenceIdAndImageType(productEntity.getProductId(),
+                            ImageType.PRODUCT).stream().map(imageMapper::toModel).toList();
+                    product.setImages(images);
+                    return product;
+                })
                 .toList();
 
         // Convert list of products to output data
@@ -65,7 +82,7 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
     private Specification<ProductEntity> buildFilter(SearchProductInputData searchProductInputData) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.isFalse(root.get("isDiscontinued")));
+            predicates.add(criteriaBuilder.isTrue(root.get("isActive")));
 
             if (!CollectionUtils.isEmpty(searchProductInputData.getCategoryIds())) {
                 List<UUID> categoryUuids = searchProductInputData.getCategoryIds()
