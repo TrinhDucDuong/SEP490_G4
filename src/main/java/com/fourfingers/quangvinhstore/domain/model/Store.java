@@ -9,7 +9,7 @@ import lombok.*;
 @Setter
 @Builder
 public class Store {
-    private String storeId;
+    private Long storeId;
     private String storeName;
     private String storeAddress;
 }

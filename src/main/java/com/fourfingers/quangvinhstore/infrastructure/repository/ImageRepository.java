@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.UUID;
 
-public interface ImageRepository extends JpaRepository<ImageEntity, UUID> {
-    List<ImageEntity> findAllByReferenceIdAndImageType(UUID referenceId, ImageType imageType);
+public interface ImageRepository extends JpaRepository<ImageEntity, Long> {
+    List<ImageEntity> findAllByReferenceIdAndImageType(Long referenceId, ImageType imageType);
     List<ImageEntity> findAllByImageType(ImageType imageType);
 }

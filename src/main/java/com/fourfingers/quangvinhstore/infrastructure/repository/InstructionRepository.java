@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface InstructionRepository extends JpaRepository<InstructionEntity, UUID> {
+public interface InstructionRepository extends JpaRepository<InstructionEntity, Long> {
     List<InstructionEntity> findAllByIsActiveTrue();
 }

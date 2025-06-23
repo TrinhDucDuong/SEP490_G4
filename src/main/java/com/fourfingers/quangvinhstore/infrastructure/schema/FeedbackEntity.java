@@ -15,9 +15,9 @@ import java.util.UUID;
 @Builder
 public class FeedbackEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feedback_id")
-    private UUID feedbackId;
+    private Long feedbackId;
 
     @Column(name = "feedback_title", columnDefinition = "NVARCHAR(50)", nullable = false)
     private String feedbackTitle;

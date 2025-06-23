@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -36,7 +35,7 @@ public class ManagePolicyUseCaseInteraction implements PolicyManagementInputBoun
     @Override
     public PolicyOutputData findById(String id) {
         try {
-            UUID policyId = UUID.fromString(id);
+            Long policyId = Long.parseLong(id);
             PolicyEntity policyEntity = policyRepository.findById(policyId).orElse(null);
             if (policyEntity != null) {
                 return policyOutputBoundary.convertToPolicyOutputData(policyMapper.toPolicy(policyEntity));
@@ -57,7 +56,7 @@ public class ManagePolicyUseCaseInteraction implements PolicyManagementInputBoun
                 .build();
         if(id!=null) {
             try {
-                UUID policyId = UUID.fromString(id);
+                Long policyId = Long.parseLong(id);
                 policyEntity.setPolicyId(policyId);
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Invalid policy id");
@@ -70,7 +69,7 @@ public class ManagePolicyUseCaseInteraction implements PolicyManagementInputBoun
     @Override
     public PolicyOutputData delete(String id) {
         try {
-            UUID policyId = UUID.fromString(id);
+            Long policyId = Long.parseLong(id);
             PolicyEntity policyEntity = policyRepository.findById(policyId).orElse(null);
             if (policyEntity != null) {
                 policyEntity.setIsActive(false);

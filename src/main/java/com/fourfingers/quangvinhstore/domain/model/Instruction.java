@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @Builder
 public class Instruction {
-    private String instructionId;
+    private Long instructionId;
     private String instructionName;
     private String instructionDescription;
 }

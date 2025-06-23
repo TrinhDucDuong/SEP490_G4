@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @Builder
 public class Policy {
-    private String policyId;
+    private Long policyId;
     private String policyName;
     private String policyDescription;
 }

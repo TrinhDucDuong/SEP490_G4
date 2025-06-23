@@ -15,8 +15,8 @@ import java.util.UUID;
 public class CartEntity {
     @Id
     @Column(name = "cart_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID cartId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long cartId;
 
     @ManyToOne
     @JoinColumn(name = "account_id" , nullable = false)

@@ -20,9 +20,9 @@ import java.util.UUID;
 @Builder
 public class AccountEntity implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
-    private UUID accountId;
+    private Long accountId;
 
     @Column(name = "username", unique = true, nullable = false, columnDefinition = "CHAR(15)")
     private String username;

@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @Builder
 public class Category {
-    private String categoryId;
+    private Long categoryId;
     private String categoryName;
     private List<Image> images;
 }

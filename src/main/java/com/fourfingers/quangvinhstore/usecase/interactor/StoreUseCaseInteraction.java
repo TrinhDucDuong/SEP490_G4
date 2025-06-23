@@ -35,7 +35,7 @@ public class StoreUseCaseInteraction implements StoreInputBoundary {
     @Override
     public StoreOutputData findById(String storeId) {
         try {
-            UUID storeUuid = UUID.fromString(storeId);
+            Long storeUuid = Long.parseLong(storeId);
             StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
             if (storeEntity != null) {
                 return storeOutputBoundary.convertToStoreOutputData(

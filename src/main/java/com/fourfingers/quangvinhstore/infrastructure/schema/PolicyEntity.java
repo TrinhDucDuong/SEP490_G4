@@ -15,8 +15,8 @@ import java.util.UUID;
 public class PolicyEntity {
     @Id
     @Column(name = "policy_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID policyId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long policyId;
 
     @Column(name = "policy_name", columnDefinition = "NVARCHAR(50)", nullable = false)
     private String policyName;

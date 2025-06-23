@@ -14,7 +14,13 @@ public class ProductController {
     private final ProductInputBoundary productInputBoundary;
 
     @PostMapping
-    public ResponseEntity<?> getAllProducts(@RequestBody SearchProductInputData searchProductInputData) {
-        return ResponseEntity.ok(productInputBoundary.search(searchProductInputData));
+    public ResponseEntity<?> getAllProducts(@RequestBody SearchProductInputData searchProductInputData,
+                                            @RequestParam(defaultValue = "desc") String sortDirection,
+                                            @RequestParam(defaultValue = "createdAt") String sortBy,
+                                            @RequestParam(defaultValue = "0") String pageNumber,
+                                            @RequestParam(defaultValue = "10") String pageSize) {
+        return ResponseEntity.ok(productInputBoundary.search(searchProductInputData, sortDirection, sortBy,
+                pageNumber,
+                pageSize));
     }
 }

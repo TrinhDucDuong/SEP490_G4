@@ -4,5 +4,8 @@ import com.fourfingers.quangvinhstore.usecase.data.input.product.SearchProductIn
 import com.fourfingers.quangvinhstore.usecase.data.output.product.ListProductOutputData;
 
 public interface ProductInputBoundary {
-    ListProductOutputData search(SearchProductInputData searchProductInputData);
+    ListProductOutputData search(SearchProductInputData searchProductInputData, String sortDirection,
+                                 String sortBy,
+                                 String pageNumber,
+                                 String pageSize);
 }

@@ -17,4 +17,5 @@ public class Product {
     private BigDecimal unitPrice;
     private Double starRateAvg;
     private List<Image> images;
+    private Long totalSoldOut;
 }

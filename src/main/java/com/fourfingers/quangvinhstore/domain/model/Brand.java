@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @Builder
 public class Brand {
-    private String brandId;
+    private Long brandId;
     private String brandName;
     private String brandDescription;
     private List<Image> images;

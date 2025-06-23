@@ -60,6 +60,7 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/banner").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/feedback").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/staff/order").permitAll();
+                    auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

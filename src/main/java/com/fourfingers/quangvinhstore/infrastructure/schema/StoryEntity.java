@@ -15,8 +15,8 @@ import java.util.UUID;
 public class StoryEntity {
     @Id
     @Column(name = "story_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID storyId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long storyId;
 
     @Column(name = "title", columnDefinition = "NVARCHAR(50)", nullable = false)
     private String title;

@@ -18,8 +18,8 @@ import java.util.UUID;
 public class DiscountEntity {
     @Id
     @Column(name = "discount_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID discountId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long discountId;
 
     @Column(name = "discount_name", nullable = false, columnDefinition = "NVARCHAR(50)")
     private String discountName;

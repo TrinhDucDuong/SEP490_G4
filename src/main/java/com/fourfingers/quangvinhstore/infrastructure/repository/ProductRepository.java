@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface ProductRepository extends JpaRepository<ProductEntity, UUID>,
+public interface ProductRepository extends JpaRepository<ProductEntity, Long>,
         JpaSpecificationExecutor<ProductEntity> {
     @Query("SELECT p FROM ProductEntity p " +
             "JOIN p.starRates s GROUP BY p " +

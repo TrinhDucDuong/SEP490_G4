@@ -38,7 +38,7 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
 
     @Override
     public OrderOutputData processOrder(String id, ProcessOrderInputData processOrderInputData) {
-        UUID orderId = UUID.fromString(id);
+        Long orderId = Long.parseLong(id);
         OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(
                 () -> new RuntimeException("Order not found")
         );

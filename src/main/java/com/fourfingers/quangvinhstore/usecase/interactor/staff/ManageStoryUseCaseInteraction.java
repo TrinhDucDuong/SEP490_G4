@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -37,7 +36,7 @@ public class ManageStoryUseCaseInteraction implements StoryManagementInputBounda
     @Override
     public StoryOutputData getStory(String id) {
         try {
-            UUID storyId = UUID.fromString(id);
+            Long storyId = Long.parseLong(id);
             return storyOutputBoundary.convertToStoryOutputData(
                     storyMapper.toStory(
                             storyRepository.findById(storyId).orElseThrow(() -> new StoryNotFoundException("Story not found"))
@@ -51,7 +50,7 @@ public class ManageStoryUseCaseInteraction implements StoryManagementInputBounda
     @Override
     public StoryOutputData deleteStory(String id) {
         try {
-            UUID storyId = UUID.fromString(id);
+            Long storyId = Long.parseLong(id);
             StoryEntity storyEntity = storyRepository.findByStoryIdAndIsActiveTrue(storyId)
                     .orElseThrow(() -> new StoryNotFoundException("Story's not found"));
             storyEntity.setIsActive(false);
@@ -66,7 +65,7 @@ public class ManageStoryUseCaseInteraction implements StoryManagementInputBounda
     public StoryOutputData saveStory(String id, StoryInputData inputData) {
         if(id != null) {
             try {
-                UUID storyId = UUID.fromString(id);
+                Long storyId = Long.parseLong(id);
                 StoryEntity storyEntity = storyRepository.findByStoryIdAndIsActiveTrue(storyId)
                         .orElseThrow(StoryNotFoundException::new);
                 storyEntity.setTitle(inputData.getTitle());

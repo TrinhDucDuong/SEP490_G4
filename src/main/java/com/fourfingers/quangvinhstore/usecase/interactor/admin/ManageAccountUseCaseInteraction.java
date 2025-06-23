@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -36,7 +35,7 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
     @Override
     public AccountOutputData getAccount(String id) {
         try {
-            UUID accountId = UUID.fromString(id);
+            Long accountId = Long.parseLong(id);
             AccountEntity accountEntity = accountRepository.findById(accountId).orElseThrow(
                     () -> new AccountNotFoundException("Account not found")
             );
@@ -61,7 +60,7 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
     @Override
     public AccountOutputData save(String id, AccountInputData accountInputData, UserDetails userDetails) {
         try {
-            UUID accountId = UUID.fromString(id);
+            Long accountId = Long.parseLong(id);
             if (checkNotUpdateEmail(accountInputData.getEmail(), accountId)
                     && checkNotUpdateUsername(accountInputData.getUsername(), accountId)) {
                 List<AuthorityEntity> authorityEntities = new ArrayList<>();
@@ -117,7 +116,7 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
     @Override
     public AccountOutputData delete(String id, UserDetails userDetails) {
         try {
-            UUID accountId = UUID.fromString(id);
+            Long accountId = Long.parseLong(id);
             AccountEntity accountEntity = accountRepository.findById(accountId).orElseThrow(
                     () -> new AccountNotFoundException("Account not found")
             );
@@ -147,7 +146,7 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
     * @Return: true when not updating email
     * @Return: false when other account used same email
     */
-    private boolean checkNotUpdateEmail(String email, UUID accountId) {
+    private boolean checkNotUpdateEmail(String email, Long accountId) {
         return accountRepository.findByEmailAndAccountIdNot(email, accountId).isEmpty();
     }
 
@@ -158,7 +157,7 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
      * @Return: true when not updating username
      * @Return: false when other account used same username
      */
-    private boolean checkNotUpdateUsername(String username, UUID accountId) {
+    private boolean checkNotUpdateUsername(String username, Long accountId) {
         return accountRepository.findByUsernameAndAccountIdNot(username, accountId).isEmpty();
     }
 }

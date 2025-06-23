@@ -17,8 +17,8 @@ import java.util.UUID;
 public class CategoryEntity {
     @Id
     @Column(name = "category_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID categoryId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long categoryId;
 
     @Column(name = "category_name", nullable = false, columnDefinition = "NVARCHAR(50)")
     private String categoryName;

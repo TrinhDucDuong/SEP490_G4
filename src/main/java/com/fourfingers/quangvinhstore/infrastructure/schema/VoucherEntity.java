@@ -16,9 +16,9 @@ import java.util.UUID;
 @Builder
 public class VoucherEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "voucher_code")
-    private UUID voucherCode;
+    private Long voucherCode;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

@@ -15,8 +15,8 @@ import java.util.UUID;
 public class StarRateEntity {
     @Id
     @Column(name = "star_rate_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID starRateId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long starRateId;
 
     @ManyToOne
     @JoinColumn(name = "product_id" , nullable = false)

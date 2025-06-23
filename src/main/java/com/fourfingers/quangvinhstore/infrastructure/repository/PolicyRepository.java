@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface PolicyRepository extends JpaRepository<PolicyEntity, UUID> {
+public interface PolicyRepository extends JpaRepository<PolicyEntity, Long> {
     List<PolicyEntity> findAllByIsActive(Boolean isActive);
 }
