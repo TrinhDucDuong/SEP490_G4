@@ -47,9 +47,6 @@ public class ProductEntity {
     @JoinColumn(name = "updated_by", referencedColumnName = "account_id")
     private AccountEntity updatedBy;
 
-    @Column(name = "is_discontinued", columnDefinition = "boolean default false")
-    private Boolean isDiscontinued;
-
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private CategoryEntity category;

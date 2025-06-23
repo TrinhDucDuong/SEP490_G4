@@ -26,6 +26,13 @@ public class CategoryEntity {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1")
+    private Boolean isActive;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by", referencedColumnName = "account_id")
+    private AccountEntity createdBy;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
