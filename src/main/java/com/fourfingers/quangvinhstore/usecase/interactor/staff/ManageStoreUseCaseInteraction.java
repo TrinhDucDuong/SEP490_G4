@@ -27,7 +27,7 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
         return storeOutputBoundary.convertToListStoreOutputData(
                 List.of(storeRepository.findAllByIsActiveTrue()
                         .stream()
-                        .map(storeMapper::toStore)
+                        .map(storeMapper::toModel)
                         .toArray(Store[]::new))
         );
     }
@@ -39,7 +39,7 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
             StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
             if (storeEntity != null) {
                 return storeOutputBoundary.convertToStoreOutputData(
-                        storeMapper.toStore(storeEntity)
+                        storeMapper.toModel(storeEntity)
                 );
             } else {
                 throw new StoreNotFoundException("Store not found");
@@ -58,7 +58,7 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
                         .orElseThrow(() -> new StoreNotFoundException("Store not found"));
                 storeEntity.setStoreName(manageStoreInputData.getStoreName());
                 storeEntity.setStoreAddress(manageStoreInputData.getStoreAddress());
-                Store savedStore = storeMapper.toStore(storeRepository.save(storeEntity));
+                Store savedStore = storeMapper.toModel(storeRepository.save(storeEntity));
                 return storeOutputBoundary.convertToStoreOutputData(savedStore);
             } catch (IllegalArgumentException e) {
                 throw new NumberFormatException("Invalid store id");
@@ -69,7 +69,7 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
                     .storeAddress(manageStoreInputData.getStoreAddress())
                     .isActive(true)
                     .build();
-            Store savedStore = storeMapper.toStore(storeRepository.save(storeEntity));
+            Store savedStore = storeMapper.toModel(storeRepository.save(storeEntity));
             return storeOutputBoundary.convertToStoreOutputData(savedStore);
         }
     }
@@ -81,7 +81,7 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
             StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
             if(storeEntity != null) {
                 storeEntity.setIsActive(false);
-                Store deletedStore = storeMapper.toStore(storeRepository.save(storeEntity));
+                Store deletedStore = storeMapper.toModel(storeRepository.save(storeEntity));
                 return storeOutputBoundary.convertToStoreOutputData(deletedStore);
             } else {
                 throw new StoreNotFoundException("Store not found");

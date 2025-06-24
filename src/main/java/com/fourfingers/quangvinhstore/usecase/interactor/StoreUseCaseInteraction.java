@@ -27,7 +27,7 @@ public class StoreUseCaseInteraction implements StoreInputBoundary {
         return storeOutputBoundary.convertToListStoreOutputData(
                 List.of(storeRepository.findAllByIsActiveTrue()
                         .stream()
-                        .map(storeMapper::toStore)
+                        .map(storeMapper::toModel)
                         .toArray(Store[]::new))
         );
     }
@@ -39,7 +39,7 @@ public class StoreUseCaseInteraction implements StoreInputBoundary {
             StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
             if (storeEntity != null) {
                 return storeOutputBoundary.convertToStoreOutputData(
-                        storeMapper.toStore(storeEntity)
+                        storeMapper.toModel(storeEntity)
                 );
             } else {
                 throw new StoreNotFoundException("Store not found");

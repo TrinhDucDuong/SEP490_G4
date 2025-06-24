@@ -22,7 +22,7 @@ public class ManageProductController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(@RequestPart("productInputData") ProductInputData productInputData,
                                     @RequestPart("productImages") List<MultipartFile> productImages,
-                                    @AuthenticationPrincipal UserDetails userDetails) {
+                                    @AuthenticationPrincipal UserDetails userDetails) throws Exception {
         productInputData.setProductImages(productImages);
         return ResponseEntity.ok(productManagementInputBoundary.save(productInputData, userDetails));
     }

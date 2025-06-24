@@ -6,6 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface StoreMapper {
-    StoreEntity toEntity(StoreEntity storeEntity);
-    Store toStore(StoreEntity storeEntity);
+    StoreEntity toEntity(Store store);
+    Store toModel(StoreEntity storeEntity);
 }

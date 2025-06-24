@@ -15,6 +15,8 @@ public class ProductInputData {
     private String productName;
     private String productDescription;
     private String unitPrice;
+    private String brandId;
+    private String categoryId;
     private List<ProductVariant> productVariants;
     private List<MultipartFile> productImages;
 }

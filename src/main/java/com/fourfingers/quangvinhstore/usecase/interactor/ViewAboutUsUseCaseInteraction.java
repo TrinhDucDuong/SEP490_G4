@@ -27,7 +27,7 @@ public class ViewAboutUsUseCaseInteraction implements AboutUsInputBoundary {
     public AboutUsOutputData showInformation() {
         List<Store> stores = List.of(storeRepository.findAll()
                 .stream()
-                .map(storeMapper::toStore)
+                .map(storeMapper::toModel)
                 .toArray(Store[]::new)
         );
         List<Story> stories = List.of(storyRepository.findAll()
