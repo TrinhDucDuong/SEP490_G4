@@ -6,9 +6,7 @@ import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMap
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
-import com.fourfingers.quangvinhstore.infrastructure.schema.ProductEntity;
-import com.fourfingers.quangvinhstore.infrastructure.schema.ProductVariantEntity;
-import com.fourfingers.quangvinhstore.infrastructure.schema.StarRateEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductOutputBoundary;
@@ -47,32 +45,25 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                                         String sortBy,
                                         String pageNumber,
                                         String pageSize) {
-        // Create Sort object based on sort direction and field
-        Sort sort = Sort.by(sortDirection.equalsIgnoreCase("asc") ?
-                        Sort.Direction.ASC : Sort.Direction.DESC,
-                sortBy);
-
         // Create Pageable object with page number, size and sort
-        Pageable pageable = PageRequest.of(Integer.parseInt(pageNumber), Integer.parseInt(pageSize), sort);
+        Pageable pageable = PageRequest.of(Integer.parseInt(pageNumber), Integer.parseInt(pageSize));
 
+        Specification<ProductEntity> specification = buildFilter(searchProductInputData);
         // Build specification by combining filter conditions and star rating sort
-        Specification<ProductEntity> specification = buildFilter(searchProductInputData).and(buildSortByAvgStarRage());
+        if(sortBy.equalsIgnoreCase("starRateAvg")) {
+            specification = specification.and(buildSortByAvgStarRage(sortDirection));
+        } else if(sortBy.equalsIgnoreCase("unitPrice")) {
+            specification = specification.and(buildSortByUnitPrice(sortDirection));
+        } else if(sortBy.equalsIgnoreCase("createdAt")) {
+            specification = specification.and(buildSortByCreatedAt());
+        } else if(sortBy.equalsIgnoreCase("numberOfSoldOut")) {
+            specification = specification.and(buildSortByNumberOfSoldOut());
+        }
 
         // Execute query with specification and pageable, map results to domain model
         List<Product> products = productRepository.findAll(specification, pageable)
                 .stream()
-                .map(productEntity -> {
-                    Product product = productMapper.toModel(productEntity);
-                    Double starRateAvg = productEntity.getStarRates().stream()
-                            .mapToDouble(StarRateEntity::getStarRate)
-                            .average()
-                            .orElse(0.0);
-                    product.setStarRateAvg(starRateAvg);
-                    List<Image> images = imageRepository.findAllByReferenceIdAndImageType(productEntity.getProductId(),
-                            ImageType.PRODUCT).stream().map(imageMapper::toModel).toList();
-                    product.setImages(images);
-                    return product;
-                })
+                .map(this::getProductInformation)
                 .toList();
 
         // Convert list of products to output data
@@ -133,13 +124,72 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
         };
     }
 
-    private Specification<ProductEntity> buildSortByAvgStarRage() {
+    private Specification<ProductEntity> buildSortByAvgStarRage(String sortDirection) {
         return ((root, query, criteriaBuilder) -> {
             Join<ProductEntity, StarRateEntity> productEntityStarRateEntityJoin = root.join("starRates",
                     JoinType.LEFT);
             query.groupBy(root.get("productId"));
-            query.orderBy(criteriaBuilder.desc(criteriaBuilder.avg(productEntityStarRateEntityJoin.get("starRate"))));
+            query = sortDirection.equalsIgnoreCase("asc") ?
+                    query.orderBy(criteriaBuilder.asc(criteriaBuilder.avg(productEntityStarRateEntityJoin.get("starRate")))) :
+                    query.orderBy(criteriaBuilder.desc(criteriaBuilder.avg(productEntityStarRateEntityJoin.get("starRate"))));
             return criteriaBuilder.conjunction();
         });
     }
+
+    private Specification<ProductEntity> buildSortByUnitPrice(String sortDirection) {
+        return ((root, query, criteriaBuilder) -> {
+            query = sortDirection.equalsIgnoreCase("asc") ?
+                    query.orderBy(criteriaBuilder.asc(root.get("unitPrice"))) :
+                    query.orderBy(criteriaBuilder.desc(root.get("unitPrice")));
+            return criteriaBuilder.conjunction();
+        });
+    }
+
+    private Specification<ProductEntity> buildSortByCreatedAt() {
+        return ((root, query, criteriaBuilder) -> {
+            query.orderBy(criteriaBuilder.desc(root.get("createdAt")));
+            return criteriaBuilder.conjunction();
+        });
+    }
+
+    private Specification<ProductEntity> buildSortByNumberOfSoldOut() {
+        return ((root, query, criteriaBuilder) -> {
+            Join<ProductEntity, ProductVariantEntity> variantJoin = root.join("productVariants",
+                    JoinType.LEFT);
+            Join<ProductVariantEntity, OrderDetailsEntity> orderDetailJoin = variantJoin.join("orderDetails",
+                    JoinType.LEFT);
+
+            query.groupBy(root.get("productId"));
+            query.orderBy(criteriaBuilder.desc(criteriaBuilder.sum(orderDetailJoin.get("quantity"))));
+
+            return criteriaBuilder.conjunction();
+        });
+    }
+    
+    private Product getProductInformation(ProductEntity productEntity) {
+        Product product = productMapper.toModel(productEntity);
+        Double starRateAvg = productEntity.getStarRates().stream()
+                .mapToDouble(StarRateEntity::getStarRate)
+                .average()
+                .orElse(0.0);
+        product.setStarRateAvg(starRateAvg);
+        List<Image> images = imageRepository.findAllByReferenceIdAndImageType(productEntity.getProductId(),
+                ImageType.PRODUCT).stream().map(imageMapper::toModel).toList();
+        product.setImages(images);
+        Long numberOfSoldOut = numberOfSoldOut(productEntity);
+        product.setTotalSoldOut(numberOfSoldOut);
+        return product;
+    }
+
+
+    //Get number of product sold out
+    private Long numberOfSoldOut(ProductEntity productEntity) {
+        return productEntity.getProductVariants()
+                .stream()
+                .flatMap(variant -> variant.getOrderDetails().stream())
+                .mapToLong(OrderDetailsEntity::getQuantity)
+                .sum();
+    }
+    
+    
 }
