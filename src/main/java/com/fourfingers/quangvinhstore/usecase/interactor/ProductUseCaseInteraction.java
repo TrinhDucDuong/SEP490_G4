@@ -142,12 +142,17 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
 
     private Specification<ProductEntity> buildSortByAvgStarRage(String sortDirection) {
         return ((root, query, criteriaBuilder) -> {
-            Join<ProductEntity, StarRateEntity> productEntityStarRateEntityJoin = root.join("starRates",
+            Join<ProductEntity, ProductVariantEntity> productEntityProductVariantEntityJoin = root.join(
+                    "productVariants",
                     JoinType.LEFT);
+            Join<ProductVariantEntity, StarRateEntity> productEntityStarRateEntityJoin =
+                    productEntityProductVariantEntityJoin.join("starRates");
             query.groupBy(root.get("productId"));
             query = sortDirection.equalsIgnoreCase("asc") ?
-                    query.orderBy(criteriaBuilder.asc(criteriaBuilder.avg(productEntityStarRateEntityJoin.get("starRate")))) :
-                    query.orderBy(criteriaBuilder.desc(criteriaBuilder.avg(productEntityStarRateEntityJoin.get("starRate"))));
+                    query.orderBy(criteriaBuilder.asc(criteriaBuilder.avg(
+                            productEntityStarRateEntityJoin.get("starRate")))) :
+                    query.orderBy(criteriaBuilder.desc(criteriaBuilder.avg(
+                            productEntityStarRateEntityJoin.get("starRate"))));
             return criteriaBuilder.conjunction();
         });
     }
@@ -184,7 +189,8 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
     
     private Product getProductInformation(ProductEntity productEntity) {
         Product product = productMapper.toModel(productEntity);
-        Double starRateAvg = productEntity.getStarRates().stream()
+        Double starRateAvg = productEntity.getProductVariants().stream()
+                .flatMap(variant -> variant.getStarRates().stream())
                 .mapToDouble(StarRateEntity::getStarRate)
                 .average()
                 .orElse(0.0);

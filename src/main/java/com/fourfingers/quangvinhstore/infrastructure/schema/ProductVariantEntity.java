@@ -39,4 +39,7 @@ public class ProductVariantEntity {
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
     private ProductEntity product;
+
+    @OneToMany(mappedBy = "productVariant")
+    private List<StarRateEntity> starRates;
 }

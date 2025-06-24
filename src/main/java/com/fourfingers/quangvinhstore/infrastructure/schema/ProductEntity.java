@@ -6,7 +6,6 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "products")
@@ -54,12 +53,6 @@ public class ProductEntity {
     @ManyToOne
     @JoinColumn(name = "discount_id", referencedColumnName = "discount_id")
     private DiscountEntity discounts;
-
-    @OneToMany(mappedBy = "product")
-    private List<CommentEntity> comments;
-
-    @OneToMany(mappedBy = "product")
-    private List<StarRateEntity> starRates;
 
     @OneToMany(mappedBy = "product")
     private List<ProductVariantEntity> productVariants;

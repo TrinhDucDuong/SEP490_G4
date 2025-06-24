@@ -3,6 +3,7 @@ package com.fourfingers.quangvinhstore.infrastructure.schema;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -19,13 +20,19 @@ public class StarRateEntity {
     private Long starRateId;
 
     @ManyToOne
-    @JoinColumn(name = "product_id" , nullable = false)
-    private ProductEntity product;
-
-    @ManyToOne
     @JoinColumn(name = "account_id" , nullable = false)
     private AccountEntity account;
 
     @Column(name = "star_rate" , nullable = false, columnDefinition = "TINYINT CHECK (star_rate BETWEEN 1 AND 5)")
     private Long starRate;
+
+    @ManyToOne
+    @JoinColumn(name = "product_variant_id" , nullable = false)
+    private ProductVariantEntity productVariant;
+
+    @Column(name = "comment" , columnDefinition = "TEXT")
+    private String comment;
+
+    @Column(name = "created_at" , nullable = false)
+    private LocalDateTime createdAt;
 }
