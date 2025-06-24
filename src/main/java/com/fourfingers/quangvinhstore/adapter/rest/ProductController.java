@@ -23,4 +23,9 @@ public class ProductController {
                 pageNumber,
                 pageSize));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProduct(@PathVariable String id) {
+        return ResponseEntity.ok(productInputBoundary.getProduct(id));
+    }
 }

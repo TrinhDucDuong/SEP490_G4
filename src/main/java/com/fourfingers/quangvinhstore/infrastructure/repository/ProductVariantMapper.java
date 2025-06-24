@@ -1,4 +1,4 @@
-package com.fourfingers.quangvinhstore.infrastructure.persistence.mapper;
+package com.fourfingers.quangvinhstore.infrastructure.repository;
 
 import com.fourfingers.quangvinhstore.domain.model.ProductVariant;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductVariantEntity;

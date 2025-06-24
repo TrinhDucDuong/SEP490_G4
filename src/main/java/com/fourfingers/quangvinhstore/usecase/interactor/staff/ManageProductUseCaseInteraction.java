@@ -1,8 +1,8 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductMapper;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductVariantMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
+import com.fourfingers.quangvinhstore.infrastructure.repository.ProductVariantMapper;
 import com.fourfingers.quangvinhstore.infrastructure.schema.*;
 import com.fourfingers.quangvinhstore.usecase.boundary.BackBlazeBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductOutputBoundary;

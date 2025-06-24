@@ -1,17 +1,20 @@
 package com.fourfingers.quangvinhstore.usecase.interactor;
 
+import com.fourfingers.quangvinhstore.domain.model.Color;
 import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.domain.model.Product;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
+import com.fourfingers.quangvinhstore.infrastructure.repository.ProductVariantMapper;
 import com.fourfingers.quangvinhstore.infrastructure.schema.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.ProductOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.input.product.SearchProductInputData;
 import com.fourfingers.quangvinhstore.usecase.data.output.product.ListProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductDetailsOutputData;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -20,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -37,6 +39,7 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
     private final ProductMapper productMapper;
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
+    private final ProductVariantMapper productVariantMapper;
 
     @Override
     @Transactional
@@ -45,7 +48,7 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                                         String sortBy,
                                         String pageNumber,
                                         String pageSize) {
-        // Create Pageable object with page number, size and sort
+        // Create a Pageable object with page number, size and sort
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNumber), Integer.parseInt(pageSize));
 
         Specification<ProductEntity> specification = buildFilter(searchProductInputData);
@@ -60,14 +63,27 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
             specification = specification.and(buildSortByNumberOfSoldOut());
         }
 
-        // Execute query with specification and pageable, map results to domain model
+        // Execute a query with specification and pageable, map results to a domain model
         List<Product> products = productRepository.findAll(specification, pageable)
                 .stream()
                 .map(this::getProductInformation)
                 .toList();
 
-        // Convert list of products to output data
+        // Convert a list of products to output data
         return productOutputBoundary.convertToListProductOutputData(products);
+    }
+
+    @Override
+    @Transactional
+    public ProductDetailsOutputData getProduct(String id) {
+        Long productId = Long.parseLong(id);
+        ProductEntity productEntity = productRepository.findByProductIdAndIsActiveTrue(productId).orElseThrow(
+                () -> new RuntimeException("Product not found")
+        );
+        Product product = getProductInformation(productEntity);
+        return productOutputBoundary.convertToProductDetailsOutputData(product,
+                getProductSizes(productEntity),
+                getProductColors(productEntity));
     }
 
     private Specification<ProductEntity> buildFilter(SearchProductInputData searchProductInputData) {
@@ -182,7 +198,7 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
     }
 
 
-    //Get number of product sold out
+    //Get the number of products sold out
     private Long numberOfSoldOut(ProductEntity productEntity) {
         return productEntity.getProductVariants()
                 .stream()
@@ -191,5 +207,21 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 .sum();
     }
     
-    
+    private List<String> getProductSizes(ProductEntity productEntity) {
+        return productEntity.getProductVariants().stream()
+                .map(productVariantEntity -> {
+                    return productVariantEntity.getProductSize().toString();
+                })
+                .toList();
+    }
+
+    private List<Color> getProductColors(ProductEntity productEntity) {
+        return productEntity.getProductVariants().stream()
+                .map(productVariantEntity -> {
+                    return Color.builder()
+                            .colorHex(productVariantEntity.getColor().getColorHex())
+                            .build();
+                })
+                .toList();
+    }
 }
