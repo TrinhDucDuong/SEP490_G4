@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @Builder
 public class Product {
-    private String productId;
+    private Long productId;
     private String productName;
     private String productDescription;
     private BigDecimal unitPrice;

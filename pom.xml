@@ -104,19 +104,10 @@
             <version>2.8.8</version>
         </dependency>
 
-        <!--Backblaze for save image-->
-        <!-- https://mvnrepository.com/artifact/com.backblaze.b2/b2-sdk-httpclient -->
         <dependency>
-            <groupId>com.backblaze.b2</groupId>
-            <artifactId>b2-sdk-httpclient</artifactId>
-            <version>6.4.0</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.backblaze.b2/b2-sdk-core -->
-        <dependency>
-            <groupId>com.backblaze.b2</groupId>
-            <artifactId>b2-sdk-core</artifactId>
-            <version>6.4.0</version>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-storage-blob</artifactId>
+            <version>12.25.0</version>
         </dependency>
 
     </dependencies>

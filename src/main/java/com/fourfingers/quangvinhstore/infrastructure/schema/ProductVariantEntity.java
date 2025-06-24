@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "product_variants")
@@ -40,4 +39,7 @@ public class ProductVariantEntity {
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
     private ProductEntity product;
+
+    @OneToMany(mappedBy = "productVariant")
+    private List<StarRateEntity> starRates;
 }

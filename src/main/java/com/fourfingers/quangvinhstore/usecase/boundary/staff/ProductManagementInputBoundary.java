@@ -5,5 +5,5 @@ import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductOutputD
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface ProductManagementInputBoundary {
-    ProductOutputData save(ProductInputData productInputData, UserDetails userDetails);
+    ProductOutputData save(ProductInputData productInputData, UserDetails userDetails) throws Exception;
 }
