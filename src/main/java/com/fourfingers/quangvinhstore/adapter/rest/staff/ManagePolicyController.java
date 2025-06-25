@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.adapter.rest.staff;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.PolicyManagementInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.input.policy.PolicyInputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.PolicyInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

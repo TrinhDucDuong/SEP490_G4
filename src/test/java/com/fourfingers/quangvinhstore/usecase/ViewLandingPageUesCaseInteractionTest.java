@@ -1,9 +1,9 @@
 //package com.fourfingers.quangvinhstore.usecase;
 //
-//import com.fourfingers.quangvinhstore.domain.model.Product;
+//import com.fourfingers.quangvinhstore.domain.model.customer.Product;
 //import com.fourfingers.quangvinhstore.domain.model.ProductImage;
 //import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductImageMapper;
-//import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductMapper;
+//import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductMapper;
 //import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
 //import com.fourfingers.quangvinhstore.infrastructure.schema.ProductEntity;
 //import com.fourfingers.quangvinhstore.infrastructure.schema.ProductImageEntity;

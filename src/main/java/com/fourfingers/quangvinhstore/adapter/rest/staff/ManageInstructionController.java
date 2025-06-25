@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.adapter.rest.staff;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.InstructionManagementInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.input.instruction.InstructionInputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.InstructionInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

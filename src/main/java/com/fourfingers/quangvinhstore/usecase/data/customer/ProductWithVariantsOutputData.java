@@ -1,0 +1,17 @@
+package com.fourfingers.quangvinhstore.usecase.data.customer;
+
+import com.fourfingers.quangvinhstore.domain.model.customer.Product;
+import com.fourfingers.quangvinhstore.domain.model.customer.ProductVariant;
+import lombok.*;
+
+import java.util.List;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
+public class ProductWithVariantsOutputData {
+    private Product product;
+    private List<ProductVariant> productVariants;
+}

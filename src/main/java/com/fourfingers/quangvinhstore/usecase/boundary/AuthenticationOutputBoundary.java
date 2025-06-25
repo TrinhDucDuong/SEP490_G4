@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.usecase.boundary;
 
 import com.fourfingers.quangvinhstore.domain.model.Account;
-import com.fourfingers.quangvinhstore.usecase.data.output.auth.AuthenticationOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.auth.AuthenticationOutputData;
 
 
 public interface AuthenticationOutputBoundary {

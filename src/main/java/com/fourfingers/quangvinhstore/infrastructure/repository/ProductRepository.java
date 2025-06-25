@@ -20,4 +20,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>,
     List<ProductEntity> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     Optional<ProductEntity> findByProductIdAndIsActiveTrue(Long productId);
+
+    List<ProductEntity> findByProductNameContainingIgnoreCase(String productName);
 }

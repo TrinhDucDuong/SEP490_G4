@@ -1,10 +1,10 @@
 //package com.fourfingers.quangvinhstore.usecase;
 //
-//import com.fourfingers.quangvinhstore.domain.model.Instruction;
-//import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.InstructionMapper;
+//import com.fourfingers.quangvinhstore.domain.model.customer.Instruction;
+//import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.InstructionMapper;
 //import com.fourfingers.quangvinhstore.infrastructure.repository.InstructionRepository;
 //import com.fourfingers.quangvinhstore.infrastructure.schema.InstructionEntity;
-//import com.fourfingers.quangvinhstore.usecase.boundary.InstructionOutputBoundary;
+//import com.fourfingers.quangvinhstore.usecase.boundary.customer.InstructionOutputBoundary;
 //import com.fourfingers.quangvinhstore.usecase.data.output.instruction.ListInstructionOutputData;
 //import com.fourfingers.quangvinhstore.usecase.interactor.ViewInstructionUseCaseInteraction;
 //import org.junit.jupiter.api.BeforeEach;

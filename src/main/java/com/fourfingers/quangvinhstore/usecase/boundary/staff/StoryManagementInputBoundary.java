@@ -1,9 +1,8 @@
 package com.fourfingers.quangvinhstore.usecase.boundary.staff;
 
-import com.fourfingers.quangvinhstore.usecase.data.input.story.StoryInputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.store.StoreOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.story.ListStoryOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.story.StoryOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.StoryInputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.ListStoryOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.StoryOutputData;
 import lombok.*;
 
 public interface StoryManagementInputBoundary {

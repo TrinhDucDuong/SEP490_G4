@@ -44,4 +44,8 @@ public class StoreEntity {
             )
     )
     private List<ProductVariantEntity> productVariants;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by", referencedColumnName = "account_id")
+    private AccountEntity createdBy;
 }

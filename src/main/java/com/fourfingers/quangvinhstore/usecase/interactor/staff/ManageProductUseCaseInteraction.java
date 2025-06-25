@@ -1,17 +1,21 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 
-import com.fourfingers.quangvinhstore.domain.model.Image;
-import com.fourfingers.quangvinhstore.domain.model.Product;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductMapper;
+import com.fourfingers.quangvinhstore.domain.model.customer.Image;
+import com.fourfingers.quangvinhstore.domain.model.customer.Product;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ImageMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductVariantMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.AzureStorageBoundary;
-import com.fourfingers.quangvinhstore.usecase.boundary.ProductOutputBoundary;
+import com.fourfingers.quangvinhstore.usecase.boundary.customer.ProductOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.ProductManagementInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.input.product.ProductInputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.boundary.staff.ProductManagementOutputBoundary;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductWithVariantsOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,10 +39,11 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
     private final ImageMapper imageMapper;
     private final BrandRepository brandEntityRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductManagementOutputBoundary productManagementOutputBoundary;
 
     @Override
     @Transactional
-    public ProductOutputData save(ProductInputData productInputData, UserDetails userDetails) throws Exception {
+    public ProductOutputData create(ProductInputData productInputData, UserDetails userDetails) throws Exception {
         AccountEntity performInsertingAccount = (AccountEntity) userDetails;
         List<ProductVariantEntity> productVariantEntities = getListVariant(productInputData,
                 performInsertingAccount.getWorkingAt());
@@ -60,6 +65,43 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         return productOutputBoundary.convertToProductOutputData(savedProduct);
     }
 
+    @Override
+    public ListProductOutputData findAllProductWithNameContains(String name) {
+        return productOutputBoundary.convertToListProductOutputData(
+            productRepository.findByProductNameContainingIgnoreCase(name)
+                    .stream().map(productMapper::toModel)
+                    .toList()
+        );
+    }
+
+    @Override
+    @Transactional
+    public ProductOutputData update(String id, ProductInputData productInputData, UserDetails userDetails) throws Exception {
+        Long productId = Long.valueOf(id);
+        ProductEntity productEntity = productRepository.findById(productId).orElseThrow(
+                () -> new RuntimeException("Product not found")
+        );
+        productEntity.setUnitPrice(BigDecimal.valueOf(Double.parseDouble(productInputData.getUnitPrice())));
+        productEntity.setProductDescription(productInputData.getProductDescription());
+        productEntity.setProductName(productInputData.getProductName());
+        productEntity.setBrand(getBrandEntity(productInputData.getBrandId()));
+        productEntity.setCategory(getCategoryEntity(productInputData.getCategoryId()));
+        productEntity.setUpdatedAt(LocalDateTime.now());
+        return null;
+    }
+
+    @Override
+    public ProductOutputData delete(String id, UserDetails userDetails) throws Exception {
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public ProductWithVariantsOutputData getProduct(String id) {
+        Long productId = Long.valueOf(id);
+        return null;
+    }
+
     private List<ProductVariantEntity> getListVariant(ProductInputData productInputData, StoreEntity storeEntity) {
         return productInputData.getProductVariants().stream()
                 .map((productVariant) -> {
@@ -73,16 +115,14 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
     private List<Image> saveProductImages(List<MultipartFile> images, ProductEntity productEntity) throws Exception {
         List<String> imageUrls = azureStorageBoundary.uploadMany(images);
         List<ImageEntity> imageEntities = imageUrls.stream()
-                .map(imageUrl -> {
-                    return imageRepository.saveAndFlush(
-                            ImageEntity.builder()
-                                    .imageType(ImageType.PRODUCT)
-                                    .referenceId(productEntity.getProductId())
-                                    .imageUrl(imageUrl)
-                                    .isActive(true)
-                                    .build()
-                    );
-                })
+                .map(imageUrl -> imageRepository.saveAndFlush(
+                        ImageEntity.builder()
+                                .imageType(ImageType.PRODUCT)
+                                .referenceId(productEntity.getProductId())
+                                .imageUrl(imageUrl)
+                                .isActive(true)
+                                .build()
+                ))
                 .toList();
         return imageEntities.stream().map(imageMapper::toModel).toList();
     }

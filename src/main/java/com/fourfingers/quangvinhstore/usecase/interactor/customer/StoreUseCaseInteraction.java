@@ -1,0 +1,50 @@
+package com.fourfingers.quangvinhstore.usecase.interactor.customer;
+
+import com.fourfingers.quangvinhstore.adapter.exception.StoreNotFoundException;
+import com.fourfingers.quangvinhstore.domain.model.customer.Store;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.StoreMapper;
+import com.fourfingers.quangvinhstore.infrastructure.repository.StoreRepository;
+import com.fourfingers.quangvinhstore.infrastructure.schema.StoreEntity;
+import com.fourfingers.quangvinhstore.usecase.boundary.customer.StoreInputBoundary;
+import com.fourfingers.quangvinhstore.usecase.boundary.customer.StoreOutputBoundary;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListStoreOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.StoreOutputData;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@Component
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+public class StoreUseCaseInteraction implements StoreInputBoundary {
+    private final StoreRepository storeRepository;
+    private final StoreOutputBoundary storeOutputBoundary;
+    private final StoreMapper storeMapper;
+    @Override
+    public ListStoreOutputData findAll() {
+        return storeOutputBoundary.convertToListStoreOutputData(
+                List.of(storeRepository.findAllByIsActiveTrue()
+                        .stream()
+                        .map(storeMapper::toModel)
+                        .toArray(Store[]::new))
+        );
+    }
+
+    @Override
+    public StoreOutputData findById(String storeId) {
+        try {
+            Long storeUuid = Long.parseLong(storeId);
+            StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
+            if (storeEntity != null) {
+                return storeOutputBoundary.convertToStoreOutputData(
+                        storeMapper.toModel(storeEntity)
+                );
+            } else {
+                throw new StoreNotFoundException("Store not found");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid store id");
+        }
+    }
+}

@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.infrastructure.schema;
 
-import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ProductSizeEnumEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ProductSize;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,7 +21,7 @@ public class ProductVariantEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "size_code")
-    private ProductSizeEnumEntity productSize;
+    private ProductSize productSize;
 
     @ManyToOne
     @JoinColumn(name = "color_code", referencedColumnName = "color_code")

@@ -1,8 +1,8 @@
 package com.fourfingers.quangvinhstore.usecase.boundary.staff;
 
-import com.fourfingers.quangvinhstore.usecase.data.input.policy.PolicyInputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.policy.ListPolicyOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.policy.PolicyOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.PolicyInputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.ListPolicyOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.PolicyOutputData;
 
 public interface PolicyManagementInputBoundary {
     ListPolicyOutputData findAll();

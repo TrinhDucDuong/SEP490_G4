@@ -3,6 +3,7 @@ package com.fourfingers.quangvinhstore.infrastructure.schema;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -26,4 +27,11 @@ public class PolicyEntity {
 
     @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1", nullable = false)
     private Boolean isActive;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by", referencedColumnName = "account_id")
+    private AccountEntity createdBy;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }
