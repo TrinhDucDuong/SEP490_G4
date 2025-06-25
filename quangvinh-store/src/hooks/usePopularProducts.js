@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchProducts } from '../utils/api';
+import { fetchProducts } from '../utils/api/ProductAPI.js';
 
 export const usePopularProducts = () => {
     const [popularProducts, setPopularProducts] = useState([]);

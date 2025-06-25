@@ -1,46 +1,57 @@
-import sliderpic2 from '../../../assets/images/banner.png';
-import sliderpic3 from '../../../assets/images/meobanner.png';
+import { useFetchBanners } from "../../../hooks/useFetchBanners.js";
+import { useRef, useState } from "react";
+import bannerDefault from "../../../assets/images/meobanner.png";
 
 function Carousel() {
+    const { banners, loading, error } = useFetchBanners();
+    const containerRef = useRef(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
-    const handleScrollTo = (id) => {
-        const el = document.getElementById(id);
+    const scrollToSlide = (index) => {
+        const el = document.getElementById(`slide-${index}`);
         if (el) {
-            el.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+            el.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+            setCurrentIndex(index);
         }
     };
+
+    if (loading) return <div className="text-center py-10">Đang tải banner...</div>;
+    if (error) return <div className="text-center text-red-500 py-10">Lỗi: {error}</div>;
 
     return (
         <div className="w-full flex justify-center items-center">
             <div className="relative w-full overflow-hidden shadow-lg">
-                <div className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-hide">
-                    <img
-                        src={sliderpic2}
-                        alt="Slide 1"
-                        id="slide-1"
-                        className="flex-shrink-0 w-full h-[500px] object-cover snap-start"
-                    />
-                    <img
-                        src={sliderpic3}
-                        alt="Slide 2"
-                        id="slide-2"
-                        className="flex-shrink-0 w-full h-[500px] object-cover snap-start"
-                    />
+                <div
+                    ref={containerRef}
+                    className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-hide"
+                >
+                    {banners.map((banner, index) => (
+                        <img
+                            key={index}
+                            src={banner.imageUrl}
+                            alt={`Banner ${index + 1}`}
+                            id={`slide-${index}`}
+                            className="flex-shrink-0 w-full h-[500px] object-cover snap-start"
+                            onError={e => {
+                                e.target.onerror = null;
+                                e.target.src = bannerDefault;
+                            }}
+                        />
+                    ))}
                 </div>
 
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-                    <button
-                        onClick={() => handleScrollTo('slide-1')}
-                        className="w-3 h-3 rounded-full bg-white/70 hover:bg-white transition duration-200"
-                        aria-label="Chuyển đến slide 1"
-                    />
-                    <button
-                        onClick={() => handleScrollTo('slide-2')}
-                        className="w-3 h-3 rounded-full bg-white/70 hover:bg-white transition duration-200"
-                        aria-label="Chuyển đến slide 2"
-                    />
+                    {banners.map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => scrollToSlide(index)}
+                            className={`w-3 h-3 rounded-full ${
+                                currentIndex === index ? "bg-white" : "bg-white/70"
+                            } hover:bg-white transition duration-200`}
+                            aria-label={`Chuyển đến slide ${index + 1}`}
+                        />
+                    ))}
                 </div>
-
             </div>
         </div>
     );
