@@ -1,15 +1,15 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 
 import com.fourfingers.quangvinhstore.adapter.exception.StoreNotFoundException;
-import com.fourfingers.quangvinhstore.domain.model.customer.Store;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.StoreMapper;
+import com.fourfingers.quangvinhstore.domain.model.staff.Store;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.StoreStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.StoreRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.StoreEntity;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.StoreManagementInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.boundary.customer.StoreOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.input.store.StoreInputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.store.ListStoreOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.store.StoreOutputData;
+import com.fourfingers.quangvinhstore.usecase.boundary.staff.StoreManagementOutputBoundary;
+import com.fourfingers.quangvinhstore.usecase.data.staff.ListStoreOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.StoreInputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.StoreOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,14 +20,14 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ManageStoreUseCaseInteraction implements StoreManagementInputBoundary {
     private final StoreRepository storeRepository;
-    private final StoreOutputBoundary storeOutputBoundary;
-    private final StoreMapper storeMapper;
+    private final StoreManagementOutputBoundary storeManagementOutputBoundary;
+    private final StoreStaffMapper storeStaffMapper;
     @Override
     public ListStoreOutputData getListStore() {
-        return storeOutputBoundary.convertToListStoreOutputData(
+        return storeManagementOutputBoundary.convertToListStoreOutputData(
                 List.of(storeRepository.findAllByIsActiveTrue()
                         .stream()
-                        .map(storeMapper::toModel)
+                        .map(storeStaffMapper::toModel)
                         .toArray(Store[]::new))
         );
     }
@@ -38,8 +38,8 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
             Long storeUuid = Long.parseLong(storeId);
             StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
             if (storeEntity != null) {
-                return storeOutputBoundary.convertToStoreOutputData(
-                        storeMapper.toModel(storeEntity)
+                return storeManagementOutputBoundary.convertToStoreOutputData(
+                        storeStaffMapper.toModel(storeEntity)
                 );
             } else {
                 throw new StoreNotFoundException("Store not found");
@@ -58,8 +58,8 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
                         .orElseThrow(() -> new StoreNotFoundException("Store not found"));
                 storeEntity.setStoreName(manageStoreInputData.getStoreName());
                 storeEntity.setStoreAddress(manageStoreInputData.getStoreAddress());
-                Store savedStore = storeMapper.toModel(storeRepository.save(storeEntity));
-                return storeOutputBoundary.convertToStoreOutputData(savedStore);
+                Store savedStore = storeStaffMapper.toModel(storeRepository.save(storeEntity));
+                return storeManagementOutputBoundary.convertToStoreOutputData(savedStore);
             } catch (IllegalArgumentException e) {
                 throw new NumberFormatException("Invalid store id");
             }
@@ -69,8 +69,8 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
                     .storeAddress(manageStoreInputData.getStoreAddress())
                     .isActive(true)
                     .build();
-            Store savedStore = storeMapper.toModel(storeRepository.save(storeEntity));
-            return storeOutputBoundary.convertToStoreOutputData(savedStore);
+            Store savedStore = storeStaffMapper.toModel(storeRepository.save(storeEntity));
+            return storeManagementOutputBoundary.convertToStoreOutputData(savedStore);
         }
     }
 
@@ -81,8 +81,8 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
             StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
             if(storeEntity != null) {
                 storeEntity.setIsActive(false);
-                Store deletedStore = storeMapper.toModel(storeRepository.save(storeEntity));
-                return storeOutputBoundary.convertToStoreOutputData(deletedStore);
+                Store deletedStore = storeStaffMapper.toModel(storeRepository.save(storeEntity));
+                return storeManagementOutputBoundary.convertToStoreOutputData(deletedStore);
             } else {
                 throw new StoreNotFoundException("Store not found");
             }

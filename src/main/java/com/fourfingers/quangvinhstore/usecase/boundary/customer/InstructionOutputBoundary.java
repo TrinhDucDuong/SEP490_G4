@@ -1,8 +1,8 @@
 package com.fourfingers.quangvinhstore.usecase.boundary.customer;
 
 import com.fourfingers.quangvinhstore.domain.model.customer.Instruction;
-import com.fourfingers.quangvinhstore.usecase.data.output.instruction.InstructionOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.instruction.ListInstructionOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.InstructionOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListInstructionOutputData;
 
 import java.util.List;
 

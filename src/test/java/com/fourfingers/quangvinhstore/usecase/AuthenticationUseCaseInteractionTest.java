@@ -9,7 +9,7 @@
 //import com.fourfingers.quangvinhstore.infrastructure.schema.AuthorityEntity;
 //import com.fourfingers.quangvinhstore.usecase.boundary.AuthenticationOutputBoundary;
 //import com.fourfingers.quangvinhstore.usecase.boundary.JwtUtilBoundary;
-//import com.fourfingers.quangvinhstore.usecase.data.input.auth.AuthenticationInputData;
+//import com.fourfingers.quangvinhstore.usecase.data.auth.AuthenticationInputData;
 //import com.fourfingers.quangvinhstore.usecase.data.output.auth.AuthenticationOutputData;
 //import com.fourfingers.quangvinhstore.usecase.interactor.AuthenticationUseCaseInteraction;
 //import org.junit.jupiter.api.BeforeEach;

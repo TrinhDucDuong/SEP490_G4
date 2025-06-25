@@ -96,6 +96,12 @@ public class AccountEntity implements UserDetails {
     @OneToMany(mappedBy = "createdBy")
     private List<StoryEntity> createdStories;
 
+    @OneToMany(mappedBy = "createdBy")
+    private List<StoreEntity> createdStores;
+
+    @OneToMany(mappedBy = "createdBy")
+    private List<BrandEntity> brands;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.adapter.rest.staff;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.StoreManagementInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.input.store.StoreInputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.StoreInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

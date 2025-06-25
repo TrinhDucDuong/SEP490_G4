@@ -5,7 +5,7 @@ import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer
 import com.fourfingers.quangvinhstore.infrastructure.repository.PolicyRepository;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.PolicyInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.PolicyOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.output.policy.ListPolicyOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListPolicyOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -2,7 +2,7 @@ package com.fourfingers.quangvinhstore.usecase.boundary.staff;
 
 import com.fourfingers.quangvinhstore.domain.model.customer.Product;
 import com.fourfingers.quangvinhstore.domain.model.customer.ProductVariant;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductWithVariantsOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductWithVariantsOutputData;
 
 import java.util.List;
 

@@ -12,10 +12,10 @@ import com.fourfingers.quangvinhstore.usecase.boundary.AzureStorageBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.ProductOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.ProductManagementInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.ProductManagementOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.input.product.ProductInputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ListProductOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductWithVariantsOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductWithVariantsOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -99,14 +99,7 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
     @Transactional
     public ProductWithVariantsOutputData getProduct(String id) {
         Long productId = Long.valueOf(id);
-        ProductEntity productEntity = productRepository.findByProductIdAndIsActiveTrue(productId).orElseThrow(
-                () -> new RuntimeException("Product not found")
-        );
-        List<ProductVariantEntity> productVariantEntities = productEntity.getProductVariants();
-        return productManagementOutputBoundary.convertProductWithVariantsOutputData(
-                productMapper.toModel(productEntity),
-                productVariantEntities.stream().map(productVariantMapper::toModel).toList()
-        );
+        return null;
     }
 
     private List<ProductVariantEntity> getListVariant(ProductInputData productInputData, StoreEntity storeEntity) {

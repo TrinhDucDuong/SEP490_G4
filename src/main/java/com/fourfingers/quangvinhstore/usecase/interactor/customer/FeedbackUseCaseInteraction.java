@@ -8,7 +8,7 @@ import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.FeedbackInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.FeedbackOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.output.feedback.ListFeedbackOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListFeedbackOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

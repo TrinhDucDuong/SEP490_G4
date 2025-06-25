@@ -2,8 +2,8 @@ package com.fourfingers.quangvinhstore.presenter;
 
 import com.fourfingers.quangvinhstore.domain.model.Account;
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.AccountManagementOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.output.account.AccountOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.account.ListAccountOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.admin.account.AccountOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.admin.account.ListAccountOutputData;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

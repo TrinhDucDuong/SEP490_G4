@@ -5,7 +5,7 @@ import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer
 import com.fourfingers.quangvinhstore.infrastructure.repository.InstructionRepository;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.InstructionInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.InstructionOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.output.instruction.ListInstructionOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListInstructionOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.adapter.rest.customer;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.ProductInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.input.product.SearchProductInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.SearchProductInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

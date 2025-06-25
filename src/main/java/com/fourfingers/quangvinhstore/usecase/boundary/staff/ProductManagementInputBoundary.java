@@ -1,9 +1,9 @@
 package com.fourfingers.quangvinhstore.usecase.boundary.staff;
 
-import com.fourfingers.quangvinhstore.usecase.data.input.product.ProductInputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ListProductOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductWithVariantsOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductWithVariantsOutputData;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface ProductManagementInputBoundary {

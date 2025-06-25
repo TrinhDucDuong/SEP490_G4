@@ -10,7 +10,7 @@ import com.fourfingers.quangvinhstore.infrastructure.schema.BrandEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.BrandInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.BrandOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.output.brand.ListBrandOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListBrandOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

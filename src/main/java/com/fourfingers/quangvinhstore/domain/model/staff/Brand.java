@@ -1,4 +1,21 @@
 package com.fourfingers.quangvinhstore.domain.model.staff;
 
+import com.fourfingers.quangvinhstore.domain.model.customer.Image;
+import lombok.*;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
 public class Brand {
+    private Long brandId;
+    private String brandName;
+    private String brandDescription;
+    private Boolean isActive;
+    private List<Image> images;
+    private LocalDate createdAt;
 }

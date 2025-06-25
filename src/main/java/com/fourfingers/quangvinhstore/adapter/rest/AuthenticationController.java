@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.AuthenticationInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.input.auth.AuthenticationInputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.auth.AuthenticationOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.auth.AuthenticationInputData;
+import com.fourfingers.quangvinhstore.usecase.data.auth.AuthenticationOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

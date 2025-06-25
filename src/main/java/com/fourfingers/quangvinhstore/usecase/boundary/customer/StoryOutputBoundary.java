@@ -1,8 +1,8 @@
 package com.fourfingers.quangvinhstore.usecase.boundary.customer;
 
 import com.fourfingers.quangvinhstore.domain.model.customer.Story;
-import com.fourfingers.quangvinhstore.usecase.data.output.story.ListStoryOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.story.StoryOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListStoryOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.StoryOutputData;
 
 import java.util.List;
 

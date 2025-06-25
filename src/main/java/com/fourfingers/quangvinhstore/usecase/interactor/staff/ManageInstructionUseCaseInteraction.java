@@ -1,15 +1,15 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 
 import com.fourfingers.quangvinhstore.adapter.exception.InstructionNotFoundException;
-import com.fourfingers.quangvinhstore.domain.model.customer.Instruction;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.InstructionMapper;
+import com.fourfingers.quangvinhstore.domain.model.staff.Instruction;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.InstructionStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.InstructionRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.InstructionEntity;
-import com.fourfingers.quangvinhstore.usecase.boundary.customer.InstructionOutputBoundary;
+import com.fourfingers.quangvinhstore.usecase.boundary.staff.InstructionManagementOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.InstructionManagementInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.input.instruction.InstructionInputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.instruction.InstructionOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.instruction.ListInstructionOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.InstructionInputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.InstructionOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.ListInstructionOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,14 +20,14 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ManageInstructionUseCaseInteraction implements InstructionManagementInputBoundary {
     private final InstructionRepository instructionRepository;
-    private final InstructionOutputBoundary instructionOutputBoundary;
-    private final InstructionMapper instructionMapper;
+    private final InstructionManagementOutputBoundary instructionManagementOutputBoundary;
+    private final InstructionStaffMapper instructionMapper;
     @Override
     public ListInstructionOutputData findAll() {
-        return instructionOutputBoundary.convertToListInstructionOutputData(
+        return instructionManagementOutputBoundary.convertToListInstructionOutputData(
                 List.of(instructionRepository.findAllByIsActiveTrue()
                         .stream()
-                        .map(instructionMapper::toInstruction)
+                        .map(instructionMapper::toModel)
                         .toArray(Instruction[]::new))
         );
     }
@@ -38,7 +38,8 @@ public class ManageInstructionUseCaseInteraction implements InstructionManagemen
             Long instructionId = Long.parseLong(id);
             InstructionEntity instructionEntity = instructionRepository.findById(instructionId)
                     .orElseThrow(() -> new InstructionNotFoundException("Instruction not found"));
-            return instructionOutputBoundary.convertToOutputData(instructionMapper.toInstruction(instructionEntity));
+            return instructionManagementOutputBoundary.convertToInstructionOutputData(instructionMapper
+                    .toModel(instructionEntity));
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid instruction id");
         }
@@ -53,8 +54,8 @@ public class ManageInstructionUseCaseInteraction implements InstructionManagemen
                         .orElseThrow(() -> new InstructionNotFoundException("Instruction not found"));
                 instructionEntity.setInstructionName(instructionInputData.getInstructionName());
                 instructionEntity.setInstructionDescription(instructionInputData.getInstructionDescription());
-                return instructionOutputBoundary.convertToOutputData(instructionMapper
-                        .toInstruction(instructionRepository
+                return instructionManagementOutputBoundary.convertToInstructionOutputData(instructionMapper
+                        .toModel(instructionRepository
                                 .save(instructionEntity)));
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Invalid instruction id");
@@ -65,8 +66,8 @@ public class ManageInstructionUseCaseInteraction implements InstructionManagemen
                     .instructionDescription(instructionInputData.getInstructionDescription())
                     .isActive(true)
                     .build();
-            return instructionOutputBoundary.convertToOutputData(
-                    instructionMapper.toInstruction(instructionRepository.save(instructionEntity))
+            return instructionManagementOutputBoundary.convertToInstructionOutputData(
+                    instructionMapper.toModel(instructionRepository.save(instructionEntity))
             );
         }
     }
@@ -78,8 +79,8 @@ public class ManageInstructionUseCaseInteraction implements InstructionManagemen
             InstructionEntity instructionEntity = instructionRepository.findById(instructionId)
                     .orElseThrow(() -> new InstructionNotFoundException("Instruction not found"));
             instructionEntity.setIsActive(false);
-            return instructionOutputBoundary.convertToOutputData(
-                    instructionMapper.toInstruction(instructionRepository.save(instructionEntity))
+            return instructionManagementOutputBoundary.convertToInstructionOutputData(
+                    instructionMapper.toModel(instructionRepository.save(instructionEntity))
             );
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid instruction id");

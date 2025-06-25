@@ -2,9 +2,9 @@ package com.fourfingers.quangvinhstore.usecase.boundary.customer;
 
 import com.fourfingers.quangvinhstore.domain.model.customer.Color;
 import com.fourfingers.quangvinhstore.domain.model.customer.Product;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ListProductOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductDetailsOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductDetailsOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductOutputData;
 
 import java.util.List;
 

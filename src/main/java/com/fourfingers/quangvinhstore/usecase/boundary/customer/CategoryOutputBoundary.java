@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.usecase.boundary.customer;
 
 import com.fourfingers.quangvinhstore.domain.model.customer.Category;
-import com.fourfingers.quangvinhstore.usecase.data.output.category.ListCategoryOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListCategoryOutputData;
 
 import java.util.List;
 

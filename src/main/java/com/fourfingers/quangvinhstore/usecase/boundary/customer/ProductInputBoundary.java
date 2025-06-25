@@ -1,8 +1,8 @@
 package com.fourfingers.quangvinhstore.usecase.boundary.customer;
 
-import com.fourfingers.quangvinhstore.usecase.data.input.product.SearchProductInputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ListProductOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductDetailsOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.SearchProductInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductDetailsOutputData;
 
 public interface ProductInputBoundary {
     ListProductOutputData search(SearchProductInputData searchProductInputData, String sortDirection,
