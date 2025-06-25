@@ -93,6 +93,9 @@ public class AccountEntity implements UserDetails {
     @OneToMany(mappedBy = "processBy")
     private List<OrderEntity> processedOrders;
 
+    @OneToMany(mappedBy = "createdBy")
+    private List<StoryEntity> createdStories;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.usecase.boundary.staff;
 
-import com.fourfingers.quangvinhstore.domain.model.Order;
+import com.fourfingers.quangvinhstore.domain.model.customer.Order;
 import com.fourfingers.quangvinhstore.usecase.data.output.order.ListOrderOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.output.order.OrderOutputData;
 

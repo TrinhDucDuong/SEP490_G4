@@ -1,10 +1,10 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 
-import com.fourfingers.quangvinhstore.domain.model.Order;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.OrderMapper;
+import com.fourfingers.quangvinhstore.domain.model.customer.Order;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.OrderMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.OrderRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.OrderEntity;
-import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatusEnum;
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.OrderManagementInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.OrderManagementOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.input.order.ProcessOrderInputData;
@@ -17,7 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -42,7 +41,7 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
         OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(
                 () -> new RuntimeException("Order not found")
         );
-        orderEntity.setOrderStatus(OrderStatusEnum.PREPARING);
+        orderEntity.setOrderStatus(OrderStatus.PREPARING);
         return orderManagementOutputBoundary.createOrderOutputData(
                 orderMapper.toModel(orderRepository.save(orderEntity))
         );
@@ -55,7 +54,7 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
                         .map(orderMapper::toModel)
                         .toList()
                 :
-                orderRepository.findAllByOrderStatus(OrderStatusEnum.valueOf(orderStatus))
+                orderRepository.findAllByOrderStatus(OrderStatus.valueOf(orderStatus))
                         .stream()
                         .map(orderMapper::toModel)
                         .toList();

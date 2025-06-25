@@ -1,6 +1,5 @@
 package com.fourfingers.quangvinhstore.usecase.data.input.product;
 
-import com.fourfingers.quangvinhstore.domain.model.enums.ProductSizeEnum;
 import lombok.*;
 
 import java.math.BigDecimal;

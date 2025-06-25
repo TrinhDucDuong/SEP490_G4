@@ -1,12 +1,11 @@
 package com.fourfingers.quangvinhstore.infrastructure.schema;
 
-import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatusEnum;
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
@@ -37,5 +36,5 @@ public class OrderEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status")
-    private OrderStatusEnum orderStatus;
+    private OrderStatus orderStatus;
 }

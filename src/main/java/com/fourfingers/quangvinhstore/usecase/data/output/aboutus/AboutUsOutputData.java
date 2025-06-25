@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.usecase.data.output.aboutus;
 
-import com.fourfingers.quangvinhstore.domain.model.Store;
-import com.fourfingers.quangvinhstore.domain.model.Story;
+import com.fourfingers.quangvinhstore.domain.model.customer.Store;
+import com.fourfingers.quangvinhstore.domain.model.customer.Story;
 import lombok.*;
 
 import java.util.List;

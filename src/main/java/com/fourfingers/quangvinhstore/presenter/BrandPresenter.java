@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.presenter;
 
-import com.fourfingers.quangvinhstore.domain.model.Brand;
-import com.fourfingers.quangvinhstore.usecase.boundary.BrandOutputBoundary;
+import com.fourfingers.quangvinhstore.domain.model.customer.Brand;
+import com.fourfingers.quangvinhstore.usecase.boundary.customer.BrandOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.output.brand.ListBrandOutputData;
 import org.springframework.stereotype.Component;
 

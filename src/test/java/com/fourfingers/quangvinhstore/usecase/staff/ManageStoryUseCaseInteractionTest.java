@@ -1,11 +1,11 @@
 //package com.fourfingers.quangvinhstore.usecase.staff;
 //
 //import com.fourfingers.quangvinhstore.adapter.exception.StoryNotFoundException;
-//import com.fourfingers.quangvinhstore.domain.model.Story;
-//import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.StoryMapper;
+//import com.fourfingers.quangvinhstore.domain.model.customer.Story;
+//import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.StoryMapper;
 //import com.fourfingers.quangvinhstore.infrastructure.repository.StoryRepository;
 //import com.fourfingers.quangvinhstore.infrastructure.schema.StoryEntity;
-//import com.fourfingers.quangvinhstore.usecase.boundary.StoryOutputBoundary;
+//import com.fourfingers.quangvinhstore.usecase.boundary.customer.StoryOutputBoundary;
 //import com.fourfingers.quangvinhstore.usecase.data.input.story.StoryInputData;
 //import com.fourfingers.quangvinhstore.usecase.data.output.story.ListStoryOutputData;
 //import com.fourfingers.quangvinhstore.usecase.data.output.story.StoryOutputData;

@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.presenter;
 
-import com.fourfingers.quangvinhstore.domain.model.Instruction;
-import com.fourfingers.quangvinhstore.usecase.boundary.InstructionOutputBoundary;
+import com.fourfingers.quangvinhstore.domain.model.customer.Instruction;
+import com.fourfingers.quangvinhstore.usecase.boundary.customer.InstructionOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.output.instruction.InstructionOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.output.instruction.ListInstructionOutputData;
 import org.springframework.stereotype.Component;

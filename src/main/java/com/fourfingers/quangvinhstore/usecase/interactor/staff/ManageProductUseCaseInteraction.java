@@ -1,14 +1,15 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 
-import com.fourfingers.quangvinhstore.domain.model.Image;
-import com.fourfingers.quangvinhstore.domain.model.Product;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ProductMapper;
+import com.fourfingers.quangvinhstore.domain.model.customer.Image;
+import com.fourfingers.quangvinhstore.domain.model.customer.Product;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ImageMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductVariantMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.AzureStorageBoundary;
-import com.fourfingers.quangvinhstore.usecase.boundary.ProductOutputBoundary;
+import com.fourfingers.quangvinhstore.usecase.boundary.customer.ProductOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.ProductManagementInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.ProductManagementOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.input.product.ProductInputData;

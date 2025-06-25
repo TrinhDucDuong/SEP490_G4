@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.presenter;
 
-import com.fourfingers.quangvinhstore.domain.model.Blog;
-import com.fourfingers.quangvinhstore.usecase.boundary.BlogOutputBoundary;
+import com.fourfingers.quangvinhstore.domain.model.customer.Blog;
+import com.fourfingers.quangvinhstore.usecase.boundary.customer.BlogOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.output.blog.ListBlogOutputData;
 import org.springframework.stereotype.Component;
 

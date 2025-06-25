@@ -1,12 +1,12 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 
 import com.fourfingers.quangvinhstore.adapter.exception.StoreNotFoundException;
-import com.fourfingers.quangvinhstore.domain.model.Store;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.StoreMapper;
+import com.fourfingers.quangvinhstore.domain.model.customer.Store;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.StoreMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.StoreRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.StoreEntity;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.StoreManagementInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.boundary.StoreOutputBoundary;
+import com.fourfingers.quangvinhstore.usecase.boundary.customer.StoreOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.input.store.StoreInputData;
 import com.fourfingers.quangvinhstore.usecase.data.output.store.ListStoreOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.output.store.StoreOutputData;

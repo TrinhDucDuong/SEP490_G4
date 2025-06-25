@@ -1,9 +1,9 @@
 package com.fourfingers.quangvinhstore.presenter;
 
-import com.fourfingers.quangvinhstore.domain.model.Color;
-import com.fourfingers.quangvinhstore.domain.model.Product;
-import com.fourfingers.quangvinhstore.domain.model.ProductVariant;
-import com.fourfingers.quangvinhstore.usecase.boundary.ProductOutputBoundary;
+import com.fourfingers.quangvinhstore.domain.model.customer.Color;
+import com.fourfingers.quangvinhstore.domain.model.customer.Product;
+import com.fourfingers.quangvinhstore.domain.model.customer.ProductVariant;
+import com.fourfingers.quangvinhstore.usecase.boundary.customer.ProductOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.ProductManagementOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.output.product.ListProductOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.output.product.ProductDetailsOutputData;

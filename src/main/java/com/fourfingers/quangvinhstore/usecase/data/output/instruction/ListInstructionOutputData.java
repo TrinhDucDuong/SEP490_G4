@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.usecase.data.output.instruction;
 
-import com.fourfingers.quangvinhstore.domain.model.Instruction;
+import com.fourfingers.quangvinhstore.domain.model.customer.Instruction;
 import lombok.*;
 
 import java.util.List;

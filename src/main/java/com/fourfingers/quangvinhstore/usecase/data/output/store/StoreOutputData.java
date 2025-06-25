@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.usecase.data.output.store;
 
-import com.fourfingers.quangvinhstore.domain.model.Store;
+import com.fourfingers.quangvinhstore.domain.model.customer.Store;
 import lombok.*;
 
 @AllArgsConstructor

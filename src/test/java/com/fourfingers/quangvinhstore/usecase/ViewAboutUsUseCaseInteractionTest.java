@@ -1,14 +1,14 @@
 //package com.fourfingers.quangvinhstore.usecase;
 //
-//import com.fourfingers.quangvinhstore.domain.model.Store;
-//import com.fourfingers.quangvinhstore.domain.model.Story;
-//import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.StoreMapper;
-//import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.StoryMapper;
+//import com.fourfingers.quangvinhstore.domain.model.customer.Store;
+//import com.fourfingers.quangvinhstore.domain.model.customer.Story;
+//import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.StoreMapper;
+//import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.StoryMapper;
 //import com.fourfingers.quangvinhstore.infrastructure.repository.StoreRepository;
 //import com.fourfingers.quangvinhstore.infrastructure.repository.StoryRepository;
 //import com.fourfingers.quangvinhstore.infrastructure.schema.StoreEntity;
 //import com.fourfingers.quangvinhstore.infrastructure.schema.StoryEntity;
-//import com.fourfingers.quangvinhstore.usecase.boundary.AboutUsOutputBoundary;
+//import com.fourfingers.quangvinhstore.usecase.boundary.customer.AboutUsOutputBoundary;
 //import com.fourfingers.quangvinhstore.usecase.data.output.aboutus.AboutUsOutputData;
 //import com.fourfingers.quangvinhstore.usecase.interactor.ViewAboutUsUseCaseInteraction;
 //import org.junit.jupiter.api.BeforeEach;

@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.presenter;
 
-import com.fourfingers.quangvinhstore.domain.model.Category;
-import com.fourfingers.quangvinhstore.usecase.boundary.CategoryOutputBoundary;
+import com.fourfingers.quangvinhstore.domain.model.customer.Category;
+import com.fourfingers.quangvinhstore.usecase.boundary.customer.CategoryOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.output.category.ListCategoryOutputData;
 import org.springframework.stereotype.Component;
 

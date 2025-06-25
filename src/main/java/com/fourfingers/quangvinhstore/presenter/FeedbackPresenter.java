@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.presenter;
 
-import com.fourfingers.quangvinhstore.domain.model.Feedback;
-import com.fourfingers.quangvinhstore.usecase.boundary.FeedbackOutputBoundary;
+import com.fourfingers.quangvinhstore.domain.model.customer.Feedback;
+import com.fourfingers.quangvinhstore.usecase.boundary.customer.FeedbackOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.output.feedback.ListFeedbackOutputData;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.usecase.data.input.product;
 
-import com.fourfingers.quangvinhstore.domain.model.ProductVariant;
+import com.fourfingers.quangvinhstore.domain.model.customer.ProductVariant;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 

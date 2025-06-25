@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.usecase.data.output.blog;
 
-import com.fourfingers.quangvinhstore.domain.model.Blog;
+import com.fourfingers.quangvinhstore.domain.model.customer.Blog;
 import lombok.*;
 
 import java.util.List;
