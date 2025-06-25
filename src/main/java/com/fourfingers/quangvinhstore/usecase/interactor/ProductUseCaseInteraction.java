@@ -92,9 +92,9 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
             predicates.add(criteriaBuilder.isTrue(root.get("isActive")));
 
             if (!CollectionUtils.isEmpty(searchProductInputData.getCategoryIds())) {
-                List<UUID> categoryUuids = searchProductInputData.getCategoryIds()
+                List<Long> categoryUuids = searchProductInputData.getCategoryIds()
                         .stream()
-                        .map(UUID::fromString)
+                        .map(Long::parseLong)
                         .toList();
                 predicates.add(root
                         .get("category")
@@ -103,9 +103,9 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
             }
 
             if (!CollectionUtils.isEmpty(searchProductInputData.getBrandIds())) {
-                List<UUID> brandUuids = searchProductInputData.getBrandIds()
+                List<Long> brandUuids = searchProductInputData.getBrandIds()
                         .stream()
-                        .map(UUID::fromString)
+                        .map(Long::parseLong)
                         .toList();
                 predicates.add(root
                         .get("brand")

@@ -14,7 +14,7 @@ import java.util.List;
 public class SearchProductInputData {
     private List<String> categoryIds;
     private List<String> brandIds;
-    private List<ProductSizeEnum> productSizes;
+    private List<String> productSizes;
     private List<String> colorHexes;
     private BigDecimal price;
 }
