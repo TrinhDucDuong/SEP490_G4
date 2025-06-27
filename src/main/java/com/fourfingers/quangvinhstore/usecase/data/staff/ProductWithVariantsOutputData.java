@@ -1,4 +1,4 @@
-package com.fourfingers.quangvinhstore.usecase.data.customer;
+package com.fourfingers.quangvinhstore.usecase.data.staff;
 
 import com.fourfingers.quangvinhstore.domain.model.customer.Product;
 import com.fourfingers.quangvinhstore.domain.model.customer.ProductVariant;

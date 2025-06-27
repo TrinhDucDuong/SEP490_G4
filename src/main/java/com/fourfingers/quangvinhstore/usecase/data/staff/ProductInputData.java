@@ -1,6 +1,6 @@
-package com.fourfingers.quangvinhstore.usecase.data.customer;
+package com.fourfingers.quangvinhstore.usecase.data.staff;
 
-import com.fourfingers.quangvinhstore.domain.model.customer.ProductVariant;
+import com.fourfingers.quangvinhstore.domain.model.staff.ProductVariant;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 

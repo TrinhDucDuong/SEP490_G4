@@ -11,5 +11,6 @@ import java.util.List;
 public interface ProductOutputBoundary {
     ListProductOutputData convertToListProductOutputData(List<Product> products);
     ProductOutputData convertToProductOutputData(Product product);
-    ProductDetailsOutputData convertToProductDetailsOutputData(Product product, List<String> productSizes, List<Color> productColors);
+    ProductDetailsOutputData convertToProductDetailsOutputData(Product product, List<String> productSizes,
+                                                               List<Color> productColors);
 }
