@@ -29,8 +29,12 @@ public class ManageCategoryUseCaseInteraction implements CategoryManagementInput
     private final ImageMapper imageMapper;
     @Override
     public CategoryOutputData getCategory(String id) {
-        CategoryEntity categoryEntity;
-        return null;
+        Long categoryId = Long.valueOf(id);
+        CategoryEntity categoryEntity = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new RuntimeException("Category not found")
+        );
+        Category category = getCategory(categoryEntity);
+        return categoryManagementOutputBoundary.convertToCategoryOutputData(category);
     }
 
     @Override
