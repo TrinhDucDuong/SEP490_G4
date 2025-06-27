@@ -36,6 +36,10 @@ public class CategoryEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "updated_by", referencedColumnName = "account_id")
+    private AccountEntity updatedBy;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
     private List<ProductEntity> products;
 
