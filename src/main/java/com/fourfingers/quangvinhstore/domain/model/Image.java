@@ -1,4 +1,4 @@
-package com.fourfingers.quangvinhstore.domain.model.customer;
+package com.fourfingers.quangvinhstore.domain.model;
 
 import lombok.*;
 

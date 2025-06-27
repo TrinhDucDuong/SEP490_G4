@@ -1,9 +1,9 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.customer;
 
 import com.fourfingers.quangvinhstore.domain.model.customer.Brand;
-import com.fourfingers.quangvinhstore.domain.model.customer.Image;
+import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.BrandMapper;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ImageMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.BrandRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.BrandEntity;

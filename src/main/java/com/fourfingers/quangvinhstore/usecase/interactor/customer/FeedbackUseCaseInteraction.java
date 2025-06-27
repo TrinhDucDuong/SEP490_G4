@@ -2,7 +2,7 @@ package com.fourfingers.quangvinhstore.usecase.interactor.customer;
 
 import com.fourfingers.quangvinhstore.domain.model.customer.Feedback;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.FeedbackMapper;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ImageMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.FeedbackRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;

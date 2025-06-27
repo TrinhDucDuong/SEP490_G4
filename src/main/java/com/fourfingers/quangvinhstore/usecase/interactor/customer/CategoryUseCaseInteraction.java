@@ -2,7 +2,7 @@ package com.fourfingers.quangvinhstore.usecase.interactor.customer;
 
 import com.fourfingers.quangvinhstore.domain.model.customer.Category;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.CategoryMapper;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ImageMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.CategoryRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;

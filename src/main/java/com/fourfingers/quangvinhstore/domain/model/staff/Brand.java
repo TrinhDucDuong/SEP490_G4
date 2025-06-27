@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.domain.model.staff;
 
-import com.fourfingers.quangvinhstore.domain.model.customer.Image;
+import com.fourfingers.quangvinhstore.domain.model.Image;
 import lombok.*;
 
 import java.time.LocalDate;

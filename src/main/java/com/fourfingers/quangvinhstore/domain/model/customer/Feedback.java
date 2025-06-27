@@ -1,5 +1,6 @@
 package com.fourfingers.quangvinhstore.domain.model.customer;
 
+import com.fourfingers.quangvinhstore.domain.model.Image;
 import lombok.*;
 
 import java.util.List;

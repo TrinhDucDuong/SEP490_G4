@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.presenter.customer;
 
-import com.fourfingers.quangvinhstore.domain.model.customer.Image;
+import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.BannerOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.customer.BannerOutputData;
 import org.springframework.stereotype.Component;

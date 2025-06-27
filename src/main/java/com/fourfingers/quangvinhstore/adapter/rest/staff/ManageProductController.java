@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.adapter.rest.staff;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.ProductManagementInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.customer.ProductInputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.ProductInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -29,11 +29,24 @@ public class ManageProductController {
 
     @GetMapping
     public ResponseEntity<?> find(@RequestParam(required = false) String name) {
-        return ResponseEntity.ok(productManagementInputBoundary.findAllProductWithNameContains(name));
+        return ResponseEntity.ok(productManagementInputBoundary.findAllProducts(name));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProduct(@PathVariable String id) {
         return ResponseEntity.ok(productManagementInputBoundary.getProduct(id));
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> getProduct(@PathVariable String id,
+                                        @RequestPart("productInputData") ProductInputData productInputData,
+                                        @RequestPart(value = "productImages", required = false) List<MultipartFile> productImages,
+                                        @AuthenticationPrincipal UserDetails userDetails) throws Exception {
+        productInputData.setProductImages(productImages);
+        return ResponseEntity.ok(productManagementInputBoundary.update(
+                id,
+                productInputData,
+                userDetails
+        ));
     }
 }

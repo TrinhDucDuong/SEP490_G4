@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.usecase.data.customer;
 
-import com.fourfingers.quangvinhstore.domain.model.customer.Image;
+import com.fourfingers.quangvinhstore.domain.model.Image;
 import lombok.*;
 
 import java.util.List;

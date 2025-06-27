@@ -25,7 +25,7 @@ public class ProductController {
                                             @RequestParam(defaultValue = "desc") String sortDirection,
                                             @RequestParam(defaultValue = "createdAt") String sortBy,
                                             @RequestParam(defaultValue = "0") String pageNumber,
-                                            @RequestParam(defaultValue = "10") String pageSize) {
+                                            @RequestParam(defaultValue = "20") String pageSize) {
         SearchProductInputData searchProductInputData = new SearchProductInputData(
                 categoryIds, brandIds, productSizes, colorHexes, price
         );
