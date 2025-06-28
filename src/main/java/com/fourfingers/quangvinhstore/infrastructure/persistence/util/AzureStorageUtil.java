@@ -41,4 +41,21 @@ public class AzureStorageUtil implements AzureStorageBoundary {
 
         return uploadedUrls;
     }
+
+    @Override
+    public void deleteFile(List<String> fileUrls) {
+        if(fileUrls == null || fileUrls.isEmpty()) return;
+        BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
+                .connectionString(connectionString)
+                .buildClient();
+        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(containerName);
+        for (String url : fileUrls) {
+            String blobName = extractBlobNameFormUrl(url);
+            containerClient.getBlobClient(blobName).delete();
+        }
+    }
+
+    private String extractBlobNameFormUrl(String url) {
+        return url.substring(url.lastIndexOf("/") + 1);
+    }
 }

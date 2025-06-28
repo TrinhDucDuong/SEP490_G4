@@ -35,4 +35,19 @@ public class ManageCategoryController {
                                     @AuthenticationPrincipal UserDetails userDetails) throws Exception {
         return ResponseEntity.ok(categoryManagementInputBoundary.create(categoryInputData, categoryImages, userDetails));
     }
+
+    @PutMapping(value = "/category/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update(@PathVariable("id") String id,
+                                    @RequestPart("categoryInputData") CategoryInputData categoryInputData,
+                                    @RequestPart("categoryImages") List<MultipartFile> categoryImages,
+                                    @AuthenticationPrincipal UserDetails userDetails) throws Exception {
+        return ResponseEntity.ok(categoryManagementInputBoundary.update(id,
+                categoryInputData, categoryImages, userDetails));
+    }
+
+    @DeleteMapping("/category/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") String id,
+                                    @AuthenticationPrincipal UserDetails userDetails) throws Exception {
+        return ResponseEntity.ok(categoryManagementInputBoundary.delete(id, userDetails));
+    }
 }
