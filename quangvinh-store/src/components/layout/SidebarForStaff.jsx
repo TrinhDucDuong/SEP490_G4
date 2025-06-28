@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
     Package,
     FileText,
@@ -14,12 +14,31 @@ import {
     Tag,
     Receipt,
     Store,
-    Megaphone
+    Megaphone,
+    ChevronDown,
+    ChevronRight
 } from 'lucide-react';
 
 const SidebarForStaff = () => {
+    const location = useLocation();
+    const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+
+    // Auto open dropdown nếu đang ở trang categories hoặc product-types (chỉ lần đầu)
+    useEffect(() => {
+        if (location.pathname === '/categories' || location.pathname === '/product-types') {
+            setCategoryDropdownOpen(true);
+        }
+    }, []); // Chỉ chạy 1 lần khi component mount
+
+    // Hàm toggle dropdown - chỉ thay đổi khi click vào button chính
+    const toggleDropdown = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setCategoryDropdownOpen(!categoryDropdownOpen);
+    };
+
     return (
-        <div className="w-64 bg-white shadow-lg h-full">
+        <div className="w-80 bg-white shadow-lg h-full">
             <div className="p-6 border-b">
                 <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
@@ -46,7 +65,7 @@ const SidebarForStaff = () => {
 
                 <div className="flex-1 space-y-1 px-3">
                     <NavLink
-                        to="/products"
+                        to="/products-management"
                         className={({ isActive }) =>
                             `flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
                                 isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-100'
@@ -57,17 +76,56 @@ const SidebarForStaff = () => {
                         <span>Sản phẩm</span>
                     </NavLink>
 
-                    <NavLink
-                        to="/categories"
-                        className={({ isActive }) =>
-                            `flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                                isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-100'
-                            }`
-                        }
-                    >
-                        <Tag className="h-5 w-5" />
-                        <span>Danh mục sản phẩm</span>
-                    </NavLink>
+                    {/* Category Dropdown - FIXED ABSOLUTE POSITION */}
+                    <div className="relative">
+                        {/* Main Category Button */}
+                        <button
+                            onClick={toggleDropdown}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
+                                location.pathname === '/categories' || location.pathname === '/product-types'
+                                    ? 'bg-gray-900 text-white'
+                                    : 'text-gray-700 hover:bg-gray-100'
+                            }`}
+                        >
+                            <div className="flex items-center space-x-3">
+                                <Tag className="h-5 w-5" />
+                                <span>Danh mục sản phẩm</span>
+                            </div>
+                            {categoryDropdownOpen ? (
+                                <ChevronDown className="h-4 w-4" />
+                            ) : (
+                                <ChevronRight className="h-4 w-4" />
+                            )}
+                        </button>
+
+                        {/* Dropdown Items - ABSOLUTE POSITIONING */}
+                        {categoryDropdownOpen && (
+                            <div className="absolute top-full left-0 right-0 z-50 bg-white shadow-lg border border-gray-200 rounded-lg mt-1">
+                                <div className="py-1">
+                                    <NavLink
+                                        to="/categories"
+                                        className={({ isActive }) =>
+                                            `flex items-center px-6 py-2 text-sm transition-colors ${
+                                                isActive ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100'
+                                            }`
+                                        }
+                                    >
+                                        <span>Danh mục sản phẩm</span>
+                                    </NavLink>
+                                    <NavLink
+                                        to="/product-types"
+                                        className={({ isActive }) =>
+                                            `flex items-center px-6 py-2 text-sm transition-colors ${
+                                                isActive ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100'
+                                            }`
+                                        }
+                                    >
+                                        <span>Loại trang phục</span>
+                                    </NavLink>
+                                </div>
+                            </div>
+                        )}
+                    </div>
 
                     <NavLink
                         to="/customers"
@@ -181,7 +239,7 @@ const SidebarForStaff = () => {
                 {/* Bottom section */}
                 <div className="px-3 pb-6 space-y-1 border-t pt-4 mt-4">
                     <NavLink
-                        to="/settings"
+                        to="/settings-management"
                         className={({ isActive }) =>
                             `flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
                                 isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-100'
