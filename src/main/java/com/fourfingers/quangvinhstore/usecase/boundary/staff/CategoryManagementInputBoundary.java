@@ -10,7 +10,17 @@ import java.util.List;
 
 public interface CategoryManagementInputBoundary {
     CategoryOutputData getCategory(String id);
+
     ListCategoryOutputData getAll();
 
-    CategoryOutputData create(CategoryInputData categoryInputData, List<MultipartFile> categoryImages, UserDetails userDetails) throws Exception;
+    CategoryOutputData create(CategoryInputData categoryInputData,
+                              List<MultipartFile> categoryImages,
+                              UserDetails userDetails) throws Exception;
+
+    CategoryOutputData update(String id,
+                              CategoryInputData categoryInputData,
+                              List<MultipartFile> categoryImages,
+                              UserDetails userDetails) throws Exception;
+
+    CategoryOutputData delete(String id, UserDetails userDetails);
 }
