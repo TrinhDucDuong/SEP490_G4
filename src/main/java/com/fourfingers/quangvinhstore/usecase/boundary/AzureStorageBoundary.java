@@ -7,4 +7,5 @@ import java.util.List;
 public interface AzureStorageBoundary {
     List<String> uploadMany(List<MultipartFile> files) throws Exception;
     void deleteFile(List<String> fileUrls);
+    String uploadSingle(MultipartFile file) throws Exception;
 }
