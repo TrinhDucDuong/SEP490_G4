@@ -7,5 +7,6 @@ public enum ImageType {
     FEEDBACK,
     CATEGORY,
     COMMENT,
-    BLOG
+    BLOG,
+    PROFILE
 }

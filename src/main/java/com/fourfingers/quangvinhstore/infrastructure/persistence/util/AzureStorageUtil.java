@@ -44,16 +44,38 @@ public class AzureStorageUtil implements AzureStorageBoundary {
 
     @Override
     public void deleteFile(List<String> fileUrls) {
-        if(fileUrls == null || fileUrls.isEmpty()) return;
+        if (fileUrls == null || fileUrls.isEmpty()) return;
+
         BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
                 .connectionString(connectionString)
                 .buildClient();
         BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(containerName);
+
         for (String url : fileUrls) {
             String blobName = extractBlobNameFormUrl(url);
-            containerClient.getBlobClient(blobName).delete();
+            BlobClient blobClient = containerClient.getBlobClient(blobName);
+
+            if (blobClient.exists()) {
+                blobClient.delete();
+            }
         }
     }
+
+    @Override
+    public String uploadSingle(MultipartFile file) throws IOException {
+        BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
+                .connectionString(connectionString)
+                .buildClient();
+
+        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(containerName);
+
+        String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
+        BlobClient blobClient = containerClient.getBlobClient(fileName);
+        blobClient.upload(file.getInputStream(), file.getSize(), true);
+
+        return blobClient.getBlobUrl();
+    }
+
 
     private String extractBlobNameFormUrl(String url) {
         return url.substring(url.lastIndexOf("/") + 1);

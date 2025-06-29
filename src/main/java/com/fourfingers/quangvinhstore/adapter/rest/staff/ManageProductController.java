@@ -49,4 +49,10 @@ public class ManageProductController {
                 userDetails
         ));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable String id,
+                                    @AuthenticationPrincipal UserDetails userDetails) throws Exception {
+        return ResponseEntity.ok(productManagementInputBoundary.delete(id, userDetails));
+    }
 }

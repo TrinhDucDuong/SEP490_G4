@@ -64,8 +64,8 @@ public class AccountEntity implements UserDetails {
     )
     private List<AuthorityEntity> authorities;
 
-    @OneToMany(mappedBy = "account")
-    private List<ProfileEntity> profiles;
+    @OneToOne(mappedBy = "account")
+    private ProfileEntity profile;
 
     @OneToMany(mappedBy = "owner")
     private List<VoucherEntity> vouchers;
