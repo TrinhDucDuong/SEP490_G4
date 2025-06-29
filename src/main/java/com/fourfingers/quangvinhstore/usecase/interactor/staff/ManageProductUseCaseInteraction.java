@@ -89,11 +89,15 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
 
     @Override
     @Transactional
-    public ProductOutputData update(String id, ProductInputData productInputData, UserDetails userDetails) {
+    public ProductOutputData update(String id, ProductInputData productInputData, UserDetails userDetails) throws Exception {
         Long productId = Long.valueOf(id);
         ProductEntity productEntity = productRepository.findById(productId).orElseThrow(
                 () -> new RuntimeException("Product not found")
         );
+
+        //delete the old images
+        deleteProductImages(productEntity);
+
         productEntity.setUnitPrice(BigDecimal.valueOf(Double.parseDouble(productInputData.getUnitPrice())));
         productEntity.setProductDescription(productInputData.getProductDescription());
         productEntity.setProductName(productInputData.getProductName());
@@ -104,8 +108,13 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         productEntity.setProductVariants(updateProductVariants(productInputData, productEntity));
 
         ProductEntity savedProduct = productRepository.saveAndFlush(productEntity);
+
+        //Save the new images
+        List<Image> savedProductImages = saveProductImages(productInputData.getProductImages(),
+                productEntity);
+
         Product product = productMapper.toModel(savedProduct);
-        product.setImages(getProductImages(savedProduct));
+        product.setImages(savedProductImages);
         return productManagementOutputBoundary.convertToProductOutputData(product);
     }
 
@@ -205,5 +214,13 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         return productEntity.getProductVariants().stream()
                 .map(productVariantMapper::toModel)
                 .toList();
+    }
+
+    private void deleteProductImages(ProductEntity productEntity) {
+        List<ImageEntity> imageEntities = imageRepository.findAllByReferenceIdAndImageType(productEntity.getProductId(),
+                ImageType.PRODUCT);
+        List<String> imageUrls = imageEntities.stream().map(ImageEntity::getImageUrl).toList();
+        azureStorageBoundary.deleteFile(imageUrls);
+        imageRepository.deleteAll(imageEntities);
     }
 }
