@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import HeaderNoHover from "../../components/layout/HeaderNoHover.jsx";
 import loginBg from "../../assets/images/login-background.jpg";
+import { Link } from "react-router-dom";
 
 function ForgotPassword() {
     const [emailOrUsername, setEmailOrUsername] = useState("");
@@ -73,9 +74,9 @@ function ForgotPassword() {
                     </form>
 
                     <div className="mt-4 text-sm">
-                        <a href="/src/pages/Customer/Login" className="text-black hover:underline">
+                        <Link to="/login" className="text-black hover:underline">
                             ← Quay lại trang đăng nhập
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

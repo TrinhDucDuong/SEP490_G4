@@ -12,7 +12,7 @@ export const useFetchBrands = () => {
                 const data = await fetchBrand();
                 setBrands(data.brands || []);
             } catch (err) {
-                setError(err.message);
+                setError(err.message || "Không thể tải thương hiệu.");
             } finally {
                 setLoading(false);
             }

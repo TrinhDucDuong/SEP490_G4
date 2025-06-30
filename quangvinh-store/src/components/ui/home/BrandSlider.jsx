@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import Logodefault from '../../../assets/images/logodefault.png';
 
-const BrandSlider = ({ brands }) => {
+const BrandSlider = ({ brands = [] }) => {
     const settings = {
         dots: false,
         infinite: false,
@@ -25,11 +25,15 @@ const BrandSlider = ({ brands }) => {
         ]
     };
 
+    if (!brands.length) {
+        return <div className="text-white text-center py-8">Không có thương hiệu</div>;
+    }
+
     return (
         <div className="px-4 py-6">
             <Slider {...settings}>
-                {brands.map((brand) => (
-                    <div key={brand.brandId} className="px-2">
+                {brands.map((brand, idx) => (
+                    <div key={brand.brandId || idx} className="px-2">
                         <Link
                             to={`/products?brand=${encodeURIComponent(brand.brandName)}`}
                             className="block transition-transform duration-300 hover:scale-105 rounded-xl"
@@ -41,7 +45,7 @@ const BrandSlider = ({ brands }) => {
                                             ? brand.images[0].imageUrl
                                             : Logodefault
                                     }
-                                    alt={brand.brandName}
+                                    alt={brand.brandName || "Thương hiệu"}
                                     className="w-[178px] h-[86px] object-contain"
                                 />
                             </div>

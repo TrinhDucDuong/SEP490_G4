@@ -1,6 +1,6 @@
 import React from "react";
 
-const FilterGroup = ({ label, options, selectedOptions, onChange }) => {
+const FilterGroup = ({ label, options, selectedOptions = [], onChange }) => {
     const handleToggle = (value) => {
         if (selectedOptions.includes(value)) {
             onChange(selectedOptions.filter(item => item !== value));

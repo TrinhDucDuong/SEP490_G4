@@ -8,7 +8,6 @@ function Sidebar({ isOpen, onClose }) {
         logout();
         console.log("Đã gọi logout từ Sidebar");
         onClose();
-        window.location.href = '/login';
     };
 
     return (

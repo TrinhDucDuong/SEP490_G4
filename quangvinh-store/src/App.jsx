@@ -29,6 +29,7 @@ import Privacy from "./pages/Customer/Profile/Privacy.jsx";
 function App() {
     return (
         <AuthProvider>
+            <ToastContainer />
             <div className='flex flex-col min-h-screen'>
                 <Header />
                 <main className='flex-grow'>
@@ -54,7 +55,6 @@ function App() {
                     </Routes>
                 </main>
                 <Footer />
-                <ToastContainer />
             </div>
         </AuthProvider>
     );

@@ -17,6 +17,7 @@ const SizeFilterGroup = ({ options = [], selectedOptions = [], onChange }) => {
                     onClick={() => handleToggle(size)}
                     className={`px-2 py-1 rounded border text-sm 
                         ${selectedOptions.includes(size) ? 'bg-black text-white' : 'bg-white text-black'}`}
+                    type="button"
                 >
                     {size}
                 </button>

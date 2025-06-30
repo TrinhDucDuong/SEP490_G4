@@ -10,16 +10,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ProductScrollSlider from "../../components/ui/product/ProductScrollSlider.jsx";
 import Banner from "../../components/ui/home/Banner.jsx";
 import { motion } from "framer-motion";
+import { useMemo } from "react";
 
 function Home() {
     const { brands, loading: loadingBrands, error: errorBrands } = useFetchBrands();
-    const { categories, loading: loadingCategories, error: errorCategories } = useFetchCategories();
-    const { products, loading: loadingProducts, error: errorProducts } = useFetchProducts();
+    const { categories = [], loading: loadingCategories, error: errorCategories } = useFetchCategories();
+    const { products = [], loading: loadingProducts, error: errorProducts } = useFetchProducts();
     const {
-        productTotal: totalSoldoutProducts,
+        productTotal: totalSoldoutProducts = [],
         loadingTotal: loadingTotalSoldoutProducts,
         errorTotal: errorTotalSoldOutProduct
     } = useFetchTotalSoldOutProducts();
+
+    const topBrands = useMemo(() => brands?.slice(0, 10) || [], [brands]);
+    const trendingProducts = useMemo(() => products?.slice(0, 10) || [], [products]);
+    const hotProducts = useMemo(() => totalSoldoutProducts?.slice(0, 10) || [], [totalSoldoutProducts]);
+    const topCategories = useMemo(() => categories?.slice(0, 3) || [], [categories]);
 
     return (
         <div className="bg-[#F2F2EE] text-black">
@@ -37,7 +43,7 @@ function Home() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7 }}
                     >
-                        <BrandSlider brands={brands.slice(0, 10)} />
+                        <BrandSlider brands={topBrands} />
                     </motion.div>
                 )}
             </div>
@@ -57,14 +63,14 @@ function Home() {
                 ) : errorProducts ? (
                     <p className="text-center text-red-500">{errorProducts}</p>
                 ) : (
-                    <ProductScrollSlider products={products.slice(0, 10)} />
+                    <ProductScrollSlider products={trendingProducts} />
                 )}
             </div>
 
             {/* Danh mục */}
-            {!loadingCategories && !errorCategories && categories.length > 0 && (
+            {!loadingCategories && !errorCategories && topCategories.length > 0 && (
                 <div className="px-28 py-10 space-y-8">
-                    {categories.slice(0, 3).map((category, index) => (
+                    {topCategories.map((category, index) => (
                         <Banner
                             key={index}
                             item={category}
@@ -91,7 +97,7 @@ function Home() {
                 ) : errorTotalSoldOutProduct ? (
                     <p className="text-center text-red-500">{errorTotalSoldOutProduct}</p>
                 ) : (
-                    <ProductScrollSlider products={totalSoldoutProducts.slice(0, 10)} />
+                    <ProductScrollSlider products={hotProducts} />
                 )}
             </div>
 

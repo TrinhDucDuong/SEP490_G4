@@ -16,12 +16,16 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        if (!identifier || !password) {
+            setError('Vui lòng nhập đầy đủ thông tin');
+            return;
+        }
         setLoading(true);
         try {
             const res = await fetch('http://localhost:9999/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: identifier, password }),
+                body: JSON.stringify({ identifier, password }),
             });
 
             const data = await res.json();
@@ -41,6 +45,10 @@ const Login = () => {
 
     const googleLogin = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
+            if (!tokenResponse.credential) {
+                setError('Không nhận được thông tin xác thực Google');
+                return;
+            }
             try {
                 const res = await fetch('http://localhost:9999/auth/google-login', {
                     method: 'POST',
@@ -76,6 +84,7 @@ const Login = () => {
                         title="Đăng nhập với Google"
                         onClick={() => googleLogin()}
                         className="flex items-center justify-center gap-2 px-3 py-3  border border-gray-300 rounded-xl shadow-sm hover:bg-gray-100 transition w-full"
+                        disabled={loading}
                     >
                         <FcGoogle size={20}/>
                         <span className="text-sm font-medium text-gray-700">Đăng nhập với Google</span>
@@ -106,6 +115,7 @@ const Login = () => {
 
                         <button
                             className="w-full bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition"
+                            disabled={loading}
                         >
                             {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
                         </button>

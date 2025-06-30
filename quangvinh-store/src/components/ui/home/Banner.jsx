@@ -13,7 +13,7 @@ function Banner({ item, link = "/" }) {
 
     return (
         <div className="relative group w-full h-[550px] overflow-hidden rounded-2xl shadow-lg">
-            <Link to={link} className="block w-full h-full">
+            <Link to={link} className="block w-full h-full" title={title}>
                 <img
                     src={imageUrl}
                     alt={title}

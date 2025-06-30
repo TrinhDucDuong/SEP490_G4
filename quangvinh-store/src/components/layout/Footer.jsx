@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faYoutube, faTiktok } from '@fortawesome/free-brands-svg-icons';
-import {faCreditCard, faMoneyBill, faUniversity} from "@fortawesome/free-solid-svg-icons";
+import { faCreditCard, faMoneyBill, faUniversity } from "@fortawesome/free-solid-svg-icons";
 
 function Footer() {
     return (
@@ -9,7 +9,7 @@ function Footer() {
                 <div className="text-yellow-400 font-bold">
                     Hệ Thống Cửa Hàng
                 </div>
-                <div className="my-4">
+                <address className="not-italic my-4">
                     Địa chỉ:
                     <div className="ml-4">
                         <ul className="list-disc list-inside">
@@ -24,12 +24,12 @@ function Footer() {
                         </ul>
                     </div>
                     Email: <a href="mailto:support@quangvinstore.vn" className="text-blue-400">support@quangvinstore.vn</a>
-                </div>
-                <div className="mt-2 my-4 flex space-x-2 gap-4">
-                    <div className="">
+                </address>
+                <div className="mt-2 my-4 flex space-x-2 gap-4" aria-label="Mạng xã hội">
+                    <div>
                         <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
-                        <FontAwesomeIcon icon={faFacebook} className="text-blue-600 hover:text-blue-400" />
-                    </a>
+                            <FontAwesomeIcon icon={faFacebook} className="text-blue-600 hover:text-blue-400" />
+                        </a>
                     </div>
                     <div>
                         <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
@@ -46,12 +46,9 @@ function Footer() {
                             <FontAwesomeIcon icon={faTiktok} className="text-white hover:text-gray-400" />
                         </a>
                     </div>
-
-
-
                 </div>
             </div>
-            <div>
+            <nav aria-label="Chính sách khách hàng">
                 <div className="text-yellow-400 font-bold">
                     Chính Sách Cho Khách Hàng
                 </div>
@@ -64,8 +61,8 @@ function Footer() {
                     <li>Chính Sách Bảo Mật</li>
                     <li>Chính Sách Tích Điểm & Đổi Điểm Thưởng</li>
                 </ul>
-            </div>
-            <div>
+            </nav>
+            <nav aria-label="Hướng dẫn khách hàng">
                 <div className="text-yellow-400 font-bold">
                     Hướng Dẫn Cho Khách Hàng
                 </div>
@@ -81,7 +78,7 @@ function Footer() {
                     <div><FontAwesomeIcon icon={faCreditCard} /></div>
                     <div><FontAwesomeIcon icon={faMoneyBill} /></div>
                 </div>
-            </div>
+            </nav>
         </footer>
     );
 }

@@ -1,5 +1,5 @@
 import { useFetchBanners } from "../../../hooks/useFetchBanners.js";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import bannerDefault from "../../../assets/images/meobanner.png";
 
 function Carousel() {
@@ -7,7 +7,13 @@ function Carousel() {
     const containerRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
 
+    useEffect(() => {
+        // Reset index nếu số lượng banner thay đổi
+        if (currentIndex >= banners.length) setCurrentIndex(0);
+    }, [banners.length, currentIndex]);
+
     const scrollToSlide = (index) => {
+        if (index === currentIndex) return; // Không scroll nếu đã ở slide này
         const el = document.getElementById(`slide-${index}`);
         if (el) {
             el.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
@@ -17,6 +23,13 @@ function Carousel() {
 
     if (loading) return <div className="text-center py-10">Đang tải banner...</div>;
     if (error) return <div className="text-center text-red-500 py-10">Lỗi: {error}</div>;
+    if (!banners.length) {
+        return (
+            <div className="w-full flex justify-center items-center">
+                <img src={bannerDefault} alt="Banner mặc định" className="w-full h-[500px] object-cover" />
+            </div>
+        );
+    }
 
     return (
         <div className="w-full flex justify-center items-center">
