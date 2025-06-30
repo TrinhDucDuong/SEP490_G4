@@ -1,36 +1,53 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useFetchFilteredProducts } from '../../hooks/useFetchFilteredProducts.js';
 import ProductCard from '../../components/ui/product/ProductCard.jsx';
 import ProductFilter from '../../components/ui/product/ProductFilter.jsx';
 import Banner from '../../components/ui/home/Banner.jsx';
 import { useFetchCategories } from '../../hooks/useFetchCategories.js';
+import Breadcrumb from "../../components/common/Breadcrumb.jsx";
+
+const parseSearchParamsToFilterOptions = (searchParams) => {
+    const getArrayParam = (key) => {
+        const value = searchParams.get(key);
+        return value ? value.split(',') : [];
+    };
+
+    return {
+        genders: getArrayParam('genders'),
+        brands: getArrayParam('brands'),
+        materials: getArrayParam('materials'),
+        sizes: getArrayParam('sizes'),
+        colors: getArrayParam('colors'),
+        categories: getArrayParam('categories'),
+        priceMin: parseInt(searchParams.get('priceMin')) || 150000,
+        priceMax: parseInt(searchParams.get('priceMax')) || 3000000,
+        sortBy: searchParams.get('sortBy') || 'createdAt',
+        sortDirection: searchParams.get('sortDirection') || 'desc',
+        pageNumber: parseInt(searchParams.get('pageNumber')) || 0,
+        pageSize: parseInt(searchParams.get('pageSize')) || 30,
+    };
+};
 
 const ProductList = () => {
     const { categories, loading: categoriesLoading, error: categoriesError } = useFetchCategories();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const filterOptions = parseSearchParamsToFilterOptions(searchParams);
 
-    const [filterOptions, setFilterOptions] = useState({
-        genders: [],
-        brands: [],
-        collections: [],
-        materials: [],
-        sizes: [],
-        colors: [],
-        categories: [],
-        sortBy: 'createdAt',
-        sortDirection: 'desc',
-        pageNumber: 0,
-        pageSize: 10
+    const [sortOption, setSortOption] = useState(() => {
+        if (filterOptions.sortBy === 'unitPrice' && filterOptions.sortDirection === 'asc') return 'price-low-to-high';
+        if (filterOptions.sortBy === 'unitPrice' && filterOptions.sortDirection === 'desc') return 'price-high-to-low';
+        if (filterOptions.sortBy === 'totalSoldOut') return 'bestseller';
+        return 'newest';
     });
 
-    const [sortOption, setSortOption] = useState('price-low-to-high');
     const productListRef = useRef(null);
 
     const {
         products,
         loading: productsLoading,
         error: productsError
-    } = useFetchFilteredProducts(filterOptions);
+    } = useFetchFilteredProducts();
 
     useEffect(() => {
         if (products.length > 0) {
@@ -39,19 +56,31 @@ const ProductList = () => {
     }, [products]);
 
     useEffect(() => {
-        if (sortOption === 'price-low-to-high') {
-            setFilterOptions(prev => ({
-                ...prev,
-                sortBy: 'unitPrice',
-                sortDirection: 'asc'
-            }));
-        } else if (sortOption === 'price-high-to-low') {
-            setFilterOptions(prev => ({
-                ...prev,
-                sortBy: 'unitPrice',
-                sortDirection: 'desc'
-            }));
+        const updated = Object.fromEntries(searchParams.entries());
+
+        switch (sortOption) {
+            case 'price-low-to-high':
+                updated.sortBy = 'unitPrice';
+                updated.sortDirection = 'asc';
+                break;
+            case 'price-high-to-low':
+                updated.sortBy = 'unitPrice';
+                updated.sortDirection = 'desc';
+                break;
+            case 'newest':
+                updated.sortBy = 'createdAt';
+                updated.sortDirection = 'desc';
+                break;
+            case 'bestseller':
+                updated.sortBy = 'totalSoldOut';
+                updated.sortDirection = 'desc';
+                break;
+            default:
+                break;
         }
+
+        updated.pageNumber = 0;
+        setSearchParams(updated);
     }, [sortOption]);
 
     if (productsLoading || categoriesLoading) {
@@ -63,7 +92,8 @@ const ProductList = () => {
     }
 
     return (
-        <div className="bg-[#FFF] min-h-screen px-4 sm:px-8 py-12">
+        <div className="bg-[#FFF] min-h-screen px-24 py-12">
+
             {products.length > 0 && (
                 <Banner
                     index={1}
@@ -71,31 +101,28 @@ const ProductList = () => {
                     link={`/products/${products[0].productId}`}
                 />
             )}
-
-            <div className="flex flex-col text-sm sm:flex-row items-center mb-6 opacity-50 gap-2 mt-8">
-                <Link className="text-black hover:text-yellow-400 transition" to="/home">TRANG CHỦ</Link>
-                <span>\</span>
-                <Link className="text-black hover:text-yellow-400 transition" to="/products">SẢN PHẨM</Link>
-            </div>
-
+            <Breadcrumb
+                items={[
+                    { label: "Trang chủ", to: "/" },
+                    { label: "Sản phẩm", to: "/cart" },
+                ]}
+            />
             <h1 className="text-5xl font-bold text-gray-800 mb-6">Tất cả sản phẩm</h1>
 
             <div className="container mx-auto flex gap-6">
                 <div className="w-full lg:w-1/4">
-                    <ProductFilter
-                        categories={categories}
-                        filterOptions={filterOptions}
-                        setFilterOptions={setFilterOptions}
-                    />
+                    <ProductFilter categories={categories} />
                 </div>
 
                 <div className="w-full lg:w-3/4">
-                    <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+                    <div className="flex justify-end mb-6">
                         <select
                             value={sortOption}
-                            onChange={e => setSortOption(e.target.value)}
+                            onChange={(e) => setSortOption(e.target.value)}
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
+                            <option value="newest">Mới nhất</option>
+                            <option value="bestseller">Bán chạy nhất</option>
                             <option value="price-low-to-high">Giá: Thấp đến Cao</option>
                             <option value="price-high-to-low">Giá: Cao đến Thấp</option>
                         </select>

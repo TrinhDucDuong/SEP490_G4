@@ -7,7 +7,7 @@ function ProductScrollSlider({ products }) {
             <div className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory px-4 gap-4 scrollbar-hide">
                 {products.map((product, index) => (
                     <Link
-                        to={`/products/${product.id}`}
+                        to={`/products/${product.productId}`}
                         key={index}
                         className="flex-shrink-0 snap-start"
                     >

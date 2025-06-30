@@ -4,22 +4,28 @@ import BrandSlider from '../../components/ui/home/BrandSlider.jsx';
 import { useFetchProducts } from "../../hooks/useFetchAllProducts.js";
 import { useFetchBrands } from "../../hooks/useFetchBrands.js";
 import { useFetchCategories } from "../../hooks/useFetchCategories.js";
+import { useFetchTotalSoldOutProducts } from "../../hooks/useFetchTotalSoldOutProducts.js";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ProductScrollSlider from "../../components/ui/product/ProductScrollSlider.jsx";
 import Banner from "../../components/ui/home/Banner.jsx";
 import { motion } from "framer-motion";
 
-
 function Home() {
     const { brands, loading: loadingBrands, error: errorBrands } = useFetchBrands();
     const { categories, loading: loadingCategories, error: errorCategories } = useFetchCategories();
     const { products, loading: loadingProducts, error: errorProducts } = useFetchProducts();
+    const {
+        productTotal: totalSoldoutProducts,
+        loadingTotal: loadingTotalSoldoutProducts,
+        errorTotal: errorTotalSoldOutProduct
+    } = useFetchTotalSoldOutProducts();
 
     return (
         <div className="bg-[#F2F2EE] text-black">
             <Carousel />
 
+            {/* Thương hiệu */}
             <div className="w-full px-40 bg-black">
                 {loadingBrands ? (
                     <p className="text-center text-white py-4">Đang tải thương hiệu...</p>
@@ -55,14 +61,15 @@ function Home() {
                 )}
             </div>
 
-            {!loadingCategories && !errorCategories && (
+            {/* Danh mục */}
+            {!loadingCategories && !errorCategories && categories.length > 0 && (
                 <div className="px-28 py-10 space-y-8">
                     {categories.slice(0, 3).map((category, index) => (
                         <Banner
                             key={index}
                             item={category}
                             link={`/products?category=${encodeURIComponent(
-                                category.name?.toLowerCase() || "all"
+                                category.categoryName?.toLowerCase() || "all"
                             )}`}
                         />
                     ))}
@@ -79,17 +86,17 @@ function Home() {
                         Xem thêm <FontAwesomeIcon className="ml-2" icon={faArrowRight} />
                     </Link>
                 </div>
-                {loadingProducts ? (
+                {loadingTotalSoldoutProducts ? (
                     <p className="text-center">Đang tải sản phẩm...</p>
-                ) : errorProducts ? (
-                    <p className="text-center text-red-500">{errorProducts}</p>
+                ) : errorTotalSoldOutProduct ? (
+                    <p className="text-center text-red-500">{errorTotalSoldOutProduct}</p>
                 ) : (
-                    <ProductScrollSlider products={products.slice(10, 20)} />
+                    <ProductScrollSlider products={totalSoldoutProducts.slice(0, 10)} />
                 )}
             </div>
 
             <div className="py-20">
-                {/* Phần này có thể dùng để hiển thị tin tức trong tương lai */}
+                {/* Tin tức hoặc nội dung thêm ở đây */}
             </div>
         </div>
     );

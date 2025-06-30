@@ -4,9 +4,6 @@ import { AuthContext } from '../../context/AuthContext.jsx';
 
 function Sidebar({ isOpen, onClose }) {
     const { user, logout } = useContext(AuthContext);
-
-    console.log("Trạng thái user trong Sidebar:", user);
-
     const handleLogout = () => {
         logout();
         console.log("Đã gọi logout từ Sidebar");

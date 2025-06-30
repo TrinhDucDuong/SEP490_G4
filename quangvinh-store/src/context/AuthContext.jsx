@@ -1,35 +1,40 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export let AuthContext;
-AuthContext = createContext();
+// eslint-disable-next-line react-refresh/only-export-components
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [token, setToken] = useState(null);
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            const parsedUser = JSON.parse(storedUser);
-            setUser(parsedUser);
-            console.log("Khôi phục user từ localStorage:", parsedUser);
-        }
-    }, []);
-
-    const login = (userData) => {
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
-        console.log("Đăng nhập - User được lưu:", userData);
+    const login = (account, token) => {
+        setUser(account);
+        setToken(token);
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('auth_user', JSON.stringify(account));
     };
 
     const logout = () => {
         setUser(null);
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        console.log("Đăng xuất - User và token đã bị xóa");
+        setToken(null);
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
+        navigate('/login');
     };
 
+    useEffect(() => {
+        const savedToken = localStorage.getItem('auth_token');
+        const savedUser = localStorage.getItem('auth_user');
+        if (savedToken && savedUser) {
+            setToken(savedToken);
+            setUser(JSON.parse(savedUser));
+        }
+    }, []);
+
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, token, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
