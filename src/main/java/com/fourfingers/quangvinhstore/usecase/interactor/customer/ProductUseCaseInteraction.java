@@ -15,15 +15,12 @@ import com.fourfingers.quangvinhstore.usecase.boundary.customer.ProductOutputBou
 import com.fourfingers.quangvinhstore.usecase.data.customer.SearchProductInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ListProductOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ProductDetailsOutputData;
-import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
