@@ -1,6 +1,7 @@
 package com.fourfingers.quangvinhstore.domain.model.customer;
 
 import com.fourfingers.quangvinhstore.domain.model.Account;
+import com.fourfingers.quangvinhstore.domain.model.Image;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,9 +12,10 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class StarRate {
-    private Account account;
     private Long starRate;
     private String comment;
     private ProductVariant productVariant;
     private LocalDateTime createdAt;
+    private String profileName;
+    private Image profileImage;
 }
