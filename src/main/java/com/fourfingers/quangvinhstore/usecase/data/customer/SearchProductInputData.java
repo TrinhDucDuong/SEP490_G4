@@ -15,5 +15,6 @@ public class SearchProductInputData {
     private List<String> brandIds;
     private List<String> productSizes;
     private List<String> colorHexes;
-    private BigDecimal price;
+    private BigDecimal maxPrice;
+    private BigDecimal minPrice;
 }
