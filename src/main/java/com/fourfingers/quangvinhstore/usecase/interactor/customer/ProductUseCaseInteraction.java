@@ -15,18 +15,14 @@ import com.fourfingers.quangvinhstore.usecase.boundary.customer.ProductOutputBou
 import com.fourfingers.quangvinhstore.usecase.data.customer.SearchProductInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ListProductOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ProductDetailsOutputData;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,23 +46,14 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
         // Create a Pageable object with page number, size and sort
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNumber), Integer.parseInt(pageSize));
 
-        Specification<ProductEntity> specification = buildFilter(searchProductInputData);
-        // Build specification by combining filter conditions and star rating sort
-        if(sortBy.equalsIgnoreCase("starRateAvg")) {
-            specification = specification.and(buildSortByAvgStarRage(sortDirection));
-        } else if(sortBy.equalsIgnoreCase("unitPrice")) {
-            specification = specification.and(buildSortByUnitPrice(sortDirection));
-        } else if(sortBy.equalsIgnoreCase("createdAt")) {
-            specification = specification.and(buildSortByCreatedAt());
-        } else if(sortBy.equalsIgnoreCase("numberOfSoldOut")) {
-            specification = specification.and(buildSortByNumberOfSoldOut());
-        }
-
-        // Execute a query with specification and pageable, map results to a domain model
-        List<Product> products = productRepository.findAll(specification, pageable)
-                .stream()
-                .map(this::getProductInformation)
-                .toList();
+        List<Product> products = getSearchResult(
+                productRepository.searchProduct(
+                        searchProductInputData.getMinPrice(), searchProductInputData.getMaxPrice(),
+                        searchProductInputData.getCategoryIds(), searchProductInputData.getBrandIds(),
+                        searchProductInputData.getColorHexes(), searchProductInputData.getProductSizes(),
+                        sortDirection, sortBy, pageable
+                ).getContent()
+        );
 
         // Convert a list of products to output data
         return productOutputBoundary.convertToListProductOutputData(products);
@@ -84,108 +71,9 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 getProductSizes(productEntity),
                 getProductColors(productEntity));
     }
-
-    private Specification<ProductEntity> buildFilter(SearchProductInputData searchProductInputData) {
-        return (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.isTrue(root.get("isActive")));
-
-            if (!CollectionUtils.isEmpty(searchProductInputData.getCategoryIds())) {
-                List<Long> categoryUuids = searchProductInputData.getCategoryIds()
-                        .stream()
-                        .map(Long::parseLong)
-                        .toList();
-                predicates.add(root
-                        .get("category")
-                        .get("categoryId")
-                        .in(categoryUuids));
-            }
-
-            if (!CollectionUtils.isEmpty(searchProductInputData.getBrandIds())) {
-                List<Long> brandUuids = searchProductInputData.getBrandIds()
-                        .stream()
-                        .map(Long::parseLong)
-                        .toList();
-                predicates.add(root
-                        .get("brand")
-                        .get("brandId")
-                        .in(brandUuids));
-            }
-
-            if (!CollectionUtils.isEmpty(searchProductInputData.getProductSizes())) {
-                Join<ProductEntity, ProductVariantEntity> variantJoin = root
-                        .join("productVariants");
-                predicates.add(variantJoin
-                        .get("productSize")
-                        .in(searchProductInputData.getProductSizes()));
-
-            }
-
-            if (!CollectionUtils.isEmpty(searchProductInputData.getColorHexes())) {
-                Join<ProductEntity, ProductVariantEntity> variantJoin = root
-                        .join("productVariants");
-                predicates.add(variantJoin
-                        .get("color")
-                        .get("colorHex")
-                        .in(searchProductInputData.getColorHexes()));
-            }
-
-            if (searchProductInputData.getPrice() != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("unitPrice"),
-                        searchProductInputData.getPrice()));
-            }
-
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
-    }
-
-    private Specification<ProductEntity> buildSortByAvgStarRage(String sortDirection) {
-        return ((root, query, criteriaBuilder) -> {
-            Join<ProductEntity, ProductVariantEntity> productEntityProductVariantEntityJoin = root.join(
-                    "productVariants",
-                    JoinType.LEFT);
-            Join<ProductVariantEntity, StarRateEntity> productEntityStarRateEntityJoin =
-                    productEntityProductVariantEntityJoin.join("starRates");
-            query.groupBy(root.get("productId"));
-            query = sortDirection.equalsIgnoreCase("asc") ?
-                    query.orderBy(criteriaBuilder.asc(criteriaBuilder.avg(
-                            productEntityStarRateEntityJoin.get("starRate")))) :
-                    query.orderBy(criteriaBuilder.desc(criteriaBuilder.avg(
-                            productEntityStarRateEntityJoin.get("starRate"))));
-            return criteriaBuilder.conjunction();
-        });
-    }
-
-    private Specification<ProductEntity> buildSortByUnitPrice(String sortDirection) {
-        return ((root, query, criteriaBuilder) -> {
-            query = sortDirection.equalsIgnoreCase("asc") ?
-                    query.orderBy(criteriaBuilder.asc(root.get("unitPrice"))) :
-                    query.orderBy(criteriaBuilder.desc(root.get("unitPrice")));
-            return criteriaBuilder.conjunction();
-        });
-    }
-
-    private Specification<ProductEntity> buildSortByCreatedAt() {
-        return ((root, query, criteriaBuilder) -> {
-            query.orderBy(criteriaBuilder.desc(root.get("createdAt")));
-            return criteriaBuilder.conjunction();
-        });
-    }
-
-    private Specification<ProductEntity> buildSortByNumberOfSoldOut() {
-        return ((root, query, criteriaBuilder) -> {
-            Join<ProductEntity, ProductVariantEntity> variantJoin = root.join("productVariants",
-                    JoinType.LEFT);
-            Join<ProductVariantEntity, OrderDetailsEntity> orderDetailJoin = variantJoin.join("orderDetails",
-                    JoinType.LEFT);
-
-            query.groupBy(root.get("productId"));
-            query.orderBy(criteriaBuilder.desc(criteriaBuilder.sum(orderDetailJoin.get("quantity"))));
-
-            return criteriaBuilder.conjunction();
-        });
-    }
-    
+    /*
+    *   Get total sold out of a product
+    */
     private Product getProductInformation(ProductEntity productEntity) {
         Product product = productMapper.toModel(productEntity);
         Double starRateAvg = productEntity.getProductVariants().stream()
@@ -211,7 +99,10 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 .mapToLong(OrderDetailsEntity::getQuantity)
                 .sum();
     }
-    
+
+    /*
+    * Get product size
+    */
     private List<String> getProductSizes(ProductEntity productEntity) {
         return productEntity.getProductVariants().stream()
                 .map(productVariantEntity -> {
@@ -220,6 +111,9 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 .toList();
     }
 
+    /*
+    * Get product colors
+    */
     private List<Color> getProductColors(ProductEntity productEntity) {
         return productEntity.getProductVariants().stream()
                 .map(productVariantEntity -> {
@@ -228,5 +122,28 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                             .build();
                 })
                 .toList();
+    }
+
+    private List<Product> getSearchResult(List<Object[]> result) {
+        return result.stream()
+                .map(row -> {
+                    Product product =  Product.builder()
+                            .productId(((Number) row[0]).longValue())
+                            .productName((String) row[1])
+                            .productDescription((String) row[2])
+                            .unitPrice((BigDecimal) row[3])
+                            .starRateAvg(((Number) row[4]).doubleValue())
+                            .totalSoldOut(((Number) row[5]).longValue())
+                            .build();
+                    product.setImages(
+                            imageRepository.findAllByReferenceIdAndImageType(product.getProductId(),
+                                    ImageType.PRODUCT)
+                                    .stream()
+                                    .map(imageMapper::toModel)
+                                    .toList()
+                    );
+                    return product;
+                }
+                ).toList();
     }
 }

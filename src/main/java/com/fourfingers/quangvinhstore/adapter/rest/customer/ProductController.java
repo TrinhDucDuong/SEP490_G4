@@ -21,13 +21,14 @@ public class ProductController {
                                             @RequestParam(required = false) List<String> brandIds,
                                             @RequestParam(required = false) List<String> colorHexes,
                                             @RequestParam(required = false) List<String> productSizes,
-                                            @RequestParam(required = false) BigDecimal price,
+                                            @RequestParam(required = false) BigDecimal maxPrice,
+                                            @RequestParam(required = false, defaultValue = "0") BigDecimal minPrice,
                                             @RequestParam(defaultValue = "desc") String sortDirection,
                                             @RequestParam(defaultValue = "createdAt") String sortBy,
                                             @RequestParam(defaultValue = "0") String pageNumber,
                                             @RequestParam(defaultValue = "20") String pageSize) {
         SearchProductInputData searchProductInputData = new SearchProductInputData(
-                categoryIds, brandIds, productSizes, colorHexes, price
+                categoryIds, brandIds, productSizes, colorHexes, maxPrice, minPrice
         );
         return ResponseEntity.ok(productInputBoundary.search(searchProductInputData, sortDirection, sortBy,
                 pageNumber,
