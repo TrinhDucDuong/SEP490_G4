@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./PriceRangeFilter.css";
 
 const PriceRangeFilter = ({ min = 0, max = 1000000, values = [0, 1000000], onChange = () => {} }) => {
@@ -12,17 +12,17 @@ const PriceRangeFilter = ({ min = 0, max = 1000000, values = [0, 1000000], onCha
         setMaxVal(newMax);
     }, [values, min, max]);
 
-    const handleMinChange = (e) => {
+    const handleMinChange = useCallback((e) => {
         const val = Math.min(Number(e.target.value), maxVal - 100000);
         setMinVal(val);
         onChange([val, maxVal]);
-    };
+    }, [maxVal, onChange]);
 
-    const handleMaxChange = (e) => {
+    const handleMaxChange = useCallback((e) => {
         const val = Math.max(Number(e.target.value), minVal + 100000);
         setMaxVal(val);
         onChange([minVal, val]);
-    };
+    }, [minVal, onChange]);
 
     // Tính toán phần trăm cho slider-range, đảm bảo không chia cho 0
     const rangeLeft = max > min ? ((minVal - min) / (max - min)) * 100 : 0;
@@ -43,6 +43,7 @@ const PriceRangeFilter = ({ min = 0, max = 1000000, values = [0, 1000000], onCha
                     value={minVal}
                     onChange={handleMinChange}
                     className="thumb thumb-left"
+                    aria-label="Giá tối thiểu"
                 />
                 <input
                     type="range"
@@ -52,6 +53,7 @@ const PriceRangeFilter = ({ min = 0, max = 1000000, values = [0, 1000000], onCha
                     value={maxVal}
                     onChange={handleMaxChange}
                     className="thumb thumb-right"
+                    aria-label="Giá tối đa"
                 />
                 <div className="slider-track" />
                 <div

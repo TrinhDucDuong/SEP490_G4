@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchProducts} from '../utils/api/ProductAPI.js';
+import { fetchProducts } from '../utils/api/ProductAPI.js';
 
 export const useFetchProducts = () => {
     const [products, setProducts] = useState([]);
@@ -11,9 +11,9 @@ export const useFetchProducts = () => {
             setLoading(true);
             try {
                 const data = await fetchProducts();
-                setProducts(data);
+                setProducts(data.products || []);
             } catch (err) {
-                setError('Không thể tải sản phẩm. Vui lòng thử lại sau.');
+                setError(err.message || 'Không thể tải sản phẩm. Vui lòng thử lại sau.');
             } finally {
                 setLoading(false);
             }
@@ -21,7 +21,7 @@ export const useFetchProducts = () => {
         getProducts();
     }, []);
 
-
+    console.log('Products:', products);
     return { products, loading, error };
 };
 

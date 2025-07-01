@@ -1,6 +1,6 @@
 import React from "react";
 
-const ColorFilterGroup = ({ colors, selectedColors, onChange }) => {
+const ColorFilterGroup = ({ colors = [], selectedColors = [], onChange }) => {
     const handleToggle = (color) => {
         if (selectedColors.includes(color)) {
             onChange(selectedColors.filter(c => c !== color));
@@ -19,6 +19,7 @@ const ColorFilterGroup = ({ colors, selectedColors, onChange }) => {
                         ${selectedColors.includes(color) ? 'ring-2 ring-black' : 'ring-0'}`}
                     style={{ backgroundColor: color }}
                     title={color}
+                    type="button"
                 />
             ))}
         </div>

@@ -12,7 +12,7 @@ export const useFetchBanners = () => {
                 const data = await fetchBanner();
                 setBanners(data.bannerImages || []);
             } catch (err) {
-                setError(err.message);
+                setError(err.message || "Không thể tải banner.");
             } finally {
                 setLoading(false);
             }
