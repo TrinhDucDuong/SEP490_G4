@@ -59,6 +59,7 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/brand").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/blog").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/category").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/product").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/star-rate").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/banner").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/feedback").permitAll();
@@ -70,6 +71,9 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.POST, "/staff/category").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/profile").permitAll();
                     auth.requestMatchers(HttpMethod.PUT, "/profile").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/signup").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/images/**").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/staff/product").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
                     auth.anyRequest().authenticated();
                 })

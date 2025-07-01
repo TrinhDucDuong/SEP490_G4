@@ -19,6 +19,8 @@ public class Product {
     private Double starRateAvg;
     private List<Image> images;
     private Long totalSoldOut;
+    private Brand brand;
+    private Category category;
 
     public Product(Long productId, String productName, String productDescription, BigDecimal unitPrice,
                    Double starRateAvg, Long totalSoldOut) {

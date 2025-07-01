@@ -13,4 +13,7 @@ public class Account {
     private Long accountId;
     private String username;
     private String email;
+    private Boolean isActive;
+    private List<Authority> authorities;
+    private List<CartDetails> cartDetails;
 }

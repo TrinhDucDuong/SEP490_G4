@@ -7,29 +7,27 @@ import com.fourfingers.quangvinhstore.infrastructure.repository.StoryRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.StoryEntity;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.StoryManagementInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.StoryManagementOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.staff.StoryInputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.ListStoryOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.StoryInputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.StoryOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ManageStoryUseCaseInteraction implements StoryManagementInputBoundary {
     private final StoryRepository storyRepository;
     private final StoryManagementOutputBoundary storyManagementOutputBoundary;
-    private final StoryStaffMapper storyMapper;
+    private final StoryStaffMapper storyStaffMapper;
+
     @Override
     public ListStoryOutputData getAllStory() {
         return storyManagementOutputBoundary.convertToListStoryOutputData(
-                List.of(storyRepository.findAllByIsActiveTrue()
+                storyRepository.findAllByIsActiveTrue()
                         .stream()
-                        .map(storyMapper::toModel)
-                        .toArray(Story[]::new)
-                )
+                        .map(storyStaffMapper::toModel)
+                        .toList()
         );
     }
 
@@ -38,7 +36,7 @@ public class ManageStoryUseCaseInteraction implements StoryManagementInputBounda
         try {
             Long storyId = Long.parseLong(id);
             return storyManagementOutputBoundary.convertToStoryOutputData(
-                    storyMapper.toModel(
+                    storyStaffMapper.toModel(
                             storyRepository.findById(storyId).orElseThrow(() -> new StoryNotFoundException("Story not found"))
                     )
             );
@@ -54,7 +52,7 @@ public class ManageStoryUseCaseInteraction implements StoryManagementInputBounda
             StoryEntity storyEntity = storyRepository.findByStoryIdAndIsActiveTrue(storyId)
                     .orElseThrow(() -> new StoryNotFoundException("Story's not found"));
             storyEntity.setIsActive(false);
-            Story deletedStory = storyMapper.toModel(storyRepository.save(storyEntity));
+            Story deletedStory = storyStaffMapper.toModel(storyRepository.save(storyEntity));
             return storyManagementOutputBoundary.convertToStoryOutputData(deletedStory);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid story id");
@@ -63,14 +61,14 @@ public class ManageStoryUseCaseInteraction implements StoryManagementInputBounda
 
     @Override
     public StoryOutputData saveStory(String id, StoryInputData inputData) {
-        if(id != null) {
+        if (id != null) {
             try {
                 Long storyId = Long.parseLong(id);
                 StoryEntity storyEntity = storyRepository.findByStoryIdAndIsActiveTrue(storyId)
                         .orElseThrow(StoryNotFoundException::new);
                 storyEntity.setTitle(inputData.getTitle());
                 storyEntity.setContent(inputData.getContent());
-                Story updatedStory = storyMapper.toModel(storyRepository.save(storyEntity));
+                Story updatedStory = storyStaffMapper.toModel(storyRepository.save(storyEntity));
                 return storyManagementOutputBoundary.convertToStoryOutputData(updatedStory);
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Invalid story id");
@@ -81,7 +79,7 @@ public class ManageStoryUseCaseInteraction implements StoryManagementInputBounda
                     .content(inputData.getContent())
                     .isActive(true)
                     .build();
-            Story addedStory = storyMapper.toModel(storyRepository.save(storyEntity));
+            Story addedStory = storyStaffMapper.toModel(storyRepository.save(storyEntity));
             return storyManagementOutputBoundary.convertToStoryOutputData(addedStory);
         }
     }

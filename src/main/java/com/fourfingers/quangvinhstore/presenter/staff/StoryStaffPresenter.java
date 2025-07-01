@@ -18,6 +18,6 @@ public class StoryStaffPresenter implements StoryManagementOutputBoundary {
 
     @Override
     public ListStoryOutputData convertToListStoryOutputData(List<Story> stories) {
-        return null;
+        return new ListStoryOutputData(stories);
     }
 }

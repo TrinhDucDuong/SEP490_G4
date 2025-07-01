@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer;
 
-import com.fourfingers.quangvinhstore.domain.model.customer.ProductVariant;
+import com.fourfingers.quangvinhstore.domain.model.ProductVariant;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductVariantEntity;
 import org.mapstruct.Mapper;
 
