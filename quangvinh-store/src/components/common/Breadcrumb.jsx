@@ -6,7 +6,7 @@ const Breadcrumb = React.memo(({ items = [] }) => {
 
     return (
         <nav
-            className="flex px-5 py-3 text-gray-700 bg-gray-50 dark:bg-gray-800"
+            className="flex px-5 py-3 text-gray-700 bg-gray-50 dark:bg-gray-800 rounded-full"
             aria-label="Breadcrumb"
         >
             <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">

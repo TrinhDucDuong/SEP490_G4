@@ -1,37 +1,33 @@
-import React, { createContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useEffect, useState } from 'react';
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
-    const navigate = useNavigate();
 
-    const login = (account, token) => {
-        setUser(account);
-        setToken(token);
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('auth_user', JSON.stringify(account));
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        const storedToken = localStorage.getItem('token');
+        if (storedUser && storedToken) {
+            setUser(JSON.parse(storedUser));
+            setToken(storedToken);
+        }
+    }, []);
+
+    const login = (userData, jwtToken) => {
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('token', jwtToken);
+        setUser(userData);
+        setToken(jwtToken);
     };
 
     const logout = () => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
         setUser(null);
         setToken(null);
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('auth_user');
-        navigate('/login');
     };
-
-    useEffect(() => {
-        const savedToken = localStorage.getItem('auth_token');
-        const savedUser = localStorage.getItem('auth_user');
-        if (savedToken && savedUser) {
-            setToken(savedToken);
-            setUser(JSON.parse(savedUser));
-        }
-    }, []);
 
     return (
         <AuthContext.Provider value={{ user, token, login, logout }}>

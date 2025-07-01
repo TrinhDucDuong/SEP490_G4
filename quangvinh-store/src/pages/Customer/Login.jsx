@@ -16,20 +16,24 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
         if (!identifier || !password) {
             setError('Vui lòng nhập đầy đủ thông tin');
             return;
         }
+
         setLoading(true);
         try {
             const res = await fetch('http://localhost:9999/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ identifier, password }),
+                body: JSON.stringify({
+                    username: identifier,
+                    password: password,
+                }),
             });
 
             const data = await res.json();
-            console.log('Login Response:', data);
             if (res.ok && data.token) {
                 await login(data.account, data.token);
                 navigate('/');
@@ -42,6 +46,7 @@ const Login = () => {
             setLoading(false);
         }
     };
+
 
     const googleLogin = useGoogleLogin({
         onSuccess: async (tokenResponse) => {

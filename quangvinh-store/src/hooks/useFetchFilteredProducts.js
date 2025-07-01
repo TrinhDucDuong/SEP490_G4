@@ -1,31 +1,34 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
 export const useFetchFilteredProducts = () => {
     const [products, setProducts] = useState([]);
+    const [totalItems, setTotalItems] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchParams] = useSearchParams();
 
+    const queryString = useMemo(() => searchParams.toString(), [searchParams]);
+
     useEffect(() => {
-        const fetchProducts = async () => {
+        const fetchFiltered = async () => {
             setLoading(true);
+            setError(null);
             try {
-                const query = searchParams.toString();
-                const response = await axios.get(`http://localhost:9999/product?${query}`);
+                const response = await axios.get(`http://localhost:9999/product?${queryString}`);
                 setProducts(response.data.products || []);
-                setError(null);
+                setTotalItems(response.data.totalItems || 0);
             } catch (err) {
-                console.error('Lỗi gọi API:', err);
-                setError('Lỗi khi gọi API lọc sản phẩm.');
+                console.error('Lỗi API:', err);
+                setError('Lỗi khi lọc sản phẩm.');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchProducts();
-    }, [searchParams]);
+        fetchFiltered();
+    }, [queryString]);
 
-    return { products, loading, error };
+    return { products, totalItems, loading, error };
 };

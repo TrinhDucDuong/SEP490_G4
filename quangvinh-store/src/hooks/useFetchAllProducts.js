@@ -21,7 +21,7 @@ export const useFetchProducts = () => {
         getProducts();
     }, []);
 
-
+    console.log('Products:', products);
     return { products, loading, error };
 };
 

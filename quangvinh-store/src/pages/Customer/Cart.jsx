@@ -36,7 +36,17 @@ function Cart({ isOpen, onClose }) {
                         <p className="text-center text-gray-400 text-sm sm:text-base">Giỏ hàng trống</p>
                     ) : (
                         cartItems.map(item => (
-                            <ProductInCartCard key={item.id} item={item} onRemove={removeItem} />
+                            <ProductInCartCard
+                                key={item.id}
+                                item={item}
+                                onRemove={removeItem}
+                                onUpdateQuantity={(id, newQty) => {
+                                    setCartItems(prev =>
+                                        prev.map(item => item.id === id ? { ...item, quantity: newQty } : item)
+                                    );
+                                }}
+                            />
+
                         ))
                     )}
                 </div>
@@ -46,7 +56,7 @@ function Cart({ isOpen, onClose }) {
                         <span className="font-semibold">Tổng cộng:</span>
                         <span>{totalPrice.toLocaleString('vi-VN')} VNĐ</span>
                     </div>
-                    <Link to="/checkout" onClick={onClose} className="block w-full text-center bg-yellow-400 text-black py-2 sm:py-3 rounded hover:bg-yellow-500 active:bg-yellow-600 transition text-sm sm:text-base">
+                    <Link to="/payment" onClick={onClose} className="block w-full text-center bg-yellow-400 text-black py-2 sm:py-3 rounded hover:bg-yellow-500 active:bg-yellow-600 transition text-sm sm:text-base">
                         Thanh Toán
                     </Link>
                 </div>

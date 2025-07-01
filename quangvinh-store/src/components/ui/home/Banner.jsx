@@ -1,15 +1,10 @@
 import { Link } from "react-router-dom";
 import banner from "../../../assets/images/login-background.jpg";
-
 function Banner({ item, link = "/" }) {
-    if (!item) {
-        console.warn("Banner item thiếu dữ liệu:", item);
-        return null;
-    }
-    const title = item.title || item.categoryName || "Banner";
-    const imageUrl = Array.isArray(item.images) && item.images.length > 0
-        ? item.images[0].imageUrl
-        : banner;
+    if (!item) return null;
+
+    const title = item.title || "Banner";
+    const imageUrl = item.imageUrl || banner;
 
     return (
         <div className="relative group w-full h-[550px] overflow-hidden rounded-2xl shadow-lg">
@@ -28,5 +23,6 @@ function Banner({ item, link = "/" }) {
         </div>
     );
 }
+
 
 export default Banner;

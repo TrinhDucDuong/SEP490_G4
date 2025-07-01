@@ -19,7 +19,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import ProfileLayout from "./pages/Customer/Profile/ProfileLayout.jsx";
 import Info from './pages/Customer/Profile/Info.jsx';
-import Address from "./pages/Customer/Profile/Address.jsx";
+import Address from "./pages/Customer/Profile/Address/Address.jsx";
 import ChangePassword from "./pages/Customer/Profile/ChangePassword.jsx";
 import Notifications from "./pages/Customer/Profile/Notifications.jsx";
 import Privacy from "./pages/Customer/Profile/Privacy.jsx";
@@ -45,6 +45,7 @@ function App() {
                         <Route path='/payment' element={<Payment />} />
                         <Route path='/error' element={<Error404 />} />
                         <Route path='*' element={<NotFound />} />
+                        <Route path="/products/:id" element={<ProductDetail />} />
                         <Route path='/profile' element={<ProfileLayout />}>
                             <Route index element={<Info />} />
                             <Route path='address' element={<Address />} />
