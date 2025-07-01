@@ -72,6 +72,7 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.PUT, "/profile").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/signup").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/images/**").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/staff/product").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
                     auth.anyRequest().authenticated();
                 })
