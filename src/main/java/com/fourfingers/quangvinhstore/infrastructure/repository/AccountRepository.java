@@ -13,4 +13,5 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     Optional<AccountEntity> findByEmail(String email);
     Optional<AccountEntity> findByEmailAndAccountIdNot(String email, Long id);
     Optional<AccountEntity> findByUsernameAndAccountIdNot(String username, Long id);
+    Optional<AccountEntity> findByFacebookId(String facebookId);
 }

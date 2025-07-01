@@ -1,5 +1,7 @@
-package com.fourfingers.quangvinhstore.domain.model.customer;
+package com.fourfingers.quangvinhstore.domain.model;
 
+import com.fourfingers.quangvinhstore.domain.model.customer.Color;
+import com.fourfingers.quangvinhstore.domain.model.customer.Store;
 import lombok.*;
 
 import java.util.List;
