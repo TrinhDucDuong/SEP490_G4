@@ -1,9 +1,13 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.customer;
 
+import com.fourfingers.quangvinhstore.domain.model.customer.Brand;
+import com.fourfingers.quangvinhstore.domain.model.customer.Category;
 import com.fourfingers.quangvinhstore.domain.model.customer.Color;
 import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.domain.model.customer.Product;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.BrandMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.CategoryMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
@@ -35,6 +39,8 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
     private final ProductVariantMapper productVariantMapper;
+    private final BrandMapper brandMapper;
+    private final CategoryMapper categoryMapper;
 
     @Override
     @Transactional
@@ -87,6 +93,16 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
         product.setImages(images);
         Long numberOfSoldOut = numberOfSoldOut(productEntity);
         product.setTotalSoldOut(numberOfSoldOut);
+        //Set category
+        List<Image> categoryImages = getCategoryImage(productEntity.getCategory());
+        Category category = categoryMapper.toModel(productEntity.getCategory());
+        category.setImages(categoryImages);
+        product.setCategory(category);
+        //Set brand
+        List<Image> brandImages = getBrandImage(productEntity.getBrand());
+        Brand brand = brandMapper.toModel(productEntity.getBrand());
+        brand.setImages(brandImages);
+        product.setBrand(brand);
         return product;
     }
 
@@ -145,5 +161,21 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                     return product;
                 }
                 ).toList();
+    }
+
+    //Get category image
+    private List<Image> getCategoryImage(CategoryEntity categoryEntity) {
+        return imageRepository.findAllByReferenceIdAndImageType(categoryEntity.getCategoryId(), ImageType.CATEGORY)
+                .stream()
+                .map(imageMapper::toModel)
+                .toList();
+    }
+
+    //Get brand image
+    private List<Image> getBrandImage(BrandEntity brandEntity) {
+        return imageRepository.findAllByReferenceIdAndImageType(brandEntity.getBrandId(), ImageType.BRAND)
+                .stream()
+                .map(imageMapper::toModel)
+                .toList();
     }
 }
