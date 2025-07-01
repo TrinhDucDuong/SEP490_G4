@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
-import Header from './components/layout/Header';
-import Footer from './components/layout/Footer';
+// import Header from './components/layout/Header';
+// import Footer from './components/layout/Footer';
 import Home from './pages/Customer/Home.jsx';
 import ProductList from './pages/Customer/ProductList.jsx';
 import NotFound from './pages/Customer/NotFound.jsx';
@@ -21,12 +21,14 @@ import CustomerList from "./pages/Staff/CustomerList.jsx";
 import OrderManagement from "./pages/Staff/OrderManagement.jsx";
 import CategoryManagement from "./pages/Staff/CategoryManagement.jsx";
 import ProductType from "./pages/Staff/ProductType.jsx";
+import BrandManagement from "./pages/Staff/BrandManagement.jsx";
+import ProductManagement from "./pages/Staff/ProductManagement.jsx";
 
 function App() {
     return (
         <AuthProvider>
             <div className="flex flex-col min-h-screen">
-                <Header />
+                {/*<Header />*/}
                 <main className="flex-grow">
                     <Routes>
                         {/* Customer Routes */}
@@ -49,7 +51,8 @@ function App() {
                         <Route path="/orders" element={<OrderManagement />} />
                         <Route path="/categories" element={<CategoryManagement />} />
                         <Route path="/product-types" element={<ProductType />} />
-                        <Route path="/products-management" element={<div>Products Management Page</div>} />
+                        <Route path="/brands" element={<BrandManagement />} />
+                        <Route path="/products-management" element={<ProductManagement />} />
                         <Route path="/feedbacks" element={<div>Feedbacks Page</div>} />
                         <Route path="/statistics" element={<div>Statistics Page</div>} />
                         <Route path="/staff" element={<div>Staff Page</div>} />
@@ -58,7 +61,7 @@ function App() {
                         <Route path="/logout" element={<div>Logout Page</div>} />
                     </Routes>
                 </main>
-                <Footer />
+                {/*<Footer />*/}
             </div>
         </AuthProvider>
     );
