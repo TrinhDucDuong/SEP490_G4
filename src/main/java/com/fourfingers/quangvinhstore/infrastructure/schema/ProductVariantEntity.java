@@ -34,7 +34,7 @@ public class ProductVariantEntity {
     private List<OrderDetailsEntity> orderDetails;
 
     @OneToMany(mappedBy = "productVariant")
-    private List<CartEntity> carts;
+    private List<CartDetailsEntity> cartDetails;
 
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
@@ -42,4 +42,7 @@ public class ProductVariantEntity {
 
     @OneToMany(mappedBy = "productVariant")
     private List<StarRateEntity> starRates;
+
+    @Column(name = "quantity")
+    private Long quantity;
 }

@@ -27,8 +27,11 @@ public class AccountEntity implements UserDetails {
     @Column(name = "username", unique = true, nullable = false, columnDefinition = "CHAR(15)")
     private String username;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email", unique = true)
     private String email;
+
+    @JoinColumn(name = "facebook_id")
+    private String facebookId;
 
     @Column(name = "password", nullable = false, length = 68)
     private String password;
@@ -77,8 +80,8 @@ public class AccountEntity implements UserDetails {
     @OneToMany(mappedBy = "createdBy")
     private List<ProductEntity> createdProducts;
 
-    @OneToMany(mappedBy = "owner")
-    private List<CartEntity> carts;
+    @OneToMany(mappedBy = "account")
+    private List<CartDetailsEntity> carts;
 
 
     @OneToMany(mappedBy = "account")
