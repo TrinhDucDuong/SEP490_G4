@@ -59,6 +59,7 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/brand").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/blog").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/category").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/product").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/star-rate").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/banner").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/feedback").permitAll();
