@@ -165,7 +165,7 @@ const CustomerList = () => {
                 email: 'vuthi@gmail.com',
                 points: 650,
                 orderHistory: 'Lịch sử đặt hàng',
-                status: 'Người dùng bị chặn'
+                status: 'Khóa vĩnh viễn'
             },
             {
                 id: '07',
