@@ -9,5 +9,7 @@ public interface SNSAuthInputBoundary {
 
     AuthenticationOutputData performFacebookAuthentication(SNSAuthInputData data);
 
-    void verifyCodeAndResetPassword(String email);
+    void resetPassword(String email);
+
+    void processResetPassword(String contact, String token);
 }

@@ -36,6 +36,9 @@ public class AccountEntity implements UserDetails {
     @Column(name = "password", nullable = false, length = 68)
     private String password;
 
+    @Column(name = "reset_token")
+    private String resetToken;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

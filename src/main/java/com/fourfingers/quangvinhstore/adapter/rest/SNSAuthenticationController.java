@@ -7,18 +7,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth-social")
+@RequestMapping("/auth/social")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class SNSAuthenticationController {
     private final SNSAuthInputBoundary snsAuthInputBoundary;
 
-    @GetMapping("/login/google")
+    @GetMapping("/google")
     public ResponseEntity<?> loginWithGoogle(OAuth2AuthenticationToken token) {
         SNSAuthInputData snsAuthInputData = new SNSAuthInputData();
         snsAuthInputData.setEmail(token.getPrincipal().getAttribute("email"));
@@ -28,7 +25,7 @@ public class SNSAuthenticationController {
         return ResponseEntity.ok(authenticationOutputData);
     }
 
-    @GetMapping("/login/facebook")
+    @GetMapping("/facebook")
     public ResponseEntity loginWithFacebook(OAuth2AuthenticationToken token) {
         SNSAuthInputData snsAuthInputData = new SNSAuthInputData();
         snsAuthInputData.setEmail(token.getPrincipal().getAttribute("id"));
@@ -38,9 +35,16 @@ public class SNSAuthenticationController {
         return ResponseEntity.ok(authenticationOutputData);
     }
 
-    @GetMapping("/password/verify")
-    public String verifyAndReset(@RequestParam String contact) { // xử lý lại cho cả email và số điên thoai
-        snsAuthInputBoundary.verifyCodeAndResetPassword(contact);
+    @GetMapping("/forgot")
+    public String resetPassword(@RequestParam String contact) { //TODO: xử lý thêm cho số điên thoai
+        snsAuthInputBoundary.resetPassword(contact);
         return "Mã xác minh đã được gửi đến " + contact;
     }
+
+    @GetMapping("/reset")
+    public String processResetPassword(@RequestParam String contact, String token) { //TODO: xử lý thêm cho số điên thoai
+        snsAuthInputBoundary.processResetPassword(contact, token);
+        return "Mật khẩu mới đã được gửi đến " + contact;
+    }
+
 }

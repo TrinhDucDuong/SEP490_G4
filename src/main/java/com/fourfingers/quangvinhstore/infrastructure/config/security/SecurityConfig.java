@@ -70,8 +70,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/**").permitAll();
                     auth.requestMatchers("/home").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/auth-social/login/google").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/auth-social/login/facebook").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/auth/social/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET,"/policy").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/policy").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/policy/**").permitAll();
