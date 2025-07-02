@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -25,7 +26,39 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
+    @Order(1)
+    public SecurityFilterChain googleSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/auth/google/**")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/google/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .oauth2Login(oauth2 -> {
+                    oauth2.loginPage("/oauth2/authorization/google");
+                })
+                .build();
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain facebookSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/auth/facebook/**")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/facebook/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .oauth2Login(oauth2 -> {
+                    oauth2.loginPage("/oauth2/authorization/facebook");
+                })
+                .build();
+    }
+
+    @Bean
+    @Order(3)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -37,6 +70,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/**").permitAll();
                     auth.requestMatchers("/home").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/auth-social/login/google").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/auth-social/login/facebook").permitAll();
                     auth.requestMatchers(HttpMethod.GET,"/policy").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/policy").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/policy/**").permitAll();
@@ -59,7 +94,6 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/brand").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/blog").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/category").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/product").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/star-rate").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/banner").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/feedback").permitAll();
@@ -73,6 +107,11 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.PUT, "/profile").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/signup").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/images/**").permitAll();
+                    auth.requestMatchers("/admin/sns/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/sns/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/cart").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/cart").permitAll();
+                    auth.requestMatchers(HttpMethod.PUT, "/cart").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/staff/product").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
                     auth.anyRequest().authenticated();

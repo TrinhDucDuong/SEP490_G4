@@ -37,6 +37,7 @@ import java.util.List;
 public class AuthenticationUseCaseInteraction implements AuthenticationInputBoundary, UserDetailsService {
     private final AccountMapper accountMapper;
     private final AccountRepository accountRepository;
+    private final CartUseCaseInteraction cartUseCaseInteraction;
     private final AuthenticationOutputBoundary authenticationOutputBoundary;
     private final JwtUtilBoundary jwtUtil;
     private final AuthorityRepository authorityRepository;
@@ -68,10 +69,10 @@ public class AuthenticationUseCaseInteraction implements AuthenticationInputBoun
             newAccount.setActive(true);
             newAccount.setCreatedAt(LocalDateTime.now());
 
-            AuthorityEntity authority = authorityRepository.findById("Customer")
+            AuthorityEntity authority = authorityRepository.findById("CUSTOMER")
                     .orElseGet(() -> {
                         AuthorityEntity newAuthority = new AuthorityEntity();
-                        newAuthority.setAuthorityName("Customer");
+                        newAuthority.setAuthorityName("CUSTOMER");
                         return authorityRepository.save(newAuthority);
                     });
 

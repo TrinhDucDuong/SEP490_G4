@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface SNSManagementInputBoundary {
     ListSNSOutputData getAllSNSs();
 
-    SNSOutputData save(String id, SNSInputData snsInputData);
+    SNSOutputData save(SNSInputData snsInputData);
 
     SNSOutputData getSNS(String id);
 

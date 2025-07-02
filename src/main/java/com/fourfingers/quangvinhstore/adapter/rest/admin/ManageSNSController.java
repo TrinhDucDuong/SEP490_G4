@@ -21,8 +21,8 @@ public class ManageSNSController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createSNS(@RequestBody SNSInputData snsInputData) {
-        return ResponseEntity.ok(snsManagementInputBoundary.save(null, snsInputData));
+    public ResponseEntity<?> saveSNS(@RequestBody SNSInputData snsInputData) {
+        return ResponseEntity.ok(snsManagementInputBoundary.save(snsInputData));
     }
 
     @GetMapping("/{id}")
@@ -30,11 +30,10 @@ public class ManageSNSController {
         return ResponseEntity.ok(snsManagementInputBoundary.getSNS(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateSNS(@PathVariable String id,
-                                           @RequestBody SNSInputData snsInputData) {
-        return ResponseEntity.ok(snsManagementInputBoundary.save(id, snsInputData));
-    }
+//    @PutMapping
+//    public ResponseEntity<?> updateSNS(@RequestBody SNSInputData snsInputData) {
+//        return ResponseEntity.ok(snsManagementInputBoundary.save(snsInputData));
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSNS(@PathVariable String id,

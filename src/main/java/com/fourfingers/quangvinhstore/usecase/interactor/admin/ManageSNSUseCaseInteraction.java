@@ -26,7 +26,7 @@ public class ManageSNSUseCaseInteraction implements SNSManagementInputBoundary {
     @Override
     public ListSNSOutputData getAllSNSs() {
         return snsManagementOutputBoundary.convertToListSNSOutputData(
-                snsRepository.findAll()
+                snsRepository.findAllByIsActiveTrue()
                         .stream()
                         .map(snsMapper::toSNS)
                         .toList()
@@ -34,20 +34,14 @@ public class ManageSNSUseCaseInteraction implements SNSManagementInputBoundary {
     }
 
     @Override
-    public SNSOutputData save(String id, SNSInputData snsInputData) {
+    public SNSOutputData save(SNSInputData snsInputData) {
         SNSEntity snsEntity = SNSEntity.builder()
+                .snsId(snsInputData.getSnsId())
                 .snsName(snsInputData.getSnsName())
                 .snsUrl(snsInputData.getSnsUrl())
                 .snsChatUrl(snsInputData.getSnsChatUrl())
                 .isActive(true)
                 .build();
-        if(id != null) {
-            try {
-                snsEntity.setSnsId(Long.valueOf(id));
-            } catch (NumberFormatException e) {
-                throw new RuntimeException("Invalid SNS id");
-            }
-        }
         SNS savedSNS = snsMapper.toSNS(snsRepository.save(snsEntity));
         return snsManagementOutputBoundary.convertToSNSOutputData(savedSNS);
     }
@@ -56,7 +50,7 @@ public class ManageSNSUseCaseInteraction implements SNSManagementInputBoundary {
     public SNSOutputData getSNS(String id) {
         try {
             Long snsId = Long.valueOf(id);
-            SNSEntity snsEntity = snsRepository.findById(snsId).orElseThrow(
+            SNSEntity snsEntity = snsRepository.findBySnsIdAndIsActiveTrue(snsId).orElseThrow(
                     () -> new AccountNotFoundException("SNS not found")
             );
             return snsManagementOutputBoundary.convertToSNSOutputData(
