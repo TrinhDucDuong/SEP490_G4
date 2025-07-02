@@ -1,18 +1,23 @@
-import {useState, useEffect, useRef} from "react";
-import {faStar as solidStar} from "@fortawesome/free-solid-svg-icons";
-import {faStar as regularStar} from "@fortawesome/free-regular-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import productPicture from '../../../assets/images/ao.png';
+import { useState, useEffect, useRef, memo, useMemo } from "react";
+import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import productPicture from "../../../assets/images/ao.png";
+import { useNavigate } from "react-router-dom";
 
-function ProductCard({product}) {
+const ProductCard = memo(function ProductCard({ product }) {
     const [imageIndex, setImageIndex] = useState(0);
     const [hovered, setHovered] = useState(false);
     const intervalRef = useRef(null);
-    const images = product.images?.length ? product.images : [product.image];
-    const currentImage = images[imageIndex];
-    const rating = product.rating || 0;
-    const reviews = product.reviews?.length || 0;
+    const navigate = useNavigate();
+
+    const images = useMemo(() => (
+        product.images?.length ? product.images.map(img => img.imageUrl) : [productPicture]
+    ), [product.images]);
+
+    const rating = product.starRateAvg || 0;
     const fullStars = Math.floor(rating);
+
     useEffect(() => {
         if (hovered && images.length > 1) {
             intervalRef.current = setInterval(() => {
@@ -23,36 +28,53 @@ function ProductCard({product}) {
             setImageIndex(0);
         }
         return () => clearInterval(intervalRef.current);
-    }, [hovered, images.length]);
+    }, [hovered, images]);
+
+    const handleClick = () => {
+        navigate(`/products/${product.productId}`);
+    };
 
     return (
-        <div className=" relative bg-white shadow-md border border-transparent hover:shadow-2xl hover:-translate-y-2 hover:scale-105   hover:border-indigo-400 transition-all duration-300 ease-in-out p-4 cursor-pointer group"
+        <div
+            onClick={handleClick}
+            className="relative bg-white rounded-sm shadow-sm p-4 cursor-pointer group hover:shadow-md hover:-translate-y-1 hover:border-indigo-100 border border-transparent transition-all duration-300"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
         >
-            <div className="aspect-square bg-gray-50 overflow-hidden mb-4 flex items-center justify-center">
-                <img
-                    src={currentImage || productPicture}
-                    alt={product.name}
-                    className="object-contain max-h-full max-w-full transition-transform duration-500 group-hover:scale-110"
-                />
-            </div>
-            <p className="text-black text-sm font-bold py-1 mb-2">
-                {product.price?.toLocaleString()}đ
-            </p>
-            <h3 className="text-gray-600 font-normal mb-1 truncate">
-                {product.sku ? product.sku : "Nameless"}
-            </h3>
-            <div className="text-gray-500 py-1 text-sm">
-                {product.brand ? product.brand : "Nameless"}
-            </div>
-            <div className="flex items-center py-1 gap-1 text-yellow-400 text-base mb-2">
-                {[...Array(5)].map((_, i) => (
-                    <FontAwesomeIcon key={i} icon={i < fullStars ? solidStar : regularStar}/>
+            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4 relative flex items-center justify-center">
+                {images.map((image, index) => (
+                    <img
+                        key={index}
+                        src={image}
+                        alt={`${product.productName} - Image ${index + 1}`}
+                        className={`absolute w-full h-full object-contain max-h-full max-w-full transition-all duration-500 ease-in-out ${
+                            index === imageIndex
+                                ? 'opacity-100 translate-x-0'
+                                : index > imageIndex
+                                    ? 'opacity-0 translate-x-full'
+                                    : 'opacity-0 -translate-x-full'
+                        }`}
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = productPicture;
+                        }}
+                    />
                 ))}
+            </div>
+            <p className="text-black-600 text-sm font-semibold mb-2">
+                {typeof product.unitPrice === 'number'
+                    ? product.unitPrice.toLocaleString() + '₫'
+                    : 'Liên hệ'}
+            </p>
+            <h3 className="text-gray-800 text-base font-bold mb-1 truncate">{product.productName}</h3>
+            <div className="flex items-center py-1 gap-1 text-yellow-400 text-base">
+                {[...Array(5)].map((_, i) => (
+                    <FontAwesomeIcon key={i} icon={i < fullStars ? solidStar : regularStar} />
+                ))}
+                <span className="text-sm text-gray-500 ml-1">({rating.toFixed(1)})</span>
             </div>
         </div>
     );
-}
+});
 
 export default ProductCard;

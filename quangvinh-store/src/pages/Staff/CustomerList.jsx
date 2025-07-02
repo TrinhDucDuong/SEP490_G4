@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, ChevronDown } from 'lucide-react';
 import SidebarForStaff from '../../components/layout/SidebarForStaff';
 import HeaderForManager from '../../components/layout/HeaderForManager';
-import Modal from '../../components/common/Modal';
+import Modal from '../../components/common/Modals.jsx';
 import SearchBar from '../../components/common/SearchBar';
-import Pagination from '../../components/common/Pagination';
+import Pagination from '../../components/common/Paginations.jsx';
 import DataTable from '../../components/common/DataTable';
 
 const CustomerList = () => {
@@ -727,7 +727,7 @@ const CustomerList = () => {
                 </div>
             </div>
 
-            {/* Phone Modal */}
+            {/* Phone Modals */}
             <Modal
                 isOpen={showPhoneModal}
                 onClose={() => setShowPhoneModal(false)}

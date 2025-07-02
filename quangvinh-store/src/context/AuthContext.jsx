@@ -1,35 +1,47 @@
-import React, { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
+import { fetchUser } from '../utils/api/UserAPI';
 
-export let AuthContext;
-AuthContext = createContext();
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [token, setToken] = useState(localStorage.getItem('token'));
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            const parsedUser = JSON.parse(storedUser);
-            setUser(parsedUser);
-            console.log("Khôi phục user từ localStorage:", parsedUser);
-        }
-    }, []);
+        const getUser = async () => {
+            if (!token) {
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+            try {
+                const data = await fetchUser(token);
+                setUser(data);
+            } catch (err) {
+                console.error("Lỗi khi fetch user:", err);
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+        getUser();
+    }, [token]);
 
-    const login = (userData) => {
+    const login = (userData, newToken) => {
+        localStorage.setItem('token', newToken);
+        setToken(newToken);
         setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
-        console.log("Đăng nhập - User được lưu:", userData);
     };
 
     const logout = () => {
-        setUser(null);
-        localStorage.removeItem('user');
         localStorage.removeItem('token');
-        console.log("Đăng xuất - User và token đã bị xóa");
+        setToken(null);
+        setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, token, login, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );

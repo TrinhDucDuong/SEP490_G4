@@ -1,87 +1,109 @@
-import React, { useState, useMemo } from 'react';
-import { useFetchProducts, useFetchCategories } from '../../hooks/useFetch.js';
-import ProductCard from '../../components/ui/product/ProductCard.jsx';
-import Filter from '../../components/ui/product/ProductFilter.jsx';
+import React from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useFetchCategories } from '../../hooks/useFetchCategories';
+import { useFetchFilteredProducts } from '../../hooks/useFetchFilteredProducts';
+import ProductFilter from '../../components/ui/product/ProductFilter';
+import ProductCard from '../../components/ui/product/ProductCard';
+import Pagination from '../../components/common/Paginations.jsx';
+import Banner from "../../components/ui/home/Banner.jsx";
+
+const sortOptions = [
+    { value: '', label: 'Mặc định' },
+    { value: 'createdDate,DESC', label: 'Mới nhất' },
+    { value: 'unitPrice,ASC', label: 'Giá tăng dần' },
+    { value: 'unitPrice,DESC', label: 'Giá giảm dần' },
+    { value: 'totalSoldOut,DESC', label: 'Bán chạy' },
+];
 
 const ProductList = () => {
-    const { products, loading: productsLoading, error: productsError } = useFetchProducts();
-    const { categories, loading: categoriesLoading, error: categoriesError } = useFetchCategories();
-    const [filterOptions, setFilterOptions] = useState({
-        category: 'all',
-        priceRange: [0, 1000],
-        brand: 'all',
-        color: 'all',
-        size: 'all',
-    });
-    const [sortOption, setSortOption] = useState('price-low-to-high');
+    const { products, totalItems, loading, error } = useFetchFilteredProducts();
+    const { categories } = useFetchCategories();
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    const filteredProducts = useMemo(() => {
-        let result = products.filter(product => {
-            return (
-                (filterOptions.category === 'all' || product.category === filterOptions.category) &&
-                product.price >= filterOptions.priceRange[0] &&
-                product.price <= filterOptions.priceRange[1] &&
-                (filterOptions.brand === 'all' || product.brand === filterOptions.brand) &&
-                (filterOptions.color === 'all' || product.color === filterOptions.color) &&
-                (filterOptions.size === 'all' || product.size === filterOptions.size)
-            );
-        });
+    const pageNumber = Number(searchParams.get("pageNumber") || 0);
+    const pageSize = Number(searchParams.get("pageSize") || 20);
 
-        if (sortOption === 'price-low-to-high') {
-            result.sort((a, b) => a.price - b.price);
-        } else if (sortOption === 'price-high-to-low') {
-            result.sort((a, b) => b.price - a.price);
+    const currentSort = searchParams.get("sortBy") && searchParams.get("sortDirection")
+        ? `${searchParams.get("sortBy")},${searchParams.get("sortDirection")}`
+        : '';
+
+    const handlePageChange = (newPage) => {
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set("pageNumber", newPage);
+        setSearchParams(newParams);
+    };
+
+    const handleSortChange = (e) => {
+        const value = e.target.value;
+        const newParams = new URLSearchParams(searchParams);
+        if (value === '') {
+            newParams.delete('sortBy');
+            newParams.delete('sortDirection');
+        } else {
+            const [sortBy, sortDirection] = value.split(',');
+            newParams.set('sortBy', sortBy);
+            newParams.set('sortDirection', sortDirection);
         }
-
-        return result;
-    }, [products, filterOptions, sortOption]);
-
-    if (productsLoading || categoriesLoading) {
-        return <div className="text-center py-10 text-gray-600">Đang tải...</div>;
-    }
-
-    if (productsError || categoriesError) {
-        return (
-            <div className="text-center py-10 text-red-500">
-                Lỗi: {productsError || categoriesError}
-            </div>
-        );
-    }
+        newParams.set('pageNumber', 0);
+        setSearchParams(newParams);
+    };
 
     return (
-        <div className="bg-[#F2F2EE] min-h-screen px-4 sm:px-8 py-12 ">
-            <div className="container mx-auto flex gap-6">
-                <div className="w-full lg:w-1/4">
-                    <Filter
-                        categories={['all', ...categories]}
-                        setFilterOptions={setFilterOptions}
-                        filterOptions={filterOptions}
-                    />
-                </div>
-                <div className="w-full lg:w-3/4">
-                    <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold text-gray-800">Tất cả sản phẩm</h2>
+        <div className="bg-gray-100 min-h-screen px-4 sm:px-6 lg:px-20 py-6 md:py-8 ">
+            <div className="mb-6">
+                <Banner
+                    item={{
+                        title: "SẢN PHẨM NỔI BẬT",
+                        images: [{ imageUrl: "/banner-product.jpg" }]
+                    }}
+                    link="/products"
+                />
+            </div>
+
+            <div className="flex flex-col lg:flex-row gap-6">
+                <aside className="w-full lg:w-1/4">
+                    <ProductFilter categories={categories || []} />
+                </aside>
+
+                <main className="flex-1">
+                    {/* Sort Bar */}
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4 sm:mb-0">Danh sách sản phẩm</h2>
                         <select
-                            value={sortOption}
-                            onChange={e => setSortOption(e.target.value)}
-                            className="mt-2 sm:mt-0 border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            value={currentSort}
+                            onChange={handleSortChange}
+                            className="w-full sm:w-auto border border-gray-300 rounded-lg py-2.5 px-4 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
                         >
-                            <option value="price-low-to-high">Giá: Thấp đến Cao</option>
-                            <option value="price-high-to-low">Giá: Cao đến Thấp</option>
+                            {sortOptions.map(opt => (
+                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            ))}
                         </select>
                     </div>
-                    {filteredProducts.length === 0 ? (
-                        <p className="text-center text-gray-600 mt-8">
-                            Không có sản phẩm nào phù hợp với bộ lọc.
-                        </p>
+
+                    {loading ? (
+                        <p className="text-center text-gray-500 text-sm">Đang tải sản phẩm...</p>
+                    ) : error ? (
+                        <p className="text-center text-red-500 text-sm">{error}</p>
+                    ) : products.length === 0 ? (
+                        <p className="text-center text-gray-500 text-sm">Không tìm thấy sản phẩm phù hợp</p>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {filteredProducts.map(product => (
-                                <ProductCard key={product.id} product={product} />
-                            ))}
-                        </div>
+                        <>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                                {products.map((product) => (
+                                    <ProductCard key={product.productId} product={product} />
+                                ))}
+                            </div>
+                            <div className="mt-8 flex justify-center">
+                                <Pagination
+                                    currentPage={pageNumber}
+                                    pageSize={pageSize}
+                                    totalItems={totalItems}
+                                    onPageChange={handlePageChange}
+                                />
+                            </div>
+                        </>
                     )}
-                </div>
+                </main>
             </div>
         </div>
     );

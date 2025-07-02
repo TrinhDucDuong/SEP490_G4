@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Plus, Edit, Trash2, ArrowUpDown } from 'lucide-react';
 import SidebarForStaff from '../../components/layout/SidebarForStaff';
 import HeaderForManager from '../../components/layout/HeaderForManager';
-import Modal from '../../components/common/Modal';
+import Modal from '../../components/common/Modals.jsx';
 import SearchBar from '../../components/common/SearchBar';
-import Pagination from '../../components/common/Pagination';
+import Pagination from '../../components/common/Paginations.jsx';
 import DataTable from '../../components/common/DataTable';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -438,7 +438,7 @@ const BrandManagement = () => {
                 </div>
             </div>
 
-            {/* Description Modal */}
+            {/* Description Modals */}
             <Modal
                 isOpen={showDescriptionModal}
                 onClose={() => setShowDescriptionModal(false)}
@@ -450,7 +450,7 @@ const BrandManagement = () => {
                 </div>
             </Modal>
 
-            {/* Status Change Modal */}
+            {/* Status Change Modals */}
             <Modal
                 isOpen={showStatusModal}
                 onClose={() => setShowStatusModal(false)}
@@ -481,7 +481,7 @@ const BrandManagement = () => {
                 </div>
             </Modal>
 
-            {/* Create Modal */}
+            {/* Create Modals */}
             <Modal
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
@@ -530,7 +530,7 @@ const BrandManagement = () => {
                 </div>
             </Modal>
 
-            {/* Update Modal */}
+            {/* Update Modals */}
             <Modal
                 isOpen={showUpdateModal}
                 onClose={() => setShowUpdateModal(false)}
@@ -579,7 +579,7 @@ const BrandManagement = () => {
                 </div>
             </Modal>
 
-            {/* Delete Modal */}
+            {/* Delete Modals */}
             <Modal
                 isOpen={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}

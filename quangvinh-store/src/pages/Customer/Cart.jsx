@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark, faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import ProductInCartCard from '../../components/ui/productInCartCard.jsx';
 
 function Cart({ isOpen, onClose }) {
@@ -18,38 +18,59 @@ function Cart({ isOpen, onClose }) {
     };
 
     return (
-        <div className={`fixed top-0 right-0 h-full w-[80vw] sm:w-80 lg:w-96 bg-white text-black transform ${isOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 z-50 overflow-x-hidden`}>
+        <div className={`fixed top-0 right-0 h-full w-[80vw] sm:w-80 lg:w-96 bg-white text-black transform ${isOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 z-50 shadow-lg`}>
             <div className="p-4 sm:p-6 flex flex-col h-full">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg sm:text-xl font-bold">Giỏ Hàng</h2>
-                    <button onClick={onClose} className="text-black hover:text-yellow-400 active:text-yellow-500 text-sm sm:text-base">
+                <div className="flex justify-between items-center mb-4 border-b pb-2">
+                    <h2 className="text-xl font-bold tracking-tight">🛒 Giỏ hàng</h2>
+                    <button
+                        onClick={onClose}
+                        className="text-black hover:text-yellow-400 active:text-yellow-500 text-lg"
+                    >
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
                 </div>
-
-                <div className="flex flex-col gap-2 mb-4">
-                    <span className="text-sm sm:text-base">{cartItems.length} sản phẩm</span>
+                <div className="text-sm text-gray-500 mb-3">
+                    {cartItems.length} sản phẩm trong giỏ hàng
                 </div>
-
-                <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 overflow-y-auto pr-1">
                     {cartItems.length === 0 ? (
-                        <p className="text-center text-gray-400 text-sm sm:text-base">Giỏ hàng trống</p>
+                        <div className="flex flex-col items-center justify-center text-center text-gray-400 mt-20">
+                            <FontAwesomeIcon icon={faCartShopping} size="3x" className="mb-4" />
+                            <p className="text-base font-medium">Giỏ hàng trống</p>
+                            <p className="text-sm mt-1">Hãy thêm một vài món nhé!</p>
+                        </div>
                     ) : (
-                        cartItems.map(item => (
-                            <ProductInCartCard key={item.id} item={item} onRemove={removeItem} />
-                        ))
+                        <div className="flex flex-col gap-4">
+                            {cartItems.map(item => (
+                                <ProductInCartCard
+                                    key={item.id}
+                                    item={item}
+                                    onRemove={removeItem}
+                                    onUpdateQuantity={(id, newQty) => {
+                                        setCartItems(prev =>
+                                            prev.map(item => item.id === id ? { ...item, quantity: newQty } : item)
+                                        );
+                                    }}
+                                />
+                            ))}
+                        </div>
                     )}
                 </div>
-
-                <div className="mt-4">
-                    <div className="flex justify-between items-center mb-4 text-sm sm:text-base">
-                        <span className="font-semibold">Tổng cộng:</span>
-                        <span>{totalPrice.toLocaleString('vi-VN')} VNĐ</span>
+                {cartItems.length > 0 && (
+                    <div className="pt-4 border-t mt-4">
+                        <div className="flex justify-between items-center mb-4 text-base font-semibold">
+                            <span>Tổng cộng:</span>
+                            <span className="text-yellow-600">{totalPrice.toLocaleString('vi-VN')} VNĐ</span>
+                        </div>
+                        <Link
+                            to="/payment"
+                            onClick={onClose}
+                            className="block w-full text-center bg-yellow-400 text-black py-3 rounded-lg font-semibold text-sm hover:bg-yellow-500 transition"
+                        >
+                            Thanh Toán Ngay
+                        </Link>
                     </div>
-                    <Link to="/checkout" onClick={onClose} className="block w-full text-center bg-yellow-400 text-black py-2 sm:py-3 rounded hover:bg-yellow-500 active:bg-yellow-600 transition text-sm sm:text-base">
-                        Thanh Toán
-                    </Link>
-                </div>
+                )}
             </div>
         </div>
     );

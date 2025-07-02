@@ -81,7 +81,7 @@ const DataTable = ({
         return `${days} ngày trước`;
     };
 
-    // History Modal Component
+    // History Modals Component
     const HistoryModal = () => {
         if (!showHistoryModal) return null;
 
@@ -93,7 +93,7 @@ const DataTable = ({
                     onClick={() => setShowHistoryModal(false)}
                 />
 
-                {/* Modal */}
+                {/* Modals */}
                 <div className="flex min-h-full items-center justify-center p-4">
                     <div className="relative bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
                         {/* Header */}
@@ -295,7 +295,7 @@ const DataTable = ({
                 </div>
             )}
 
-            {/* History Modal */}
+            {/* History Modals */}
             <HistoryModal />
         </div>
     );

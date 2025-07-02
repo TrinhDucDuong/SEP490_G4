@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import Logodefault from '../../../assets/images/logodefault.png';
 
-const CategorySlider = ({ categories }) => {
+const BrandSlider = ({ brands = [] }) => {
     const settings = {
         dots: false,
         infinite: false,
@@ -25,19 +25,27 @@ const CategorySlider = ({ categories }) => {
         ]
     };
 
+    if (!brands.length) {
+        return <div className="text-white text-center py-8">Không có thương hiệu</div>;
+    }
+
     return (
         <div className="px-4 py-6">
             <Slider {...settings}>
-                {categories.map((category, index) => (
-                    <div key={index} className="px-2 ">
+                {brands.map((brand, idx) => (
+                    <div key={brand.brandId || idx} className="px-2">
                         <Link
-                            to={`/products?category=${encodeURIComponent(category)}`}
-                            className="block transition-transform duration-300 hover:scale-105 hover: rounded-xl"
+                            to={`/products?brand=${encodeURIComponent(brand.brandName)}`}
+                            className="block transition-transform duration-300 hover:scale-105 rounded-xl"
                         >
                             <div className="bg-white rounded-xl flex justify-center items-center p-2 transition-colors duration-300">
                                 <img
-                                    src={category === 'all' ? Logodefault : `/images/categories/${category}.png`}
-                                    alt={`Logo ${category}`}
+                                    src={
+                                        brand.images && brand.images.length > 0
+                                            ? brand.images[0].imageUrl
+                                            : Logodefault
+                                    }
+                                    alt={brand.brandName || "Thương hiệu"}
                                     className="w-[178px] h-[86px] object-contain"
                                 />
                             </div>
@@ -49,4 +57,4 @@ const CategorySlider = ({ categories }) => {
     );
 };
 
-export default CategorySlider;
+export default BrandSlider;
