@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Menu } from 'lucide-react';
 import logo from '../../assets/images/logo_black.png';
 import Sidebar from './Sidebar';
@@ -23,6 +23,17 @@ function Header() {
     const toggleDropdown = () => {
         setDropdownOpen(!isDropdownOpen);
     };
+
+    useEffect(() => {
+        if (isCartOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isCartOpen]);
 
     return (
         <>
@@ -49,55 +60,25 @@ function Header() {
                     <nav className='hidden xl:flex flex-1 justify-center max-w-[720px] mx-auto'>
                         <ul className='flex flex-wrap justify-center gap-2 font-sans text-sm font-semibold text-gray-700'>
                             <li>
-                                <Link
-                                    to='/'
-                                    className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'
-                                >
-                                    Trang chủ
-                                </Link>
+                                <Link to='/' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'>Trang chủ</Link>
                             </li>
                             <li>
-                                <Link
-                                    to='/products'
-                                    className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'
-                                >
-                                    Sản phẩm
-                                </Link>
+                                <Link to='/products' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'>Sản phẩm</Link>
                             </li>
                             <li>
-                                <Link
-                                    to='/feedbacks'
-                                    className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'
-                                >
-                                    Feedback
-                                </Link>
+                                <Link to='/feedbacks' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'>Feedback</Link>
                             </li>
                             <li>
-                                <Link
-                                    to='/contacts'
-                                    className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'
-                                >
-                                    Liên hệ
-                                </Link>
+                                <Link to='/contacts' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'>Liên hệ</Link>
                             </li>
                             <li>
-                                <Link
-                                    to='/sale'
-                                    className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200 relative'
-                                >
-                                    <span className='absolute -top-1 -right-2 text-[10px] bg-red-600 text-white px-1 rounded'>
-                                        HOT
-                                    </span>
+                                <Link to='/sale' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200 relative'>
+                                    <span className='absolute -top-1 -right-2 text-[10px] bg-red-600 text-white px-1 rounded'>HOT</span>
                                     Sale
                                 </Link>
                             </li>
                             <li>
-                                <Link
-                                    to='/blog'
-                                    className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200 text-center'
-                                >
-                                    Hàng Auth chuẩn có gì?
-                                </Link>
+                                <Link to='/blog' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200 text-center'>Hàng Auth chuẩn có gì?</Link>
                             </li>
                         </ul>
                     </nav>
@@ -145,49 +126,33 @@ function Header() {
                                     <div className='absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10'>
                                         <ul className='py-1'>
                                             <li>
-                                                <Link
-                                                    to='/order-history'
-                                                    className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                                                    onClick={() => setDropdownOpen(false)}
-                                                >
-                                                    Lịch sử đơn hàng
-                                                </Link>
+                                                <Link to='/profile/order-history' className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => setDropdownOpen(false)}>Lịch sử đơn hàng</Link>
                                             </li>
                                             <li>
-                                                <Link
-                                                    to='/profile'
-                                                    className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                                                    onClick={() => setDropdownOpen(false)}
-                                                >
-                                                    Cá nhân
-                                                </Link>
+                                                <Link to='/profile' className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => setDropdownOpen(false)}>Cá nhân</Link>
                                             </li>
                                             <li>
-                                                <button
-                                                    onClick={() => {
-                                                        handleLogout();
-                                                        setDropdownOpen(false);
-                                                    }}
-                                                    className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                                                >
-                                                    Đăng xuất
-                                                </button>
+                                                <button onClick={() => { handleLogout(); setDropdownOpen(false); }} className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'>Đăng xuất</button>
                                             </li>
                                         </ul>
                                     </div>
                                 )}
                             </div>
                         ) : (
-                            <Link
-                                to='/login'
-                                className='text-sm text-gray-700 hover:text-yellow-500 transition hidden lg:inline'
-                            >
+                            <Link to='/login' className='text-sm text-gray-700 hover:text-yellow-500 transition hidden lg:inline'>
                                 Đăng nhập
                             </Link>
                         )}
                     </div>
                 </div>
             </header>
+
+            {isCartOpen && (
+                <div
+                    className='fixed inset-0 bg-black bg-opacity-50 z-40'
+                    onClick={() => setCartOpen(false)}
+                />
+            )}
 
             <Sidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
             <Cart isOpen={isCartOpen} onClose={() => setCartOpen(false)} />

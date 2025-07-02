@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import { toast } from "react-toastify";
-import { useFetchUser } from "../../../hooks/useFetchUsers";
+import {AuthContext} from "../../../../context/AuthContext.jsx";
 
 function Info() {
-    const { user, token, login } = useFetchUser();
-
+    const { user, token, login } = useContext(AuthContext);
+    console.log(user);
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -127,8 +127,8 @@ function Info() {
                     <div className="flex-1 space-y-6">
                         <Input label="Họ" id="lastName" value={formData.lastName} onChange={(e) => handleChange("lastName", e.target.value)} />
                         <Input label="Tên" id="firstName" value={formData.firstName} onChange={(e) => handleChange("firstName", e.target.value)} />
-                        <Input label="Email" id="email" value={formData.email} onChange={(e) => handleChange("email", e.target.value)} readOnly />
-                        <Input label="Số điện thoại" id="phone" value={formData.phoneNumber} onChange={(e) => handleChange("phoneNumber", e.target.value)} readOnly />
+                        <Input label="Email" id="email" value={formData.email} onChange={(e) => handleChange("email", e.target.value)} />
+                        <Input label="Số điện thoại" id="phone" value={formData.phoneNumber} onChange={(e) => handleChange("phoneNumber", e.target.value)} />
 
                         <div>
                             <label className="block mb-1 text-sm font-medium text-gray-700">Giới tính</label>
