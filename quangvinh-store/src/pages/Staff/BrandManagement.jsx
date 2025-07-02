@@ -330,114 +330,88 @@ const BrandManagement = () => {
     ];
 
     return (
-        <div className="flex min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-blue-50">
-            {/* Mobile Sidebar Overlay */}
-            {sidebarOpen && (
-                <div className="fixed inset-0 z-50 lg:hidden">
-                    <div className="absolute inset-0 bg-black opacity-50" onClick={() => setSidebarOpen(false)}></div>
-                    <div className="relative w-64 h-full">
-                        <SidebarForStaff />
-                    </div>
-                </div>
-            )}
-
-            {/* Desktop Sidebar */}
-            <div className="hidden lg:block">
-                <SidebarForStaff />
+        <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-blue-50">
+            {/* Header cố định */}
+            <div className="fixed top-0 left-0 right-0 z-50">
+                <HeaderForManager username="Ngô Quang Thắng" role="Admin"/>
             </div>
 
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col min-w-0">
-                {/* Header */}
-                <HeaderForManager username="Ngô Quang Thắng" role="Admin" />
+            {/* Sidebar cố định */}
+            <div className="fixed left-0 top-16 z-40">
+                <SidebarForStaff/>
+            </div>
 
-                {/* Mobile Menu Button */}
-                <div className="lg:hidden p-4">
-                    <button
-                        onClick={() => setSidebarOpen(true)}
-                        className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                    >
-                        <Menu className="h-6 w-6" />
-                    </button>
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 p-4 sm:p-6">
+            {/* Main content - THÊM margin-left để tránh sidebar */}
+            <div className="ml-0 lg:ml-64 pt-16">
+                <div className="p-4 sm:p-6">
                     {/* Page Title */}
                     <div className="mb-6 flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Quản Lý Thương Hiệu</h1>
+                            <h1 className="text-2xl font-bold text-gray-900">Quản lý thương hiệu</h1>
                             <p className="text-sm text-gray-600 mt-1">Quản lý các thương hiệu sản phẩm</p>
                         </div>
                         <button
                             onClick={openCreate}
                             className="inline-flex items-center px-4 py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600"
                         >
-                            <Plus className="h-4 w-4 mr-2" />
+                            <Plus className="h-4 w-4 mr-2"/>
                             Thêm thương hiệu
                         </button>
                     </div>
 
-                    {/* Controls */}
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                        <div className="space-y-6">
-                            {/* Search Bar */}
-                            <div className="w-full">
+                    {/* Search Section */}
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4">
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <div className="flex-1">
                                 <SearchBar
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    placeholder="Tìm kiếm thương hiệu..."
+                                    placeholder="Tìm kiếm tên hoặc ID thương hiệu..."
                                 />
                             </div>
+                            <button
+                                onClick={clearFilters}
+                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
+                            >
+                                Xóa tất cả lọc
+                            </button>
+                        </div>
+                    </div>
 
-                            {/* Filter and Sort */}
-                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                                {/* Filter */}
-                                <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
+                    {/* Filters Section */}
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <div className="flex flex-col space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">Lọc theo trạng thái</label>
                                     <select
-                                        className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm min-w-0"
+                                        className="w-full h-10 px-3 py-2 border border-gray-300 rounded-md text-sm"
                                         value={filterStatus}
                                         onChange={(e) => handleFilterChange(e.target.value)}
                                     >
-                                        <option value="">Trạng thái</option>
+                                        <option value="">Tất cả trạng thái</option>
                                         <option value="Đang bán">Đang bán</option>
                                         <option value="Đã ngừng bán">Đã ngừng bán</option>
                                     </select>
                                 </div>
-
-                                {/* Sort and Clear buttons */}
-                                <div className="flex flex-wrap items-center gap-2 lg:flex-shrink-0">
-                                    <button
-                                        onClick={() => handleSort('name')}
-                                        className={`flex items-center space-x-2 px-4 py-2.5 border rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                                            sortConfig.key === 'name'
-                                                ? 'bg-blue-50 border-blue-300 text-blue-700'
-                                                : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                                        }`}
-                                    >
-                                        <ArrowUpDown className={`h-4 w-4 ${sortConfig.key === 'name' && sortConfig.direction === 'desc' ? 'rotate-180' : ''}`} />
-                                        <span>
-                                            Tên: {sortConfig.key === 'name' && sortConfig.direction === 'desc' ? 'Z → A' : 'A → Z'}
-                                        </span>
-                                    </button>
-
-                                    <button
-                                        onClick={clearFilters}
-                                        className="flex items-center space-x-2 px-4 py-2.5 border border-red-300 rounded-lg hover:bg-red-50 text-sm font-medium text-red-700 transition-colors whitespace-nowrap"
-                                    >
-                                        <X className="h-4 w-4" />
-                                        <span>Xóa lọc</span>
-                                    </button>
-                                </div>
                             </div>
 
-                            {/* Results info */}
+                            <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-gray-200">
+                                <button
+                                    onClick={() => handleSort('name')}
+                                    className={`flex items-center space-x-2 px-4 py-2 border rounded-lg text-sm font-medium transition-colors ${
+                                        sortConfig.key === 'name' ? 'bg-blue-50 border-blue-300 text-blue-700' : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                                    }`}
+                                >
+                                    <ArrowUpDown className={`h-4 w-4 ${sortConfig.key === 'name' && sortConfig.direction === 'desc' ? 'rotate-180' : ''}`}/>
+                                    <span>Sắp xếp theo tên: {sortConfig.key === 'name' && sortConfig.direction === 'desc' ? 'Z → A' : 'A → Z'}</span>
+                                </button>
+                            </div>
+
                             <div className="pt-4 border-t border-gray-200">
                                 <p className="text-sm text-gray-600">
                                     Tìm thấy <span className="font-semibold text-gray-900">{filteredBrands.length}</span> thương hiệu
-                                    {searchTerm && (
-                                        <span> cho từ khóa "<span className="font-semibold text-blue-600">{searchTerm}</span>"</span>
-                                    )}
+                                    {searchTerm && <span> cho từ khóa "<span className="font-semibold text-blue-600">{searchTerm}</span>"</span>}
                                 </p>
                             </div>
                         </div>

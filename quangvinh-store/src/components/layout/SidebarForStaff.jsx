@@ -44,7 +44,6 @@ const SidebarForStaff = () => {
                 {/* Quản lý sản phẩm */}
                 <NavLink
                     to="/products-management"
-                    to="/products-management"
                     className={({ isActive }) =>
                         `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                             isActive
@@ -145,7 +144,7 @@ const SidebarForStaff = () => {
 
                 {/* Hóa đơn */}
                 <NavLink
-                    to="/invoices"
+                    to="/orders"
                     className={({ isActive }) =>
                         `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                             isActive
@@ -175,7 +174,7 @@ const SidebarForStaff = () => {
 
                 {/* Chính sách */}
                 <NavLink
-                    to="/policies"
+                    to="/policies-management"
                     className={({ isActive }) =>
                         `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                             isActive
@@ -190,7 +189,7 @@ const SidebarForStaff = () => {
 
                 {/* Hướng dẫn */}
                 <NavLink
-                    to="/guides"
+                    to="/instruction-management"
                     className={({ isActive }) =>
                         `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                             isActive
@@ -220,7 +219,7 @@ const SidebarForStaff = () => {
 
                 {/* Nhân viên */}
                 <NavLink
-                    to="/staff"
+                    to="/employee-management"
                     className={({ isActive }) =>
                         `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                             isActive

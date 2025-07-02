@@ -1188,12 +1188,6 @@ const ProductManagement = () => {
                             <p className="text-gray-900">{productTypes.find(pt => pt.id === selectedProduct.productTypeId)?.name || 'Không có'}</p>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Giá sản phẩm:</label>
-                            <p className="text-gray-900 font-semibold text-green-600">
-                                {selectedProduct.price ? formatPriceInput(selectedProduct.price) : '0'} VNĐ
-                            </p>
-                        </div>
-                        <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Số hàng nhập:</label>
                             <p className="text-gray-900">{selectedProduct.importedQuantity || 0}</p>
                         </div>

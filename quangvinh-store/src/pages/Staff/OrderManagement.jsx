@@ -480,39 +480,20 @@ const OrderManagement = () => {
     const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
 
     return (
-        <div className="flex min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-blue-50">
-            {/* Mobile Sidebar Overlay */}
-            {sidebarOpen && (
-                <div className="fixed inset-0 z-50 lg:hidden">
-                    <div className="absolute inset-0 bg-black opacity-50" onClick={() => setSidebarOpen(false)}></div>
-                    <div className="relative w-64 h-full">
-                        <SidebarForStaff />
-                    </div>
-                </div>
-            )}
-
-            {/* Desktop Sidebar */}
-            <div className="hidden lg:block">
-                <SidebarForStaff />
+        <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-blue-50">
+            {/* Header cố định */}
+            <div className="fixed top-0 left-0 right-0 z-50">
+                <HeaderForManager username="Ngô Quang Thắng" role="Admin"/>
             </div>
 
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col min-w-0">
-                {/* Header */}
-                <HeaderForManager username="Ngô Quang Thắng" role="Admin" />
+            {/* Sidebar cố định */}
+            <div className="fixed left-0 top-16 z-40">
+                <SidebarForStaff/>
+            </div>
 
-                {/* Mobile Menu Button */}
-                <div className="lg:hidden p-4">
-                    <button
-                        onClick={() => setSidebarOpen(true)}
-                        className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                    >
-                        <Menu className="h-6 w-6" />
-                    </button>
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 p-4 sm:p-6">
+            {/* Main content - THÊM margin-left */}
+            <div className="ml-0 lg:ml-64 pt-16">
+                <div className="p-4 sm:p-6">
                     {/* Page Title */}
                     <div className="mb-6 flex items-center justify-between">
                         <div>
