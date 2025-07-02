@@ -21,7 +21,7 @@ function ProductInCartCard({ item, onRemove, onUpdateQuantity }) {
 
     return (
         <div className="flex items-center border border-gray-200 rounded-lg p-3 hover:shadow-sm transition mb-3 group">
-            <Link to={`/product/${item.id}`} className="flex-shrink-0 w-20 h-20 overflow-hidden rounded-lg bg-gray-100 hover:opacity-80 transition">
+            <Link to={`/products/${item.id}`} className="flex-shrink-0 w-20 h-20 overflow-hidden rounded-lg bg-gray-100 hover:opacity-80 transition">
                 <img
                     src={item.imageUrl || productPicture}
                     alt={item.name}
@@ -31,7 +31,7 @@ function ProductInCartCard({ item, onRemove, onUpdateQuantity }) {
             </Link>
 
             <div className="flex-1 px-4">
-                <Link to={`/product/${item.id}`}>
+                <Link to={`/products/${item.id}`}>
                     <h3 className="font-semibold text-sm text-black line-clamp-2 hover:text-yellow-600 transition">
                         {item.name}
                     </h3>

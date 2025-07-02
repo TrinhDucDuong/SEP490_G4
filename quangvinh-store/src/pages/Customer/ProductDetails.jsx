@@ -4,8 +4,12 @@ import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTruck, faBoxesPacking, faThumbsUp, faPhoneVolume, faStar } from '@fortawesome/free-solid-svg-icons';
+import {
+    faTruck, faBoxesPacking, faThumbsUp, faPhoneVolume, faStar
+} from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 import Breadcrumb from '../../components/common/Breadcrumb';
+import {useCart} from "../../context/CartContext.jsx";
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -15,6 +19,10 @@ const ProductDetail = () => {
     const [selectedColor, setSelectedColor] = useState(null);
     const [selectedSize, setSelectedSize] = useState(null);
     const [tab, setTab] = useState('desc');
+    const [quantity, setQuantity] = useState(1);
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accountId = user?.account?.accountId || null;
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -27,6 +35,34 @@ const ProductDetail = () => {
         };
         fetchProduct();
     }, [id]);
+
+    const { addToCart } = useCart();
+
+    const handleAddToCart = async () => {
+        if (!user?.account?.accountId) {
+            toast.warning("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
+            return;
+        }
+
+        if (!selectedColor || !selectedSize) {
+            toast.error("Vui lòng chọn màu sắc và kích thước");
+            return;
+        }
+
+        try {
+            await addToCart({
+                productId: product.productId,
+                colorHexCode: selectedColor,
+                sizeCode: selectedSize,
+                quantity
+            });
+
+            toast.success("Đã thêm sản phẩm vào giỏ hàng");
+        } catch (error) {
+            toast.error("Lỗi khi thêm vào giỏ hàng");
+        }
+    };
+
 
     if (!product) return <div className="text-center py-20">Đang tải sản phẩm...</div>;
 
@@ -47,7 +83,7 @@ const ProductDetail = () => {
             <Breadcrumb items={breadcrumbItems} />
 
             <div className="flex flex-col lg:flex-row gap-12 mt-6">
-                {/* LEFT: Images */}
+                {/* LEFT: Hình ảnh */}
                 <div className="w-full lg:w-1/2">
                     <div className="rounded-xl overflow-hidden border aspect-square">
                         <Zoom>
@@ -66,7 +102,7 @@ const ProductDetail = () => {
                     </div>
                 </div>
 
-                {/* RIGHT: Info */}
+                {/* RIGHT: Thông tin */}
                 <div className="w-full lg:w-1/2 space-y-6">
                     <div className="space-y-2">
                         <div className="flex justify-between text-sm text-gray-500">
@@ -111,8 +147,22 @@ const ProductDetail = () => {
                         </div>
                     </div>
 
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Số lượng:</label>
+                        <input
+                            type="number"
+                            min="1"
+                            value={quantity}
+                            onChange={(e) => setQuantity(Number(e.target.value))}
+                            className="w-24 border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                        />
+                    </div>
+
                     <div className="flex flex-col gap-3">
-                        <button className="bg-black text-white py-2.5 rounded-full font-medium hover:bg-gray-800">
+                        <button
+                            onClick={handleAddToCart}
+                            className="bg-black text-white py-2.5 rounded-full font-medium hover:bg-gray-800"
+                        >
                             Thêm vào giỏ hàng
                         </button>
                         <button className="bg-white text-indigo-600 border border-indigo-600 py-2.5 rounded-full font-medium hover:bg-indigo-50">

@@ -21,7 +21,6 @@ const ProductFilter = ({ categories }) => {
 
     const { brands, loading: brandsLoading } = useFetchBrands();
 
-    // Load filters từ URL param
     useEffect(() => {
         const fromParams = {};
         for (const [key, value] of searchParams.entries()) {
@@ -30,7 +29,6 @@ const ProductFilter = ({ categories }) => {
         setLocalFilters(fromParams);
     }, [searchParams]);
 
-    // Toggle hiển thị từng nhóm lọc
     const toggleSection = (key) => {
         setSectionVisibility((prev) => ({
             ...prev,
@@ -49,10 +47,8 @@ const ProductFilter = ({ categories }) => {
         const newParams = {};
 
         Object.entries(localFilters).forEach(([key, val]) => {
-            if (Array.isArray(val) && val.length > 0) {
-                newParams[key] = val.join(',');
-            } else if (!Array.isArray(val) && val !== '') {
-                newParams[key] = val;
+            if (val !== '' && val !== null && val !== undefined) {
+                newParams[key] = Array.isArray(val) ? val.join(',') : val;
             }
         });
 
@@ -84,7 +80,6 @@ const ProductFilter = ({ categories }) => {
         <div className="space-y-4">
             <h2 className="text-xl font-bold border-b pb-2">BỘ LỌC</h2>
 
-            {/* DANH MỤC */}
             <ShowSection
                 label="PHÂN LOẠI SẢN PHẨM"
                 show={sectionVisibility.categories}
@@ -101,7 +96,6 @@ const ProductFilter = ({ categories }) => {
                 />
             </ShowSection>
 
-            {/* THƯƠNG HIỆU */}
             <ShowSection
                 label="THƯƠNG HIỆU"
                 show={sectionVisibility.brands}
@@ -122,7 +116,6 @@ const ProductFilter = ({ categories }) => {
                 )}
             </ShowSection>
 
-            {/* CHẤT LIỆU */}
             <ShowSection
                 label="CHẤT LIỆU"
                 show={sectionVisibility.materials}
@@ -136,7 +129,6 @@ const ProductFilter = ({ categories }) => {
                 />
             </ShowSection>
 
-            {/* KÍCH CỠ */}
             <ShowSection
                 label="KÍCH CỠ"
                 show={sectionVisibility.sizes}
@@ -149,7 +141,6 @@ const ProductFilter = ({ categories }) => {
                 />
             </ShowSection>
 
-            {/* MÀU SẮC */}
             <ShowSection
                 label="MÀU SẮC"
                 show={sectionVisibility.colors}
@@ -162,18 +153,17 @@ const ProductFilter = ({ categories }) => {
                 />
             </ShowSection>
 
-            {/* GIÁ TIỀN */}
             <ShowSection
                 label="KHOẢNG GIÁ"
                 show={sectionVisibility.price}
                 onToggle={() => toggleSection("price")}
             >
                 <PriceRangeFilter
-                    min={150000}
+                    min={0}
                     max={3000000}
                     values={[
-                        localFilters.minPrice || 150000,
-                        localFilters.maxPrice || 3000000,
+                        Number(localFilters.minPrice) || 0,
+                        Number(localFilters.maxPrice) || 3000000,
                     ]}
                     onChange={([min, max]) => {
                         updateField("minPrice", min);
