@@ -69,10 +69,10 @@ public class AuthenticationUseCaseInteraction implements AuthenticationInputBoun
             newAccount.setActive(true);
             newAccount.setCreatedAt(LocalDateTime.now());
 
-            AuthorityEntity authority = authorityRepository.findById("Customer")
+            AuthorityEntity authority = authorityRepository.findById("CUSTOMER")
                     .orElseGet(() -> {
                         AuthorityEntity newAuthority = new AuthorityEntity();
-                        newAuthority.setAuthorityName("Customer");
+                        newAuthority.setAuthorityName("CUSTOMER");
                         return authorityRepository.save(newAuthority);
                     });
 

@@ -19,7 +19,7 @@ public class SNSUseCaseInteraction implements SNSInputBoundary {
     @Override
     public ListSNSOutputData getAllSNSs() {
         return snsManagementOutputBoundary.convertToListSNSOutputData(
-                snsRepository.findAll()
+                snsRepository.findAllByIsActiveTrue()
                         .stream()
                         .map(snsMapper::toSNS)
                         .toList()

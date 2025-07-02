@@ -65,7 +65,7 @@ public class SNSAuthUseCaseInteraction implements SNSAuthInputBoundary {
                         .toArray(Authority[]::new)
         );
         Account userAccount = accountMapper.toAccount(accountEntity);
-        userAccount.setAuthorities(authorities);
+//        userAccount.setAuthorities(authorities);
         return authenticationOutputBoundary.convertToOutputData(userAccount, token);
     }
 
@@ -98,7 +98,7 @@ public class SNSAuthUseCaseInteraction implements SNSAuthInputBoundary {
                         .toArray(Authority[]::new)
         );
         Account userAccount = accountMapper.toAccount(accountEntity);
-        userAccount.setAuthorities(authorities);
+//        userAccount.setAuthorities(authorities);
         return authenticationOutputBoundary.convertToOutputData(userAccount, token);
     }
 

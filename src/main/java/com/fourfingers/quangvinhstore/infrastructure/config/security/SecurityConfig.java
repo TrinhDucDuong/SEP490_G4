@@ -107,7 +107,8 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.PUT, "/profile").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/signup").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/images/**").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/admin/sns/**").permitAll();
+                    auth.requestMatchers("/admin/sns/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/sns/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/cart").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/cart").permitAll();
                     auth.requestMatchers(HttpMethod.PUT, "/cart").permitAll();

@@ -9,8 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface SNSRepository extends JpaRepository<SNSEntity, Long> {
-    List<SNSEntity> findAll();
+    List<SNSEntity> findAllByIsActiveTrue();
     SNSEntity save(SNSEntity snsEntity);
     void delete(SNSEntity snsEntity);
-    Optional<SNSEntity> findById(Long snsId);
+    Optional<SNSEntity> findBySnsIdAndIsActiveTrue(Long snsId);
 }

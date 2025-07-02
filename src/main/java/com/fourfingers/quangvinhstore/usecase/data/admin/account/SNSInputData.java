@@ -8,6 +8,7 @@ import lombok.*;
 @Setter
 @Builder
 public class SNSInputData {
+    private Long snsId;
     private String snsName;
     private String snsUrl;
     private String snsChatUrl;
