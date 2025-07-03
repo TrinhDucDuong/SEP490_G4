@@ -6,6 +6,7 @@ import com.fourfingers.quangvinhstore.infrastructure.repository.CartDetailsRepos
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductVariantRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.CartDetailsEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductVariantEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ProductSize;
 import com.fourfingers.quangvinhstore.usecase.boundary.CartInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.CartOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.customer.CartInputData;
@@ -30,18 +31,27 @@ public class CartUseCaseInteraction implements CartInputBoundary {
     public ListCartDetailsOutputData getCart(Long accountId) {
         return cartOutputBoundary.convertToListCartDetailsOutputData(
                         cartDetailsRepository.findByAccount_AccountId(accountId)
-                                .stream().map(cartMapper::toCartDetails).toList()
+                                .stream().map(cartMapper::toCartDetails)
+                                .peek(cartDetails -> {
+                                    if(cartDetails.getProductVariant() != null) {
+                                        cartDetails.getProductVariant().setStores(null);
+                                    }
+                                })
+                                .toList()
         );
     }
 
     @Override
     @Transactional
     public ListCartDetailsOutputData addToCart(CartInputData cartInputData) throws IllegalArgumentException {
+        if(cartInputData.getQuantity() <= 0) {
+            throw new IllegalArgumentException("Không thể thêm số lượng " + cartInputData.getQuantity() + " vào giỏ hàng");
+        }
         Optional<ProductVariantEntity> productVariantEntity = productVariantRepository
                                                             .findByProduct_ProductIdAndColor_ColorHexAndProductSize(
                                                                     cartInputData.getProductId(),
                                                                     cartInputData.getColorHexCode(),
-                                                                    cartInputData.getSizeCode()
+                                                                    ProductSize.valueOf(cartInputData.getSizeCode())
                                                             );
         if(productVariantEntity.isEmpty()){
             throw new IllegalArgumentException("Không tìm thấy sản phẩm với kích cỡ và màu sắc như bạn chọn");
@@ -50,13 +60,15 @@ public class CartUseCaseInteraction implements CartInputBoundary {
             if(remainingQuantity < cartInputData.getQuantity()){
                 throw new IllegalArgumentException("Không đủ số lượng sản phẩm mong muốn! Hiện còn: " + remainingQuantity);
             } else {
-                if(cartInputData.getCartDetailsId() != null) {
-                    Optional<CartDetailsEntity> existingCart = cartDetailsRepository.findById(cartInputData.getCartDetailsId());
-                    if(existingCart.isPresent()){
-                        CartDetailsEntity cartDetails = existingCart.get();
-                        cartDetails.setQuantity((short) (cartDetails.getQuantity() + cartInputData.getQuantity()));
-                        cartDetailsRepository.save(cartDetails);
-                    }
+                Optional<CartDetailsEntity> cartDetailsEntity = cartDetailsRepository
+                                                            .findByAccount_AccountIdAndProductVariant_ProductVariantId(
+                                                                    cartInputData.getAccountId(),
+                                                                    productVariantEntity.get().getProductVariantId()
+                                                            );
+                if(cartDetailsEntity.isPresent()){
+                    CartDetailsEntity existingCartDetails = cartDetailsEntity.get();
+                    existingCartDetails.setQuantity((short) (existingCartDetails.getQuantity() + cartInputData.getQuantity()));
+                    cartDetailsRepository.save(existingCartDetails);
                 }
                 else {
                     CartDetailsEntity newCartDetails = new CartDetailsEntity(
@@ -75,15 +87,34 @@ public class CartUseCaseInteraction implements CartInputBoundary {
 
     @Override
     public ListCartDetailsOutputData removeFromCart(CartInputData cartInputData) throws IllegalArgumentException {
-        if(cartInputData.getCartDetailsId() != null) {
-            Optional<CartDetailsEntity> existingCart = cartDetailsRepository.findByCartDetailsId(cartInputData.getCartDetailsId());
-            if(existingCart.isPresent()){
-                CartDetailsEntity cartDetails = existingCart.get();
-                cartDetails.setQuantity(cartInputData.getQuantity());
-                cartDetailsRepository.save(cartDetails);
-                if(cartDetails.getQuantity() == 0) {
-                    cartDetailsRepository.delete(cartDetails);
+        if(cartInputData.getQuantity() <= 0) {
+            throw new IllegalArgumentException("Không thể giảm số lượng " + cartInputData.getQuantity() + " từ giỏ hàng");
+        }
+        Optional<ProductVariantEntity> productVariantEntity = productVariantRepository
+                .findByProduct_ProductIdAndColor_ColorHexAndProductSize(
+                        cartInputData.getProductId(),
+                        cartInputData.getColorHexCode(),
+                        ProductSize.valueOf(cartInputData.getSizeCode())
+                );
+        if(productVariantEntity.isEmpty()){
+            throw new IllegalArgumentException("Không tìm thấy sản phẩm với kích cỡ và màu sắc như bạn chọn");
+        } else {
+            Optional<CartDetailsEntity> cartDetailsEntity = cartDetailsRepository
+                    .findByAccount_AccountIdAndProductVariant_ProductVariantId(
+                            cartInputData.getAccountId(),
+                            productVariantEntity.get().getProductVariantId()
+                    );
+            if(cartDetailsEntity.isPresent()){
+                short afterSubtractQuantity = (short) (cartDetailsEntity.get().getQuantity() - cartInputData.getQuantity());
+                if(afterSubtractQuantity <= 0){
+                    cartDetailsRepository.delete(cartDetailsEntity.get());
+                } else {
+                    CartDetailsEntity existingCartDetails = cartDetailsEntity.get();
+                    existingCartDetails.setQuantity(afterSubtractQuantity);
+                    cartDetailsRepository.save(existingCartDetails);
                 }
+            } else {
+                throw new IllegalArgumentException("Không tìm thấy sản phầm này trong giỏ hàng của bạn");
             }
         }
 

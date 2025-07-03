@@ -16,7 +16,7 @@ public class CartController {
     private final CartInputBoundary cartInputBoundary;
 
     @GetMapping
-    public ResponseEntity<ListCartDetailsOutputData> getCart(@RequestBody Long accountId) {
+    public ResponseEntity<ListCartDetailsOutputData> getCart(@RequestParam Long accountId) {
         ListCartDetailsOutputData cart = cartInputBoundary.getCart(accountId);
         return ResponseEntity.ok(cart);
     }
