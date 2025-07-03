@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// src/components/ProductDetail.jsx
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
@@ -8,8 +9,10 @@ import {
     faTruck, faBoxesPacking, faThumbsUp, faPhoneVolume, faStar
 } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
-import Breadcrumb from '../../components/common/Breadcrumb';
-import useCart from '../../hooks/useCart';
+import {AuthContext} from "../../context/AuthContext.jsx";
+import useCart from "../../hooks/useCart.js";
+import Breadcrumb from "../../components/common/Breadcrumb.jsx";
+
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -21,16 +24,23 @@ const ProductDetail = () => {
     const [tab, setTab] = useState('desc');
     const [quantity, setQuantity] = useState(1);
 
-    const { addToCart } = useCart();
+    const { account, token } = useContext(AuthContext);
+    const { addToCart } = useCart(account?.accountId, token);
 
     useEffect(() => {
         window.scrollTo(0, 0);
         const fetchProduct = async () => {
-            const res = await fetch(`http://localhost:9999/product/${id}`);
-            const data = await res.json();
-            setProduct(data.product);
-            setProductSizes(data.productSizes || []);
-            setProductColors(data.productColors || []);
+            try {
+                const res = await fetch(`http://localhost:9999/product/${id}`);
+                if (!res.ok) throw new Error('Lỗi tải sản phẩm');
+                const data = await res.json();
+                setProduct(data.product);
+                setProductSizes(data.productSizes || []);
+                setProductColors(data.productColors || []);
+            } catch (err) {
+                console.error('Lỗi khi fetch sản phẩm:', err);
+                toast.error(err.message || 'Lỗi tải sản phẩm');
+            }
         };
         fetchProduct();
     }, [id]);
@@ -49,12 +59,12 @@ const ProductDetail = () => {
                 quantity,
                 price: product.unitPrice,
                 productName: product.productName,
-                productImage: product.images?.[0]?.imageUrl || ''
+                productImage: product.images?.[0]?.imageUrl || '',
             });
-
             toast.success("Đã thêm sản phẩm vào giỏ hàng");
         } catch (error) {
-            toast.error("Lỗi khi thêm vào giỏ hàng");
+            console.error('Lỗi khi thêm vào giỏ hàng:', error);
+            toast.error(error.message || 'Lỗi khi thêm vào giỏ hàng');
         }
     };
 

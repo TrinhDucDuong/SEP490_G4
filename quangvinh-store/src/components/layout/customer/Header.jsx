@@ -15,6 +15,7 @@ function Header() {
     const [isSearchOpen, setSearchOpen] = useState(false);
     const { user, logout } = useContext(AuthContext);
     const [isDropdownOpen, setDropdownOpen] = useState(false);
+    const accountId = localStorage.getItem('accountId');
 
     const handleLogout = () => {
         logout();
@@ -155,7 +156,7 @@ function Header() {
             )}
 
             <Sidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
-            <Cart isOpen={isCartOpen} onClose={() => setCartOpen(false)} />
+            <Cart isOpen={isCartOpen} accountId={accountId} onClose={() => setCartOpen(false)} />
             <Search isOpen={isSearchOpen} onClose={() => setSearchOpen(false)} />
             <div className='h-20'></div>
         </>

@@ -33,7 +33,9 @@ const Login = () => {
             });
 
             const data = await res.json();
+            console.log(data.account.accountId);
             if (res.ok && data.token) {
+                localStorage.setItem('accountId', data.account.accountId);
                 await login(data.account, data.token);
                 navigate('/');
             } else {
