@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,7 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
-@EnableWebSecurity
+//@EnableWebSecurity
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -31,29 +32,16 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain googleSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher("/auth/google/**")
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/google/**").authenticated()
-                        .anyRequest().permitAll()
-                )
-                .oauth2Login(oauth2 -> {
-                    oauth2.loginPage("/oauth2/authorization/google");
+                .securityMatcher("/auth/social/google/**", "/login/oauth2/code/google/**", "/oauth2/**")
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/auth/social/google/**").permitAll();
+                    auth.anyRequest().authenticated();
                 })
-                .build();
-    }
-
-    @Bean
-    @Order(2)
-    public SecurityFilterChain facebookSecurityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .securityMatcher("/auth/facebook/**")
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/facebook/**").authenticated()
-                        .anyRequest().permitAll()
+                .oauth2Login(auth -> auth
+                        .loginPage("/oauth2/authorization/google")
+                        .defaultSuccessUrl("/auth/social/google", true)
+//                        .failureUrl("/auth/login?error=true")
                 )
-                .oauth2Login(oauth2 -> {
-                    oauth2.loginPage("/oauth2/authorization/facebook");
-                })
                 .build();
     }
 
@@ -70,7 +58,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/**").permitAll();
                     auth.requestMatchers("/home").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/auth/social/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET,"/policy").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/policy").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/policy/**").permitAll();
@@ -134,7 +121,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:5173"); // Allow your frontend origin
+        configuration.addAllowedOrigin("http://localhost:5180"); // Allow your frontend origin
         configuration.addAllowedMethod("*"); // Allow all HTTP methods (GET, POST, etc.)
         configuration.addAllowedHeader("*"); // Allow all headers
         configuration.setAllowCredentials(true); // Allow credentials (e.g., cookies, Authorization headers)
