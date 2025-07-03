@@ -95,7 +95,7 @@ public class SNSAuthUseCaseInteraction implements SNSAuthInputBoundary {
 
     private void savedDefaultImage(ProfileEntity savedProfile, String picture) {
         ImageEntity needToCreatedImage = ImageEntity.builder()
-                .imageUrl("picture")
+                .imageUrl(picture)
                 .imageType(ImageType.PROFILE)
                 .isActive(true)
                 .referenceId(savedProfile.getProfileId())
@@ -105,36 +105,38 @@ public class SNSAuthUseCaseInteraction implements SNSAuthInputBoundary {
 
     @Override
     public AuthenticationOutputData performFacebookAuthentication(SNSAuthInputData data) {
-//        AccountEntity accountEntity = accountRepository.findByFacebookId(data.getFacebookId()).orElse(null);
-//        if (accountEntity == null) {
-//            AccountEntity newAccount = new AccountEntity();
-//            newAccount.setFacebookId(data.getFacebookId());
-//            //TODO: Set default profile + image + created at + is active
-//
-//            AuthorityEntity authority = authorityRepository.findById("Customer")
-//                    .orElseGet(() -> {
-//                        AuthorityEntity newAuthority = new AuthorityEntity();
-//                        newAuthority.setAuthorityName("Customer");
-//                        return authorityRepository.save(newAuthority);
-//                    });
-//
-//            newAccount.setAuthorities(List.of(authority));
-//
-//            accountRepository.save(newAccount);
-//        }
-//        accountEntity = accountRepository.findByFacebookId(data.getFacebookId()).orElseThrow(() -> new AccountNotFoundException("Login via Facebook failed!"));
-//
-//        String token = jwtUtil.generateToken(accountEntity);
-//        List<Authority> authorities = List.of(
-//                accountEntity.getAuthorities()
-//                        .stream()
-//                        .map((authorityEntity) -> authorityMapper.toModel((AuthorityEntity) authorityEntity))
-//                        .toArray(Authority[]::new)
-//        );
-//        Account userAccount = accountMapper.toAccount(accountEntity);
-////        userAccount.setAuthorities(authorities);
-//        return authenticationOutputBoundary.convertToOutputData(userAccount, token);
-        return null;
+        OAuth2AuthenticationToken token = data.getToken();
+        String facebookId = token.getPrincipal().getAttributes().get("id").toString();
+        String name = token.getPrincipal().getAttributes().get("name").toString();
+        String email = token.getPrincipal().getAttributes().get("email").toString();
+        String picture = token.getPrincipal().getAttributes().get("picture").toString();
+        AccountEntity accountEntity = accountRepository.findByFacebookId(facebookId).orElse(null);
+        if (accountEntity == null) {
+            AccountEntity newAccount = new AccountEntity();
+            newAccount.setFacebookId(facebookId);
+            newAccount.setUsername(email.substring(0, 15));
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            newAccount.setPassword(passwordEncoder.encode(email+name));
+            newAccount.setActive(true);
+            newAccount.setCreatedAt(LocalDateTime.now());
+
+            AuthorityEntity authority = authorityRepository.findById("CUSTOMER")
+                    .orElseGet(() -> {
+                        AuthorityEntity newAuthority = new AuthorityEntity();
+                        newAuthority.setAuthorityName("CUSTOMER");
+                        return authorityRepository.save(newAuthority);
+                    });
+
+            newAccount.setAuthorities(List.of(authority));
+
+            accountRepository.save(newAccount);
+            saveDefaultProfile(newAccount, name, picture);
+        }
+        accountEntity = accountRepository.findByFacebookId(facebookId).orElseThrow(() -> new AccountNotFoundException("Login via Facebook failed!"));
+
+        String generateToken = jwtUtil.generateToken(accountEntity);
+        Account userAccount = accountMapper.toAccount(accountEntity);
+        return authenticationOutputBoundary.convertToOutputData(userAccount, generateToken);
     }
 
     public void resetPassword(String contact) throws AccountNotFoundException {

@@ -26,15 +26,14 @@ public class SNSAuthenticationController {
         return ResponseEntity.ok(authenticationOutputData);
     }
 
-//    @GetMapping("/facebook")
-//    public ResponseEntity loginWithFacebook(OAuth2AuthenticationToken token) {
-//        SNSAuthInputData snsAuthInputData = new SNSAuthInputData();
-//        snsAuthInputData.setEmail(token.getPrincipal().getAttribute("id"));
-//        snsAuthInputData.setName(token.getPrincipal().getAttribute("name"));
-//        AuthenticationOutputData authenticationOutputData = snsAuthInputBoundary
-//                .performFacebookAuthentication(snsAuthInputData);
-//        return ResponseEntity.ok(authenticationOutputData);
-//    }
+    @GetMapping("/facebook")
+    public ResponseEntity<?> loginWithFacebook(OAuth2AuthenticationToken token) {
+        SNSAuthInputData snsAuthInputData = new SNSAuthInputData();
+        snsAuthInputData.setToken(token);
+        AuthenticationOutputData authenticationOutputData = snsAuthInputBoundary
+                .performFacebookAuthentication(snsAuthInputData);
+        return ResponseEntity.ok(authenticationOutputData);
+    }
 
     @GetMapping("/forgot")
     public String resetPassword(@RequestParam String contact) { //TODO: xử lý thêm cho số điên thoai

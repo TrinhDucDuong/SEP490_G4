@@ -46,6 +46,23 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Order(2)
+    public SecurityFilterChain facebookSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/auth/social/facebook/**", "/login/oauth2/code/google/**", "/oauth2/**")
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/auth/social/facebook/**").permitAll();
+                    auth.anyRequest().authenticated();
+                })
+                .oauth2Login(auth -> auth
+                                .loginPage("/oauth2/authorization/facebook")
+                                .defaultSuccessUrl("/auth/social/facebook", true)
+//                        .failureUrl("/auth/login?error=true")
+                )
+                .build();
+    }
+
+    @Bean
     @Order(3)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
