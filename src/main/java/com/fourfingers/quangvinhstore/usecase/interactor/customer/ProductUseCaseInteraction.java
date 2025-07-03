@@ -52,11 +52,26 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
         // Create a Pageable object with page number, size and sort
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNumber), Integer.parseInt(pageSize));
 
+        String categoryIds = searchProductInputData.getCategoryIds() != null
+                ? String.join(",", searchProductInputData.getCategoryIds())
+                : null;
+
+        String brandIds = searchProductInputData.getBrandIds() != null
+                ? String.join(",", searchProductInputData.getBrandIds())
+                : null;
+
+        String colorHexes = searchProductInputData.getColorHexes() != null
+                ? String.join(",", searchProductInputData.getColorHexes())
+                : null;
+
+        String productSizes = searchProductInputData.getProductSizes() != null
+                ? String.join(",", searchProductInputData.getProductSizes())
+                : null;
+
         List<Product> products = getSearchResult(
                 productRepository.searchProduct(
                         searchProductInputData.getMinPrice(), searchProductInputData.getMaxPrice(),
-                        searchProductInputData.getCategoryIds(), searchProductInputData.getBrandIds(),
-                        searchProductInputData.getColorHexes(), searchProductInputData.getProductSizes(),
+                        categoryIds, brandIds, colorHexes, productSizes,
                         sortDirection, sortBy, pageable
                 ).getContent()
         );
