@@ -9,7 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import Breadcrumb from '../../components/common/Breadcrumb';
-import {useCart} from "../../context/CartContext.jsx";
+import useCart from '../../hooks/useCart';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -21,8 +21,7 @@ const ProductDetail = () => {
     const [tab, setTab] = useState('desc');
     const [quantity, setQuantity] = useState(1);
 
-    const user = JSON.parse(localStorage.getItem('user'));
-    const accountId = user?.account?.accountId || null;
+    const { addToCart } = useCart();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -36,14 +35,7 @@ const ProductDetail = () => {
         fetchProduct();
     }, [id]);
 
-    const { addToCart } = useCart();
-
     const handleAddToCart = async () => {
-        if (!user?.account?.accountId) {
-            toast.warning("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
-            return;
-        }
-
         if (!selectedColor || !selectedSize) {
             toast.error("Vui lòng chọn màu sắc và kích thước");
             return;
@@ -54,7 +46,10 @@ const ProductDetail = () => {
                 productId: product.productId,
                 colorHexCode: selectedColor,
                 sizeCode: selectedSize,
-                quantity
+                quantity,
+                price: product.unitPrice,
+                productName: product.productName,
+                productImage: product.images?.[0]?.imageUrl || ''
             });
 
             toast.success("Đã thêm sản phẩm vào giỏ hàng");
@@ -62,7 +57,6 @@ const ProductDetail = () => {
             toast.error("Lỗi khi thêm vào giỏ hàng");
         }
     };
-
 
     if (!product) return <div className="text-center py-20">Đang tải sản phẩm...</div>;
 
@@ -108,9 +102,9 @@ const ProductDetail = () => {
                         <div className="flex justify-between text-sm text-gray-500">
                             <span>Mã sản phẩm: #{product.productId}</span>
                             <span className="flex items-center gap-1">
-                <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
+                                <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
                                 {product.starRateAvg || 0}
-              </span>
+                            </span>
                         </div>
                         <h1 className="text-2xl font-bold text-gray-800">{product.productName}</h1>
                         <div className="text-red-500 text-2xl font-semibold">
@@ -125,7 +119,11 @@ const ProductDetail = () => {
                                 <button
                                     key={i}
                                     onClick={() => setSelectedColor(color.colorHex)}
-                                    className={`w-8 h-8 rounded-full border-2 ${selectedColor === color.colorHex ? 'ring-2 ring-black' : 'hover:border-black'} border-gray-300`}
+                                    className={`w-8 h-8 rounded-full border-2 ${
+                                        selectedColor === color.colorHex
+                                            ? 'ring-2 ring-black'
+                                            : 'hover:border-black'
+                                    } border-gray-300`}
                                     style={{ backgroundColor: color.colorHex }}
                                 />
                             ))}
@@ -139,7 +137,11 @@ const ProductDetail = () => {
                                 <button
                                     key={i}
                                     onClick={() => setSelectedSize(size)}
-                                    className={`px-3 py-1.5 rounded-lg border text-sm font-medium ${selectedSize === size ? 'bg-black text-white border-black' : 'bg-white border-gray-300 hover:bg-black hover:text-white'}`}
+                                    className={`px-3 py-1.5 rounded-lg border text-sm font-medium ${
+                                        selectedSize === size
+                                            ? 'bg-black text-white border-black'
+                                            : 'bg-white border-gray-300 hover:bg-black hover:text-white'
+                                    }`}
                                 >
                                     {size}
                                 </button>
@@ -194,10 +196,12 @@ const ProductDetail = () => {
             {/* Tabs */}
             <div className="mt-12">
                 <div className="flex gap-6 border-b">
-                    {['desc', 'story', 'detail'].map(key => (
+                    {['desc', 'story', 'detail'].map((key) => (
                         <button
                             key={key}
-                            className={`pb-2 text-sm font-medium ${tab === key ? 'border-b-2 border-black text-black' : 'text-gray-500'}`}
+                            className={`pb-2 text-sm font-medium ${
+                                tab === key ? 'border-b-2 border-black text-black' : 'text-gray-500'
+                            }`}
                             onClick={() => setTab(key)}
                         >
                             {key === 'desc' ? 'Mô tả' : key === 'story' ? 'Câu chuyện' : 'Chi tiết'}

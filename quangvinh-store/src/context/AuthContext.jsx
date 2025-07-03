@@ -1,3 +1,4 @@
+// src/context/AuthContext.jsx
 import { createContext, useState, useEffect } from 'react';
 import { fetchUser } from '../utils/api/UserAPI';
 
@@ -17,7 +18,12 @@ export const AuthProvider = ({ children }) => {
             }
             try {
                 const data = await fetchUser(token);
-                setUser(data);
+                // Dữ liệu trả về dạng { account: {...} }
+                if (data.account) {
+                    setUser({ ...data.account, token }); // flatten
+                } else {
+                    setUser(data);
+                }
             } catch (err) {
                 console.error("Lỗi khi fetch user:", err);
                 setUser(null);
@@ -31,11 +37,17 @@ export const AuthProvider = ({ children }) => {
     const login = (userData, newToken) => {
         localStorage.setItem('token', newToken);
         setToken(newToken);
-        setUser(userData);
+
+        if (userData.account) {
+            setUser({ ...userData.account, token: newToken });
+        } else {
+            setUser(userData);
+        }
     };
 
     const logout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('guest_cart');
         setToken(null);
         setUser(null);
     };

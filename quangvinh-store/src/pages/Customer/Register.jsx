@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from "../../assets/images/logo_black.png";
+
 
 const Register = () => {
     const [username, setUsername] = useState('');
