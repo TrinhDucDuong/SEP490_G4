@@ -47,10 +47,10 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>,
             JOIN colors c ON pv.color_code = c.color_code
             WHERE (:minPrice IS NULL OR p.unit_price >= :minPrice)
                 AND (:maxPrice IS NULL OR p.unit_price <= :maxPrice)
-                AND (:categoryIds IS NULL OR p.category_id IN (:categoryIds))
-                AND (:brandIds IS NULL OR p.brand_id IN (:brandIds))
-                AND (:colorHexes IS NULL OR pv.color_code IN (:colorHexes))
-                AND (:productSizes IS NULL OR pv.size_code IN (:productSizes))
+                AND (:categoryIds IS NULL OR FIND_IN_SET(p.category_id, :categoryIds) > 0)
+                AND (:brandIds IS NULL OR FIND_IN_SET(p.brand_id, :brandIds) > 0)
+                AND (:colorHexes IS NULL OR FIND_IN_SET(pv.color_code, :colorHexes) > 0)
+                AND (:productSizes IS NULL OR FIND_IN_SET(pv.size_code, :productSizes) > 0)
             GROUP BY p.product_id, p.product_name, p.product_description, p.unit_price
             ORDER BY
                 CASE WHEN :sortBy = 'unitPrice' AND :sortDirection = 'asc' THEN p.unit_price END ASC,
@@ -66,10 +66,10 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>,
     Page<Object[]> searchProduct(
             @Param("minPrice") BigDecimal minPrice,
             @Param("maxPrice") BigDecimal maxPrice,
-            @Param("categoryIds") List<String> categoryIds,
-            @Param("brandIds") List<String> brandIds,
-            @Param("colorHexes") List<String> colorHexes,
-            @Param("productSizes") List<String> productSizes,
+            @Param("categoryIds") String categoryIds,
+            @Param("brandIds") String brandIds,
+            @Param("colorHexes") String colorHexes,
+            @Param("productSizes") String productSizes,
             @Param("sortDirection") String sortDirection,
             @Param("sortBy") String sortBy,
             Pageable pageable);
