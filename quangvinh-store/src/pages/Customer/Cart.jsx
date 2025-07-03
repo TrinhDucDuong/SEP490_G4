@@ -1,18 +1,19 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faCartShopping } from '@fortawesome/free-solid-svg-icons';
-import ProductInCartCard from '../../components/ui/productInCartCard.jsx';
-import useCart from '../../hooks/useCart.js';
+import { toast } from 'react-toastify';
+import useCart from "../../hooks/useCart.js";
+import ProductInCartCard from "../../components/ui/productInCartCard.jsx";
 
-function Cart({ isOpen, onClose }) {
-    const { cartItems, removeItem, updateQuantity } = useCart();
+
+function Cart({ isOpen, onClose, accountId, token = null }) {
+    const { cartItems, loading, removeItem, updateQuantity } = useCart(accountId, token);
 
     const totalPrice = cartItems.reduce(
-        (total, item) => total + item.price * item.quantity,
+        (sum, item) => sum + item.price * item.quantity,
         0
     );
-
-    console.log('[Cart] Sản phẩm trong giỏ:', cartItems);
 
     return (
         <div
@@ -32,11 +33,12 @@ function Cart({ isOpen, onClose }) {
                     </button>
                 </div>
 
+                {/* Info */}
                 <div className="text-sm text-gray-500 mb-3">
-                    {cartItems.length} sản phẩm trong giỏ hàng
+                    {loading ? 'Đang tải...' : `${cartItems.length} sản phẩm trong giỏ hàng`}
                 </div>
 
-                {/* List sản phẩm */}
+                {/* Cart Items */}
                 <div className="flex-1 overflow-y-auto pr-1">
                     {cartItems.length === 0 ? (
                         <div className="flex flex-col items-center justify-center text-center text-gray-400 mt-20">
@@ -48,17 +50,17 @@ function Cart({ isOpen, onClose }) {
                         <div className="flex flex-col gap-4">
                             {cartItems.map((item) => (
                                 <ProductInCartCard
-                                    key={item.id || item.key}
+                                    key={item.id}
                                     item={item}
-                                    onRemove={() => removeItem(item.id || item.key)}
-                                    onUpdateQuantity={(id, newQty) => updateQuantity(id, newQty)}
+                                    onRemove={() => removeItem(item.id)}
+                                    onUpdateQuantity={(id, qty) => updateQuantity(id, qty)}
                                 />
                             ))}
                         </div>
                     )}
                 </div>
 
-                {/* Tổng tiền và nút thanh toán */}
+                {/* Tổng cộng + Thanh toán */}
                 {cartItems.length > 0 && (
                     <div className="pt-4 border-t mt-4">
                         <div className="flex justify-between items-center mb-4 text-base font-semibold">

@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
-import { CartProvider } from './context/CartContext.jsx';
 import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -45,7 +44,6 @@ import EmployeeManagement from './pages/Staff/EmployeeManagement';
 function App() {
     return (
         <AuthProvider>
-            <CartProvider>
                 <ToastContainer position="top-right" autoClose={3000} />
                 <Routes>
                     {/* Customer layout & routes */}
@@ -88,7 +86,6 @@ function App() {
                         <Route path="logout" element={<div>Logout Page</div>} />
                     </Route>
                 </Routes>
-            </CartProvider>
         </AuthProvider>
     );
 }
