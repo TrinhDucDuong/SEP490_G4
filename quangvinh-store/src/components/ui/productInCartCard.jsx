@@ -1,83 +1,71 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinus, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
-import productPicture from '../../assets/images/ao.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMinus, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 function ProductInCartCard({ item, onRemove, onUpdateQuantity }) {
-    const [quantity, setQuantity] = useState(item.quantity);
+    const {
+        id,
+        key,
+        productImage,
+        productName,
+        colorHexCode,
+        sizeCode,
+        quantity,
+        price
+    } = item;
 
-    const handleDecrease = () => {
-        if (quantity > 1) {
-            setQuantity(quantity - 1);
-            onUpdateQuantity?.(item.id, quantity - 1);
+    const handleQuantityChange = (delta) => {
+        const newQuantity = quantity + delta;
+        if (newQuantity > 0) {
+            console.log('[ProductInCartCard] Thay đổi số lượng:', newQuantity);
+            onUpdateQuantity(id || key, newQuantity);
         }
     };
 
-    const handleIncrease = () => {
-        setQuantity(quantity + 1);
-        onUpdateQuantity?.(item.id, quantity + 1);
-    };
-
     return (
-        <div className="flex items-center border border-gray-200 rounded-lg p-3 hover:shadow-sm transition mb-3 group">
-            <Link to={`/products/${item.id}`} className="flex-shrink-0 w-20 h-20 overflow-hidden rounded-lg bg-gray-100 hover:opacity-80 transition">
-                <img
-                    src={item.imageUrl || productPicture}
-                    alt={item.name}
-                    className="object-cover w-full h-full"
-                    onError={(e) => (e.target.src = productPicture)}
-                />
-            </Link>
-
-            <div className="flex-1 px-4">
-                <Link to={`/products/${item.id}`}>
-                    <h3 className="font-semibold text-sm text-black line-clamp-2 hover:text-yellow-600 transition">
-                        {item.name}
-                    </h3>
-                </Link>
-                <div className="text-gray-600 text-xs mt-1">
-                    Giá:{" "}
-                    {item.discountPrice ? (
-                        <>
-                            <span className="text-red-500 font-semibold mr-2">
-                                {item.discountPrice.toLocaleString()}đ
-                            </span>
-                            <span className="line-through text-gray-400">
-                                {item.price.toLocaleString()}đ
-                            </span>
-                        </>
-                    ) : (
-                        <span className="text-black font-medium">
-                            {item.price.toLocaleString()}đ
-                        </span>
-                    )}
+        <div className="flex gap-4 border p-3 rounded-lg">
+            <img
+                src={productImage}
+                alt={productName}
+                className="w-20 h-20 object-cover rounded-lg border"
+            />
+            <div className="flex-1 flex flex-col justify-between">
+                <div>
+                    <h3 className="text-sm font-medium text-gray-800">{productName}</h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                        Màu: <span style={{ backgroundColor: colorHexCode }} className="inline-block w-4 h-4 rounded-full border border-gray-300 align-middle mr-1" />
+                        <span className="align-middle">{colorHexCode}</span>
+                    </p>
+                    <p className="text-xs text-gray-500">Kích thước: {sizeCode}</p>
                 </div>
-
-                <div className="flex items-center gap-2 mt-2">
-                    <button
-                        onClick={handleDecrease}
-                        className="w-6 h-6 flex items-center justify-center border border-gray-300 rounded text-gray-600 hover:bg-gray-200"
-                    >
-                        <FontAwesomeIcon icon={faMinus} />
-                    </button>
-                    <span className="w-6 text-center text-sm">{quantity}</span>
-                    <button
-                        onClick={handleIncrease}
-                        className="w-6 h-6 flex items-center justify-center border border-gray-300 rounded text-gray-600 hover:bg-gray-200"
-                    >
-                        <FontAwesomeIcon icon={faPlus} />
-                    </button>
+                <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center border rounded">
+                        <button
+                            onClick={() => handleQuantityChange(-1)}
+                            className="px-2 py-1 text-gray-600 hover:text-black"
+                        >
+                            <FontAwesomeIcon icon={faMinus} />
+                        </button>
+                        <span className="px-3 text-sm">{quantity}</span>
+                        <button
+                            onClick={() => handleQuantityChange(1)}
+                            className="px-2 py-1 text-gray-600 hover:text-black"
+                        >
+                            <FontAwesomeIcon icon={faPlus} />
+                        </button>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <p className="text-sm font-semibold text-red-500">
+                            {(price * quantity).toLocaleString('vi-VN')}₫
+                        </p>
+                        <button
+                            onClick={() => onRemove(id || key)}
+                            className="text-gray-400 hover:text-red-500"
+                        >
+                            <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <button
-                onClick={() => onRemove(item.id)}
-                className="text-gray-400 hover:text-red-500 transition ml-2"
-                title="Xóa khỏi giỏ hàng"
-            >
-                <FontAwesomeIcon icon={faXmark} size="lg" />
-            </button>
         </div>
     );
 }

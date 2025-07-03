@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { useGoogleLogin } from '@react-oauth/google';
 import { FcGoogle } from 'react-icons/fc';
 import logo from "../../assets/images/logo_black.png";
 
@@ -47,53 +46,41 @@ const Login = () => {
         }
     };
 
-
-    const googleLogin = useGoogleLogin({
-        onSuccess: async (tokenResponse) => {
-            if (!tokenResponse.credential) {
-                setError('Không nhận được thông tin xác thực Google');
-                return;
-            }
-            try {
-                const res = await fetch('http://localhost:9999/auth/google-login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ credential: tokenResponse.credential }),
-                });
-
-                const data = await res.json();
-                if (res.ok && data.token) {
-                    await login(data.account, data.token);
-                    navigate('/');
-                } else {
-                    setError(data.message || 'Đăng nhập Google thất bại');
-                }
-            } catch (error) {
-                setError('Lỗi xác thực Google');
-            }
-        },
-        onError: () => setError('Đăng nhập Google thất bại'),
-        flow: 'implicit',
-    });
-
     return (
         <>
             <div className="flex flex-col md:flex-row items-center justify-center my-20 bg-white">
                 <div className="md:w-1/2 mr-24 space-y-6 md:space-y-8 max-w-md w-full h-full">
-                    <h1 className="text-4xl font-sans text-black " style={{fontWeight: 900}}
-                    >
-                        XÁC THỰC <span className="text-[#594AE2]">HÀNG AUTH</span><br/>
+                    <h1 className="text-4xl font-sans text-black font-extrabold">
+                        XÁC THỰC <span className="text-[#594AE2]">HÀNG AUTH</span><br />
                         TIN CẬY MỌI GIAO DỊCH
                     </h1>
-                    <button
-                        title="Đăng nhập với Google"
-                        onClick={() => googleLogin()}
-                        className="flex items-center justify-center gap-2 px-3 py-3  border border-gray-300 rounded-xl shadow-sm hover:bg-gray-100 transition w-full"
-                        disabled={loading}
-                    >
-                        <FcGoogle size={20}/>
-                        <span className="text-sm font-medium text-gray-700">Đăng nhập với Google</span>
-                    </button>
+
+                    {/* Đăng nhập Google & Facebook */}
+                    <div className="flex flex-col gap-3">
+                        <button
+                            onClick={() => window.location.href = 'http://localhost:9999/auth/social/google'}
+                            className="flex items-center justify-center gap-2 px-3 py-3 border border-gray-300 rounded-xl shadow-sm hover:bg-gray-100 transition w-full"
+                            disabled={loading}
+                        >
+                            <FcGoogle size={20} />
+                            <span className="text-sm font-medium text-gray-700">Đăng nhập với Google</span>
+                        </button>
+
+                        <button
+                            onClick={() => window.location.href = 'http://localhost:9999/auth/social/facebook'}
+                            className="flex items-center justify-center gap-2 px-3 py-3 border border-gray-300 rounded-xl shadow-sm hover:bg-gray-100 transition w-full"
+                            disabled={loading}
+                        >
+                            <img
+                                src="https://cdn-icons-png.flaticon.com/512/124/124010.png"
+                                alt="Facebook"
+                                className="w-5 h-5"
+                            />
+                            <span className="text-sm font-medium text-gray-700">Đăng nhập với Facebook</span>
+                        </button>
+                    </div>
+
+                    {/* Đăng nhập truyền thống */}
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <input
                             className="rounded-full border border-gray-300 px-4 py-2 w-full"
@@ -109,14 +96,13 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
+
                         {error && <p className="text-white bg-red-500 rounded-full px-4 py-2 text-sm">{error}</p>}
 
                         <div className="flex items-center">
-                            <input className="mr-2" type="checkbox" id="remember"/>
+                            <input className="mr-2" type="checkbox" id="remember" />
                             <label htmlFor="remember" className="text-sm">Giữ đăng nhập cho tôi</label>
                         </div>
-
-
 
                         <button
                             className="w-full bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition"
@@ -124,23 +110,30 @@ const Login = () => {
                         >
                             {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
                         </button>
-                        <div className="text-sm">
-                            Bạn chưa có tài khoản? <Link to="/register" className="text-blue-600 hover:underline">Đăng
-                            ký ngay</Link>
+
+                        <div className="flex items-center justify-between mt-4">
+                            <div className="text-sm">
+                                Bạn chưa có tài khoản? <Link to="/register" className="text-blue-600 hover:underline">Đăng ký ngay</Link>
+                            </div>
+                            <div className="text-sm text-right">
+                                <Link to="/forgot-password" className="text-blue-600 hover:underline">
+                                    Quên mật khẩu?
+                                </Link>
+                            </div>
                         </div>
                     </form>
+
                     <div className="mt-4 text-xs text-gray-600 leading-snug">
                         <p>
-                            Bằng cách nhấn 'Đăng nhập', bạn đồng ý với <span className="underline cursor-pointer">Chính sách Bảo mật</span> của
-                            WebName,
+                            Bằng cách nhấn 'Đăng nhập', bạn đồng ý với <span className="underline cursor-pointer">Chính sách Bảo mật</span> của WebName,
                             <span className="underline cursor-pointer"> Điều khoản thành viên</span> và
                             <span className="underline cursor-pointer"> Điều khoản trang Web</span>.
                         </p>
                     </div>
                 </div>
 
-                <div
-                    className="md:w-1/2 ml-24 bg-gray-200 shadow-md p-6 rounded-xl mt-10 md:mt-0 md:ml-10 max-w-md w-full h-full">
+                {/* Phần giới thiệu bên phải */}
+                <div className="md:w-1/2 ml-24 bg-gray-200 shadow-md p-6 rounded-xl mt-10 md:mt-0 md:ml-10 max-w-md w-full h-full">
                     <h2 className="text-3xl font-bold mb-6">Tham gia thành viên ngay hôm nay!</h2>
                     <p className="mb-6 text-lg font-semibold text-black">Làm điều bạn thích, nhận thứ bạn mê!</p>
                     <ul className="list-disc pl-5 text-sm text-gray-700 mb-6 space-y-1">
@@ -153,22 +146,24 @@ const Login = () => {
                         Tham gia ngay để tích điểm, thăng hạng và mở khóa thêm nhiều quà tặng hấp dẫn!
                     </p>
                     <Link to="/register" className="text-blue-600 hover:underline">
-                        <button
-                            className="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition w-full">
+                        <button className="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition w-full">
                             Tham gia ngay
                         </button>
                     </Link>
-
                 </div>
             </div>
+
+            {/* Banner cuối */}
             <div className="bg-[#594AE2] p-4 rounded-t-3xl flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">Gia nhập QUANG VINH.</h1>
                     <p className="text-lg">Ưu đãi 15% dành cho!</p>
                     <p className="text-sm">Đăng ký miễn phí! Tham gia cộng đồng ngay</p>
                     <div className="mt-4 flex space-x-4">
-                        <input type="email" placeholder="Email Của Bạn" className="p-2 rounded-lg text-black"/>
-                        <button className="p-2 rounded-lg bg-black border-black text-white hover:bg-white hover:text-black ">Đăng ký ngay</button>
+                        <input type="email" placeholder="Email Của Bạn" className="p-2 rounded-lg text-black" />
+                        <button className="p-2 rounded-lg bg-black border-black text-white hover:bg-white hover:text-black">
+                            Đăng ký ngay
+                        </button>
                     </div>
                 </div>
 
@@ -184,7 +179,6 @@ const Login = () => {
                 </div>
             </div>
         </>
-
     );
 };
 

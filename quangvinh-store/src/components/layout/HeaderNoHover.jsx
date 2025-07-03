@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Menu } from 'lucide-react';
-import logo from '../../assets/images/logo_white.png';
-import Sidebar from './Sidebar';
+import logo from '../../../../../mergecode/quangvinh-store/src/assets/images/logo_white.png';
+import Sidebar from './customer/Sidebar.jsx';
 import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCartShopping, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
