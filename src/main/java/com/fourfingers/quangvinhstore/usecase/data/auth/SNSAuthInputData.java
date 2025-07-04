@@ -1,6 +1,7 @@
 package com.fourfingers.quangvinhstore.usecase.data.auth;
 
 import lombok.*;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -8,7 +9,5 @@ import lombok.*;
 @Setter
 @Builder
 public class SNSAuthInputData {
-    private String email;
-    private String name;
-    private String facebookId;
+    OAuth2AuthenticationToken token;
 }

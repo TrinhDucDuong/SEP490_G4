@@ -7,8 +7,13 @@ import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.AccountM
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.AuthorityMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.AccountRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.AuthorityRepository;
+import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
+import com.fourfingers.quangvinhstore.infrastructure.repository.ProfileRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.AccountEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.AuthorityEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.ImageEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.ProfileEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.AuthenticationOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.JwtUtilBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.SNSAuthInputBoundary;
@@ -22,8 +27,10 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -38,95 +45,99 @@ public class SNSAuthUseCaseInteraction implements SNSAuthInputBoundary {
     private final JwtUtilBoundary jwtUtil;
     private final AuthorityMapper authorityMapper;
     private final JavaMailSender mailSender;
+    private final ProfileRepository profileRepository;
+    private final ImageRepository imageRepository;
 
     @Override
     @Transactional
     public AuthenticationOutputData performGoogleAuthentication(SNSAuthInputData data) {
-        AccountEntity accountEntity = accountRepository.findByEmail(data.getEmail()).orElse(null);
+        OAuth2AuthenticationToken token = data.getToken();
+        String email = token.getPrincipal().getAttributes().get("email").toString();
+        String name = token.getPrincipal().getAttributes().get("name").toString();
+        String picture = token.getPrincipal().getAttributes().get("picture").toString();
+        AccountEntity accountEntity = accountRepository.findByEmail(email).orElse(null);
         if (accountEntity == null) {
             AccountEntity newAccount = new AccountEntity();
-            newAccount.setEmail(data.getEmail());
-            //TODO: Set default profile + image + created at
-            AuthorityEntity authority = authorityRepository.findById("Customer")
+            newAccount.setEmail(email);
+            newAccount.setUsername(email.substring(0, 15));
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            newAccount.setPassword(passwordEncoder.encode(email+name));
+            newAccount.setActive(true);
+            newAccount.setCreatedAt(LocalDateTime.now());
+
+            AuthorityEntity authority = authorityRepository.findById("CUSTOMER")
                     .orElseGet(() -> {
                         AuthorityEntity newAuthority = new AuthorityEntity();
-                        newAuthority.setAuthorityName("Customer");
+                        newAuthority.setAuthorityName("CUSTOMER");
                         return authorityRepository.save(newAuthority);
                     });
 
             newAccount.setAuthorities(List.of(authority));
 
             accountRepository.save(newAccount);
+            saveDefaultProfile(newAccount, name, picture);
         }
-        accountEntity = accountRepository.findByEmail(data.getEmail()).orElseThrow(() -> new AccountNotFoundException("Login via Google failed!"));
+        accountEntity = accountRepository.findByEmail(email).orElseThrow(() -> new AccountNotFoundException("Login via Google failed!"));
 
-        String token = jwtUtil.generateToken(accountEntity);
-        List<Authority> authorities = List.of(
-                accountEntity.getAuthorities()
-                        .stream()
-                        .map((authorityEntity) -> authorityMapper.toModel((AuthorityEntity) authorityEntity))
-                        .toArray(Authority[]::new)
-        );
+        String generateToken = jwtUtil.generateToken(accountEntity);
         Account userAccount = accountMapper.toAccount(accountEntity);
-//        userAccount.setAuthorities(authorities);
-        return authenticationOutputBoundary.convertToOutputData(userAccount, token);
+        return authenticationOutputBoundary.convertToOutputData(userAccount, generateToken);
+    }
+
+    private void saveDefaultProfile(AccountEntity accountEntity, String name, String picture) {
+        ProfileEntity needToCreatedProfile = ProfileEntity.builder()
+                .account(accountEntity)
+                .firstName("name")
+                .build();
+        ProfileEntity savedProfile = profileRepository.save(needToCreatedProfile);
+        savedDefaultImage(savedProfile, picture);
+    }
+
+    private void savedDefaultImage(ProfileEntity savedProfile, String picture) {
+        ImageEntity needToCreatedImage = ImageEntity.builder()
+                .imageUrl(picture)
+                .imageType(ImageType.PROFILE)
+                .isActive(true)
+                .referenceId(savedProfile.getProfileId())
+                .build();
+        imageRepository.save(needToCreatedImage);
     }
 
     @Override
     public AuthenticationOutputData performFacebookAuthentication(SNSAuthInputData data) {
-        AccountEntity accountEntity = accountRepository.findByFacebookId(data.getFacebookId()).orElse(null);
+        OAuth2AuthenticationToken token = data.getToken();
+        String facebookId = token.getPrincipal().getAttributes().get("id").toString();
+        String name = token.getPrincipal().getAttributes().get("name").toString();
+        String email = token.getPrincipal().getAttributes().get("email").toString();
+        String picture = token.getPrincipal().getAttributes().get("picture").toString();
+        AccountEntity accountEntity = accountRepository.findByFacebookId(facebookId).orElse(null);
         if (accountEntity == null) {
             AccountEntity newAccount = new AccountEntity();
-            newAccount.setFacebookId(data.getFacebookId());
-            //TODO: Set default profile + image + created at + is active
+            newAccount.setFacebookId(facebookId);
+            newAccount.setUsername(email.substring(0, 15));
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            newAccount.setPassword(passwordEncoder.encode(email+name));
+            newAccount.setActive(true);
+            newAccount.setCreatedAt(LocalDateTime.now());
 
-            AuthorityEntity authority = authorityRepository.findById("Customer")
+            AuthorityEntity authority = authorityRepository.findById("CUSTOMER")
                     .orElseGet(() -> {
                         AuthorityEntity newAuthority = new AuthorityEntity();
-                        newAuthority.setAuthorityName("Customer");
+                        newAuthority.setAuthorityName("CUSTOMER");
                         return authorityRepository.save(newAuthority);
                     });
 
             newAccount.setAuthorities(List.of(authority));
 
             accountRepository.save(newAccount);
+            saveDefaultProfile(newAccount, name, picture);
         }
-        accountEntity = accountRepository.findByFacebookId(data.getFacebookId()).orElseThrow(() -> new AccountNotFoundException("Login via Facebook failed!"));
+        accountEntity = accountRepository.findByFacebookId(facebookId).orElseThrow(() -> new AccountNotFoundException("Login via Facebook failed!"));
 
-        String token = jwtUtil.generateToken(accountEntity);
-        List<Authority> authorities = List.of(
-                accountEntity.getAuthorities()
-                        .stream()
-                        .map((authorityEntity) -> authorityMapper.toModel((AuthorityEntity) authorityEntity))
-                        .toArray(Authority[]::new)
-        );
+        String generateToken = jwtUtil.generateToken(accountEntity);
         Account userAccount = accountMapper.toAccount(accountEntity);
-//        userAccount.setAuthorities(authorities);
-        return authenticationOutputBoundary.convertToOutputData(userAccount, token);
+        return authenticationOutputBoundary.convertToOutputData(userAccount, generateToken);
     }
-
-//    @Override
-//    public void verifyCodeAndResetPassword(String contact) throws AccountNotFoundException {
-//        AccountEntity accountEntity = accountRepository.findByEmail(contact)
-//                .orElseThrow(() -> new AccountNotFoundException("Email không tồn tại"));
-//        String tempPassword = generateTemporaryPassword();
-//        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//        do {
-//            accountEntity.setPassword(passwordEncoder.encode(tempPassword));
-//        } while (accountRepository.findByPassword(accountEntity.getPassword()));
-//        accountRepository.save(accountEntity);
-//
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(contact);
-//        message.setSubject("Mật khẩu tạm thời");
-//        message.setText("Mật khẩu tạm thời của bạn là: " + tempPassword +
-//                "\nVui lòng đăng nhập và đổi mật khẩu ngay.");
-//        mailSender.send(message);
-//    }
-//
-//    private String generateTemporaryPassword() {
-//        return "temp" + 100000 + new Random().nextInt(999999);
-//    }
 
     public void resetPassword(String contact) throws AccountNotFoundException {
         try{

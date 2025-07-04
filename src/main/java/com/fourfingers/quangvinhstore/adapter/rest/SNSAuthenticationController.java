@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/auth/social")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -18,18 +20,16 @@ public class SNSAuthenticationController {
     @GetMapping("/google")
     public ResponseEntity<?> loginWithGoogle(OAuth2AuthenticationToken token) {
         SNSAuthInputData snsAuthInputData = new SNSAuthInputData();
-        snsAuthInputData.setEmail(token.getPrincipal().getAttribute("email"));
-        snsAuthInputData.setName(token.getPrincipal().getAttribute("name"));
+        snsAuthInputData.setToken(token);
         AuthenticationOutputData authenticationOutputData = snsAuthInputBoundary
                 .performGoogleAuthentication(snsAuthInputData);
         return ResponseEntity.ok(authenticationOutputData);
     }
 
     @GetMapping("/facebook")
-    public ResponseEntity loginWithFacebook(OAuth2AuthenticationToken token) {
+    public ResponseEntity<?> loginWithFacebook(OAuth2AuthenticationToken token) {
         SNSAuthInputData snsAuthInputData = new SNSAuthInputData();
-        snsAuthInputData.setEmail(token.getPrincipal().getAttribute("id"));
-        snsAuthInputData.setName(token.getPrincipal().getAttribute("name"));
+        snsAuthInputData.setToken(token);
         AuthenticationOutputData authenticationOutputData = snsAuthInputBoundary
                 .performFacebookAuthentication(snsAuthInputData);
         return ResponseEntity.ok(authenticationOutputData);
