@@ -17,7 +17,8 @@ import java.security.Principal;
 public class SNSAuthenticationController {
     private final SNSAuthInputBoundary snsAuthInputBoundary;
 
-    @GetMapping("/google")
+//    @GetMapping("/google")
+    @GetMapping(value = "/google", produces = "application/json")
     public ResponseEntity<?> loginWithGoogle(OAuth2AuthenticationToken token) {
         SNSAuthInputData snsAuthInputData = new SNSAuthInputData();
         snsAuthInputData.setToken(token);
@@ -26,7 +27,8 @@ public class SNSAuthenticationController {
         return ResponseEntity.ok(authenticationOutputData);
     }
 
-    @GetMapping("/facebook")
+//    @GetMapping("/facebook")
+    @GetMapping(value = "/facebook", produces = "application/json")
     public ResponseEntity<?> loginWithFacebook(OAuth2AuthenticationToken token) {
         SNSAuthInputData snsAuthInputData = new SNSAuthInputData();
         snsAuthInputData.setToken(token);
