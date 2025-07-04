@@ -32,7 +32,7 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain googleSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher("/auth/social/google/**", "/login/oauth2/code/google/**", "/oauth2/**")
+                .securityMatcher("/auth/social/google/**", "/login/oauth2/code/google/**", "/oauth2/authorization/google/**")
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/social/google/**").permitAll();
                     auth.anyRequest().authenticated();
@@ -49,7 +49,7 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain facebookSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher("/auth/social/facebook/**", "/login/oauth2/code/google/**", "/oauth2/**")
+                .securityMatcher("/auth/social/facebook/**", "/login/oauth2/code/facebook/**", "/oauth2/authorization/facebook/**")
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/social/facebook/**").permitAll();
                     auth.anyRequest().authenticated();
@@ -142,7 +142,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:5180"); // Allow your frontend origin
+        configuration.addAllowedOrigin("http://localhost:5182"); // Allow your frontend origin
         configuration.addAllowedMethod("*"); // Allow all HTTP methods (GET, POST, etc.)
         configuration.addAllowedHeader("*"); // Allow all headers
         configuration.setAllowCredentials(true); // Allow credentials (e.g., cookies, Authorization headers)

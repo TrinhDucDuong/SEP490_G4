@@ -59,9 +59,13 @@ public class SNSAuthUseCaseInteraction implements SNSAuthInputBoundary {
         if (accountEntity == null) {
             AccountEntity newAccount = new AccountEntity();
             newAccount.setEmail(email);
-            newAccount.setUsername(email.substring(0, 15));
+            String userName;
+            do{
+                userName = "VIP" + generateTemporaryPassword().substring(4);
+            } while (accountRepository.findByUsername(userName).isPresent());
+            newAccount.setUsername(userName);
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            newAccount.setPassword(passwordEncoder.encode(email+name));
+            newAccount.setPassword(passwordEncoder.encode(generateTemporaryPassword()));
             newAccount.setActive(true);
             newAccount.setCreatedAt(LocalDateTime.now());
 
@@ -108,15 +112,19 @@ public class SNSAuthUseCaseInteraction implements SNSAuthInputBoundary {
         OAuth2AuthenticationToken token = data.getToken();
         String facebookId = token.getPrincipal().getAttributes().get("id").toString();
         String name = token.getPrincipal().getAttributes().get("name").toString();
-        String email = token.getPrincipal().getAttributes().get("email").toString();
-        String picture = token.getPrincipal().getAttributes().get("picture").toString();
+        String picture = "{baseUrl}/images/default-profile.png";
+
         AccountEntity accountEntity = accountRepository.findByFacebookId(facebookId).orElse(null);
         if (accountEntity == null) {
             AccountEntity newAccount = new AccountEntity();
             newAccount.setFacebookId(facebookId);
-            newAccount.setUsername(email.substring(0, 15));
+            String userName;
+            do{
+                userName = "UN" + generateTemporaryPassword().substring(4);
+            } while (accountRepository.findByUsername(userName).isPresent());
+            newAccount.setUsername(userName);
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            newAccount.setPassword(passwordEncoder.encode(email+name));
+            newAccount.setPassword(passwordEncoder.encode(generateTemporaryPassword()));
             newAccount.setActive(true);
             newAccount.setCreatedAt(LocalDateTime.now());
 
@@ -180,7 +188,7 @@ public class SNSAuthUseCaseInteraction implements SNSAuthInputBoundary {
     }
 
     private String generateTemporaryPassword() {
-        return "temp" + 100000 + new Random().nextInt(999999);
+        return "temp" + new Random().nextInt(999999999);
     }
 
     private String mailUIresetPassword(String contact, String token) {
