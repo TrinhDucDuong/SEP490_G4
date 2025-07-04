@@ -3,7 +3,7 @@ package com.fourfingers.quangvinhstore.domain.model.staff;
 import com.fourfingers.quangvinhstore.domain.model.Image;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -17,5 +17,5 @@ public class Brand {
     private String brandDescription;
     private Boolean isActive;
     private List<Image> images;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 }

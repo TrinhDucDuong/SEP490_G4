@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface BrandRepository extends JpaRepository<BrandEntity, Long> {
     Optional<BrandEntity> findByBrandId(Long brandId);
+    Optional<BrandEntity> findByBrandName(String brandName);
 }
