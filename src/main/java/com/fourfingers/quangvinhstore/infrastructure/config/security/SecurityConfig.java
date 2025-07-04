@@ -49,13 +49,13 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain facebookSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher("/auth/social/facebook/**", "/login/oauth2/code/google/**", "/oauth2/**")
+                .securityMatcher("/auth/social/facebook/**", "/oauth2/authorization/facebook")
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/auth/social/facebook/**").permitAll();
+                    auth.requestMatchers("/auth/social/facebook/**", "/oauth2/authorization/facebook").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .oauth2Login(auth -> auth
-                                .loginPage("/oauth2/authorization/facebook")
+//                                .loginPage("/oauth2/authorization/facebook")
                                 .defaultSuccessUrl("/auth/social/facebook", true)
 //                        .failureUrl("/auth/login?error=true")
                 )
