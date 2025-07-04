@@ -24,3 +24,31 @@ export const useFetchProducts = () => {
 
     return { products, loading, error };
 };
+
+export const useFetchProductById = (productId) => {
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (!productId) return;
+
+        const fetchProduct = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.get(`http://localhost:9999/product/${productId}`);
+                setProduct(response.data.product || null);
+            } catch (err) {
+                setError('Lỗi khi tải chi tiết sản phẩm.');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProduct();
+    }, [productId]);
+
+    return { product, loading, error };
+};
+

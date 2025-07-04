@@ -16,6 +16,7 @@ export const useFetchCategories = () => {
                 } else {
                     setError('Không có danh mục nào được trả về.');
                 }
+                // eslint-disable-next-line no-unused-vars
             } catch (err) {
                 setError('Không thể tải danh mục. Vui lòng thử lại sau.');
             } finally {

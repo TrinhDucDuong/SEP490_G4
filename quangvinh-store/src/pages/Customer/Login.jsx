@@ -33,7 +33,7 @@ const Login = () => {
             });
 
             const data = await res.json();
-            console.log(data.account.accountId);
+            console.log(data.account);
             if (res.ok && data.token) {
                 localStorage.setItem('accountId', data.account.accountId);
                 await login(data.account, data.token);
@@ -48,6 +48,11 @@ const Login = () => {
         }
     };
 
+
+    const handleSubmitGoogle = () => {
+        window.location.href = 'http://localhost:9999/oauth2/authorization/google';
+    };
+
     return (
         <>
             <div className="flex flex-col md:flex-row items-center justify-center my-20 bg-white">
@@ -56,11 +61,9 @@ const Login = () => {
                         XÁC THỰC <span className="text-[#594AE2]">HÀNG AUTH</span><br />
                         TIN CẬY MỌI GIAO DỊCH
                     </h1>
-
-                    {/* Đăng nhập Google & Facebook */}
                     <div className="flex flex-col gap-3">
                         <button
-                            onClick={() => window.location.href = 'http://localhost:9999/auth/social/google'}
+                            onClick={() => handleSubmitGoogle()}
                             className="flex items-center justify-center gap-2 px-3 py-3 border border-gray-300 rounded-xl shadow-sm hover:bg-gray-100 transition w-full"
                             disabled={loading}
                         >
@@ -69,7 +72,7 @@ const Login = () => {
                         </button>
 
                         <button
-                            onClick={() => window.location.href = 'http://localhost:9999/auth/social/facebook'}
+                            onClick={() => window.location.href = 'http://localhost:9999/oauth2/authorization/facebook'}
                             className="flex items-center justify-center gap-2 px-3 py-3 border border-gray-300 rounded-xl shadow-sm hover:bg-gray-100 transition w-full"
                             disabled={loading}
                         >

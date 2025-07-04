@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ShowSection from "../../common/ShowSection.jsx";
 import { useFetchBrands } from "../../../hooks/useFetchBrands.js";
+import { useFetchColors } from "../../../hooks/useFetchColors.js";
 import FilterGroup from "./FilterGroup.jsx";
 import ColorFilterGroup from "./ColorFilterGroup.jsx";
 import SizeFilterGroup from "./SizeFilterGroup.jsx";
@@ -20,11 +21,22 @@ const ProductFilter = ({ categories }) => {
     });
 
     const { brands, loading: brandsLoading } = useFetchBrands();
+    const { colors: colorOptions, loading: colorLoading } = useFetchColors();
+
+    const keyMap = {
+        categories: "categoryIds",
+        brands: "brandIds",
+        sizes: "productSizes",
+        colors: "colorHexes",
+        materials: "materials",
+        minPrice: "minPrice",
+        maxPrice: "maxPrice",
+    };
 
     useEffect(() => {
         const fromParams = {};
         for (const [key, value] of searchParams.entries()) {
-            fromParams[key] = value.includes(',') ? value.split(',') : value;
+            fromParams[key] = value.includes(",") ? value.split(",") : value;
         }
         setLocalFilters(fromParams);
     }, [searchParams]);
@@ -47,12 +59,13 @@ const ProductFilter = ({ categories }) => {
         const newParams = {};
 
         Object.entries(localFilters).forEach(([key, val]) => {
-            if (val !== '' && val !== null && val !== undefined) {
-                newParams[key] = Array.isArray(val) ? val.join(',') : val;
+            if (val !== "" && val !== null && val !== undefined) {
+                const paramKey = keyMap[key] || key;
+                newParams[paramKey] = Array.isArray(val) ? val.join(",") : val;
             }
         });
 
-        const keepParams = ['sortBy', 'sortDirection', 'pageSize'];
+        const keepParams = ["sortBy", "sortDirection", "pageSize"];
         keepParams.forEach((key) => {
             if (searchParams.get(key)) newParams[key] = searchParams.get(key);
         });
@@ -63,28 +76,21 @@ const ProductFilter = ({ categories }) => {
 
     const handleResetFilters = () => {
         const resetParams = {};
-        const keepParams = ['sortBy', 'sortDirection', 'pageSize'];
-
+        const keepParams = ["sortBy", "sortDirection", "pageSize"];
         keepParams.forEach((key) => {
             if (searchParams.get(key)) resetParams[key] = searchParams.get(key);
         });
-
         setSearchParams(resetParams);
     };
 
     const materialOptions = ["COTTON", "DENIM", "NYLON", "RECYCLED NYLON", "RECYCLED POLYESTER"];
     const sizeOptions = ["34", "35", "36", "37", "38", "39", "40", "42"];
-    const colorOptions = ["#4169e1", "#ffa500", "#000000", "#2e8b57", "#333333", "#d2691e", "#c0c0c0", "#708090", "#8b4513"];
 
     return (
         <div className="space-y-4">
             <h2 className="text-xl font-bold border-b pb-2">BỘ LỌC</h2>
 
-            <ShowSection
-                label="PHÂN LOẠI SẢN PHẨM"
-                show={sectionVisibility.categories}
-                onToggle={() => toggleSection("categories")}
-            >
+            <ShowSection label="PHÂN LOẠI SẢN PHẨM" show={sectionVisibility.categories} onToggle={() => toggleSection("categories")}>
                 <FilterGroup
                     label="Danh mục"
                     options={categories.map((c) => ({
@@ -96,11 +102,7 @@ const ProductFilter = ({ categories }) => {
                 />
             </ShowSection>
 
-            <ShowSection
-                label="THƯƠNG HIỆU"
-                show={sectionVisibility.brands}
-                onToggle={() => toggleSection("brands")}
-            >
+            <ShowSection label="THƯƠNG HIỆU" show={sectionVisibility.brands} onToggle={() => toggleSection("brands")}>
                 {brandsLoading ? (
                     <p className="text-gray-500">Đang tải thương hiệu...</p>
                 ) : (
@@ -116,11 +118,7 @@ const ProductFilter = ({ categories }) => {
                 )}
             </ShowSection>
 
-            <ShowSection
-                label="CHẤT LIỆU"
-                show={sectionVisibility.materials}
-                onToggle={() => toggleSection("materials")}
-            >
+            <ShowSection label="CHẤT LIỆU" show={sectionVisibility.materials} onToggle={() => toggleSection("materials")}>
                 <FilterGroup
                     label="Chất liệu"
                     options={materialOptions}
@@ -129,11 +127,7 @@ const ProductFilter = ({ categories }) => {
                 />
             </ShowSection>
 
-            <ShowSection
-                label="KÍCH CỠ"
-                show={sectionVisibility.sizes}
-                onToggle={() => toggleSection("sizes")}
-            >
+            <ShowSection label="KÍCH CỠ" show={sectionVisibility.sizes} onToggle={() => toggleSection("sizes")}>
                 <SizeFilterGroup
                     options={sizeOptions}
                     selectedOptions={localFilters.sizes || []}
@@ -141,23 +135,19 @@ const ProductFilter = ({ categories }) => {
                 />
             </ShowSection>
 
-            <ShowSection
-                label="MÀU SẮC"
-                show={sectionVisibility.colors}
-                onToggle={() => toggleSection("colors")}
-            >
-                <ColorFilterGroup
-                    colors={colorOptions}
-                    selectedColors={localFilters.colors || []}
-                    onChange={(selected) => updateField("colors", selected)}
-                />
+            <ShowSection label="MÀU SẮC" show={sectionVisibility.colors} onToggle={() => toggleSection("colors")}>
+                {colorLoading ? (
+                    <p className="text-gray-500">Đang tải màu sắc...</p>
+                ) : (
+                    <ColorFilterGroup
+                        colors={colorOptions}
+                        selectedColors={localFilters.colors || []}
+                        onChange={(selected) => updateField("colors", selected)}
+                    />
+                )}
             </ShowSection>
 
-            <ShowSection
-                label="KHOẢNG GIÁ"
-                show={sectionVisibility.price}
-                onToggle={() => toggleSection("price")}
-            >
+            <ShowSection label="KHOẢNG GIÁ" show={sectionVisibility.price} onToggle={() => toggleSection("price")}>
                 <PriceRangeFilter
                     min={0}
                     max={3000000}

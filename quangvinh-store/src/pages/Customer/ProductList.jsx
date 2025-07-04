@@ -53,7 +53,7 @@ const ProductList = () => {
             <div className="mb-6">
                 <Banner
                     item={{
-                        title: "SẢN PHẨM NỔI BẬT",
+                        title: "",
                         images: [{ imageUrl: "/banner-product.jpg" }]
                     }}
                     link="/products"
@@ -66,7 +66,6 @@ const ProductList = () => {
                 </aside>
 
                 <main className="flex-1">
-                    {/* Sort Bar */}
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                         <h2 className="text-2xl font-bold text-gray-800 mb-4 sm:mb-0">Danh sách sản phẩm</h2>
                         <select

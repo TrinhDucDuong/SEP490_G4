@@ -8,6 +8,9 @@
         const [token, setToken] = useState(localStorage.getItem('token'));
         const [loading, setLoading] = useState(true);
 
+
+        console.log(user);
+
         useEffect(() => {
             const getUser = async () => {
                 if (!token) {

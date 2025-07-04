@@ -1,4 +1,3 @@
-// src/components/ProductDetail.jsx
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import Zoom from 'react-medium-image-zoom';
@@ -9,10 +8,9 @@ import {
     faTruck, faBoxesPacking, faThumbsUp, faPhoneVolume, faStar
 } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
-import {AuthContext} from "../../context/AuthContext.jsx";
+import { AuthContext } from "../../context/AuthContext.jsx";
 import useCart from "../../hooks/useCart.js";
 import Breadcrumb from "../../components/common/Breadcrumb.jsx";
-
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -21,6 +19,7 @@ const ProductDetail = () => {
     const [productColors, setProductColors] = useState([]);
     const [selectedColor, setSelectedColor] = useState(null);
     const [selectedSize, setSelectedSize] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null); // ✅ Thêm
     const [tab, setTab] = useState('desc');
     const [quantity, setQuantity] = useState(1);
 
@@ -37,6 +36,7 @@ const ProductDetail = () => {
                 setProduct(data.product);
                 setProductSizes(data.productSizes || []);
                 setProductColors(data.productColors || []);
+                setSelectedImage(data.product?.images?.[0]?.imageUrl || null); // ✅ Đặt ảnh đầu làm mặc định
             } catch (err) {
                 console.error('Lỗi khi fetch sản phẩm:', err);
                 toast.error(err.message || 'Lỗi tải sản phẩm');
@@ -59,7 +59,7 @@ const ProductDetail = () => {
                 quantity,
                 price: product.unitPrice,
                 productName: product.productName,
-                productImage: product.images?.[0]?.imageUrl || '',
+                productImage: selectedImage || product.images?.[0]?.imageUrl || '',
             });
             toast.success("Đã thêm sản phẩm vào giỏ hàng");
         } catch (error) {
@@ -91,16 +91,25 @@ const ProductDetail = () => {
                 <div className="w-full lg:w-1/2">
                     <div className="rounded-xl overflow-hidden border aspect-square">
                         <Zoom>
-                            <img src={images[0]} alt="main" className="w-full h-full object-cover" />
+                            <img
+                                src={selectedImage || images[0]}
+                                alt="main"
+                                className="w-full h-full object-cover transition-all duration-300"
+                            />
                         </Zoom>
                     </div>
                     <div className="flex gap-3 mt-4">
-                        {images.slice(1, 5).map((img, i) => (
+                        {images.map((img, i) => (
                             <img
                                 key={i}
                                 src={img}
                                 alt={`thumb-${i}`}
-                                className="w-20 h-20 object-cover rounded-lg border hover:ring-2 ring-indigo-500 cursor-pointer"
+                                onClick={() => setSelectedImage(img)}
+                                className={`w-20 h-20 object-cover rounded-lg border cursor-pointer transition-all duration-200 ${
+                                    selectedImage === img
+                                        ? 'ring-2 ring-indigo-500 border-indigo-500 scale-105'
+                                        : 'hover:ring-2 hover:ring-gray-400 hover:scale-105'
+                                }`}
                             />
                         ))}
                     </div>

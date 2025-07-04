@@ -64,7 +64,7 @@ export const updateCartQuantityAPI = async ({
     }
 
     const res = await fetch(`http://localhost:9999/cart`, {
-        method: 'POST', // Hoặc PUT nếu server yêu cầu; cần xác nhận với backend
+        method: 'PUT',
         headers,
         body: JSON.stringify({
             cartDetailsId,
@@ -103,3 +103,43 @@ export const deleteCartItemAPI = async (cartDetailsId, token = null) => {
     }
     return res.json();
 };
+
+export const deleteProductInCartAPI = async ({
+                                                 cartDetailsId,
+                                                 accountId,
+                                                 productId,
+                                                 colorHexCode,
+                                                 sizeCode,
+                                                 quantity,
+                                                 token = null,
+                                             }) => {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+    };
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+        const body = {
+            cartDetailsId,
+            accountId,
+            productId,
+            colorHexCode,
+            sizeCode,
+            quantity,
+        };
+
+        const res = await fetch(`http://localhost:9999/cart`, {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify(body),
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Lỗi xoá sản phẩm khỏi giỏ away hàng (PUT đúng số lượng hiện có)');
+        }
+
+        return res.json();
+    };
+}

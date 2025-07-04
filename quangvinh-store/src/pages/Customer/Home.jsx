@@ -58,22 +58,27 @@ function Home() {
                     <ProductScrollSlider products={trendingProducts} />
                 )}
             </div>
-            {!loadingBanner && !errorBanner && banners.length > 0 && (
-                <div className="px-28 py-10 space-y-8">
-                    {banners.map((banner, index) => (
-                        <div
-                            key={index}
-                            className="w-full h-[500px] overflow-hidden shadow-lg"
+            {!loadingCategories && !errorCategories && categories.length > 0 && (
+                <div className="px-28 py-10 flex flex-col gap-8">
+                    {categories.slice(0, 3).map((category) => (
+                        <Link
+                            key={category.categoryId}
+                            to={`/products?categoryIds=${category.categoryId}`}
+                            className="w-full h-[500px] overflow-hidden shadow-md rounded-lg group relative"
                         >
                             <img
-                                src={banner.imageUrl}
-                                alt={`Banner ${index + 1}`}
-                                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                src={category.images?.[0]?.imageUrl}
+                                alt={category.categoryName}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
-                        </div>
+                            <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                                <h3 className="text-white text-2xl font-bold">{category.categoryName}</h3>
+                            </div>
+                        </Link>
                     ))}
                 </div>
             )}
+
 
             <div className="w-full px-28">
                 <div className="flex justify-between items-center py-10">
