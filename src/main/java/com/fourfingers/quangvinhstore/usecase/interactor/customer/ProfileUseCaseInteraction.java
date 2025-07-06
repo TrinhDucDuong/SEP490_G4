@@ -62,7 +62,9 @@ public class ProfileUseCaseInteraction implements ProfileInputBoundary {
                 );
 
         //delete prev image
-        deletePrevImage(profileEntity);
+        if(profileImage != null) {
+            deletePrevImage(profileEntity);
+        }
 
         profileEntity.setFirstName(profileInputData.getFirstName());
         profileEntity.setLastName(profileInputData.getLastName());
