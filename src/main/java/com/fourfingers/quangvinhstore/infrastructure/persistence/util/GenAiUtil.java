@@ -62,4 +62,45 @@ public class GenAiUtil implements GenAiUtilBoundary {
             return "Lỗi khi tạo/gọi Client: " + e.getMessage();
         }
     }
+
+    @Override
+    public String getRecommendation(String productInfo, String actionLogInfo) {
+        try (Client client = Client.builder()
+                .apiKey(apiKey)
+                .build()) {
+
+            var config = GenerateContentConfig.builder()
+                    .temperature(0.3f)
+                    .topK(30.0f)
+                    .topP(0.9f)
+                    .maxOutputTokens(512)
+                    .build();
+
+            var content = Content.fromParts(
+                    Part.fromText(
+                            """
+                            Bạn là hệ thống gợi ý sản phẩm thông minh.
+                            Dựa vào thông tin log hành vi người dùng, hãy phân tích và đưa ra danh sách các `productId` 
+                            mà người dùng có thể sẽ thích.
+                            Chỉ trả về danh sách các productId, định dạng dưới dạng JSON array như sau:
+                            ["123", "456", "789"]
+                            Không cần giải thích thêm.
+                            """
+                    ),
+                    Part.fromText("Thông tin về sản phẩm trong cửa hàng: " + productInfo),
+                    Part.fromText("Thông tin về các tương tác của người dùng: " + actionLogInfo)
+            );
+
+            GenerateContentResponse response = client.models.generateContent(
+                    "gemini-2.5-flash",
+                    content,
+                    config
+            );
+
+            return response.text(); // trả về trực tiếp response dạng chuỗi JSON
+
+        } catch (RuntimeException e) {
+            return "[]";
+        }
+    }
 }

@@ -124,4 +124,5 @@ public class ChatWithAIUseCaseInteraction implements ChatWithAiInputBoundary {
 
         return convertToJson(storeList);
     }
+
 }
