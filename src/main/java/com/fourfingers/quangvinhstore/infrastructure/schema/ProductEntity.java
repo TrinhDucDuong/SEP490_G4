@@ -38,11 +38,11 @@ public class ProductEntity {
     @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1")
     private Boolean isActive;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", referencedColumnName = "account_id")
     private AccountEntity createdBy;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", referencedColumnName = "account_id")
     private AccountEntity updatedBy;
 

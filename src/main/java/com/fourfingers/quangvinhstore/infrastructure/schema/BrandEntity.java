@@ -28,14 +28,14 @@ public class BrandEntity {
     @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1", nullable = false)
     private Boolean isActive;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", referencedColumnName = "account_id")
     private AccountEntity createdBy;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", referencedColumnName = "account_id")
     private AccountEntity updatedBy;
 

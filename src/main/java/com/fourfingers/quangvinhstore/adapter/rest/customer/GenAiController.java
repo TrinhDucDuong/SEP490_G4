@@ -1,6 +1,7 @@
 package com.fourfingers.quangvinhstore.adapter.rest.customer;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.ChatWithAiInputBoundary;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ChatBotHistoryInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.QuestionForAiInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class GenAiController {
     private final ChatWithAiInputBoundary chatWithAiInputBoundary;
 
-    @PostMapping
+    @PostMapping("/new")
     public ResponseEntity<?> chatWithAi(@RequestBody QuestionForAiInputData questionForAiInputData) {
         return ResponseEntity.ok(chatWithAiInputBoundary.getResponse(questionForAiInputData));
+    }
+
+    @PostMapping("/history")
+    public ResponseEntity<?> chatWithAiContainsHistory(@RequestBody ChatBotHistoryInputData chatBotHistoryInputData) {
+        return null;
     }
 }
