@@ -73,7 +73,7 @@ public class GenAiUtil implements GenAiUtilBoundary {
                     .temperature(0.3f)
                     .topK(30.0f)
                     .topP(0.9f)
-                    .maxOutputTokens(512)
+                    .maxOutputTokens(4096)
                     .build();
 
             var content = Content.fromParts(
@@ -82,9 +82,15 @@ public class GenAiUtil implements GenAiUtilBoundary {
                             Bạn là hệ thống gợi ý sản phẩm thông minh.
                             Dựa vào thông tin log hành vi người dùng, hãy phân tích và đưa ra danh sách các `productId` 
                             mà người dùng có thể sẽ thích.
-                            Chỉ trả về danh sách các productId, định dạng dưới dạng JSON array như sau:
-                            ["123", "456", "789"]
+                            Dưới đâ là nội dung về hành vi người dùng theo các trình tự:
+                            - performer id là id của người dùng
+                            - reference id là id của sản phẩm hay biến thể sản phẩm mà người đó tương tác.
+                            - reference type là loại của reference, ví dụ người đó xem thông tin chi tiết của 1 sản phẩm
+                            hay thêm vào giỏ hàng 1 biến thể của sản phẩm.
+                            Các tương tác được gửi cho bạn là 20 tương tác gần nhất của khách hàng.
+                            Chỉ trả về danh sách các productId
                             Không cần giải thích thêm.
+                            Nếu không thể phân tích hãy nói rõ lý do
                             """
                     ),
                     Part.fromText("Thông tin về sản phẩm trong cửa hàng: " + productInfo),
@@ -97,9 +103,16 @@ public class GenAiUtil implements GenAiUtilBoundary {
                     config
             );
 
-            return response.text(); // trả về trực tiếp response dạng chuỗi JSON
+            if (response != null && response.text() != null) {
+                return response.text();
+            } else {
+                System.err.println("Gemini trả về response null hoặc text null");
+                return "[]";
+            }
 
         } catch (RuntimeException e) {
+            e.printStackTrace(); // In ra stack trace
+            System.err.println("Lỗi khi tạo/gọi Client: " + e.getMessage());
             return "[]";
         }
     }
