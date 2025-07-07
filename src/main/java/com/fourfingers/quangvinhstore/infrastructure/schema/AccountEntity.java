@@ -83,7 +83,7 @@ public class AccountEntity implements UserDetails {
     @OneToMany(mappedBy = "createdBy")
     private List<ProductEntity> createdProducts;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "account")
     private List<CartDetailsEntity> carts;
 
 

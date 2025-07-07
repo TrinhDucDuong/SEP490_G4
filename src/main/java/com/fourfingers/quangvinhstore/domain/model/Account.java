@@ -15,5 +15,5 @@ public class Account {
     private String email;
     private Boolean isActive;
 //    private List<Authority> authorities;
-    private List<CartDetails> carts;
+//    private List<CartDetails> carts;
 }
