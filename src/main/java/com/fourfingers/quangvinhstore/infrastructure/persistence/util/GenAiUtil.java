@@ -1,6 +1,7 @@
 package com.fourfingers.quangvinhstore.infrastructure.persistence.util;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.GenAiUtilBoundary;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.genai.Client;
 import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentConfig;
@@ -73,7 +74,7 @@ public class GenAiUtil implements GenAiUtilBoundary {
                     .temperature(0.3f)
                     .topK(30.0f)
                     .topP(0.9f)
-                    .maxOutputTokens(4096)
+                    .maxOutputTokens(20000)
                     .build();
 
             var content = Content.fromParts(
@@ -107,6 +108,7 @@ public class GenAiUtil implements GenAiUtilBoundary {
                 return response.text();
             } else {
                 System.err.println("Gemini trả về response null hoặc text null");
+                System.err.println("response: " + response.toString());
                 return "[]";
             }
 

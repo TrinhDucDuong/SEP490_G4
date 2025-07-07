@@ -39,9 +39,21 @@ public class BlogEntity {
     @JoinColumn(name = "updated_by", referencedColumnName = "account_id")
     private AccountEntity updatedBy;
 
-    @OneToMany(mappedBy = "blog", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<BlogBlockEntity> blogContents;
+    @Column(name = "blog_content", nullable = false, columnDefinition = "TEXT")
+    private String content;
 
     @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1")
     private Boolean isActive;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            joinColumns = @JoinColumn(
+                    name = "blog_id", referencedColumnName = "blog_id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "product_id", referencedColumnName = "product_id"
+            ),
+            name = "blogs_products_mapping"
+    )
+    private List<ProductEntity> relatedProducts;
 }

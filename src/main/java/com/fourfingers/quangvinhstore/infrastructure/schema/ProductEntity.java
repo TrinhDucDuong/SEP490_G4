@@ -60,4 +60,7 @@ public class ProductEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id")
     private BrandEntity brand;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "relatedProducts")
+    private List<BlogEntity> relatedBlogs;
 }
