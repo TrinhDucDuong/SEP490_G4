@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
-import useCart from "../../hooks/useCart.js";
-import ProductInCartCard from "../../components/ui/productInCartCard.jsx";
-
+import useCart from "../../../hooks/useCart.js";
+import ProductInCartCard from "../../../components/ui/productInCartCard.jsx";
 
 function Cart({ isOpen, onClose, accountId, token = null }) {
     const { cartItems, loading, removeItem, updateQuantity } = useCart(accountId, token);
@@ -22,7 +21,6 @@ function Cart({ isOpen, onClose, accountId, token = null }) {
             } transition-transform duration-300 z-50 shadow-lg`}
         >
             <div className="p-4 sm:p-6 flex flex-col h-full">
-                {/* Header */}
                 <div className="flex justify-between items-center mb-4 border-b pb-2">
                     <h2 className="text-xl font-bold tracking-tight">🛒 Giỏ hàng</h2>
                     <button
@@ -33,12 +31,10 @@ function Cart({ isOpen, onClose, accountId, token = null }) {
                     </button>
                 </div>
 
-                {/* Info */}
                 <div className="text-sm text-gray-500 mb-3">
                     {loading ? 'Đang tải...' : `${cartItems.length} sản phẩm trong giỏ hàng`}
                 </div>
 
-                {/* Cart Items */}
                 <div className="flex-1 overflow-y-auto pr-1">
                     {cartItems.length === 0 ? (
                         <div className="flex flex-col items-center justify-center text-center text-gray-400 mt-20">
@@ -53,14 +49,22 @@ function Cart({ isOpen, onClose, accountId, token = null }) {
                                     key={item.id}
                                     item={item}
                                     onRemove={() => removeItem(item.id)}
-                                    onUpdateQuantity={(id, qty) => updateQuantity(id, qty)}
+                                    onUpdateQuantity={(delta) => {
+                                        const current = cartItems.find(i => i.id === item.id);
+                                        if (!current) return;
+                                        const newQty = current.quantity + delta;
+                                        if (newQty > 0) {
+                                            updateQuantity(item.id, newQty);
+                                        } else {
+                                            toast.warn('Số lượng tối thiểu là 1');
+                                        }
+                                    }}
                                 />
                             ))}
                         </div>
                     )}
                 </div>
 
-                {/* Tổng cộng + Thanh toán */}
                 {cartItems.length > 0 && (
                     <div className="pt-4 border-t mt-4">
                         <div className="flex justify-between items-center mb-4 text-base font-semibold">

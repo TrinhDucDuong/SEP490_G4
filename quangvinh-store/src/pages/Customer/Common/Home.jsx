@@ -4,15 +4,15 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 
-import { useFetchProducts } from "../../hooks/useFetchProducts";
-import { useFetchBrands } from "../../hooks/useFetchBrands";
-import { useFetchCategories } from "../../hooks/useFetchCategories";
-import { useFetchTotalSoldOutProducts } from "../../hooks/useFetchTotalSoldOutProducts";
-import { useFetchBanners } from "../../hooks/useFetchBanners";
+import { useFetchProducts } from "../../../hooks/useFetchProducts.js";
+import { useFetchBrands } from "../../../hooks/useFetchBrands.js";
+import { useFetchCategories } from "../../../hooks/useFetchCategories.js";
+import { useFetchTotalSoldOutProducts } from "../../../hooks/useFetchTotalSoldOutProducts.js";
+import { useFetchBanners } from "../../../hooks/useFetchBanners.js";
 
-import Carousel from "../../components/ui/home/Carousel";
-import BrandSlider from "../../components/ui/home/BrandSlider";
-import ProductScrollSlider from "../../components/ui/product/ProductScrollSlider";
+import Carousel from "../../../components/ui/home/Carousel.jsx";
+import BrandSlider from "../../../components/ui/home/BrandSlider.jsx";
+import ProductScrollSlider from "../../../components/ui/product/ProductScrollSlider.jsx";
 
 function Home() {
     const { products = [], loading: loadingProducts, error: errorProducts } = useFetchProducts();
@@ -58,22 +58,27 @@ function Home() {
                     <ProductScrollSlider products={trendingProducts} />
                 )}
             </div>
-            {!loadingBanner && !errorBanner && banners.length > 0 && (
-                <div className="px-28 py-10 space-y-8">
-                    {banners.map((banner, index) => (
-                        <div
-                            key={index}
-                            className="w-full h-[500px] overflow-hidden shadow-lg"
+            {!loadingCategories && !errorCategories && categories.length > 0 && (
+                <div className="px-28 py-10 flex flex-col gap-8">
+                    {categories.slice(0, 3).map((category) => (
+                        <Link
+                            key={category.categoryId}
+                            to={`/products?categoryIds=${category.categoryId}`}
+                            className="w-full h-[500px] overflow-hidden shadow-md rounded-lg group relative"
                         >
                             <img
-                                src={banner.imageUrl}
-                                alt={`Banner ${index + 1}`}
-                                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                src={category.images?.[0]?.imageUrl}
+                                alt={category.categoryName}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
-                        </div>
+                            <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                                <h3 className="text-white text-2xl font-bold">{category.categoryName}</h3>
+                            </div>
+                        </Link>
                     ))}
                 </div>
             )}
+
 
             <div className="w-full px-28">
                 <div className="flex justify-between items-center py-10">

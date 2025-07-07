@@ -6,7 +6,7 @@ import UpdateAddressForm from "./UpdateAddressForm";
 import { toast } from "react-toastify";
 import Modal from "../../../../components/common/Modal.jsx";
 import ConfirmDialog from "../../../../components/common/ConfirmDialog.jsx";
-import AddressCard from "../../Common/AddressCard.jsx";
+import AddressCard from "./AddressCard.jsx";
 
 function Address() {
     const [address, setAddress] = useState([

@@ -1,26 +1,35 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faYoutube, faTiktok } from '@fortawesome/free-brands-svg-icons';
 import { faCreditCard, faMoneyBill, faUniversity } from "@fortawesome/free-solid-svg-icons";
+import { Link } from 'react-router-dom';
+
+import { useFetchPolicy } from "../../../hooks/useFetchPolicy";
+import { useFetchInstruction } from "../../../hooks/useFetchInstruction";
 
 function Footer() {
+    const { policies, loading: loadingPolicy } = useFetchPolicy();
+    const { instructions, loading: loadingInstruction } = useFetchInstruction();
+
+    const featuredPolicies = policies.slice(0, 4);
+    const featuredInstructions = instructions.slice(0, 3);
+
     return (
-        <footer className="bg-black text-white pt-8 pb-4 px-2 sm:px-4 md:px-8">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 border-b border-gray-700 pb-8">
-                {/* Cột 1: Hệ thống cửa hàng */}
-                <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                    <div className="text-yellow-400 font-bold mb-4 text-lg">Hệ Thống Cửa Hàng</div>
-                    <address className="not-italic text-sm leading-relaxed mb-4">
-                        <div className="mb-2">
+        <footer className="bg-black text-white pt-10 pb-6 px-4">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 border-b border-gray-700 pb-10">
+                <div className="space-y-4 text-center md:text-left">
+                    <h2 className="text-yellow-400 font-bold text-lg">Hệ Thống Cửa Hàng</h2>
+                    <address className="not-italic text-sm leading-relaxed space-y-2">
+                        <div>
                             <span className="font-semibold">Địa chỉ:</span>
                             <ul className="ml-4 list-disc list-inside">
                                 <li>126 Quán Thánh, Ba Đình, Hà Nội</li>
                             </ul>
                         </div>
-                        <div className="mb-2">
+                        <div>
                             <span className="font-semibold">Hotline hỗ trợ:</span>
                             <ul className="ml-4 list-disc list-inside">
                                 <li>Toàn quốc: 0877759999</li>
-                                <li>Phản Án Chất Lượng Dịch Vụ: 0877759999</li>
+                                <li>Phản ánh dịch vụ: 0877759999</li>
                             </ul>
                         </div>
                         <div>
@@ -30,51 +39,74 @@ function Footer() {
                             </a>
                         </div>
                     </address>
-                    <div className="flex gap-4 mt-4 justify-center" aria-label="Mạng xã hội">
-                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                            <FontAwesomeIcon icon={faFacebook} className="text-xl sm:text-2xl text-blue-600 hover:text-blue-400 transition" />
+                    <div className="flex justify-center md:justify-start gap-4 mt-2">
+                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+                            <FontAwesomeIcon icon={faFacebook} className="text-2xl text-blue-600 hover:text-blue-400 transition" />
                         </a>
-                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                            <FontAwesomeIcon icon={faInstagram} className="text-xl sm:text-2xl text-pink-600 hover:text-pink-400 transition" />
+                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+                            <FontAwesomeIcon icon={faInstagram} className="text-2xl text-pink-600 hover:text-pink-400 transition" />
                         </a>
-                        <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-                            <FontAwesomeIcon icon={faYoutube} className="text-xl sm:text-2xl text-red-600 hover:text-red-400 transition" />
+                        <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+                            <FontAwesomeIcon icon={faYoutube} className="text-2xl text-red-600 hover:text-red-400 transition" />
                         </a>
-                        <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                            <FontAwesomeIcon icon={faTiktok} className="text-xl sm:text-2xl text-white hover:text-gray-400 transition" />
+                        <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer">
+                            <FontAwesomeIcon icon={faTiktok} className="text-2xl text-white hover:text-gray-400 transition" />
                         </a>
                     </div>
                 </div>
-                {/* Cột 2: Chính sách */}
-                <nav aria-label="Chính sách khách hàng" className="mt-8 sm:mt-0 flex flex-col items-center md:items-start text-center md:text-left">
-                    <div className="text-yellow-400 font-bold mb-4 text-lg">Chính Sách Cho Khách Hàng</div>
-                    <ul className="list-disc list-inside space-y-2 text-sm">
-                        <li>Điều Khoản Sử Dụng/Term Of Service</li>
-                        <li>Chính Sách Mua Hàng & Bảo Hành</li>
-                        <li>Chính Sách Giao Hàng</li>
-                        <li>Chính Sách Đổi Trả</li>
-                        <li>Chính Sách Đổi Trả Dip Sale</li>
-                        <li>Chính Sách Bảo Mật</li>
-                        <li>Chính Sách Tích Điểm & Đổi Điểm Thưởng</li>
-                    </ul>
+
+                <nav className="space-y-4 text-center md:text-left">
+                    <h2 className="text-yellow-400 font-bold text-lg">Chính Sách Nổi Bật</h2>
+                    {loadingPolicy ? (
+                        <div className="text-sm text-gray-400">Đang tải chính sách...</div>
+                    ) : (
+                        <ul className="text-sm space-y-2 list-disc list-inside">
+                            {featuredPolicies.map((policy) => (
+                                <li key={policy.policyId}>
+                                    <Link
+                                        to={`/policies/${policy.policyId}`}
+                                        className="hover:underline hover:text-yellow-300 transition"
+                                    >
+                                        {policy.policyName}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                    <Link to="/policies" className="block mt-2 text-sm text-blue-400 hover:underline">
+                        Xem tất cả chính sách
+                    </Link>
                 </nav>
-                {/* Cột 3: Hướng dẫn */}
-                <nav aria-label="Hướng dẫn khách hàng" className="mt-8 sm:mt-0 flex flex-col items-center md:items-start text-center md:text-left">
-                    <div className="text-yellow-400 font-bold mb-4 text-lg">Hướng Dẫn Cho Khách Hàng</div>
-                    <ul className="list-disc list-inside space-y-2 text-sm">
-                        <li>Hướng Dẫn Đặt Đơn Hàng</li>
-                        <li>Hướng Dẫn Đơn Hàng Chưa Thanh Toán</li>
-                        <li>Hướng Dẫn Đơn Hàng Đã Thanh Toán</li>
-                        <li>Hướng Dẫn Bảo Quản Sản Phẩm</li>
-                        <li>Hướng Dẫn Thanh Toán</li>
-                    </ul>
-                    <div className="flex gap-4 mt-4 justify-center">
-                        <FontAwesomeIcon icon={faUniversity} className="text-lg sm:text-xl text-white" title="Chuyển khoản ngân hàng" />
-                        <FontAwesomeIcon icon={faCreditCard} className="text-lg sm:text-xl text-white" title="Thẻ tín dụng" />
-                        <FontAwesomeIcon icon={faMoneyBill} className="text-lg sm:text-xl text-white" title="Tiền mặt" />
+
+                <nav className="space-y-4 text-center md:text-left">
+                    <h2 className="text-yellow-400 font-bold text-lg">Hướng Dẫn Khách Hàng</h2>
+                    {loadingInstruction ? (
+                        <div className="text-sm text-gray-400">Đang tải hướng dẫn...</div>
+                    ) : (
+                        <ul className="text-sm space-y-2 list-disc list-inside">
+                            {featuredInstructions.map((instruction) => (
+                                <li key={instruction.instructionId}>
+                                    <Link
+                                        to={`/instructions/${instruction.instructionId}`}
+                                        className="hover:underline hover:text-yellow-300 transition"
+                                    >
+                                        {instruction.instructionName}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                    <Link to="/instructions" className="block mt-2 text-sm text-blue-400 hover:underline">
+                        Xem tất cả hướng dẫn
+                    </Link>
+                    <div className="flex justify-center md:justify-start gap-4 mt-2">
+                        <FontAwesomeIcon icon={faUniversity} className="text-xl text-white" title="Chuyển khoản" />
+                        <FontAwesomeIcon icon={faCreditCard} className="text-xl text-white" title="Thẻ tín dụng" />
+                        <FontAwesomeIcon icon={faMoneyBill} className="text-xl text-white" title="Tiền mặt" />
                     </div>
                 </nav>
             </div>
+
             <div className="max-w-7xl mx-auto text-center text-xs text-gray-400 pt-6">
                 © {new Date().getFullYear()} Quang Vinh Store. All rights reserved.
             </div>

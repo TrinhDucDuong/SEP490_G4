@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useFetchCategories } from '../../hooks/useFetchCategories';
-import { useFetchFilteredProducts } from '../../hooks/useFetchFilteredProducts';
-import ProductFilter from '../../components/ui/product/ProductFilter';
-import ProductCard from '../../components/ui/product/ProductCard';
-import Pagination from '../../components/common/Pagination';
-import Banner from "../../components/ui/home/Banner.jsx";
+import { useFetchCategories } from '../../../hooks/useFetchCategories.js';
+import { useFetchFilteredProducts } from '../../../hooks/useFetchFilteredProducts.js';
+import ProductFilter from '../../../components/ui/product/ProductFilter.jsx';
+import ProductCard from '../../../components/ui/product/ProductCard.jsx';
+import Pagination from '../../../components/common/Pagination.jsx';
+import Banner from "../../../components/ui/home/Banner.jsx";
 
 const sortOptions = [
     { value: '', label: 'Mặc định' },
@@ -53,7 +53,7 @@ const ProductList = () => {
             <div className="mb-6">
                 <Banner
                     item={{
-                        title: "SẢN PHẨM NỔI BẬT",
+                        title: "",
                         images: [{ imageUrl: "/banner-product.jpg" }]
                     }}
                     link="/products"
@@ -66,7 +66,6 @@ const ProductList = () => {
                 </aside>
 
                 <main className="flex-1">
-                    {/* Sort Bar */}
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                         <h2 className="text-2xl font-bold text-gray-800 mb-4 sm:mb-0">Danh sách sản phẩm</h2>
                         <select

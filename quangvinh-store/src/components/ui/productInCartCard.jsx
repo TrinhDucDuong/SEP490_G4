@@ -1,78 +1,78 @@
-// src/components/ui/ProductInCartCard.jsx
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {useFetchProductById} from "../../hooks/useFetchProducts.js";
 
 function ProductInCartCard({ item, onRemove, onUpdateQuantity }) {
     const {
-        id,
         productImage,
         productName,
         colorHexCode,
         sizeCode,
         quantity,
-        price
+        price,
     } = item;
 
-    const handleQuantityChange = (delta) => {
-        const newQuantity = quantity + delta;
-        if (newQuantity > 0) {
-            onUpdateQuantity(id, newQuantity);
+    const { product, loading, error } = useFetchProductById(item.productId);
+
+    const image =
+        !loading && !error && product?.images?.length > 0
+            ? product.images[0].imageUrl
+            : null;
+
+
+    const handleDecrease = () => {
+        if (quantity > 1) {
+            onUpdateQuantity(-1);
         }
     };
 
+    const handleIncrease = () => {
+        onUpdateQuantity(1);
+    };
+
     return (
-        <div className="flex gap-4 border p-3 rounded-lg shadow-sm hover:shadow-md transition">
+        <div className="flex items-start gap-4 border p-3 rounded-md shadow-sm">
             <img
-                src={productImage || '/placeholder.png'}
+                src={image}
                 alt={productName}
-                className="w-20 h-20 object-cover rounded-lg border"
-                loading="lazy"
+                className="w-16 h-16 object-cover rounded"
             />
-
-            <div className="flex-1 flex flex-col justify-between text-sm">
-                <div>
-                    <h3 className="font-medium text-gray-900 line-clamp-1">{productName}</h3>
-                    <p className="text-xs text-gray-600 mt-1">
-                        Màu: <span
-                        className="inline-block w-4 h-4 rounded-full border border-gray-300 align-middle mr-1"
-                        style={{ backgroundColor: colorHexCode }}
-                    />
-                        <span className="align-middle">{colorHexCode}</span>
-                    </p>
-                    <p className="text-xs text-gray-600">Kích thước: {sizeCode}</p>
+            <div className="flex-1">
+                <h4 className="font-semibold text-sm text-gray-800">{productName}</h4>
+                <div className="text-xs text-gray-500 mt-1">
+                    Màu: <span className="inline-block w-3 h-3 rounded-full align-middle ml-1"
+                               style={{ backgroundColor: colorHexCode }} />
+                    <span className="ml-3">Size: {sizeCode}</span>
                 </div>
-
                 <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center border rounded overflow-hidden">
+                    <div className="flex items-center gap-2 border rounded px-2 py-1 text-sm">
                         <button
-                            onClick={() => handleQuantityChange(-1)}
-                            className="px-3 py-1 text-gray-600 hover:text-black"
+                            onClick={handleDecrease}
+                            disabled={quantity <= 1}
+                            className={`text-gray-600 hover:text-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
                             <FontAwesomeIcon icon={faMinus} />
                         </button>
-                        <span className="px-3">{quantity}</span>
+                        <span className="mx-1">{quantity}</span>
                         <button
-                            onClick={() => handleQuantityChange(1)}
-                            className="px-3 py-1 text-gray-600 hover:text-black"
+                            onClick={handleIncrease}
+                            className="text-gray-600 hover:text-yellow-500"
                         >
                             <FontAwesomeIcon icon={faPlus} />
                         </button>
                     </div>
-
-                    <div className="flex items-center gap-3">
-                        <p className="text-base font-semibold text-red-600 whitespace-nowrap">
-                            {(price * quantity).toLocaleString('vi-VN')}₫
-                        </p>
-                        <button
-                            onClick={() => onRemove(id)}
-                            className="text-gray-400 hover:text-red-500"
-                            title="Xóa khỏi giỏ hàng"
-                        >
-                            <FontAwesomeIcon icon={faTrash} />
-                        </button>
-                    </div>
+                    <span className="text-sm font-semibold text-yellow-600">
+                        {(price * quantity).toLocaleString('vi-VN')} ₫
+                    </span>
                 </div>
             </div>
+            <button
+                onClick={onRemove}
+                className="text-red-500 hover:text-red-700 text-sm"
+                title="Xóa"
+            >
+                <FontAwesomeIcon icon={faTrash} />
+            </button>
         </div>
     );
 }

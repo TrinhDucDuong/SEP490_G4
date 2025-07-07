@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import banner from "../../../assets/images/login-background.jpg";
+import banner from "../../../assets/images/banner.png";
 function Banner({ item, link = "/" }) {
     if (!item) return null;
 
-    const title = item.title || "Banner";
+    const title = item.title;
     const imageUrl = item.imageUrl || banner;
 
     return (

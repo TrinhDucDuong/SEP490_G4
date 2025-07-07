@@ -1,108 +1,152 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
     fetchCartAPI,
     addToCartAPI,
     updateCartQuantityAPI,
-    deleteCartItemAPI,
+    deleteCartItemAPI
 } from '../utils/api/CartAPI';
+import { fetchProductById } from '../utils/api/ProductAPI';
 import { toast } from 'react-toastify';
 
 const useCart = (accountId, token = null) => {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
+    const syncedRef = useRef(false);
 
     const getLocalCart = () => JSON.parse(localStorage.getItem('cart') || '[]');
     const saveLocalCart = (items) => localStorage.setItem('cart', JSON.stringify(items));
 
+    const fetchAndFormatCartFromServer = async () => {
+        const data = await fetchCartAPI(accountId, token);
+        return data.cart.map((item) => ({
+            id: item.cartDetailsId,
+            productName: item.productVariant.product.productName,
+            productImage: item.productVariant.product.images?.[0]?.imageUrl || '/placeholder.png',
+            colorHexCode: item.productVariant.color.colorHex,
+            sizeCode: item.productVariant.productSize,
+            quantity: item.quantity,
+            price: item.productVariant.product.unitPrice,
+            productId: item.productVariant.product.productId,
+        }));
+    };
+
     const syncLocalCartToServer = async () => {
         const localCart = getLocalCart();
-        if (localCart.length > 0 && accountId) {
-            try {
-                for (const item of localCart) {
+        if (!accountId || localCart.length === 0 || syncedRef.current) return;
+
+        try {
+            const serverData = await fetchCartAPI(accountId, token);
+            const serverCart = serverData.cart || [];
+
+            await Promise.all(
+                localCart.map(async (localItem) => {
+                    const matched = serverCart.find(
+                        (item) =>
+                            item.productVariant.product.productId === localItem.productId &&
+                            item.productVariant.color.colorHex.toLowerCase() === localItem.colorHexCode.toLowerCase() &&
+                            item.productVariant.productSize === localItem.sizeCode
+                    );
+
                     await addToCartAPI({
                         accountId,
-                        productId: item.productId,
-                        colorHexCode: item.colorHexCode,
-                        sizeCode: item.sizeCode,
-                        quantity: item.quantity,
+                        productId: localItem.productId,
+                        colorHexCode: localItem.colorHexCode,
+                        sizeCode: localItem.sizeCode,
+                        quantity: localItem.quantity,
                         token,
                     });
-                }
-                localStorage.removeItem('cart');
-            } catch (err) {
-                console.error('Lỗi đồng bộ giỏ hàng:', err);
-                toast.error(err.message || 'Lỗi đồng bộ giỏ hàng');
+                })
+            );
+
+            syncedRef.current = true;
+            localStorage.removeItem('cart');
+        } catch (err) {
+            console.error('Lỗi đồng bộ giỏ hàng:', err);
+            toast.error(err.message || 'Lỗi đồng bộ giỏ hàng');
+        }
+    };
+
+    const loadCart = async () => {
+        setLoading(true);
+        try {
+            if (accountId) {
+                await syncLocalCartToServer();
+                const formatted = await fetchAndFormatCartFromServer();
+                setCartItems(formatted);
+            } else {
+                const localCart = getLocalCart();
+                const enrichedCart = await Promise.all(
+                    localCart.map(async (item) => {
+                        if (!item.productImage || item.productImage === '/placeholder.png') {
+                            try {
+                                const product = await fetchProductById(item.productId);
+                                return {
+                                    ...item,
+                                    productName: product.productName,
+                                    productImage: product.images?.[0]?.imageUrl || '/placeholder.png',
+                                    price: product.unitPrice,
+                                };
+                            } catch (err) {
+                                return item;
+                            }
+                        }
+                        return item;
+                    })
+                );
+                setCartItems(enrichedCart);
+                saveLocalCart(enrichedCart);
             }
+        } catch (err) {
+            console.error('Lỗi tải giỏ hàng:', err);
+            toast.error(err.message || 'Lỗi tải giỏ hàng');
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        const loadCart = async () => {
-            setLoading(true);
-            try {
-                if (accountId) {
-                    await syncLocalCartToServer();
-                    const data = await fetchCartAPI(accountId, token);
-                    const formatted = data.cart.map((item) => ({
-                        id: item.cartDetailsId,
-                        productName: item.productVariant.product.productName,
-                        productImage: item.productVariant.product.images?.[0]?.imageUrl || '/placeholder.png',
-                        colorHexCode: item.productVariant.color.colorHex,
-                        sizeCode: item.productVariant.productSize,
-                        quantity: item.quantity,
-                        price: item.productVariant.product.unitPrice,
-                        productId: item.productVariant.product.productId,
-                    }));
-                    setCartItems(formatted);
-                } else {
-                    setCartItems(getLocalCart());
-                }
-            } catch (err) {
-                console.error('Lỗi khi fetch giỏ hàng:', err);
-                toast.error(err.message || 'Lỗi tải giỏ hàng');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         loadCart();
     }, [accountId, token]);
 
-    const addToCart = async ({ productId, colorHexCode, sizeCode, quantity, productName, productImage, price }) => {
+    const addToCart = async ({
+                                 productId,
+                                 colorHexCode,
+                                 sizeCode,
+                                 quantity,
+                                 productName,
+                                 productImage,
+                                 price
+                             }) => {
         try {
             if (accountId) {
-                await addToCartAPI({ accountId, productId, colorHexCode, sizeCode, quantity, token });
-                const data = await fetchCartAPI(accountId, token);
-                const formatted = data.cart.map((item) => ({
-                    id: item.cartDetailsId,
-                    productName: item.productVariant.product.productName,
-                    productImage: item.productVariant.product.images?.[0]?.imageUrl || '/placeholder.png',
-                    colorHexCode: item.productVariant.color.colorHex,
-                    sizeCode: item.productVariant.productSize,
-                    quantity: item.quantity,
-                    price: item.productVariant.product.unitPrice,
-                    productId: item.productVariant.product.productId,
-                }));
-                setCartItems(formatted);
+                await addToCartAPI({
+                    accountId,
+                    productId,
+                    colorHexCode,
+                    sizeCode,
+                    quantity,
+                    token,
+                });
+                const updated = await fetchAndFormatCartFromServer();
+                setCartItems(updated);
             } else {
                 const localCart = getLocalCart();
                 const existing = localCart.find(
                     (item) =>
                         item.productId === productId &&
-                        item.colorHexCode === colorHexCode &&
+                        item.colorHexCode?.toLowerCase() === colorHexCode?.toLowerCase() &&
                         item.sizeCode === sizeCode
                 );
 
+                let updatedCart;
                 if (existing) {
-                    const updatedCart = localCart.map((item) =>
+                    updatedCart = localCart.map((item) =>
                         item.productId === productId &&
-                        item.colorHexCode === colorHexCode &&
+                        item.colorHexCode?.toLowerCase() === colorHexCode?.toLowerCase() &&
                         item.sizeCode === sizeCode
                             ? { ...item, quantity: item.quantity + quantity }
                             : item
                     );
-                    setCartItems(updatedCart);
-                    saveLocalCart(updatedCart);
                 } else {
                     const newItem = {
                         id: `local_${Date.now()}`,
@@ -114,70 +158,111 @@ const useCart = (accountId, token = null) => {
                         quantity,
                         price,
                     };
-                    const updatedCart = [...localCart, newItem];
-                    setCartItems(updatedCart);
-                    saveLocalCart(updatedCart);
+                    updatedCart = [...localCart, newItem];
                 }
+
+                setCartItems(updatedCart);
+                saveLocalCart(updatedCart);
             }
         } catch (err) {
             console.error('Lỗi thêm vào giỏ hàng:', err);
-            throw err; // Để component gọi hàm này xử lý lỗi
+            toast.error(err.message || 'Lỗi thêm vào giỏ hàng');
         }
     };
 
-    const updateQuantity = async (id, quantity) => {
+    const updateQuantity = async (id, newQuantity) => {
         try {
             if (accountId) {
-                const item = cartItems.find((item) => item.id === id);
-                if (!item) {
-                    throw new Error('Không tìm thấy sản phẩm trong giỏ hàng');
+                const item = cartItems.find((i) => i.id === id);
+                if (!item) throw new Error('Không tìm thấy sản phẩm');
+
+                if (newQuantity === item.quantity) return; // Không cần xử lý nếu không thay đổi
+
+                if (newQuantity > item.quantity) {
+                    const delta = newQuantity - item.quantity;
+                    await addToCartAPI({
+                        accountId,
+                        productId: item.productId,
+                        colorHexCode: item.colorHexCode,
+                        sizeCode: item.sizeCode,
+                        quantity: delta,
+                        token,
+                    });
+                } else {
+                    await updateCartQuantityAPI({
+                        cartDetailsId: id,
+                        accountId,
+                        productId: item.productId,
+                        colorHexCode: item.colorHexCode,
+                        sizeCode: item.sizeCode,
+                        quantity: newQuantity, // Gửi số lượng mới, backend xử lý giảm hoặc xóa
+                        token,
+                    });
                 }
+
+                const updated = await fetchAndFormatCartFromServer();
+                setCartItems(updated);
+            } else {
+                const updated = getLocalCart().map((i) =>
+                    i.id === id ? { ...i, quantity: newQuantity } : i
+                );
+                setCartItems(updated);
+                saveLocalCart(updated);
+            }
+        } catch (err) {
+            console.error('Lỗi cập nhật số lượng:', err);
+            toast.error(err.message || 'Lỗi cập nhật số lượng');
+        }
+    };
+
+
+    const removeItem = async (id) => {
+        try {
+            if (accountId) {
+                const item = cartItems.find((i) => i.id === id);
+                if (!item) throw new Error('Không tìm thấy sản phẩm');
+
+                // Gọi updateCartQuantityAPI với quantity = item.quantity => backend hiểu là xóa
                 await updateCartQuantityAPI({
                     cartDetailsId: id,
                     accountId,
                     productId: item.productId,
                     colorHexCode: item.colorHexCode,
                     sizeCode: item.sizeCode,
-                    quantity,
+                    quantity: item.quantity,
                     token,
                 });
-                setCartItems((prev) =>
-                    prev.map((item) => (item.id === id ? { ...item, quantity } : item))
-                );
-            } else {
-                const localCart = getLocalCart();
-                const updatedCart = localCart.map((item) =>
-                    item.id === id ? { ...item, quantity } : item
-                );
-                setCartItems(updatedCart);
-                saveLocalCart(updatedCart);
-            }
-        } catch (err) {
-            console.error('Lỗi cập nhật số lượng:', err);
-            toast.error(err.message || 'Lỗi cập nhật số lượng sản phẩm');
-        }
-    };
 
-    const removeItem = async (id) => {
-        try {
-            if (accountId) {
-                await deleteCartItemAPI(id, token);
-                setCartItems((prev) => prev.filter((item) => item.id !== id));
+                // Cập nhật lại state sau khi "xóa"
+                const updated = await fetchAndFormatCartFromServer();
+                setCartItems(updated);
             } else {
-                const localCart = getLocalCart();
-                const updatedCart = localCart.filter((item) => item.id !== id);
-                setCartItems(updatedCart);
-                saveLocalCart(updatedCart);
+                const updated = getLocalCart().filter((i) => i.id !== id);
+                setCartItems(updated);
+                saveLocalCart(updated);
             }
         } catch (err) {
             console.error('Lỗi xóa sản phẩm:', err);
-            toast.error(err.message || 'Lỗi xóa sản phẩm khỏi giỏ hàng');
+            toast.error(err.message || 'Lỗi xóa sản phẩm');
         }
     };
 
-    const clearCart = () => {
-        setCartItems([]);
-        localStorage.removeItem('cart');
+
+    const clearCart = async () => {
+        try {
+            setCartItems([]);
+            localStorage.removeItem('cart');
+            if (accountId) {
+                const data = await fetchCartAPI(accountId, token);
+                await Promise.all(
+                    (data.cart || []).map((item) =>
+                        deleteCartItemAPI(item.cartDetailsId, token)
+                    )
+                );
+            }
+        } catch (err) {
+            console.error('Lỗi xóa giỏ hàng:', err);
+        }
     };
 
     return {

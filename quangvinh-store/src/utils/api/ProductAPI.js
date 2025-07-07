@@ -3,7 +3,15 @@ export const fetchProducts = async () => {
     if (!response.ok) {
         throw new Error('Failed to fetch products');
     }
-    console.log(response);
     const data = await response.json();
-    return data.products;
+    return data.products || [];
+};
+
+export const fetchProductById = async (id) => {
+    const response = await fetch(`http://localhost:9999/product/${id}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch product');
+    }
+    const data = await response.json();
+    return data.product;
 };
