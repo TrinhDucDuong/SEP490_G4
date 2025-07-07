@@ -19,7 +19,7 @@ public class RecommendationController {
     //TODO: fix if the user is not logged in.
     @GetMapping
     public ResponseEntity<?> getRecommendation(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(recommendationInputBoundary.getRecommendation());
+        return ResponseEntity.ok(recommendationInputBoundary.getRecommendation(userDetails));
     }
 
 }

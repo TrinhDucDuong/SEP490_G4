@@ -1,8 +1,8 @@
 package com.fourfingers.quangvinhstore.usecase.boundary.customer;
 
-import com.fourfingers.quangvinhstore.usecase.data.customer.ProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListProductOutputData;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface RecommendationInputBoundary {
-    String getRecommendation();
+    ListProductOutputData getRecommendation(UserDetails userDetails);
 }
