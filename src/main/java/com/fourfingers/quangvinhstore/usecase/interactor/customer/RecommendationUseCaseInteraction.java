@@ -1,16 +1,26 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.customer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fourfingers.quangvinhstore.domain.model.Image;
+import com.fourfingers.quangvinhstore.domain.model.customer.Product;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ActionLogRepository;
+import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
+import com.fourfingers.quangvinhstore.infrastructure.schema.AccountEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductVariantEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.GenAiUtilBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.ProductOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.RecommendationInputBoundary;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListProductOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
@@ -25,6 +35,9 @@ public class RecommendationUseCaseInteraction implements RecommendationInputBoun
     private final ProductRepository productRepository;
     private final ActionLogRepository actionLogRepository;
     private final ProductOutputBoundary productOutputBoundary;
+    private final ProductMapper productMapper;
+    private final ImageRepository imageRepository;
+    private final ImageMapper imageMapper;
 
     private String getRecommendation(String productInfo, String actionLogInfo) {
         return genAiUtilBoundary.getRecommendation(productInfo, actionLogInfo);
@@ -43,6 +56,7 @@ public class RecommendationUseCaseInteraction implements RecommendationInputBoun
 
     private Map<String, Object> convertProductToMap(ProductEntity product) {
         Map<String, Object> productMap = new LinkedHashMap<>();
+        productMap.put("productId", product.getProductId());
         productMap.put("productName", product.getProductName());
         productMap.put("description", product.getProductDescription());
         productMap.put("price", product.getUnitPrice());
@@ -58,6 +72,7 @@ public class RecommendationUseCaseInteraction implements RecommendationInputBoun
         return variants.stream()
                 .map(variant -> {
                     Map<String, Object> variantMap = new LinkedHashMap<>();
+                    variantMap.put("variantId", variant.getProductVariantId());
                     variantMap.put("size", variant.getProductSize() != null ? variant.getProductSize().name() : "Không xác định");
                     variantMap.put("color", variant.getColor() != null ? variant.getColor().getColorHex() : "Không xác định");
                     variantMap.put("quantity", variant.getQuantity() != null ? variant.getQuantity() : 0);
@@ -76,18 +91,58 @@ public class RecommendationUseCaseInteraction implements RecommendationInputBoun
     }
 
     private String getUserActionLogsAsJson(Long userId) {
-        var logs = actionLogRepository.findTop60ActionLogEntitiesByPerformerIdOrderByActionTimeDesc(userId);
+        var logs = actionLogRepository.findTop20ActionLogEntitiesByPerformerIdOrderByActionTimeDesc(userId);
 
         List<Map<String, Object>> actionList = logs.stream()
                 .map(log -> {
                     Map<String, Object> actionMap = new LinkedHashMap<>();
                     actionMap.put("action", log.getActionType().name()); // ADD_TO_CART, VIEW_DETAILS, ORDER
-                    actionMap.put("productId", log.getReferenceId());
+                    actionMap.put("referenceId", log.getReferenceId());
                     actionMap.put("time", log.getActionTime().toString());
+                    actionMap.put("referenceType", log.getReferenceType().name());
                     return actionMap;
                 })
                 .collect(Collectors.toList());
 
         return convertToJson(actionList);
+    }
+
+    @Override
+    public ListProductOutputData getRecommendation(UserDetails userDetails) {
+        AccountEntity accountEntity = (AccountEntity) userDetails;
+        String actionLogInfo = getUserActionLogsAsJson(accountEntity.getAccountId());
+        String productInfo = getProductInfo();
+        String response = getRecommendation(productInfo, actionLogInfo);
+        List<Product> recommendedProduct = getListProductIdFromResponse(response)
+                .stream()
+                .map(this::getProductInformation)
+                .toList();
+        return productOutputBoundary.convertToListProductOutputData(recommendedProduct);
+    }
+
+    private List<Long> getListProductIdFromResponse(String response) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            // 1. Làm sạch Markdown: loại bỏ phần ```json và ``` (cả các khoảng trắng thừa)
+            String cleaned = response
+                    .replaceAll("(?s)```json\\s*", "")  // xóa dòng mở đầu ```json
+                    .replaceAll("(?s)```", "")          // xóa dòng đóng ```
+                    .trim();                            // xóa khoảng trắng đầu-cuối
+
+            return objectMapper.readValue(cleaned, new TypeReference<List<Long>>() {});
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Lỗi khi parse JSON từ Markdown:\n" + response, e);
+        }
+    }
+
+    private Product getProductInformation(Long productId) {
+        ProductEntity productEntity = productRepository.findById(productId).orElse(null);
+
+        if(productEntity == null) return null;
+        Product product = productMapper.toModel(productEntity);
+        List<Image> images = imageRepository.findAllByReferenceIdAndImageType(productEntity.getProductId(),
+                ImageType.PRODUCT).stream().map(imageMapper::toModel).toList();
+        product.setImages(images);
+        return product;
     }
 }

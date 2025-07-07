@@ -173,6 +173,8 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                                     .map(imageMapper::toModel)
                                     .toList()
                     );
+                    product.setCategory(getProductCategory(product.getProductId()));
+                    product.setBrand(getProductBrand(product.getProductId()));
                     return product;
                 }
                 ).toList();
@@ -192,5 +194,19 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 .stream()
                 .map(imageMapper::toModel)
                 .toList();
+    }
+
+    private Category getProductCategory(Long productId) {
+        ProductEntity productEntity = productRepository.findById(productId).orElseThrow(
+                () -> new RuntimeException("Product not found")
+        );
+        return categoryMapper.toModel(productEntity.getCategory());
+    }
+
+    private Brand getProductBrand(Long productId) {
+        ProductEntity productEntity = productRepository.findById(productId).orElseThrow(
+                () -> new RuntimeException("Product not found")
+        );
+        return brandMapper.toModel(productEntity.getBrand());
     }
 }
