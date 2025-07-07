@@ -45,14 +45,16 @@ public class ChatWithAIUseCaseInteraction implements ChatWithAiInputBoundary {
         if (isRelatedToStore(question)) {
             return getStoreInfoAsJson();
         }
-        List<ProductEntity> productEntities = productRepository.findAll();
+        else {
+            List<ProductEntity> productEntities = productRepository.findAll();
 
-        List<Map<String, Object>> productList = productEntities.stream()
-                .filter(ProductEntity::getIsActive)
-                .map(this::convertProductToMap)
-                .collect(Collectors.toList());
+            List<Map<String, Object>> productList = productEntities.stream()
+                    .filter(ProductEntity::getIsActive)
+                    .map(this::convertProductToMap)
+                    .collect(Collectors.toList());
 
-        return convertToJson(productList);
+            return convertToJson(productList);
+        }
     }
 
     private Map<String, Object> convertProductToMap(ProductEntity product) {
@@ -93,7 +95,7 @@ public class ChatWithAIUseCaseInteraction implements ChatWithAiInputBoundary {
         if (input == null || input.isBlank()) return false;
         String normalized = input.toLowerCase();
         String[] storeKeywords = {
-                "cửa hàng", "shop", "store", "địa chỉ", "ở đâu", "mở cửa", "giờ mở", "giờ đóng",
+                "địa chỉ", "ở đâu", "mở cửa", "giờ mở", "giờ đóng",
                 "chi nhánh", "cơ sở", "vị trí", "location", "open time", "opening hours",
                 "store hours", "how to get there", "đường đến", "map", "google map", "tìm cửa hàng",
                 "store locator", "gần nhất", "xa nhất", "có mặt tại", "trụ sở", "headquarter",

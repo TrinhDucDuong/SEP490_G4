@@ -4,13 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ActionLogRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
+import com.fourfingers.quangvinhstore.infrastructure.schema.AccountEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductVariantEntity;
 import com.fourfingers.quangvinhstore.usecase.boundary.GenAiUtilBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.ProductOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.RecommendationInputBoundary;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
@@ -43,6 +46,7 @@ public class RecommendationUseCaseInteraction implements RecommendationInputBoun
 
     private Map<String, Object> convertProductToMap(ProductEntity product) {
         Map<String, Object> productMap = new LinkedHashMap<>();
+        productMap.put("productId", product.getProductId());
         productMap.put("productName", product.getProductName());
         productMap.put("description", product.getProductDescription());
         productMap.put("price", product.getUnitPrice());
@@ -58,6 +62,7 @@ public class RecommendationUseCaseInteraction implements RecommendationInputBoun
         return variants.stream()
                 .map(variant -> {
                     Map<String, Object> variantMap = new LinkedHashMap<>();
+                    variantMap.put("variantId", variant.getProductVariantId());
                     variantMap.put("size", variant.getProductSize() != null ? variant.getProductSize().name() : "Không xác định");
                     variantMap.put("color", variant.getColor() != null ? variant.getColor().getColorHex() : "Không xác định");
                     variantMap.put("quantity", variant.getQuantity() != null ? variant.getQuantity() : 0);
@@ -76,18 +81,26 @@ public class RecommendationUseCaseInteraction implements RecommendationInputBoun
     }
 
     private String getUserActionLogsAsJson(Long userId) {
-        var logs = actionLogRepository.findTop60ActionLogEntitiesByPerformerIdOrderByActionTimeDesc(userId);
+        var logs = actionLogRepository.findTop20ActionLogEntitiesByPerformerIdOrderByActionTimeDesc(userId);
 
         List<Map<String, Object>> actionList = logs.stream()
                 .map(log -> {
                     Map<String, Object> actionMap = new LinkedHashMap<>();
                     actionMap.put("action", log.getActionType().name()); // ADD_TO_CART, VIEW_DETAILS, ORDER
-                    actionMap.put("productId", log.getReferenceId());
+                    actionMap.put("referenceId", log.getReferenceId());
                     actionMap.put("time", log.getActionTime().toString());
+                    actionMap.put("referenceType", log.getReferenceType().name());
                     return actionMap;
                 })
                 .collect(Collectors.toList());
 
         return convertToJson(actionList);
+    }
+
+    @Override
+    public String getRecommendation() {
+        String actionLogInfo = getUserActionLogsAsJson(7L);
+        String productInfo = getProductInfo();
+        return getRecommendation(productInfo, actionLogInfo);
     }
 }
