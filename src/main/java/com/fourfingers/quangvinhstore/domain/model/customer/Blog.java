@@ -13,6 +13,7 @@ import java.util.List;
 public class Blog {
     private Long blogId;
     private String blogTitle;
-    private List<BlogBlock> blogContents;
+    private String content;
     private List<Image> images;
+    private List<Long> relatedProductIds;
 }
