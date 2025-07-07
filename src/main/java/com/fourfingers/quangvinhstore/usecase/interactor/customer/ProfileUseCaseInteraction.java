@@ -4,6 +4,7 @@ import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.domain.model.customer.Profile;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProfileMapper;
+import com.fourfingers.quangvinhstore.infrastructure.repository.AccountRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProfileRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.AccountEntity;
@@ -16,6 +17,7 @@ import com.fourfingers.quangvinhstore.usecase.boundary.customer.ProfileInputBoun
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.ProfileOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ProfileInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ProfileOutputData;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -33,6 +36,7 @@ public class ProfileUseCaseInteraction implements ProfileInputBoundary {
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
     private final AzureStorageBoundary azureStorageBoundary;
+    private final AccountRepository accountRepository;
 
     @Override
     public ProfileOutputData getProfile(UserDetails userDetails) {
@@ -48,10 +52,13 @@ public class ProfileUseCaseInteraction implements ProfileInputBoundary {
         profile.setProfileImage(
                 imageEntity == null ? new Image() : imageMapper.toModel(imageEntity)
         );
+        Optional<AccountEntity> accountToGetMail = accountRepository.findById(accountEntity.getAccountId());
+        accountToGetMail.ifPresent(entity -> profile.setEmail(accountToGetMail.get().getEmail()));
         return profileOutputBoundary.convertToProfileOutputData(profile);
     }
 
     @Override
+    @Transactional
     public ProfileOutputData update(ProfileInputData profileInputData,
                                     MultipartFile profileImage,
                                     UserDetails userDetails) throws Exception {
@@ -60,21 +67,29 @@ public class ProfileUseCaseInteraction implements ProfileInputBoundary {
                 .orElseThrow(
                     () -> new RuntimeException("Profile not found")
                 );
+        Optional.ofNullable(profileInputData.getFirstName()).ifPresent(profileEntity::setFirstName);
+        Optional.ofNullable(profileInputData.getLastName()).ifPresent(profileEntity::setLastName);
+        Optional.ofNullable(profileInputData.getPhoneNumber()).ifPresent(profileEntity::setPhoneNumber);
+        Optional.ofNullable(profileInputData.getBirthDate()).ifPresent(profileEntity::setBirthDate);
+        Optional.ofNullable(profileInputData.getGender()).ifPresent(gender ->
+                profileEntity.setGender(Gender.valueOf(gender))
+        );
+        profileEntity.setUpdatedAt(LocalDateTime.now());
 
-        //delete prev image
+        Optional<AccountEntity> accountToSetMail = accountRepository.findById(accountEntity.getAccountId());
+        accountToSetMail.ifPresent(entity -> {
+            entity.setEmail(profileInputData.getEmail());
+            accountRepository.save(entity);
+        });
+
+        Profile profile = profileMapper.toModel(profileRepository.saveAndFlush(profileEntity));
+        Optional<AccountEntity> accountToGetMail = accountRepository.findById(accountEntity.getAccountId());
+        accountToGetMail.ifPresent(entity -> profile.setEmail(accountToGetMail.get().getEmail()));
+        ImageEntity imageEntity = imageRepository.findByReferenceIdAndImageType(profileEntity.getProfileId(),
+                ImageType.PROFILE).orElse(null);
+        profile.setProfileImage(imageEntity == null ? new Image() : imageMapper.toModel(imageEntity));
         if(profileImage != null) {
             deletePrevImage(profileEntity);
-        }
-
-        profileEntity.setFirstName(profileInputData.getFirstName());
-        profileEntity.setLastName(profileInputData.getLastName());
-        profileEntity.setEmail(profileInputData.getEmail());
-        profileEntity.setPhoneNumber(profileInputData.getPhoneNumber());
-        profileEntity.setBirthDate(profileInputData.getBirthDate());
-        profileEntity.setGender(Gender.valueOf(profileInputData.getGender()));
-        profileEntity.setUpdatedAt(LocalDateTime.now());
-        Profile profile = profileMapper.toModel(profileRepository.saveAndFlush(profileEntity));
-        if(profileImage != null) {
             profile.setProfileImage(saveImage(profileEntity, profileImage));
         }
         return profileOutputBoundary.convertToProfileOutputData(profile);
@@ -93,7 +108,12 @@ public class ProfileUseCaseInteraction implements ProfileInputBoundary {
     }
 
     private void deletePrevImage(ProfileEntity profileEntity) {
-        imageRepository.findByReferenceIdAndImageType(profileEntity.getProfileId(),
-                ImageType.PROFILE).ifPresent(imageRepository::delete);
+        try {
+            imageRepository.findByReferenceIdAndImageType(profileEntity.getProfileId(),
+                    ImageType.PROFILE).ifPresent(imageRepository::delete);
+        } catch (Exception e) {
+            throw new RuntimeException("Xóa ảnh cũ thất bại: " + e.getMessage());
+        }
     }
+
 }
