@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Breadcrumb from "../../../components/common/Breadcrumb.jsx";
-import SidebarProfile from "../Common/SidebarProfile.jsx";
+import SidebarProfile from "./Information/SidebarProfile.jsx";
 
 function ProfileLayout() {
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../../assets/images/logo_black.png";
+import logo from "../../../assets/images/logo_black.png";
 
 function ForgotPassword() {
     const [contact, setContact] = useState("");

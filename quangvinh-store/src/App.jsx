@@ -11,15 +11,15 @@ import CustomerLayout from './layouts/CustomerLayout';
 import AdminLayout from './layouts/AdminLayout';
 
 // Customer pages
-import Home from './pages/Customer/Home';
-import ProductList from './pages/Customer/ProductList';
-import ProductDetail from './pages/Customer/ProductDetails';
-import Login from './pages/Customer/Login';
-import Register from './pages/Customer/Register';
-import ForgotPassword from './pages/Customer/ForgotPassword';
-import Cart from './pages/Customer/Cart';
-import Payment from './pages/Customer/Payment';
-import NotFound from './pages/Customer/NotFound';
+import Home from './pages/Customer/Common/Home.jsx';
+import ProductList from './pages/Customer/Product/ProductList.jsx';
+import ProductDetail from './pages/Customer/Product/ProductDetails.jsx';
+import Login from './pages/Customer/Login/Login.jsx';
+import Register from './pages/Customer/Login/Register.jsx';
+import ForgotPassword from './pages/Customer/Login/ForgotPassword.jsx';
+import Cart from './pages/Customer/Payment/Cart.jsx';
+import Payment from './pages/Customer/Payment/Payment.jsx';
+import NotFound from './pages/Customer/Common/NotFound.jsx';
 
 import ProfileLayout from './pages/Customer/Profile/ProfileLayout';
 import Info from './pages/Customer/Profile/Information/Info';
@@ -42,16 +42,16 @@ import BrandManagement from './pages/Staff/BrandManagement';
 import ProductManagement from './pages/Staff/ProductManagement';
 import EmployeeManagement from './pages/Staff/EmployeeManagement';
 import GoogleRedirect from "./pages/GoogleRedirect.jsx";
+import PolicyPage from "./pages/Customer/Policy/PolicyPage.jsx";
+import InstructionPage from "./pages/Customer/Instruction/InstructionPage.jsx";
+import SocialCallback from "./pages/Customer/Login/SocialCallback.jsx";
 
 function App() {
     return (
         <AuthProvider>
             <ToastContainer position="top-right" autoClose={3000} />
             <Routes>
-                {/* ✅ Route xử lý redirect sau khi đăng nhập bằng Google */}
                 <Route path="/oauth2/redirect" element={<GoogleRedirect />} />
-
-                {/* Customer layout & routes */}
                 <Route path="/" element={<CustomerLayout />}>
                     <Route index element={<Home />} />
                     <Route path="products" element={<ProductList />} />
@@ -70,9 +70,14 @@ function App() {
                         <Route path="privacy" element={<Privacy />} />
                     </Route>
                     <Route path="*" element={<NotFound />} />
+                    <Route path="policies" element={<PolicyPage />} />
+                    <Route path="policies/:id" element={<PolicyPage />} />
+                    <Route path="instructions" element={<InstructionPage />} />
+                    <Route path="instructions/:id" element={<InstructionPage />} />
+                    <Route path="/social-callback" element={<SocialCallback />} />
                 </Route>
 
-                {/* Admin layout & routes */}
+
                 <Route path="/admin" element={<AdminLayout />}>
                     <Route path="instruction-management" element={<InstructionManagement />} />
                     <Route path="policies-management" element={<PoliciesManagement />} />

@@ -8,9 +8,9 @@ import {
     faTruck, faBoxesPacking, faThumbsUp, faPhoneVolume, faStar
 } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
-import { AuthContext } from "../../context/AuthContext.jsx";
-import useCart from "../../hooks/useCart.js";
-import Breadcrumb from "../../components/common/Breadcrumb.jsx";
+import { AuthContext } from "../../../context/AuthContext.jsx";
+import useCart from "../../../hooks/useCart.js";
+import Breadcrumb from "../../../components/common/Breadcrumb.jsx";
 
 const ProductDetail = () => {
     const { id } = useParams();

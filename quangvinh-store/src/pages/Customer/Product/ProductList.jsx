@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useFetchCategories } from '../../hooks/useFetchCategories';
-import { useFetchFilteredProducts } from '../../hooks/useFetchFilteredProducts';
-import ProductFilter from '../../components/ui/product/ProductFilter';
-import ProductCard from '../../components/ui/product/ProductCard';
-import Pagination from '../../components/common/Pagination';
-import Banner from "../../components/ui/home/Banner.jsx";
+import { useFetchCategories } from '../../../hooks/useFetchCategories.js';
+import { useFetchFilteredProducts } from '../../../hooks/useFetchFilteredProducts.js';
+import ProductFilter from '../../../components/ui/product/ProductFilter.jsx';
+import ProductCard from '../../../components/ui/product/ProductCard.jsx';
+import Pagination from '../../../components/common/Pagination.jsx';
+import Banner from "../../../components/ui/home/Banner.jsx";
 
 const sortOptions = [
     { value: '', label: 'Mặc định' },

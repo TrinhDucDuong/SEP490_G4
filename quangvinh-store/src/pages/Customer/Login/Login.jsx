@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../../context/AuthContext.jsx';
 import { FcGoogle } from 'react-icons/fc';
-import logo from "../../assets/images/logo_black.png";
+import logo from "../../../assets/images/logo_black.png";
 
 const Login = () => {
     const [identifier, setIdentifier] = useState('');

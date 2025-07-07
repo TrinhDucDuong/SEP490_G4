@@ -4,15 +4,15 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 
-import { useFetchProducts } from "../../hooks/useFetchProducts";
-import { useFetchBrands } from "../../hooks/useFetchBrands";
-import { useFetchCategories } from "../../hooks/useFetchCategories";
-import { useFetchTotalSoldOutProducts } from "../../hooks/useFetchTotalSoldOutProducts";
-import { useFetchBanners } from "../../hooks/useFetchBanners";
+import { useFetchProducts } from "../../../hooks/useFetchProducts.js";
+import { useFetchBrands } from "../../../hooks/useFetchBrands.js";
+import { useFetchCategories } from "../../../hooks/useFetchCategories.js";
+import { useFetchTotalSoldOutProducts } from "../../../hooks/useFetchTotalSoldOutProducts.js";
+import { useFetchBanners } from "../../../hooks/useFetchBanners.js";
 
-import Carousel from "../../components/ui/home/Carousel";
-import BrandSlider from "../../components/ui/home/BrandSlider";
-import ProductScrollSlider from "../../components/ui/product/ProductScrollSlider";
+import Carousel from "../../../components/ui/home/Carousel.jsx";
+import BrandSlider from "../../../components/ui/home/BrandSlider.jsx";
+import ProductScrollSlider from "../../../components/ui/product/ProductScrollSlider.jsx";
 
 function Home() {
     const { products = [], loading: loadingProducts, error: errorProducts } = useFetchProducts();

@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments } from '@fortawesome/free-solid-svg-icons';
-import Breadcrumb from '../../components/common/Breadcrumb';
-import { AuthContext } from '../../context/AuthContext';
+import Breadcrumb from '../../../components/common/Breadcrumb.jsx';
+import { AuthContext } from '../../../context/AuthContext.jsx';
 
 const containerStyle = {
     width: '100%',
