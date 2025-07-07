@@ -17,9 +17,7 @@ public class CustomerOrderController {
     private final CustomerOrderInputBoundary customerOrderInputBoundary;
 
     @GetMapping
-    public ResponseEntity<?> getCustomerOrder(//@AuthenticationPrincipal UserDetails userDetails
-    Long accountId) {
-        return ResponseEntity.ok(customerOrderInputBoundary.getOrders(//userDetails
-                accountId));
+    public ResponseEntity<?> getCustomerOrder(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(customerOrderInputBoundary.getOrders(userDetails));
     }
 }

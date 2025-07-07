@@ -22,12 +22,10 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
     private final OrderRepository orderRepository;
 
     @Override
-    public ListOrderOutputData getOrders(//UserDetails userDetails
-                                         Long accountId ) {
-//        AccountEntity accountEntity = (AccountEntity) userDetails;
+    public ListOrderOutputData getOrders(UserDetails userDetails) {
+        AccountEntity accountEntity = (AccountEntity) userDetails;
         return customerOrderOutputBoundary.convertToListCustomerOrderOutputData(
-                orderRepository.findAllByOwnerAccountId(//accountEntity.getAccountId()
-                                accountId )
+                orderRepository.findAllByOwnerAccountId(accountEntity.getAccountId())
                         .stream()
                         .map(orderEntity -> {
                             orderEntity.getOrderDetails().size();

@@ -4,6 +4,5 @@ import com.fourfingers.quangvinhstore.usecase.data.customer.order.ListOrderOutpu
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface CustomerOrderInputBoundary {
-    ListOrderOutputData getOrders(//UserDetails userDetails
-    Long accountId );
+    ListOrderOutputData getOrders(UserDetails userDetails);
 }
