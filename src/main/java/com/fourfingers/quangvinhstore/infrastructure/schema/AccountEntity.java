@@ -108,6 +108,9 @@ public class AccountEntity implements UserDetails {
     @OneToMany(mappedBy = "createdBy")
     private List<BrandEntity> brands;
 
+    @OneToMany(mappedBy = "account")
+    private List<ShippingAddressEntity> shippingAddresses;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
