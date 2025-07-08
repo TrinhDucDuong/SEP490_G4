@@ -25,7 +25,7 @@ public class ProfileController {
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserDetails userDetails,
                                            @RequestPart ProfileInputData profileInputData,
-                                           @RequestPart MultipartFile profileImage) throws Exception {
+                                           @RequestPart (required = false) MultipartFile profileImage) throws Exception {
         return ResponseEntity.ok(profileInputBoundary.update(profileInputData, profileImage, userDetails));
     }
 }

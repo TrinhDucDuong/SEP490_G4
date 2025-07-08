@@ -22,8 +22,8 @@ public class ProfileEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long profileId;
 
-    @Column(name = "email", length = 50)
-    private String email;
+//    @Column(name = "email", length = 50)
+//    private String email;
 
     @Column(name = "first_name", length = 50)
     private String firstName;
