@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ShippingAddressRepository extends JpaRepository<ShippingAddressEntity, Long> {
     List<ShippingAddressEntity> findAllByAccount_AccountId(Long accountAccountId);
 
-    ShippingAddressEntity findByAccount_AccountIdAndShippingAddressId(Long accountAccountId, Long shippingAddressId);
+    Optional<ShippingAddressEntity> findByAccount_AccountIdAndShippingAddressId(Long accountAccountId, Long shippingAddressId);
 }

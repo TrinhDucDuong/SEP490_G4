@@ -14,4 +14,5 @@ public class ShippingAddressInputData {
     private String address;
     private String exactAddress;
     private boolean isMain;
+    private String type;
 }

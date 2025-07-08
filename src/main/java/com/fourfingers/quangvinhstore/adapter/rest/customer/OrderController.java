@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/order")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
-public class CustomerOrderController {
+public class OrderController {
     private final CustomerOrderInputBoundary customerOrderInputBoundary;
 
     @GetMapping

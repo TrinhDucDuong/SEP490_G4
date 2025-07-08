@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ShippingAddressUseCaseInteraction implements ShippingAddressInputBoundary {
@@ -35,36 +37,49 @@ public class ShippingAddressUseCaseInteraction implements ShippingAddressInputBo
     @Override
     public ListShippingAddressOutputData saveShippingAddress(UserDetails userDetails, ShippingAddressInputData shippingAddressInputData) {
         AccountEntity accountEntity = (AccountEntity) userDetails;
-        ShippingAddressEntity shippingAddressEntity = shippingAddressRepository
-                                                            .findByAccount_AccountIdAndShippingAddressId(
-                                                                    accountEntity.getAccountId(),
-                                                                    shippingAddressInputData.getShippingAddressId()
-                                                            );
-        if(shippingAddressEntity != null) {
+
+        ShippingAddressEntity shippingAddressEntity;
+
+        if (shippingAddressInputData.getShippingAddressId() != null) {
+            Optional<ShippingAddressEntity> existingEntityOpt = shippingAddressRepository
+                    .findByAccount_AccountIdAndShippingAddressId(
+                            accountEntity.getAccountId(),
+                            shippingAddressInputData.getShippingAddressId()
+                    );
+
+            if (existingEntityOpt.isPresent()) {
+                shippingAddressEntity = existingEntityOpt.get();
+            } else {
+                shippingAddressEntity = new ShippingAddressEntity();
+                shippingAddressEntity.setShippingAddressId(shippingAddressInputData.getShippingAddressId());
+                shippingAddressEntity.setAccount(accountEntity);
+            }
+        } else {
             shippingAddressEntity = new ShippingAddressEntity();
             shippingAddressEntity.setAccount(accountEntity);
-            shippingAddressEntity.setShippingAddressId(shippingAddressInputData.getShippingAddressId());
-            shippingAddressEntity.setAddress(shippingAddressInputData.getAddress());
-            shippingAddressEntity.setExactAddress(shippingAddressInputData.getExactAddress());
-            shippingAddressEntity.setName(shippingAddressInputData.getName());
-            shippingAddressEntity.setPhoneNumber(shippingAddressInputData.getPhoneNumber());
-            shippingAddressEntity.setMain(shippingAddressInputData.isMain());
-            shippingAddressRepository.save(shippingAddressEntity);
         }
+
+        shippingAddressEntity.setAddress(shippingAddressInputData.getAddress());
+        shippingAddressEntity.setExactAddress(shippingAddressInputData.getExactAddress());
+        shippingAddressEntity.setName(shippingAddressInputData.getName());
+        shippingAddressEntity.setPhoneNumber(shippingAddressInputData.getPhoneNumber());
+        shippingAddressEntity.setMain(shippingAddressInputData.isMain());
+
+        shippingAddressRepository.save(shippingAddressEntity);
+
         return getShippingAddress(userDetails);
     }
+
 
     @Override
     public ListShippingAddressOutputData deleteShippingAddress(UserDetails userDetails, Long shippingAddressId) {
         AccountEntity accountEntity = (AccountEntity) userDetails;
-        ShippingAddressEntity shippingAddressEntity = shippingAddressRepository
+        Optional<ShippingAddressEntity> shippingAddressEntity = shippingAddressRepository
                 .findByAccount_AccountIdAndShippingAddressId(
                         accountEntity.getAccountId(),
                         shippingAddressId
                 );
-        if(shippingAddressEntity != null) {
-            shippingAddressRepository.delete(shippingAddressEntity);
-        }
+        shippingAddressEntity.ifPresent(shippingAddressRepository::delete);
         return getShippingAddress(userDetails);
     }
 }
