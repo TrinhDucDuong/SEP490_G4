@@ -73,4 +73,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>,
             @Param("sortDirection") String sortDirection,
             @Param("sortBy") String sortBy,
             Pageable pageable);
+
+    List<ProductEntity> findAllByIsActiveTrueAndProductIdIn(List<Long> relatedProductIds);
 }
