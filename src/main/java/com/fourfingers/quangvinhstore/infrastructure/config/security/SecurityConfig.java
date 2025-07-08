@@ -123,6 +123,7 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.POST, "/chatbot/new").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/recommendation").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/blog/**").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/staff/blog").hasAuthority("STAFF");
                     auth.requestMatchers(HttpMethod.GET, "/order/**").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
                     auth.anyRequest().authenticated();
@@ -146,7 +147,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:5173"); // Allow your frontend origin
+        configuration.addAllowedOrigin("http://localhost:5182"); // Allow your frontend origin
         configuration.addAllowedMethod("*"); // Allow all HTTP methods (GET, POST, etc.)
         configuration.addAllowedHeader("*"); // Allow all headers
         configuration.setAllowCredentials(true); // Allow credentials (e.g., cookies, Authorization headers)
