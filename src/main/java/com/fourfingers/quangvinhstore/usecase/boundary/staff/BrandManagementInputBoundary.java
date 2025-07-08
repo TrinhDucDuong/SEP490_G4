@@ -4,6 +4,9 @@ import com.fourfingers.quangvinhstore.usecase.data.staff.BrandInputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.BrandOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.ListBrandOutputData;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface BrandManagementInputBoundary {
     ListBrandOutputData getAll();
