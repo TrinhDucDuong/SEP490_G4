@@ -4,10 +4,14 @@ import com.fourfingers.quangvinhstore.usecase.boundary.staff.BrandManagementInpu
 import com.fourfingers.quangvinhstore.usecase.data.staff.BrandInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/staff/brand")
@@ -24,16 +28,20 @@ public class ManageBrandController {
         return ResponseEntity.ok(brandManagementInputBoundary.getBrand(id));
     }
 
-    @PostMapping
-    public ResponseEntity<?> create(@RequestBody BrandInputData brandInputData,
-                                    @AuthenticationPrincipal UserDetails userDetails) throws Exception {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> create(@RequestPart BrandInputData brandInputData,
+                                    @AuthenticationPrincipal UserDetails userDetails,
+                                    @RequestPart List<MultipartFile> brandImages) throws Exception {
+        brandInputData.setBrandImages(brandImages);
         return ResponseEntity.ok(brandManagementInputBoundary.create(brandInputData, userDetails));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody BrandInputData brandInputData,
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update(@RequestPart BrandInputData brandInputData,
                                     @AuthenticationPrincipal UserDetails userDetails,
-                                    @PathVariable String id) throws Exception {
+                                    @PathVariable String id,
+                                    @RequestPart List<MultipartFile> brandImages) throws Exception {
+        brandInputData.setBrandImages(brandImages);
         return ResponseEntity.ok(brandManagementInputBoundary.save(id, brandInputData, userDetails));
     }
 
