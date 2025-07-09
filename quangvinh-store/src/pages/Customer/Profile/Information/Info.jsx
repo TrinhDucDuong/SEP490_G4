@@ -4,7 +4,6 @@ import {AuthContext} from "../../../../context/AuthContext.jsx";
 
 function Info() {
     const { user, token, login } = useContext(AuthContext);
-    console.log(user);
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",

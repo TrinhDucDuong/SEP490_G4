@@ -31,7 +31,6 @@ const Login = () => {
                     password: password,
                 }),
             });
-
             const data = await res.json();
             console.log(data.account);
             if (res.ok && data.token) {

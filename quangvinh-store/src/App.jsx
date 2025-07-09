@@ -6,12 +6,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-// Layouts
 import CustomerLayout from './layouts/CustomerLayout';
 import AdminLayout from './layouts/AdminLayout';
 
-// Customer pages
-import Home from './pages/Customer/Common/Home.jsx';
+import Home from './pages/Customer/Home/Home.jsx';
 import ProductList from './pages/Customer/Product/ProductList.jsx';
 import ProductDetail from './pages/Customer/Product/ProductDetails.jsx';
 import Login from './pages/Customer/Login/Login.jsx';
@@ -29,8 +27,6 @@ import Notifications from './pages/Customer/Profile/Setting/Notifications';
 import Privacy from './pages/Customer/Profile/Setting/Privacy';
 import OrderHistory from './pages/Customer/Profile/Order/OrderHistory';
 
-
-// Admin pages
 import InstructionManagement from './pages/Staff/InstructionManagement';
 import PoliciesManagement from './pages/Staff/PoliciesManagement';
 import AboutUsManagement from './pages/Staff/AboutUsManagement';
@@ -41,17 +37,19 @@ import ProductType from './pages/Staff/ProductType';
 import BrandManagement from './pages/Staff/BrandManagement';
 import ProductManagement from './pages/Staff/ProductManagement';
 import EmployeeManagement from './pages/Staff/EmployeeManagement';
-import GoogleRedirect from "./pages/GoogleRedirect.jsx";
 import PolicyPage from "./pages/Customer/Policy/PolicyPage.jsx";
 import InstructionPage from "./pages/Customer/Instruction/InstructionPage.jsx";
 import SocialCallback from "./pages/Customer/Login/SocialCallback.jsx";
+import OAuth2RedirectHandler from "./components/common/Customer/OAuth2RedirectHandler.jsx";
+import BlogDetail from "./pages/Customer/Blog/BlogDetail.jsx";
+import BlogList from "./pages/Customer/Blog/BlogList.jsx";
 
 function App() {
     return (
         <AuthProvider>
             <ToastContainer position="top-right" autoClose={3000} />
             <Routes>
-                <Route path="/oauth2/redirect" element={<GoogleRedirect />} />
+                <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
                 <Route path="/" element={<CustomerLayout />}>
                     <Route index element={<Home />} />
                     <Route path="products" element={<ProductList />} />
@@ -75,6 +73,8 @@ function App() {
                     <Route path="instructions" element={<InstructionPage />} />
                     <Route path="instructions/:id" element={<InstructionPage />} />
                     <Route path="/social-callback" element={<SocialCallback />} />
+                    <Route path="/blogs" element={<BlogList/>} />
+                    <Route path="/blog/:blogId" element={<BlogDetail />} />
                 </Route>
 
 

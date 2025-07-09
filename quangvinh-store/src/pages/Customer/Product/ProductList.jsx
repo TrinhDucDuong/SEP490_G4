@@ -2,9 +2,9 @@ import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useFetchCategories } from '../../../hooks/useFetchCategories.js';
 import { useFetchFilteredProducts } from '../../../hooks/useFetchFilteredProducts.js';
-import ProductFilter from '../../../components/ui/product/ProductFilter.jsx';
-import ProductCard from '../../../components/ui/product/ProductCard.jsx';
-import Pagination from '../../../components/common/Pagination.jsx';
+import ProductFilter from '../../../components/ui/product/Filter/ProductFilter.jsx';
+import ProductCard from '../../../components/ui/product/Common/ProductCard.jsx';
+import Pagination from '../../../components/common/Customer/Pagination.jsx';
 import Banner from "../../../components/ui/home/Banner.jsx";
 
 const sortOptions = [

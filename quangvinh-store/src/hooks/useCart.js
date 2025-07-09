@@ -176,7 +176,7 @@ const useCart = (accountId, token = null) => {
                 const item = cartItems.find((i) => i.id === id);
                 if (!item) throw new Error('Không tìm thấy sản phẩm');
 
-                if (newQuantity === item.quantity) return; // Không cần xử lý nếu không thay đổi
+                if (newQuantity === item.quantity) return;
 
                 if (newQuantity > item.quantity) {
                     const delta = newQuantity - item.quantity;
@@ -195,7 +195,7 @@ const useCart = (accountId, token = null) => {
                         productId: item.productId,
                         colorHexCode: item.colorHexCode,
                         sizeCode: item.sizeCode,
-                        quantity: newQuantity, // Gửi số lượng mới, backend xử lý giảm hoặc xóa
+                        quantity: item.quantity - newQuantity,
                         token,
                     });
                 }
@@ -221,8 +221,6 @@ const useCart = (accountId, token = null) => {
             if (accountId) {
                 const item = cartItems.find((i) => i.id === id);
                 if (!item) throw new Error('Không tìm thấy sản phẩm');
-
-                // Gọi updateCartQuantityAPI với quantity = item.quantity => backend hiểu là xóa
                 await updateCartQuantityAPI({
                     cartDetailsId: id,
                     accountId,
@@ -232,8 +230,6 @@ const useCart = (accountId, token = null) => {
                     quantity: item.quantity,
                     token,
                 });
-
-                // Cập nhật lại state sau khi "xóa"
                 const updated = await fetchAndFormatCartFromServer();
                 setCartItems(updated);
             } else {

@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Breadcrumb from "../../../components/common/Breadcrumb.jsx";
+import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
 import SidebarProfile from "./Information/SidebarProfile.jsx";
 
 function ProfileLayout() {
@@ -10,7 +10,7 @@ function ProfileLayout() {
     ];
 
     return (
-        <div className="min-h-screen px-4 py-6 md:px-12 lg:px-20 bg-gradient-to-br from-black via-green-300 to-yellow-200">
+        <div className="min-h-screen px-4 py-6 md:px-12 lg:px-20 bg-gradient-to-br from-gray-300 via-blue-100 to-white">
             <div className="max-w-7xl mx-auto space-y-6">
                 <Breadcrumb items={breadcrumbItems} />
                 <div className="flex flex-col lg:flex-row gap-6">

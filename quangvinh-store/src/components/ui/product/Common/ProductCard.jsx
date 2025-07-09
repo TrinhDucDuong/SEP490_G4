@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, memo, useMemo } from "react";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import productPicture from "../../../assets/images/ao.png";
+import productPicture from "../../../../assets/images/ao.png";
 import { useNavigate } from "react-router-dom";
 
 const ProductCard = memo(function ProductCard({ product }) {
@@ -67,6 +67,7 @@ const ProductCard = memo(function ProductCard({ product }) {
                     : 'Liên hệ'}
             </p>
             <h3 className="text-gray-800 text-base font-bold mb-1 truncate">{product.productName}</h3>
+ {/*           <h3 className="text-gray-800 text-base font-bold mb-1 truncate">{product.brand.brandName}</h3>*/}
             <div className="flex items-center py-1 gap-1 text-yellow-400 text-base">
                 {[...Array(5)].map((_, i) => (
                     <FontAwesomeIcon key={i} icon={i < fullStars ? solidStar : regularStar} />

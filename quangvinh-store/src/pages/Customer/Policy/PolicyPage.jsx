@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useFetchPolicy } from "../../../hooks/useFetchPolicy.js";
-import Breadcrumb from "../../../components/common/Breadcrumb.jsx";
+import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
 
 const PolicyPage = () => {
     const { policies, loading, error } = useFetchPolicy();

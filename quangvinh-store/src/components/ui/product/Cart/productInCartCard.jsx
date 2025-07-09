@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import {useFetchProductById} from "../../hooks/useFetchProducts.js";
+import {useFetchProductById} from "../../../../hooks/useFetchProducts.js";
 
 function ProductInCartCard({ item, onRemove, onUpdateQuantity }) {
     const {

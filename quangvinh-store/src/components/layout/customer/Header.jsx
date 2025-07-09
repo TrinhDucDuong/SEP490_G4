@@ -14,9 +14,9 @@ function Header() {
     const [isCartOpen, setCartOpen] = useState(false);
     const [isSearchOpen, setSearchOpen] = useState(false);
     const { user, logout } = useContext(AuthContext);
+
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const accountId = localStorage.getItem('accountId');
-
     const handleLogout = () => {
         logout();
     };
@@ -68,6 +68,9 @@ function Header() {
                             </li>
                             <li>
                                 <Link to='/feedbacks' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'>Feedback</Link>
+                            </li>
+                            <li>
+                                <Link to='/blogs' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'>Bài Viết</Link>
                             </li>
                             <li>
                                 <Link to='/contacts' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'>Liên hệ</Link>

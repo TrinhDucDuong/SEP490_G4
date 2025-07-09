@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, ChevronDown } from 'lucide-react';
 import SidebarForStaff from '../../components/layout/admin/SidebarForStaff.jsx';
 import HeaderForManager from '../../components/layout/admin/HeaderForManager.jsx';
-import Modal from '../../components/common/Modals.jsx';
-import SearchBar from '../../components/common/SearchBar';
-import Pagination from '../../components/common/Paginations.jsx';
-import DataTable from '../../components/common/DataTable';
+import Modal from '../../components/common/Admin/Modals.jsx';
+import SearchBar from '../../components/common/Admin/SearchBar.jsx';
+import Pagination from '../../components/common/Admin/Paginations.jsx';
+import DataTable from '../../components/common/Admin/DataTable.jsx';
 
 const CustomerList = () => {
     const [customers, setCustomers] = useState([]);
