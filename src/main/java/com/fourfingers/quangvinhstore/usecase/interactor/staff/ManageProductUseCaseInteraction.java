@@ -4,6 +4,7 @@ import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.domain.model.staff.Product;
 import com.fourfingers.quangvinhstore.domain.model.staff.ProductVariant;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.ColorStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.ProductStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.ProductVariantStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.*;
@@ -13,8 +14,8 @@ import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ProductSize;
 import com.fourfingers.quangvinhstore.usecase.boundary.AzureStorageBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.ProductManagementInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.ProductManagementOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.staff.ProductInputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.ListProductOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.ProductInputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.ProductOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -40,28 +43,39 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
     private final BrandRepository brandEntityRepository;
     private final CategoryRepository categoryRepository;
     private final ProductManagementOutputBoundary productManagementOutputBoundary;
+    private final ColorStaffMapper colorStaffMapper;
+    private final ColorRepository colorRepository;
+    private final ProductVariantRepository productVariantRepository;
 
     @Override
     @Transactional
     public ProductOutputData create(ProductInputData productInputData, UserDetails userDetails) throws Exception {
         AccountEntity performInsertingAccount = (AccountEntity) userDetails;
-        List<ProductVariantEntity> productVariantEntities = convertInputDataToListVariant(productInputData,
-                performInsertingAccount.getWorkingAt());
+
+        //Save product information
         ProductEntity needToCreateProduct = ProductEntity.builder()
                 .unitPrice(BigDecimal.valueOf(Double.parseDouble(productInputData.getUnitPrice())))
                 .createdAt(LocalDateTime.now())
                 .createdBy(performInsertingAccount)
                 .productDescription(productInputData.getProductDescription())
                 .productName(productInputData.getProductName())
-                .productVariants(productVariantEntities)
                 .brand(getBrandEntity(productInputData.getBrandId()))
                 .category(getCategoryEntity(productInputData.getCategoryId()))
                 .isActive(true)
                 .build();
+
         ProductEntity savedProductEntity = productRepository.saveAndFlush(needToCreateProduct);
-        List<Image> savedProductImage = saveProductImages(productInputData.getProductImages(), savedProductEntity);
         Product savedProduct = productMapper.toModel(savedProductEntity);
-        savedProduct.setImages(savedProductImage);
+
+        //Save and return product variants
+        savedProduct.setProductVariants(saveProductVariants(productInputData,
+                savedProductEntity,
+                performInsertingAccount.getWorkingAt())
+        );
+
+        //Save and return product images
+        savedProduct.setImages(saveProductImages(productInputData.getProductImages(), savedProductEntity));
+
         return productManagementOutputBoundary.convertToProductOutputData(savedProduct);
     }
 
@@ -105,16 +119,17 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         productEntity.setCategory(getCategoryEntity(productInputData.getCategoryId()));
         productEntity.setUpdatedAt(LocalDateTime.now());
         productEntity.setUpdatedBy((AccountEntity) userDetails);
-        productEntity.setProductVariants(updateProductVariants(productInputData, productEntity));
 
         ProductEntity savedProduct = productRepository.saveAndFlush(productEntity);
 
-        //Save the new images
-        List<Image> savedProductImages = saveProductImages(productInputData.getProductImages(),
-                productEntity);
-
+        //Convert to model for returning
         Product product = productMapper.toModel(savedProduct);
-        product.setImages(savedProductImages);
+
+        //Update and setNewImage
+        product.setImages(saveProductImages(productInputData.getProductImages(), savedProduct));
+
+        //Update and set new product variants
+        product.setProductVariants(updateProductVariants(productInputData, savedProduct, (AccountEntity) userDetails));
         return productManagementOutputBoundary.convertToProductOutputData(product);
     }
 
@@ -148,15 +163,38 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         );
     }
 
-    private List<ProductVariantEntity> convertInputDataToListVariant(ProductInputData productInputData,
-                                                                     StoreEntity storeEntity) {
-        return productInputData.getProductVariants().stream()
-                .map((productVariant) -> {
-                    ProductVariantEntity productVariantEntity = productVariantMapper.toEntity(productVariant);
-                    productVariantEntity.setStores(List.of(storeEntity));
-                    return productVariantEntity;
+    private List<ProductVariant> saveProductVariants(ProductInputData productInputData,
+                                                     ProductEntity productEntity,
+                                                     StoreEntity storeEntity) {
+        List<ProductVariantEntity> needToSaveProductVariants = productInputData.getProductVariants()
+                .stream()
+                .map(productVariant -> {
+                    //Check color exists, if not save a new color
+                    if (checkIfColorNotExists(productVariant.getColor().getColorHex())) {
+                        saveColor(productVariant.getColor().getColorHex());
+                    }
+                    ColorEntity colorEntity = colorStaffMapper.toEntity(
+                            productVariant.getColor()
+                    );
+                    return ProductVariantEntity.builder()
+                            .color(colorEntity)
+                            .productSize(ProductSize.valueOf(productVariant.getProductSize()))
+                            .product(productEntity)
+                            .stores(List.of(storeEntity))
+                            .quantity(productVariant.getQuantity())
+                            .build();
                 })
                 .toList();
+        List<ProductVariantEntity> savedProductVariants = productVariantRepository.saveAll(needToSaveProductVariants);
+        return savedProductVariants.stream().map(productVariantMapper::toModel).toList();
+    }
+
+    private boolean checkIfColorNotExists(String colorHex) {
+        return !colorRepository.existsByColorHex(colorHex);
+    }
+
+    private void saveColor(String colorHex) {
+        colorRepository.save(ColorEntity.builder().colorHex(colorHex).build());
     }
 
     private List<Image> saveProductImages(List<MultipartFile> images, ProductEntity productEntity) throws Exception {
@@ -186,19 +224,53 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         );
     }
 
-    private List<ProductVariantEntity> updateProductVariants(ProductInputData productInputData,
-                                                             ProductEntity productEntity) {
-        return productInputData.getProductVariants().stream()
-                .filter(inputVariant -> inputVariant.getProductVariantId() != null)
-                .flatMap(inputVariant -> productEntity.getProductVariants().stream()
-                        .filter(existingVariant -> inputVariant.getProductVariantId()
-                                .equals(existingVariant.getProductVariantId()))
-                        .peek(existingVariant -> {
-//                            existingVariant.setColor(inputVariant.getColor());
-                            existingVariant.setProductSize(ProductSize.valueOf(inputVariant.getProductSize()));
-                        }))
-                .collect(Collectors.toList());
+    private List<ProductVariant> updateProductVariants(ProductInputData productInputData,
+                                                          ProductEntity productEntity,
+                                                          AccountEntity performUpdatingAccount) {
+        Map<Long, ProductVariantEntity> currentVariants = productEntity.getProductVariants().stream()
+                .collect(Collectors.toMap(ProductVariantEntity::getProductVariantId, v -> v));
 
+        //List to save new updated variants
+        List<ProductVariantEntity> updatedList = new ArrayList<>();
+
+        for(ProductVariant productVariant : productInputData.getProductVariants()) {
+            if(checkIfColorNotExists(productVariant.getColor().getColorHex())) {
+                saveColor(productVariant.getColor().getColorHex());
+            }
+            if(productVariant.getProductVariantId() != null) {
+                ProductVariantEntity existingProductVariants = currentVariants.get(
+                        productVariant.getProductVariantId()
+                );
+                ColorEntity colorEntity = colorStaffMapper.toEntity(
+                        productVariant.getColor()
+                );
+                existingProductVariants.setColor(colorEntity);
+                existingProductVariants.setProductSize(ProductSize.valueOf(productVariant.getProductSize()));
+                existingProductVariants.setQuantity(productVariant.getQuantity());
+//                existingProductVariants.setStores(List.of(performUpdatingAccount.getWorkingAt()));
+
+                //Save the new product variants information into a list to update
+                updatedList.add(existingProductVariants);
+
+                //remove from map
+                currentVariants.remove(existingProductVariants.getProductVariantId());
+            } else {
+                ProductVariantEntity newProductVariantEntity = ProductVariantEntity.builder()
+                        .color(colorStaffMapper.toEntity(productVariant.getColor()))
+                        .productSize(ProductSize.valueOf(productVariant.getProductSize()))
+                        .product(productEntity)
+                        .stores(List.of(performUpdatingAccount.getWorkingAt()))
+                        .quantity(productVariant.getQuantity())
+                        .build();
+                updatedList.add(newProductVariantEntity);
+            }
+
+            //Delete all variants that are no longer to save
+            productVariantRepository.deleteAll(currentVariants.values());
+        }
+        //Update and return model
+        List<ProductVariantEntity> savedProductVariants = productVariantRepository.saveAll(updatedList);
+        return savedProductVariants.stream().map(productVariantMapper::toModel).toList();
     }
 
     private List<Image> getProductImages(ProductEntity productEntity) {
@@ -207,7 +279,6 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                 .map(imageMapper::toModel)
                 .toList();
     }
-
 
 
     private List<ProductVariant> getProductVariants(ProductEntity productEntity) {

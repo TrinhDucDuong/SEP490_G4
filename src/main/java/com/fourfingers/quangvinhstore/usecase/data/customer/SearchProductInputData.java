@@ -17,4 +17,5 @@ public class SearchProductInputData {
     private List<String> colorHexes;
     private BigDecimal maxPrice;
     private BigDecimal minPrice;
+    private String searchText;
 }

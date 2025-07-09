@@ -11,7 +11,6 @@ import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductVariantMapper;
 import com.fourfingers.quangvinhstore.infrastructure.schema.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.ProductInputBoundary;
@@ -27,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -38,7 +36,6 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
     private final ProductMapper productMapper;
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
-    private final ProductVariantMapper productVariantMapper;
     private final BrandMapper brandMapper;
     private final CategoryMapper categoryMapper;
 
@@ -72,7 +69,7 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 productRepository.searchProduct(
                         searchProductInputData.getMinPrice(), searchProductInputData.getMaxPrice(),
                         categoryIds, brandIds, colorHexes, productSizes,
-                        sortDirection, sortBy, pageable
+                        sortDirection, sortBy, searchProductInputData.getSearchText(), pageable
                 ).getContent()
         );
 
