@@ -37,7 +37,7 @@ public class DashBoardRevenueGraphUseCaseInteraction implements DashBoardRevenue
         return dashBoardRevenueGraphOutputBoundary.convertToDashBoardRevenueGraphOutputData(dailyRevenues);
     }
 
-    //Fill the day that don't having revenue
+    //Fill the days that don't having revenue
     private List<DailyRevenue> fillMissingDates(List<DailyRevenue> data, LocalDateTime start, LocalDateTime end) {
         Map<LocalDate, BigDecimal> revenueMap = data.stream()
                 .collect(Collectors.toMap(

@@ -10,4 +10,11 @@ import lombok.*;
 public class OrderSummary {
     private Long totalOrder;
     private Double orderGrowthRate;
+    private Long notProcessedOrder;
+    private Long processedOrder;
+
+    public OrderSummary(Long totalOrder, Double orderGrowthRate) {
+        this.totalOrder = totalOrder;
+        this.orderGrowthRate = orderGrowthRate;
+    }
 }

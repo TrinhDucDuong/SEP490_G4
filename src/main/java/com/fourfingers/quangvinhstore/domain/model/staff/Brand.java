@@ -1,5 +1,6 @@
 package com.fourfingers.quangvinhstore.domain.model.staff;
 
+import com.fourfingers.quangvinhstore.domain.model.Account;
 import com.fourfingers.quangvinhstore.domain.model.Image;
 import lombok.*;
 
@@ -18,4 +19,7 @@ public class Brand {
     private Boolean isActive;
     private List<Image> images;
     private LocalDateTime createdAt;
+    private Account createdBy;
+    private Account updatedBy;
+    private LocalDateTime updatedAt;
 }
