@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.adapter.rest;
 
-import com.fourfingers.quangvinhstore.usecase.data.admin.account.CustomerRegistedAccountOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.admin.CustomerRegistedAccountOutputData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

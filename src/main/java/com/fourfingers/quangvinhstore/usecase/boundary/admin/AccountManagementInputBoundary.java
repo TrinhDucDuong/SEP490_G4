@@ -1,8 +1,8 @@
 package com.fourfingers.quangvinhstore.usecase.boundary.admin;
 
-import com.fourfingers.quangvinhstore.usecase.data.admin.account.AccountInputData;
-import com.fourfingers.quangvinhstore.usecase.data.admin.account.ListAccountOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.admin.account.AccountOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.admin.AccountInputData;
+import com.fourfingers.quangvinhstore.usecase.data.admin.ListAccountOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.admin.AccountOutputData;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface AccountManagementInputBoundary {

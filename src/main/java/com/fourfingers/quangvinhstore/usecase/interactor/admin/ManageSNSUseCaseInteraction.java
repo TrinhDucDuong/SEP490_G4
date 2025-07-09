@@ -7,7 +7,7 @@ import com.fourfingers.quangvinhstore.infrastructure.repository.SNSRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.SNSEntity;
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.SNSManagementInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.SNSManagementOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.admin.account.SNSInputData;
+import com.fourfingers.quangvinhstore.usecase.data.admin.SNSInputData;
 import com.fourfingers.quangvinhstore.usecase.data.auth.ListSNSOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.auth.SNSOutputData;
 import lombok.RequiredArgsConstructor;

@@ -2,6 +2,7 @@ package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 
 import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.domain.model.staff.Brand;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.AccountMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.BrandStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.BrandRepository;
@@ -34,6 +35,7 @@ public class ManageBrandUseCaseInteraction implements BrandManagementInputBounda
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
     private final AzureStorageBoundary azureStorageBoundary;
+    private final AccountMapper accountMapper;
 
     @Override
     public ListBrandOutputData getAll() {
@@ -105,6 +107,9 @@ public class ManageBrandUseCaseInteraction implements BrandManagementInputBounda
                         .toList())
                 .isActive(brandEntity.getIsActive())
                 .createdAt(brandEntity.getCreatedAt())
+                .createdBy(accountMapper.toAccount(brandEntity.getCreatedBy()))
+                .updatedAt(brandEntity.getUpdatedAt())
+                .updatedBy(accountMapper.toAccount(brandEntity.getUpdatedBy()))
                 .build();
     }
 

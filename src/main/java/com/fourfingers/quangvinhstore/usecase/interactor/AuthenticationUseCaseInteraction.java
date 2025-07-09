@@ -15,7 +15,7 @@ import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.AuthenticationInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.AuthenticationOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.JwtUtilBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.admin.account.CustomerRegistedAccountOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.admin.CustomerRegistedAccountOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.auth.AuthenticationInputData;
 import com.fourfingers.quangvinhstore.usecase.data.auth.AuthenticationOutputData;
 import jakarta.transaction.Transactional;
@@ -25,7 +25,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
