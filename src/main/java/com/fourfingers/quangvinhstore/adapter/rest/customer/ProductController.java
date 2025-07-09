@@ -26,9 +26,10 @@ public class ProductController {
                                             @RequestParam(defaultValue = "desc") String sortDirection,
                                             @RequestParam(defaultValue = "createdAt") String sortBy,
                                             @RequestParam(defaultValue = "0") String pageNumber,
-                                            @RequestParam(defaultValue = "20") String pageSize) {
+                                            @RequestParam(defaultValue = "20") String pageSize,
+                                            @RequestParam(required = false) String searchText) {
         SearchProductInputData searchProductInputData = new SearchProductInputData(
-                categoryIds, brandIds, productSizes, colorHexes, maxPrice, minPrice
+                categoryIds, brandIds, productSizes, colorHexes, maxPrice, minPrice, searchText
         );
         return ResponseEntity.ok(productInputBoundary.search(searchProductInputData, sortDirection, sortBy,
                 pageNumber,

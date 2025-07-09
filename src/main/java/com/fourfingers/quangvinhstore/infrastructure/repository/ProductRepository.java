@@ -51,6 +51,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>,
                 AND (:brandIds IS NULL OR FIND_IN_SET(p.brand_id, :brandIds) > 0)
                 AND (:colorHexes IS NULL OR FIND_IN_SET(pv.color_code, :colorHexes) > 0)
                 AND (:productSizes IS NULL OR FIND_IN_SET(pv.size_code, :productSizes) > 0)
+                AND (:searchText IS NULL OR p.product_name LIKE CONCAT('%', :searchText, '%'))
             GROUP BY p.product_id, p.product_name, p.product_description, p.unit_price
             ORDER BY
                 CASE WHEN :sortBy = 'unitPrice' AND :sortDirection = 'asc' THEN p.unit_price END ASC,
@@ -72,6 +73,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>,
             @Param("productSizes") String productSizes,
             @Param("sortDirection") String sortDirection,
             @Param("sortBy") String sortBy,
+            @Param("searchText") String searchText,
             Pageable pageable);
 
     List<ProductEntity> findAllByIsActiveTrueAndProductIdIn(List<Long> relatedProductIds);
