@@ -1,7 +1,7 @@
 package com.fourfingers.quangvinhstore.adapter.rest.admin;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.SNSManagementInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.admin.account.SNSInputData;
+import com.fourfingers.quangvinhstore.usecase.data.admin.SNSInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

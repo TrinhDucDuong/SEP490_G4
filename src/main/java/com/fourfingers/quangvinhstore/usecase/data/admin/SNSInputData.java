@@ -1,4 +1,4 @@
-package com.fourfingers.quangvinhstore.usecase.data.admin.account;
+package com.fourfingers.quangvinhstore.usecase.data.admin;
 
 import lombok.*;
 

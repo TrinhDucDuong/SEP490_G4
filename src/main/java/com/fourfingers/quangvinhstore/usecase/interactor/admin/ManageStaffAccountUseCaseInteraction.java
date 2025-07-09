@@ -6,7 +6,7 @@ import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.AccountM
 import com.fourfingers.quangvinhstore.infrastructure.repository.AccountRepository;
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.StaffAccountManagementInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.StaffAccountManagementOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.admin.account.ListStaffAccountOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.admin.ListStaffAccountOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
