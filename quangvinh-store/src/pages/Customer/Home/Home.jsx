@@ -8,18 +8,19 @@ import { useFetchProducts } from "../../../hooks/useFetchProducts.js";
 import { useFetchBrands } from "../../../hooks/useFetchBrands.js";
 import { useFetchCategories } from "../../../hooks/useFetchCategories.js";
 import { useFetchTotalSoldOutProducts } from "../../../hooks/useFetchTotalSoldOutProducts.js";
-import { useFetchBanners } from "../../../hooks/useFetchBanners.js";
+
 
 import Carousel from "../../../components/ui/home/Carousel.jsx";
 import BrandSlider from "../../../components/ui/home/BrandSlider.jsx";
-import ProductScrollSlider from "../../../components/ui/product/ProductScrollSlider.jsx";
+import ProductScrollSlider from "../../../components/ui/product/Common/ProductScrollSlider.jsx";
+import NewsHome from "../../../components/ui/home/NewsHome.jsx";
+import ChatBoxAI from "../Common/chatBoxAI.jsx";
 
 function Home() {
     const { products = [], loading: loadingProducts, error: errorProducts } = useFetchProducts();
     const { brands = [], loading: loadingBrands, error: errorBrands } = useFetchBrands();
     const { categories = [], loading: loadingCategories, error: errorCategories } = useFetchCategories();
     const { productTotal: totalSoldoutProducts = [], loadingTotal: loadingTotalSoldoutProducts, errorTotal: errorTotalSoldOutProduct } = useFetchTotalSoldOutProducts();
-    const { banners = [], loading: loadingBanner, error: errorBanner } = useFetchBanners();
 
     const topBrands = useMemo(() => brands.slice(0, 10), [brands]);
     const trendingProducts = useMemo(() => products.slice(0, 10), [products]);
@@ -96,7 +97,12 @@ function Home() {
                 )}
             </div>
 
-            <div className="py-20">{/* Nội dung thêm sau nếu có */}</div>
+            <div className="py-10 w-full px-28">
+                <NewsHome/>
+            </div>
+            <div className="fixed bottom-6 right-6 z-50">
+                <ChatBoxAI />
+            </div>
         </div>
     );
 }

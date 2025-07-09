@@ -1,32 +1,43 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 function AddAddressForm({ onAdd, onCancel }) {
     const [form, setForm] = useState({
         name: '',
         phoneNumber: '',
+        address: '',
+        exactAddress: '',
+        type: 'Nhà riêng',
+        main: false,
         province: '',
         district: '',
         ward: '',
-        exactAddress: '',
-        isMain: false,
-        type: 'Nhà riêng',
     });
 
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
+
     useEffect(() => {
         fetch('https://provinces.open-api.vn/api/?depth=1')
             .then(res => res.json())
             .then(setProvinces)
-            .catch(console.error);
+            .catch(error => {
+                console.error('Lỗi khi tải danh sách tỉnh:', error);
+                toast.error('Không thể tải danh sách tỉnh');
+            });
     }, []);
 
     useEffect(() => {
         if (form.province) {
             fetch(`https://provinces.open-api.vn/api/p/${form.province}?depth=2`)
                 .then(res => res.json())
-                .then(data => setDistricts(data.districts || []));
+                .then(data => setDistricts(data.districts || []))
+                .catch(error => {
+                    console.error('Lỗi khi tải danh sách huyện:', error);
+                    toast.error('Không thể tải danh sách huyện');
+                });
+            setWards([]);
         } else {
             setDistricts([]);
             setWards([]);
@@ -37,7 +48,11 @@ function AddAddressForm({ onAdd, onCancel }) {
         if (form.district) {
             fetch(`https://provinces.open-api.vn/api/d/${form.district}?depth=2`)
                 .then(res => res.json())
-                .then(data => setWards(data.wards || []));
+                .then(data => setWards(data.wards || []))
+                .catch(error => {
+                    console.error('Lỗi khi tải danh sách xã:', error);
+                    toast.error('Không thể tải danh sách xã');
+                });
         } else {
             setWards([]);
         }
@@ -53,20 +68,32 @@ function AddAddressForm({ onAdd, onCancel }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         const selectedProvince = provinces.find(p => p.code === Number(form.province))?.name || '';
         const selectedDistrict = districts.find(d => d.code === Number(form.district))?.name || '';
         const selectedWard = wards.find(w => w.code === Number(form.ward))?.name || '';
 
+        if (!selectedWard || !selectedDistrict || !selectedProvince) {
+            toast.error('Vui lòng chọn đầy đủ tỉnh, huyện, xã!');
+            return;
+        }
+
         const combinedAddress = `${selectedWard}, ${selectedDistrict}, ${selectedProvince}`;
 
-        onAdd({
-            ...form,
+        const newAddress = {
+            name: form.name,
+            phoneNumber: form.phoneNumber,
             address: combinedAddress,
-        });
+            exactAddress: form.exactAddress,
+            main: form.main,
+            type: form.type === 'Khác' ? null : form.type,
+        };
+
+        onAdd(newAddress);
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-5 bg-white p-6 rounded-xl shadow-sm">
+        <form onSubmit={handleSubmit} className="space-y-5 bg-white p-6 rounded-xl shadow-sm w-full max-w-3xl mx-auto">
             <h3 className="text-lg font-semibold text-gray-900">Thêm địa chỉ mới</h3>
 
             <div className="flex flex-col">
@@ -104,7 +131,7 @@ function AddAddressForm({ onAdd, onCancel }) {
                         required
                     >
                         <option value="">Chọn tỉnh</option>
-                        {provinces.map((p) => (
+                        {provinces.map(p => (
                             <option key={p.code} value={p.code}>{p.name}</option>
                         ))}
                     </select>
@@ -120,7 +147,7 @@ function AddAddressForm({ onAdd, onCancel }) {
                         required
                     >
                         <option value="">Chọn huyện</option>
-                        {districts.map((d) => (
+                        {districts.map(d => (
                             <option key={d.code} value={d.code}>{d.name}</option>
                         ))}
                     </select>
@@ -136,7 +163,7 @@ function AddAddressForm({ onAdd, onCancel }) {
                         required
                     >
                         <option value="">Chọn xã</option>
-                        {wards.map((w) => (
+                        {wards.map(w => (
                             <option key={w.code} value={w.code}>{w.name}</option>
                         ))}
                     </select>
@@ -177,19 +204,20 @@ function AddAddressForm({ onAdd, onCancel }) {
             <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                     type="checkbox"
-                    name="isMain"
-                    checked={form.isMain}
+                    name="main"
+                    checked={form.main}
                     onChange={handleChange}
                     className="h-4 w-4 text-gray-900"
                 />
                 Đặt làm địa chỉ chính
             </label>
+
             <div className="flex gap-3">
                 <button
                     type="submit"
                     className="bg-green-300 text-green-800 px-6 py-1 rounded-full text-sm font-medium hover:bg-green-600 hover:text-white transition"
                 >
-                    Thêm
+                    Lưu
                 </button>
                 <button
                     type="button"

@@ -4,11 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import useCart from "../../../hooks/useCart.js";
-import ProductInCartCard from "../../../components/ui/productInCartCard.jsx";
+import ProductInCartCard from "../../../components/ui/product/Cart/productInCartCard.jsx";
 
 function Cart({ isOpen, onClose, accountId, token = null }) {
     const { cartItems, loading, removeItem, updateQuantity } = useCart(accountId, token);
-
     const totalPrice = cartItems.reduce(
         (sum, item) => sum + item.price * item.quantity,
         0

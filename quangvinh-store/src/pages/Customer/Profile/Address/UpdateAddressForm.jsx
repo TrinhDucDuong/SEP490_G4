@@ -11,12 +11,14 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
+
     useEffect(() => {
         fetch('https://provinces.open-api.vn/api/?depth=1')
             .then(res => res.json())
             .then(setProvinces)
             .catch(console.error);
     }, []);
+
     useEffect(() => {
         if (form.province) {
             fetch(`https://provinces.open-api.vn/api/p/${form.province}?depth=2`)
@@ -27,6 +29,7 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
             setWards([]);
         }
     }, [form.province]);
+
     useEffect(() => {
         if (form.district) {
             fetch(`https://provinces.open-api.vn/api/d/${form.district}?depth=2`)
@@ -36,6 +39,12 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
             setWards([]);
         }
     }, [form.district]);
+
+    const mapTypeToEnum = (type) => {
+        if (type === 'Nhà riêng') return 'HOME';
+        if (type === 'Văn phòng') return 'OFFICE';
+        return null;
+    };
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -47,20 +56,31 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         const selectedProvince = provinces.find(p => p.code === Number(form.province))?.name || '';
         const selectedDistrict = districts.find(d => d.code === Number(form.district))?.name || '';
         const selectedWard = wards.find(w => w.code === Number(form.ward))?.name || '';
-        const combinedAddress = `${selectedWard}, ${selectedDistrict}, ${selectedProvince}`;
+        const combinedAddress = selectedWard && selectedDistrict && selectedProvince
+            ? `${selectedWard}, ${selectedDistrict}, ${selectedProvince}`
+            : form.address;
 
-        onUpdate({
-            ...form,
+        const updatedAddress = {
+            shippingAddressId: form.shippingAddressId,
+            name: form.name,
+            phoneNumber: form.phoneNumber,
             address: combinedAddress,
-        });
+            exactAddress: form.exactAddress,
+            main: form.main,
+            type: mapTypeToEnum(form.type),
+        };
+
+        onUpdate(updatedAddress);
     };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-5 bg-white p-6 rounded-xl shadow-sm w-full max-w-3xl mx-auto">
             <h3 className="text-lg font-semibold text-gray-900">Cập nhật địa chỉ</h3>
+
             <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700 mb-1">Họ tên</label>
                 <input
@@ -72,6 +92,7 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
                     required
                 />
             </div>
+
             <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
                 <input
@@ -83,6 +104,7 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
                     required
                 />
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div className="flex flex-col">
                     <label className="text-sm font-medium text-gray-700 mb-1">Tỉnh / Thành phố</label>
@@ -91,7 +113,6 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
                         value={form.province}
                         onChange={handleChange}
                         className="w-full border border-gray-300 rounded-full py-2 px-3 text-sm"
-                        required
                     >
                         <option value="">Chọn tỉnh</option>
                         {provinces.map(p => (
@@ -106,7 +127,6 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
                         value={form.district}
                         onChange={handleChange}
                         className="w-full border border-gray-300 rounded-full py-2 px-3 text-sm"
-                        required
                     >
                         <option value="">Chọn huyện</option>
                         {districts.map(d => (
@@ -121,7 +141,6 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
                         value={form.ward}
                         onChange={handleChange}
                         className="w-full border border-gray-300 rounded-full py-2 px-3 text-sm"
-                        required
                     >
                         <option value="">Chọn xã</option>
                         {wards.map(w => (
@@ -142,6 +161,7 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
                     required
                 />
             </div>
+
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Loại địa chỉ</label>
                 <div className="flex gap-6">
@@ -164,8 +184,8 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
             <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                     type="checkbox"
-                    name="isMain"
-                    checked={form.isMain}
+                    name="main" // ✅ sửa từ isMain
+                    checked={form.main}
                     onChange={handleChange}
                     className="h-4 w-4 text-gray-900"
                 />

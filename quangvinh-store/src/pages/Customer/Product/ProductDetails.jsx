@@ -10,7 +10,7 @@ import {
 import { toast } from 'react-toastify';
 import { AuthContext } from "../../../context/AuthContext.jsx";
 import useCart from "../../../hooks/useCart.js";
-import Breadcrumb from "../../../components/common/Breadcrumb.jsx";
+import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -19,7 +19,7 @@ const ProductDetail = () => {
     const [productColors, setProductColors] = useState([]);
     const [selectedColor, setSelectedColor] = useState(null);
     const [selectedSize, setSelectedSize] = useState(null);
-    const [selectedImage, setSelectedImage] = useState(null); // ✅ Thêm
+    const [selectedImage, setSelectedImage] = useState(null);
     const [tab, setTab] = useState('desc');
     const [quantity, setQuantity] = useState(1);
 
@@ -36,7 +36,7 @@ const ProductDetail = () => {
                 setProduct(data.product);
                 setProductSizes(data.productSizes || []);
                 setProductColors(data.productColors || []);
-                setSelectedImage(data.product?.images?.[0]?.imageUrl || null); // ✅ Đặt ảnh đầu làm mặc định
+                setSelectedImage(data.product?.images?.[0]?.imageUrl || null);
             } catch (err) {
                 console.error('Lỗi khi fetch sản phẩm:', err);
                 toast.error(err.message || 'Lỗi tải sản phẩm');

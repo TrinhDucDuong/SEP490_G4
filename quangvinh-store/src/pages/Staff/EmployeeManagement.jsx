@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Eye, ArrowUpDown, Phone, User, Lock } from 'lucide-react';
 import SidebarForStaff from '../../components/layout/admin/SidebarForStaff.jsx';
 import HeaderForManager from '../../components/layout/admin/HeaderForManager.jsx';
-import SearchBar from '../../components/common/SearchBar.jsx';
-import Pagination from '../../components/common/Paginations.jsx';
-import DataTable from '../../components/common/DataTable.jsx';
+import SearchBar from '../../components/common/Admin/SearchBar.jsx';
+import Pagination from '../../components/common/Admin/Paginations.jsx';
+import DataTable from '../../components/common/Admin/DataTable.jsx';
 
 const EmployeeManagement = () => {
     const [employees, setEmployees] = useState([]);

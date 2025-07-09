@@ -1,67 +1,98 @@
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments } from '@fortawesome/free-solid-svg-icons';
-import Breadcrumb from '../../../components/common/Breadcrumb.jsx';
-import { AuthContext } from '../../../context/AuthContext.jsx';
-
-const containerStyle = {
-    width: '100%',
-    height: '256px',
-};
+import { AuthContext } from "../../../context/AuthContext.jsx";
+import useCart from "../../../hooks/useCart.js";
+import useFetchAddress from "../../../hooks/useFetchAddress.js";
+import { toast } from "react-toastify";
+import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
+import AddressCard from "../Profile/Address/AddressCard.jsx";
+import ManualAddressForm from "./ManualAddressForm.jsx";
+import PaymentProduct from "./PaymentProduct.jsx";
+import Modal from "../../../components/common/Customer/Modal.jsx";
+import AddAddressForm from "../Profile/Address/AddAddressForm.jsx";
+import UpdateAddressForm from "../Profile/Address/UpdateAddressForm.jsx";
+import AddressSelectModal from "./AddressSelectModal.jsx"; // ✅ NEW
+import { createAddress } from "../../../utils/api/AddressAPI.js";
 
 function Payment() {
-    const [provinces, setProvinces] = useState([]);
-    const [selectedProvince, setSelectedProvince] = useState('');
-    const [districts, setDistricts] = useState([]);
-    const [selectedDistrict, setSelectedDistrict] = useState('');
-    const [mapLocation, setMapLocation] = useState(null);
-    const [promoList, setPromoList] = useState([]);
-
     const { user } = useContext(AuthContext);
     const profile = user?.profile;
+    const accountId = localStorage.getItem('accountId');
+    const token = localStorage.getItem('token');
 
-    const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: 'AIzaSyDpPC7ZxeuEmixJHUal00qRF0LhLWd_6eQ',
-    });
+    const [selectedAddressId, setSelectedAddressId] = useState('');
+    const [promoList, setPromoList] = useState([]);
+    const [isAdd, setIsAdd] = useState(false);
+    const [editingAddress, setEditingAddress] = useState(null);
+    const [showAddressModal, setShowAddressModal] = useState(false); // ✅ NEW
 
-    useEffect(() => {
-        fetch('https://provinces.open-api.vn/api/p/')
-            .then(res => res.json())
-            .then(data => setProvinces(data));
-    }, []);
-
-    useEffect(() => {
-        if (selectedProvince) {
-            fetch(`https://provinces.open-api.vn/api/p/${selectedProvince}?depth=2`)
-                .then(res => res.json())
-                .then(data => setDistricts(data.districts || []));
-        } else {
-            setDistricts([]);
-        }
-    }, [selectedProvince]);
+    const { cartItems, removeItem, updateQuantity } = useCart(accountId, token);
+    const { addresses, refetch } = useFetchAddress();
 
     useEffect(() => {
         setPromoList(['GIAM10', 'FREESHIP', 'THANG7SALE']);
     }, []);
 
-    const handleGetLocation = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                position => {
-                    setMapLocation({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    });
-                },
-                error => {
-                    alert('Không thể lấy vị trí: ' + error.message);
-                }
-            );
-        } else {
-            alert('Trình duyệt không hỗ trợ định vị.');
+    useEffect(() => {
+        if (addresses && addresses.length > 0 && !selectedAddressId) {
+            setSelectedAddressId(addresses[0].shippingAddressId.toString());
         }
+    }, [addresses]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!selectedAddressId) {
+            toast.error('Vui lòng chọn địa chỉ giao hàng');
+            return;
+        }
+
+        const formData = {
+            shippingAddressId: Number(selectedAddressId),
+        };
+
+        try {
+            const res = await fetch('http://localhost:9999/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (res.ok) {
+                toast.success('Đặt hàng thành công!');
+            } else {
+                toast.error('Có lỗi xảy ra khi đặt hàng');
+            }
+        } catch (err) {
+            toast.error('Lỗi kết nối tới máy chủ');
+        }
+    };
+
+    const handleAddAddress = async (newAddress) => {
+        try {
+            await createAddress(newAddress, token);
+            toast.success("Thêm địa chỉ thành công!");
+            setIsAdd(false);
+            refetch();
+        } catch (err) {
+            toast.error("Lỗi khi thêm địa chỉ");
+        }
+    };
+
+    const handleUpdateAddress = async (updated) => {
+        // try {
+        //     await updateAddress(updated, token);
+        //     toast.success("Cập nhật địa chỉ thành công!");
+        //     setEditingAddress(null);
+        //     refetch();
+        // } catch (err) {
+        //     toast.error("Lỗi khi cập nhật địa chỉ");
+        // }
     };
 
     return (
@@ -77,7 +108,6 @@ function Payment() {
             </div>
 
             <div className='flex flex-col md:flex-row gap-8 md:gap-12 p-4 md:p-8 min-h-screen items-stretch'>
-                {/* LEFT */}
                 <div className='basis-full md:basis-2/3 bg-white p-6 mb-8 md:mb-0 flex flex-col'>
                     <h2 className='text-2xl font-bold mb-4 text-black'>Liên Hệ</h2>
 
@@ -104,7 +134,7 @@ function Payment() {
                         </div>
                     )}
 
-                    <form className='space-y-4'>
+                    <form className='space-y-4' onSubmit={handleSubmit}>
                         <div className='flex gap-4'>
                             <input
                                 type='text'
@@ -139,82 +169,33 @@ function Payment() {
                             className='w-full border rounded-xl px-3 py-2 text-black'
                         />
 
-                        <div className='flex'>
-                            <select
-                                value={selectedProvince}
-                                onChange={(e) => {
-                                    setSelectedProvince(e.target.value);
-                                    setSelectedDistrict('');
-                                }}
-                                className='w-full border rounded-xl px-3 py-2 mb-2 mr-2 text-black'
-                            >
-                                <option value=''>Chọn tỉnh/thành phố</option>
-                                {provinces.map((p) => (
-                                    <option key={p.code} value={p.code}>
-                                        {p.name}
-                                    </option>
-                                ))}
-                            </select>
+                        {user ? (
+                            <div className='space-y-4'>
+                                <div className='flex justify-between items-center'>
+                                    <h3 className='text-lg font-semibold text-black mb-2'>Địa chỉ giao hàng:</h3>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowAddressModal(true)}
+                                        className="text-sm px-3 py-1 border border-black rounded-full bg-black text-white hover:bg-white hover:text-black"
+                                    >
+                                        Chọn địa chỉ khác
+                                    </button>
+                                </div>
 
-                            <select
-                                value={selectedDistrict}
-                                onChange={(e) => setSelectedDistrict(e.target.value)}
-                                disabled={!districts.length}
-                                className='w-full border rounded-xl px-3 py-2 mb-2 text-black disabled:bg-gray-100'
-                            >
-                                <option value=''>Chọn quận/huyện</option>
-                                {districts.map((d) => (
-                                    <option key={d.code} value={d.code}>
-                                        {d.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                                {selectedAddressId ? (
+                                    <AddressCard
+                                        item={addresses.find(a => a.shippingAddressId.toString() === selectedAddressId)}
+                                        readonly
+                                    />
+                                ) : (
+                                    <div className='text-sm text-gray-500 italic'>Chưa chọn địa chỉ nào.</div>
+                                )}
+                            </div>
+                        ) : (
+                            <ManualAddressForm />
+                        )}
 
-                        <input
-                            type='text'
-                            placeholder='Địa chỉ*'
-                            className='w-full border rounded-xl px-3 py-2 text-black'
-                        />
-
-                        <div className='relative w-full h-64 bg-gray-200 rounded-lg mb-2'>
-                            {isLoaded && mapLocation && (
-                                <GoogleMap
-                                    mapContainerStyle={containerStyle}
-                                    center={mapLocation}
-                                    zoom={15}
-                                >
-                                    <Marker position={mapLocation} />
-                                </GoogleMap>
-                            )}
-                            <button
-                                type='button'
-                                onClick={handleGetLocation}
-                                className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2 bg-black text-white rounded-full hover:bg-white hover:text-black opacity-50 transition'
-                            >
-                                + Thêm vị trí
-                            </button>
-                        </div>
-
-                        <div className='flex gap-2'>
-                            <button type='button' className='px-3 py-1 border border-black bg-white text-black rounded-full hover:bg-gray-300'>
-                                Nhà riêng
-                            </button>
-                            <button type='button' className='px-3 py-1 border border-black bg-white text-black rounded-full hover:bg-gray-300'>
-                                Văn phòng
-                            </button>
-                        </div>
-
-                        <div className='flex flex-col gap-2'>
-                            <label className='flex items-center gap-2 text-black'>
-                                <input type='checkbox' /> Gửi cho tôi các tin tức ưu đãi qua Email
-                            </label>
-                            <label className='flex items-center gap-2 text-black'>
-                                <input type='checkbox' /> Lưu lại thông tin cho lần sau
-                            </label>
-                        </div>
-
-                        <div className='text-sm text-black bg-gray-50 p-3 rounded-md'>
+                        <div className='text-sm text-black bg-gray-50 p-3 rounded-md mt-4'>
                             <p>Chúng tôi cam kết tất cả sản phẩm đều là hàng thật, nguồn gốc rõ ràng.</p>
                             <p className='mt-2'>
                                 <FontAwesomeIcon icon={faComments} className='mr-2 text-blue-400' />
@@ -222,74 +203,47 @@ function Payment() {
                             </p>
                         </div>
 
-                        <button className='w-full mt-4 px-4 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition'>
+                        <button
+                            type='submit'
+                            className='w-full mt-4 px-4 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition'
+                        >
                             Tiếp tục phương thức thanh toán
                         </button>
                     </form>
                 </div>
 
-                {/* RIGHT */}
                 <div className='basis-full md:basis-1/3 bg-gray-50 p-6 flex flex-col'>
-                    <div className='rounded-lg shadow-md p-4 mb-6 bg-white'>
-                        <h2 className='text-xl font-bold mb-4 text-black'>Tóm Tắt Đơn Hàng</h2>
-
-                        <div className='text-sm mb-6 text-black'>
-                            <div className='flex justify-between mb-1'>
-                                <span>1 Sản phẩm</span>
-                                <span>120.000₫</span>
-                            </div>
-                            <div className='flex justify-between mb-1'>
-                                <span>Giá gốc</span>
-                                <span>800.000₫</span>
-                            </div>
-                            <div className='flex justify-between mb-1'>
-                                <span>Giao hàng</span>
-                                <span>0₫</span>
-                            </div>
-                            <div className='flex justify-between font-bold mb-1'>
-                                <span>Tổng cộng</span>
-                                <span>1.800.000₫</span>
-                            </div>
-                            <div className='flex justify-between text-xs text-gray-500'>
-                                <span>(Đã bao gồm thuế 14.074₫)</span>
-                                <span>14.074₫</span>
-                            </div>
-                        </div>
-
-                        {promoList.length > 0 && (
-                            <div className='flex flex-col gap-2 mb-4'>
-                                <label className='text-sm text-black'>Chọn mã khuyến mãi</label>
-                                <select className='border px-3 py-2 rounded-full text-black'>
-                                    <option value=''>-- Chọn mã --</option>
-                                    {promoList.map((code) => (
-                                        <option key={code} value={code}>
-                                            {code}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className='rounded-lg shadow-md mt-6 p-4 bg-white'>
-                        <h3 className='font-semibold mb-2 text-black'>Chi tiết đơn hàng (1)</h3>
-                        <div className='flex items-center gap-3'>
-                            <img
-                                src='https://via.placeholder.com/50'
-                                alt='ADIDAS 4DFWD X PARLEY Running Shoes'
-                                className='w-12 h-12 rounded border'
-                            />
-                            <div>
-                                <span className='font-medium text-black'>
-                                    ADIDAS 4DFWD X PARLEY Running Shoes
-                                </span>
-                                <br />
-                                <span className='text-blue-600'>125.000₫</span>
-                            </div>
-                        </div>
-                    </div>
+                    <PaymentProduct
+                        cartItems={cartItems}
+                        promoList={promoList}
+                        removeItem={removeItem}
+                        updateQuantity={updateQuantity}
+                    />
                 </div>
             </div>
+
+            <Modal isOpen={isAdd} onClose={() => setIsAdd(false)}>
+                <AddAddressForm onAdd={handleAddAddress} onCancel={() => setIsAdd(false)} />
+            </Modal>
+            <Modal isOpen={!!editingAddress} onClose={() => setEditingAddress(null)}>
+                {editingAddress && (
+                    <UpdateAddressForm
+                        currentAddress={editingAddress}
+                        onUpdate={handleUpdateAddress}
+                        onCancel={() => setEditingAddress(null)}
+                    />
+                )}
+            </Modal>
+
+            <AddressSelectModal
+                isOpen={showAddressModal}
+                onClose={() => setShowAddressModal(false)}
+                addresses={addresses}
+                onSelect={(addr) => setSelectedAddressId(addr.shippingAddressId.toString())}
+                onAddNew={() => setIsAdd(true)}
+                onEdit={(addr) => setEditingAddress(addr)}
+                onSetMain={(addr) => handleUpdateAddress({ ...addr, main: true })}
+            />
         </div>
     );
 }

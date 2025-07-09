@@ -1,4 +1,3 @@
-// src/context/CartContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import { fetchCartAPI, addToCartAPI } from '../utils/api/CartAPI';
 import { useAuth } from './useAuthContext';

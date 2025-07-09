@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import ShowSection from "../../common/ShowSection.jsx";
-import { useFetchBrands } from "../../../hooks/useFetchBrands.js";
-import { useFetchColors } from "../../../hooks/useFetchColors.js";
+import ShowSection from "../../../common/Customer/ShowSection.jsx";
+import { useFetchBrands } from "../../../../hooks/useFetchBrands.js";
+import { useFetchColors } from "../../../../hooks/useFetchColors.js";
 import FilterGroup from "./FilterGroup.jsx";
 import ColorFilterGroup from "./ColorFilterGroup.jsx";
 import SizeFilterGroup from "./SizeFilterGroup.jsx";
