@@ -1,5 +1,6 @@
 package com.fourfingers.quangvinhstore.infrastructure.repository;
 
+import com.fourfingers.quangvinhstore.domain.model.admin.DailyRevenue;
 import com.fourfingers.quangvinhstore.infrastructure.schema.OrderEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,4 +36,18 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     BigDecimal getTotalRevenueBetween(@Param("start") LocalDateTime start,
                                       @Param("end") LocalDateTime end);
 
+    @Query("""
+                SELECT new com.fourfingers.quangvinhstore.domain.model.admin.DailyRevenue(
+                    o.orderDate,
+                    COALESCE(SUM(d.quantity * d.unitPrice), 0)
+                )
+                FROM OrderDetailsEntity d
+                JOIN d.order o
+                WHERE o.orderStatus = 'PAID'
+                  AND o.orderDate BETWEEN :start AND :end
+                GROUP BY o.orderDate
+                ORDER BY o.orderDate
+            """)
+    List<DailyRevenue> getRevenuePerDay(@Param("start") LocalDateTime start,
+                                        @Param("end") LocalDateTime end);
 }
