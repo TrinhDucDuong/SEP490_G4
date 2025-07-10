@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {Menu, X, Plus, Edit, Eye, Image, ArrowUpDown, Trash2, Calendar, ChevronDown} from 'lucide-react';
-import DateRangePicker from '../../components/common/DateRangePicker';
-import SidebarForStaff from '../../components/layout/SidebarForStaff';
-import HeaderForManager from '../../components/layout/HeaderForManager';
-import Modal from '../../components/common/Modal';
-import SearchBar from '../../components/common/SearchBar';
-import Pagination from '../../components/common/Pagination';
-import DataTable from '../../components/common/DataTable';
+import DateRangePicker from '../../components/common/Admin/DateRangePicker.jsx';
+import SidebarForStaff from '../../components/layout/admin/SidebarForStaff.jsx';
+import HeaderForManager from '../../components/layout/admin/HeaderForManager.jsx';
+import Modal from '../../components/common/Admin/Modals.jsx';
+import SearchBar from '../../components/common/Admin/SearchBar.jsx';
+import Pagination from '../../components/common/Admin/Paginations.jsx';
+import DataTable from '../../components/common/Admin/DataTable.jsx';
 import {CKEditor} from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
@@ -37,7 +37,7 @@ const ProductManagement = () => {
     });
     const [sortConfig, setSortConfig] = useState({key: null, direction: 'asc'});
 
-    // Modal states
+    // Modals states
     const [showImageModal, setShowImageModal] = useState(false);
     const [showDescriptionModal, setShowDescriptionModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
@@ -317,7 +317,7 @@ const ProductManagement = () => {
         setSortConfig({key: null, direction: 'asc'});
     };
 
-    // Modal handlers
+    // Modals handlers
     const openImageModal = (product) => {
         setSelectedProduct(product);
         setShowImageModal(true);
@@ -1123,7 +1123,7 @@ const ProductManagement = () => {
                 </div>
             </div>
 
-            {/* Image Modal */}
+            {/* Image Modals */}
             <Modal
                 isOpen={showImageModal}
                 onClose={() => setShowImageModal(false)}
@@ -1157,7 +1157,7 @@ const ProductManagement = () => {
                 </div>)}
             </Modal>
 
-            {/* Description Modal */}
+            {/* Description Modals */}
             <Modal
                 isOpen={showDescriptionModal}
                 onClose={() => setShowDescriptionModal(false)}
@@ -1168,7 +1168,7 @@ const ProductManagement = () => {
                                           dangerouslySetInnerHTML={{__html: selectedProduct.description || 'Không có mô tả'}}/>)}
             </Modal>
 
-            {/* Detail Modal */}
+            {/* Detail Modals */}
             <Modal
                 isOpen={showDetailModal}
                 onClose={() => setShowDetailModal(false)}
@@ -1276,7 +1276,7 @@ const ProductManagement = () => {
                 </div>)}
             </Modal>
 
-            {/* Status Change Modal */}
+            {/* Status Change Modals */}
             <Modal
                 isOpen={showStatusModal}
                 onClose={() => setShowStatusModal(false)}
@@ -1307,7 +1307,7 @@ const ProductManagement = () => {
                 </div>
             </Modal>
 
-            {/* Add Product Modal */}
+            {/* Add Product Modals */}
             <Modal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
@@ -1566,7 +1566,7 @@ const ProductManagement = () => {
                 </div>
             </Modal>
 
-            {/* Update Product Modal */}
+            {/* Update Product Modals */}
             <Modal
                 isOpen={showUpdateModal}
                 onClose={() => setShowUpdateModal(false)}

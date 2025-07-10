@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { fetchProducts } from '../utils/api';
+import { fetchProducts } from '../utils/api/ProductAPI.js';
 
 const ProductContext = createContext();
 
@@ -14,13 +14,14 @@ export const ProductProvider = ({ children }) => {
             setLoading(true);
             try {
                 const data = await fetchProducts();
-                setProducts(data.products);
-                const popProducts = data.products.filter(
+                const productList = Array.isArray(data) ? data : data.products || [];
+                setProducts(productList);
+                const popProducts = productList.filter(
                     product => product.isPopular || product.rating >= 4.5
                 );
                 setPopularProducts(popProducts);
             } catch (err) {
-                setError(err.message);
+                setError(err.message || "Không thể tải sản phẩm.");
             } finally {
                 setLoading(false);
             }

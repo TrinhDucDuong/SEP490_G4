@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Plus, Edit, Eye, Image, ArrowUpDown } from 'lucide-react';
-import SidebarForStaff from '../../components/layout/SidebarForStaff';
-import HeaderForManager from '../../components/layout/HeaderForManager';
-import Modal from '../../components/common/Modal';
-import SearchBar from '../../components/common/SearchBar';
-import Pagination from '../../components/common/Pagination';
-import DataTable from '../../components/common/DataTable';
+import SidebarForStaff from '../../components/layout/admin/SidebarForStaff.jsx';
+import HeaderForManager from '../../components/layout/admin/HeaderForManager.jsx';
+import Modal from '../../components/common/Admin/Modals.jsx';
+import SearchBar from '../../components/common/Admin/SearchBar.jsx';
+import Pagination from '../../components/common/Admin/Paginations.jsx';
+import DataTable from '../../components/common/Admin/DataTable.jsx';
 
 const OrderManagement = () => {
     const [orders, setOrders] = useState([]);
@@ -645,7 +645,7 @@ const OrderManagement = () => {
                 </div>
             </div>
 
-            {/* Customer Info Modal */}
+            {/* Customer Info Modals */}
             <Modal
                 isOpen={showCustomerInfoModal}
                 onClose={() => setShowCustomerInfoModal(false)}
@@ -676,7 +676,7 @@ const OrderManagement = () => {
                 )}
             </Modal>
 
-            {/* Order Detail Modal */}
+            {/* Order Detail Modals */}
             <Modal
                 isOpen={showOrderDetailModal}
                 onClose={() => setShowOrderDetailModal(false)}
@@ -765,7 +765,7 @@ const OrderManagement = () => {
                 )}
             </Modal>
 
-            {/* Image Gallery Modal */}
+            {/* Image Gallery Modals */}
             <Modal
                 isOpen={showImageGalleryModal}
                 onClose={() => setShowImageGalleryModal(false)}
@@ -804,7 +804,7 @@ const OrderManagement = () => {
                 )}
             </Modal>
 
-            {/* Update Status Modal */}
+            {/* Update Status Modals */}
             <Modal
                 isOpen={showUpdateStatusModal}
                 onClose={() => setShowUpdateStatusModal(false)}
@@ -851,7 +851,7 @@ const OrderManagement = () => {
                 )}
             </Modal>
 
-            {/* Add Order Modal */}
+            {/* Add Order Modals */}
             <Modal
                 isOpen={showAddOrderModal}
                 onClose={() => setShowAddOrderModal(false)}

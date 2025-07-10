@@ -3,8 +3,8 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { User, Package, Users, FileText, MessageSquare, Wifi, BarChart3, UserPlus, Settings, LogOut, Search, Filter, X, Edit, Trash2, Eye, Plus } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
-import SidebarForStaff from '../../components/layout/SidebarForStaff';
-import HeaderForManager from '../../components/layout/HeaderForManager';
+import SidebarForStaff from '../../components/layout/admin/SidebarForStaff.jsx';
+import HeaderForManager from '../../components/layout/admin/HeaderForManager.jsx';
 
 
 const AboutUsManagement = () => {

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Eye, ArrowUpDown, Phone, User, Lock } from 'lucide-react';
-import SidebarForStaff from '../../components/layout/SidebarForStaff.jsx';
-import HeaderForManager from '../../components/layout/HeaderForManager.jsx';
-import Modal from '../../components/common/Modal.jsx';
-import SearchBar from '../../components/common/SearchBar.jsx';
-import Pagination from '../../components/common/Pagination.jsx';
-import DataTable from '../../components/common/DataTable.jsx';
+import SidebarForStaff from '../../components/layout/admin/SidebarForStaff.jsx';
+import HeaderForManager from '../../components/layout/admin/HeaderForManager.jsx';
+import SearchBar from '../../components/common/Admin/SearchBar.jsx';
+import Pagination from '../../components/common/Admin/Paginations.jsx';
+import DataTable from '../../components/common/Admin/DataTable.jsx';
 
 const EmployeeManagement = () => {
     const [employees, setEmployees] = useState([]);
@@ -14,7 +13,7 @@ const EmployeeManagement = () => {
     const [filterStatus, setFilterStatus] = useState('');
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
-    // Modal states
+    // Modals states
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -188,7 +187,7 @@ const EmployeeManagement = () => {
         setSelectedEmployee(null);
     };
 
-    // Modal handlers
+    // Modals handlers
     const openDetailModal = (employee) => {
         setSelectedEmployee(employee);
         setShowDetailModal(true);
@@ -491,8 +490,8 @@ const EmployeeManagement = () => {
                 </div>
             </div>
 
-            {/* Modal Chi tiết nhân viên */}
-            <Modal
+            {/* Modals Chi tiết nhân viên */}
+            <Modals
                 isOpen={showDetailModal}
                 onClose={() => setShowDetailModal(false)}
                 title="Chi tiết nhân viên"
@@ -560,9 +559,9 @@ const EmployeeManagement = () => {
                         </div>
                     </div>
                 )}
-            </Modal>
+            </Modals>
 
-            {/* Modal Thêm nhân viên */}
+            {/* Modals Thêm nhân viên */}
             <Modal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
@@ -627,7 +626,7 @@ const EmployeeManagement = () => {
                 </div>
             </Modal>
 
-            {/* Modal Cập nhật nhân viên */}
+            {/* Modals Cập nhật nhân viên */}
             <Modal
                 isOpen={showUpdateModal}
                 onClose={() => setShowUpdateModal(false)}
@@ -692,7 +691,7 @@ const EmployeeManagement = () => {
                 </div>
             </Modal>
 
-            {/* Modal Xóa nhân viên */}
+            {/* Modals Xóa nhân viên */}
             <Modal
                 isOpen={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}
@@ -720,7 +719,7 @@ const EmployeeManagement = () => {
                 </div>
             </Modal>
 
-            {/* Modal Thay đổi trạng thái */}
+            {/* Modals Thay đổi trạng thái */}
             <Modal
                 isOpen={showStatusModal}
                 onClose={() => setShowStatusModal(false)}
