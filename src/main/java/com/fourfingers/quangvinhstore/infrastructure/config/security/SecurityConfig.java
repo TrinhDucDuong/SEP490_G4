@@ -125,6 +125,8 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/order/**").permitAll();
                     auth.requestMatchers("/addresses/**").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/admin/dashboard/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/staff/star-rate").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/staff/star-rate").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
                     auth.anyRequest().authenticated();
                 })
