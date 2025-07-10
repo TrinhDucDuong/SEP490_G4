@@ -27,6 +27,9 @@ public class DashBoardRevenueGraphUseCaseInteraction implements DashBoardRevenue
     @Override
     public DashBoardRevenueGraphOutputData getDashBoardRevenueGraph(DashBoardRevenueGraphInputData
                                                                             dashBoardRevenueGraphInputData) {
+        if(dashBoardRevenueGraphInputData.getStartTime().isAfter(dashBoardRevenueGraphInputData.getEndTime())) {
+            throw new IllegalArgumentException("Start time must be before end time");
+        }
         List<DailyRevenue> daysHavingRevenue = orderRepository.getRevenuePerDay(
                 dashBoardRevenueGraphInputData.getStartTime(),
                 dashBoardRevenueGraphInputData.getEndTime()

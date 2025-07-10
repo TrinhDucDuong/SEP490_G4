@@ -4,6 +4,7 @@ import com.fourfingers.quangvinhstore.domain.model.admin.CustomerSummary;
 import com.fourfingers.quangvinhstore.domain.model.admin.OrderSummary;
 import com.fourfingers.quangvinhstore.domain.model.admin.RevenueSummary;
 import com.fourfingers.quangvinhstore.infrastructure.repository.OrderRepository;
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.DashBoardSummaryInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.DashBoardSummaryOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.admin.DashBoardSummaryInputData;
@@ -43,7 +44,11 @@ public class DashBoardSummaryUseCaseInteraction implements DashBoardSummaryInput
         Long totalOrderLast = orderRepository.countByOrderDateBetween(timeRange.get("lastStartTime"),
                 timeRange.get("lastSameTime"));
         Double orderGrowthRate = getOrderGrowthRate(totalOrderCurrent, totalOrderLast);
-        return new OrderSummary(totalOrderCurrent, orderGrowthRate);
+        Long notProcessedOrder = orderRepository.countByOrderStatus(OrderStatus.PROCESSING);
+
+        //TODO: Define what is an un-processed orders
+        Long processedOrder = orderRepository.countByOrderStatus(OrderStatus.PREPARING);
+        return new OrderSummary(totalOrderCurrent, orderGrowthRate, notProcessedOrder, processedOrder);
     }
 
     private Double getOrderGrowthRate(Long current, Long last) {
