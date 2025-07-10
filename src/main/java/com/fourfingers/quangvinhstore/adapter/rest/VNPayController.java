@@ -65,7 +65,7 @@ public class VNPayController {
 
         for (String fieldName : fieldNames) {
             String value = vnp_Params.get(fieldName);
-            if ((value != null) && (value.length() > 0)) {
+            if ((value != null) && (!value.isEmpty())) {
                 hashData.append(fieldName).append('=').append(URLEncoder.encode(value, StandardCharsets.US_ASCII)).append('&');
                 query.append(fieldName).append('=').append(URLEncoder.encode(value, StandardCharsets.US_ASCII)).append('&');
             }

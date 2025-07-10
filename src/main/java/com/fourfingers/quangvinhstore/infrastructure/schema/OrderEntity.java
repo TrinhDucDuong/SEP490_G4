@@ -23,7 +23,7 @@ public class OrderEntity {
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailsEntity> orderDetails;
 
     @ManyToOne
@@ -31,8 +31,12 @@ public class OrderEntity {
     private AccountEntity owner;
 
     @ManyToOne
-    @JoinColumn(name = "process_by", referencedColumnName = "account_id")
+    @JoinColumn(name = "shipping_address", referencedColumnName = "account_id")
     private AccountEntity processBy;
+
+    @ManyToOne
+    @JoinColumn(name = "process_by", referencedColumnName = "address_id")
+    private ShippingAddressEntity shippingAddress;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status")
