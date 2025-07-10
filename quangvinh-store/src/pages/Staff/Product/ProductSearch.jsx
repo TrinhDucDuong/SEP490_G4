@@ -1,5 +1,5 @@
 import React from 'react';
-import SearchBar from '../../../components/common/SearchBar';
+import SearchBar from '../../../components/common/Admin/SearchBar';
 
 const ProductSearch = ({ searchTerm, onSearchChange, filteredProductsCount }) => {
     return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevronDown, X } from 'lucide-react';
-import DateRangePicker from '../../../components/common/DateRangePicker';
+import DateRangePicker from '../../../components/common/Admin/DateRangePicker';
 import { BRAND_STATUS_OPTIONS } from '../../../utils/constants/BrandConstants';
 
 const BrandFilter = ({ filters, onFilterChange, onClearFilters }) => {

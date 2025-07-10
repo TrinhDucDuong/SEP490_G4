@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, X } from 'lucide-react';
-import DateRangePicker from '../../../components/common/DateRangePicker';
+import DateRangePicker from '../../../components/common/Admin/DateRangePicker';
 import {
     PRODUCT_COLOR_OPTIONS,
     PRODUCT_SIZE_OPTIONS,
