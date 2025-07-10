@@ -1,45 +1,39 @@
 import React from 'react';
-import { Bell, User } from 'lucide-react';
+import { Menu, Bell, User } from 'lucide-react';
+import { useAuthForManager } from '../../../context/AuthContextForManager';
 
-const HeaderForManager = ({ username = "Ngô Quang Thắng", role = "Admin" }) => {
-    const handleNotificationClick = () => {
-        // Chức năng notification sẽ làm sau
-        console.log('Notification clicked');
-    };
+const HeaderForManager = ({ setSidebarOpen, sidebarOpen }) => {
+    const { user } = useAuthForManager();
 
     return (
-        <header className="w-full bg-white border-b border-gray-100 h-16 flex items-center px-4 lg:px-8 z-30">
-            {/* Logo */}
-            <div className="flex items-center flex-shrink-0 h-full">
-                <div className="text-xl font-bold text-gray-900">
-                    Quang Vinh Authentic
+        <header className="fixed top-0 left-0 right-0 bg-white shadow-sm border-b border-gray-200 z-40">
+            <div className="flex items-center justify-between px-6 py-4">
+                {/* Left side - Menu button */}
+                <div className="flex items-center">
+                    <button
+                        onClick={() => setSidebarOpen && setSidebarOpen(!sidebarOpen)}
+                        className="p-2 rounded-md text-gray-600 hover:bg-gray-100 lg:hidden"
+                    >
+                        <Menu className="h-6 w-6" />
+                    </button>
+                    <h1 className="ml-4 text-xl font-semibold text-gray-900">
+                        Quang Vinh Authentic - Admin
+                    </h1>
                 </div>
-            </div>
 
-            {/* Giữa header để trống */}
-            <div className="flex-1"></div>
+                {/* Right side - User info */}
+                <div className="flex items-center space-x-4">
+                    <button className="p-2 rounded-md text-gray-600 hover:bg-gray-100">
+                        <Bell className="h-6 w-6" />
+                    </button>
 
-            {/* Notification + User info */}
-            <div className="flex items-center space-x-6">
-                {/* Notification icon */}
-                <button
-                    onClick={handleNotificationClick}
-                    className="relative p-2 rounded-full hover:bg-gray-100 focus:outline-none transition"
-                    aria-label="Notification"
-                >
-                    <Bell className="h-6 w-6 text-gray-700" />
-                    {/* Badge notification nếu cần sau này */}
-                    {/* <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span> */}
-                </button>
-
-                {/* User info */}
-                <div className="flex items-center space-x-3">
-                    <div className="flex flex-col items-end">
-                        <span className="font-semibold text-gray-900 text-sm leading-none">{username}</span>
-                        <span className="text-xs text-gray-500">{role}</span>
-                    </div>
-                    <div className="ml-2">
-                        <User className="h-7 w-7 text-gray-700" />
+                    <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                            <User className="h-5 w-5 text-white" />
+                        </div>
+                        <span className="text-sm font-medium text-gray-700">
+                            {user?.username || 'Admin'}
+                        </span>
                     </div>
                 </div>
             </div>

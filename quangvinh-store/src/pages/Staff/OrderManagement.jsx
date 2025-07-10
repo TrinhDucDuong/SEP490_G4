@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Plus, Edit, Eye, Image, ArrowUpDown } from 'lucide-react';
-import SidebarForStaff from '../../components/layout/admin/SidebarForStaff.jsx';
+import SidebarForAdmin from '../../components/layout/admin/SidebarForAdmin.jsx';
 import HeaderForManager from '../../components/layout/admin/HeaderForManager.jsx';
-import Modal from '../../components/common/Admin/Modals.jsx';
-import SearchBar from '../../components/common/Admin/SearchBar.jsx';
-import Pagination from '../../components/common/Admin/Paginations.jsx';
-import DataTable from '../../components/common/Admin/DataTable.jsx';
+import Modal from '../../components/common/Modals.jsx';
+import SearchBar from '../../components/common/SearchBar';
+import Pagination from '../../components/common/Paginations.jsx';
+import DataTable from '../../components/common/DataTable';
 
 const OrderManagement = () => {
     const [orders, setOrders] = useState([]);
@@ -488,11 +488,11 @@ const OrderManagement = () => {
 
             {/* Sidebar cố định */}
             <div className="fixed left-0 top-16 z-40">
-                <SidebarForStaff/>
+                <SidebarForAdmin/>
             </div>
 
             {/* Main content - THÊM margin-left */}
-            <div className="ml-0 lg:ml-64 pt-16">
+            <div>
                 <div className="p-4 sm:p-6">
                     {/* Page Title */}
                     <div className="mb-6 flex items-center justify-between">
