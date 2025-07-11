@@ -13,7 +13,7 @@ import PaymentProduct from "./PaymentProduct.jsx";
 import Modal from "../../../components/common/Customer/Modal.jsx";
 import AddAddressForm from "../Profile/Address/AddAddressForm.jsx";
 import UpdateAddressForm from "../Profile/Address/UpdateAddressForm.jsx";
-import AddressSelectModal from "./AddressSelectModal.jsx"; // ✅ NEW
+import AddressSelectModal from "./AddressSelectModal.jsx";
 import { createAddress } from "../../../utils/api/AddressAPI.js";
 
 function Payment() {
@@ -26,7 +26,7 @@ function Payment() {
     const [promoList, setPromoList] = useState([]);
     const [isAdd, setIsAdd] = useState(false);
     const [editingAddress, setEditingAddress] = useState(null);
-    const [showAddressModal, setShowAddressModal] = useState(false); // ✅ NEW
+    const [showAddressModal, setShowAddressModal] = useState(false);
 
     const { cartItems, removeItem, updateQuantity } = useCart(accountId, token);
     const { addresses, refetch } = useFetchAddress();

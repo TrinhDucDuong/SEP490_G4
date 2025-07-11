@@ -1,47 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import {useFetchOrders} from "../../../../hooks/useFetchOrders.js";
 import OrderItem from "./OrderItem.jsx";
 
 
 function OrderHistory() {
-    const [orders, setOrders] = useState([]);
-
-    useEffect(() => {
-        const fakeOrders = [
-            {
-                id: 1,
-                status: 'COMPLETED',
-                items: [
-                    {
-                        name: 'ADIDAS 4DFWD X PARLEY',
-                        image: 'https://via.placeholder.com/60',
-                        quantity: 1,
-                        price: 1250000,
-                    },
-                ],
-                total: 1250000,
-                date: '2025-06-29',
-            },
-            {
-                id: 2,
-                status: 'PENDING',
-                items: [
-                    {
-                        name: 'Nike Air Max',
-                        image: 'https://via.placeholder.com/60',
-                        quantity: 2,
-                        price: 2000000,
-                    },
-                ],
-                total: 4000000,
-                date: '2025-06-30',
-            },
-        ];
-
-        setOrders(fakeOrders);
-    }, []);
+    const { orders, loading, error } = useFetchOrders();
 
     const completedOrders = orders.filter(order => order.status === 'COMPLETED');
     const processingOrders = orders.filter(order => order.status !== 'COMPLETED');
+    console.log(orders);
+
+    if (loading) return <p>Đang tải đơn hàng...</p>;
+    if (error) return <p className="text-red-500">Lỗi: {error}</p>;
 
     return (
         <div>
