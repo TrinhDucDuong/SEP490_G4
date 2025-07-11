@@ -1,8 +1,14 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
 import SidebarProfile from "./Information/SidebarProfile.jsx";
 
 function ProfileLayout() {
+    const location = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location.pathname]);
 
     const breadcrumbItems = [
         { label: "Trang chủ", to: "/" },
@@ -10,7 +16,7 @@ function ProfileLayout() {
     ];
 
     return (
-        <div className="min-h-screen px-4 py-6 md:px-12 lg:px-20 bg-gradient-to-br from-gray-300 via-blue-100 to-white">
+        <div className="min-h-screen px-4 py-6 md:px-12 lg:px-20 bg-gradient-to-br from-gray-200 via-yellow-50 to-white">
             <div className="max-w-7xl mx-auto space-y-6">
                 <Breadcrumb items={breadcrumbItems} />
                 <div className="flex flex-col lg:flex-row gap-6">

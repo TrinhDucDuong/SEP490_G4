@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
+import {CartProvider} from "./context/CartContext.jsx";
 import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -44,9 +45,11 @@ import OAuth2RedirectHandler from "./components/common/Customer/OAuth2RedirectHa
 import BlogDetail from "./pages/Customer/Blog/BlogDetail.jsx";
 import BlogList from "./pages/Customer/Blog/BlogList.jsx";
 
+
 function App() {
     return (
         <AuthProvider>
+            <CartProvider>
             <ToastContainer position="top-right" autoClose={3000} />
             <Routes>
                 <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
@@ -96,6 +99,7 @@ function App() {
                     <Route path="logout" element={<div>Logout Page</div>} />
                 </Route>
             </Routes>
+            </CartProvider>
         </AuthProvider>
     );
 }
