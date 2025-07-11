@@ -34,4 +34,15 @@ public class FeedbackEntity {
 
     @Column(name = "is_active", nullable = false, columnDefinition = "BIT DEFAULT 1")
     private Boolean isActive;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by", referencedColumnName = "account_id")
+    private AccountEntity updatedBy;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "store_id", referencedColumnName = "store_id")
+    private StoreEntity store;
 }

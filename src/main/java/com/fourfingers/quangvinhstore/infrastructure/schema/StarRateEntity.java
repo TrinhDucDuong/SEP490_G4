@@ -42,4 +42,14 @@ public class StarRateEntity {
 
     @OneToMany(mappedBy = "replyTo", fetch = FetchType.LAZY)
     private List<StarRateEntity> staffReplies;
+
+    @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1", nullable = false)
+    private boolean isActive;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by", referencedColumnName = "account_id")
+    private AccountEntity updatedBy;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }

@@ -6,11 +6,12 @@ import com.fourfingers.quangvinhstore.infrastructure.repository.StarRateReposito
 import com.fourfingers.quangvinhstore.infrastructure.schema.AccountEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductVariantEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.StarRateEntity;
-import com.fourfingers.quangvinhstore.usecase.boundary.staff.StarRateManagementOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.StarRateManagementInputBoundary;
+import com.fourfingers.quangvinhstore.usecase.boundary.staff.StarRateManagementOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.staff.ListStarRateOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.ReplyStarRateInputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.StarRateOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.UpdateStarRateInputData;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class ManageStarRateUseCaseInteraction implements StarRateManagementInput
     private final StarRateRepository starRateRepository;
     private final StarRateStaffMapper starRateStaffMapper;
     private final StarRateManagementOutputBoundary starRateManageMentOutputBoundary;
+
     @Override
     public ListStarRateOutputData getAll() {
         return starRateManageMentOutputBoundary.convertToListStarRateOutputData(
@@ -52,11 +54,10 @@ public class ManageStarRateUseCaseInteraction implements StarRateManagementInput
                 .replyTo(replyTo)
                 .comment(replyStarRateInputData.getComment())
                 .build();
-        StarRateEntity savedStarRateEntity = starRateRepository.save(staffReplyStarRateEntity);
-        List<StarRate> staffReplies = getStaffReply(savedStarRateEntity);
+        starRateRepository.save(staffReplyStarRateEntity);
+        List<StarRate> staffReplies = getStaffReply(replyTo);
         return starRateManageMentOutputBoundary.convertToStarRateOutputData(starRateStaffMapper
-                .toModel(savedStarRateEntity), staffReplies);
-
+                .toModel(replyTo), staffReplies);
     }
 
     @Override
@@ -67,6 +68,49 @@ public class ManageStarRateUseCaseInteraction implements StarRateManagementInput
         List<StarRate> staffReplies = getStaffReply(starRateEntity);
         return starRateManageMentOutputBoundary.convertToStarRateOutputData(starRateStaffMapper
                 .toModel(starRateEntity), staffReplies);
+    }
+
+    @Override
+    public StarRateOutputData disable(String id, UserDetails userDetails) {
+        StarRateEntity needToDisableStarRateEntity = starRateRepository.findById(Long.parseLong(id)).orElseThrow(
+                () -> new EntityNotFoundException("Star rate not found")
+        );
+        AccountEntity performDisableAccount = (AccountEntity) userDetails;
+        needToDisableStarRateEntity.setActive(false);
+        needToDisableStarRateEntity.setUpdatedAt(LocalDateTime.now());
+        needToDisableStarRateEntity.setUpdatedBy(performDisableAccount);
+        starRateRepository.save(needToDisableStarRateEntity);
+        return starRateManageMentOutputBoundary.convertToStarRateOutputData(starRateStaffMapper
+                .toModel(needToDisableStarRateEntity), null);
+    }
+
+    @Override
+    public StarRateOutputData unDisable(String id, UserDetails userDetails) {
+        StarRateEntity needToDisableStarRateEntity = starRateRepository.findById(Long.parseLong(id)).orElseThrow(
+                () -> new EntityNotFoundException("Star rate not found")
+        );
+        AccountEntity performDisableAccount = (AccountEntity) userDetails;
+        needToDisableStarRateEntity.setActive(true);
+        needToDisableStarRateEntity.setUpdatedAt(LocalDateTime.now());
+        needToDisableStarRateEntity.setUpdatedBy(performDisableAccount);
+        starRateRepository.save(needToDisableStarRateEntity);
+        return starRateManageMentOutputBoundary.convertToStarRateOutputData(starRateStaffMapper
+                .toModel(needToDisableStarRateEntity), null);
+    }
+
+    @Override
+    public StarRateOutputData update(String id, UserDetails userDetails, UpdateStarRateInputData updateStarRateInputData) {
+        StarRateEntity needToUpdateStarRateEntity = starRateRepository.findById(Long.parseLong(id)).orElseThrow(
+                () -> new EntityNotFoundException("Star rate not found")
+        );
+        AccountEntity performUpdateAccount = (AccountEntity) userDetails;
+        needToUpdateStarRateEntity.setComment(updateStarRateInputData.getComment());
+        needToUpdateStarRateEntity.setUpdatedAt(LocalDateTime.now());
+        needToUpdateStarRateEntity.setUpdatedBy(performUpdateAccount);
+        starRateRepository.save(needToUpdateStarRateEntity);
+        return starRateManageMentOutputBoundary.convertToStarRateOutputData(
+                starRateStaffMapper.toModel(needToUpdateStarRateEntity), null
+        );
     }
 
     private List<StarRate> getStaffReply(StarRateEntity starRateEntity) {

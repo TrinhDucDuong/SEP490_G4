@@ -39,6 +39,7 @@ public class BlogUseCaseInteraction implements BlogInputBoundary {
                                 .blogId(blogEntity.getBlogId())
                                 .blogTitle(blogEntity.getBlogTitle())
                                 .images(getBlogImages(blogEntity))
+                                .content(blogEntity.getContent())
                                 .build();
                         return blog;
                     })
