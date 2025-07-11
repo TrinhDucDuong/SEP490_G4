@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useFetchInstruction } from "../../../hooks/useFetchInstruction.js";
+import { useFetchInstruction } from "../../../hooks/Customer/useFetchInstruction.js";
 import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
 
 const InstructionPage = () => {

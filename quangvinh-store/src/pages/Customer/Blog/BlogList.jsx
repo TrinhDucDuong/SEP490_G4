@@ -1,5 +1,5 @@
 import React from "react";
-import {useFetchBlogs} from "../../../hooks/useFetchBlog.js";
+import {useFetchBlogs} from "../../../hooks/Customer/useFetchBlog.js";
 import NewsCard from "../../../components/ui/home/NewsCard.jsx";
 import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
 

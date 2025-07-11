@@ -4,10 +4,10 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 
-import { useFetchProducts } from "../../../hooks/useFetchProducts.js";
-import { useFetchBrands } from "../../../hooks/useFetchBrands.js";
-import { useFetchCategories } from "../../../hooks/useFetchCategories.js";
-import { useFetchTotalSoldOutProducts } from "../../../hooks/useFetchTotalSoldOutProducts.js";
+import { useFetchProducts } from "../../../hooks/Customer/useFetchProducts.js";
+import { useFetchBrands } from "../../../hooks/Customer/useFetchBrands.js";
+import { useFetchCategories } from "../../../hooks/Customer/useFetchCategories.js";
+import { useFetchTotalSoldOutProducts } from "../../../hooks/Customer/useFetchTotalSoldOutProducts.js";
 
 
 import Carousel from "../../../components/ui/home/Carousel.jsx";

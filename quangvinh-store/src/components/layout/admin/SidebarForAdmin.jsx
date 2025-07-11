@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useAuthForManager } from '../../../context/AuthContextForManager';
 import { useNavigate } from 'react-router-dom';
-import Modal from '../../common/Modals';
+import Modal from '../../common/Admin/Modals.jsx';
 
 const SidebarForAdmin = () => {
     const location = useLocation();

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchBanner } from "../utils/api/BannerAPI.js";
+import { fetchBanner } from "../../utils/api/Customer/BannerAPI.js";
 
 export const useFetchBanners = () => {
     const [banners, setBanners] = useState([]);

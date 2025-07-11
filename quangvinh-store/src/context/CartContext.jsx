@@ -4,8 +4,8 @@ import {
     addToCartAPI,
     updateCartQuantityAPI,
     deleteCartItemAPI
-} from '../utils/api/CartAPI';
-import { fetchProductById } from '../utils/api/ProductAPI';
+} from '../utils/api/Customer/CartAPI.js';
+import { fetchProductById } from '../utils/api/Customer/ProductAPI.js';
 import { toast } from 'react-toastify';
 import {AuthContext} from "./AuthContext.jsx";
 

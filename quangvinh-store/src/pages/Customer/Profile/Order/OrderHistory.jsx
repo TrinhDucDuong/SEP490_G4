@@ -1,5 +1,5 @@
 import React from 'react';
-import {useFetchOrders} from "../../../../hooks/useFetchOrders.js";
+import {useFetchOrders} from "../../../../hooks/Customer/useFetchOrders.js";
 import OrderItem from "./OrderItem.jsx";
 
 

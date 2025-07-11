@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {fetchCategory} from "../utils/api/CatgoryAPI.js";
+import {fetchCategory} from "../../utils/api/Customer/CatgoryAPI.js";
 
 export const useFetchCategories = () => {
     const [categories, setCategories] = useState([]);
