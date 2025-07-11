@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Plus, Image, FileText, Users } from 'lucide-react';
 import DataTable from '../../../components/common/Admin/DataTable';
-import Modal from '../../../components/common/Modals';
-import Pagination from '../../../components/common/Paginations';
+import Modals from '../../../components/common/Admin/Modals';
+import Paginations from '../../../components/common/Admin/Paginations';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { BRAND_HELPERS, BRAND_DEFAULTS } from '../../../utils/constants/BrandConstants';
@@ -392,7 +392,7 @@ const BrandTable = ({
             {/* Pagination */}
             {totalPages > 1 && (
                 <div className="mt-6">
-                    <Pagination
+                    <Paginations
                         currentPage={currentPage}
                         totalPages={totalPages}
                         totalItems={brands.length}
@@ -406,7 +406,7 @@ const BrandTable = ({
             {/* Modals */}
 
             {/* Image Modal */}
-            <Modal
+            <Modals
                 isOpen={showImageModal}
                 onClose={() => setShowImageModal(false)}
                 title="Hình ảnh thương hiệu"
@@ -429,10 +429,10 @@ const BrandTable = ({
                         )}
                     </div>
                 )}
-            </Modal>
+            </Modals>
 
             {/* Description Modal - SIMPLIFIED (removed image) */}
-            <Modal
+            <Modals
                 isOpen={showDescriptionModal}
                 onClose={() => setShowDescriptionModal(false)}
                 title="Mô tả thương hiệu"
@@ -456,10 +456,10 @@ const BrandTable = ({
                         </div>
                     </div>
                 )}
-            </Modal>
+            </Modals>
 
             {/* Editors List Modal - SIMPLIFIED (removed image) */}
-            <Modal
+            <Modals
                 isOpen={showEditorsModal}
                 onClose={() => setShowEditorsModal(false)}
                 title="Danh sách người chỉnh sửa"
@@ -503,10 +503,10 @@ const BrandTable = ({
                         )}
                     </div>
                 )}
-            </Modal>
+            </Modals>
 
             {/* Create Modal - với validation message */}
-            <Modal
+            <Modals
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
                 title="Thêm thương hiệu mới"
@@ -577,10 +577,10 @@ const BrandTable = ({
                         </button>
                     </div>
                 </div>
-            </Modal>
+            </Modals>
 
             {/* Update Modal - ENHANCED with Image Management */}
-            <Modal
+            <Modals
                 isOpen={showUpdateModal}
                 onClose={() => setShowUpdateModal(false)}
                 title="Cập nhật thương hiệu"
@@ -726,10 +726,10 @@ const BrandTable = ({
                         </div>
                     </div>
                 )}
-            </Modal>
+            </Modals>
 
             {/* Status Change Modal */}
-            <Modal
+            <Modals
                 isOpen={showStatusModal}
                 onClose={() => setShowStatusModal(false)}
                 title="Xác nhận thay đổi trạng thái"
@@ -763,7 +763,7 @@ const BrandTable = ({
                         </div>
                     </div>
                 )}
-            </Modal>
+            </Modals>
         </div>
     );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import BrandSearch from './BrandSearch';
 import BrandFilter from './BrandFilter';
 import BrandSort from './BrandSort';
-import BrandTable from './BrandTable';
+import BrandTable from './BrandTable.jsx';
 import { useBrandManagement } from '../../../hooks/useBrandManagement';
 
 const BrandManagement = () => {
