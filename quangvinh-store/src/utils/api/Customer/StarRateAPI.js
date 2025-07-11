@@ -1,9 +1,20 @@
-export const fetchProducts = async () => {
-    const response = await fetch('http://localhost:9999/product?sortDirection=desc&sortBy=createdAt&pageNumber=0&pageSize=20');
+export const fetchStarRate = async ({ productId, pageNumber = 0, pageSize = 3, numberOfStarRate }) => {
+    const params = new URLSearchParams({
+        productId,
+        pageNumber,
+        pageSize,
+    });
+
+    if (numberOfStarRate !== null && numberOfStarRate !== undefined && numberOfStarRate !== "") {
+        params.append('numberOfStarRate', numberOfStarRate);
+    }
+
+    const response = await fetch(`http://localhost:9999/star-rate?${params.toString()}`);
+
     if (!response.ok) {
-        throw new Error('Failed to fetch products');
+        throw new Error('Failed to fetch Star Rate');
     }
 
     const data = await response.json();
-    return data.products;
+    return data.starRate || [];
 };
