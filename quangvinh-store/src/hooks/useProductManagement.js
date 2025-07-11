@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ProductManagementAPI } from '../utils/api/ProductManagementAPI';
+import { ProductManagementAPI } from '../utils/api/Admin/ProductManagementAPI.js';
 import { useAuthForManager } from '../context/AuthContextForManager';
 
 // Import constants và helpers
