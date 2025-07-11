@@ -39,7 +39,7 @@ import PoliciesManagement from './pages/Staff/PoliciesManagement';
 import AboutUsManagement from './pages/Staff/AboutUsManagement';
 import CustomerList from './pages/Staff/CustomerList';
 import OrderManagement from './pages/Staff/OrderManagement';
-import CategoryManagement from './pages/Staff/CategoryManagement';
+import CategoryManagement from './pages/Staff/Category/CategoryManagement.jsx';
 import ProductType from './pages/Staff/ProductType';
 import BrandManagement from './pages/Staff/Brand/BrandManagement.jsx';
 import ProductManagement from './pages/Staff/Product/ProductManagement.jsx';
@@ -91,8 +91,6 @@ function App() {
                         >
                             <Route path="category-management" element={<CategoryManagement />} />
                             <Route path="product-type" element={<ProductType />} />
-                            <Route path="brand-management" element={<BrandManagement />} />
-                            <Route path="product-management" element={<ProductManagement />} />
                             <Route path="products-management" element={<ProductManagement />} />
                             <Route path="brands-management" element={<BrandManagement />} />
                             <Route path="customers-management" element={<CustomerList />} />
