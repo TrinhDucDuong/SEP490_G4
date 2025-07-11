@@ -1,9 +1,11 @@
 package com.fourfingers.quangvinhstore.domain.model.staff;
 
 import com.fourfingers.quangvinhstore.domain.model.Account;
+import com.fourfingers.quangvinhstore.domain.model.Image;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,4 +21,5 @@ public class Feedback {
     private Account createdBy;
     private Account updatedBy;
     private LocalDateTime updatedAt;
+    private List<Image> feedbackImages;
 }

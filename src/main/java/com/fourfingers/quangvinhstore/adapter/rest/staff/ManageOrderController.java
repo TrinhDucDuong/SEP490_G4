@@ -14,7 +14,7 @@ public class ManageOrderController {
     private final OrderManagementInputBoundary orderManagementInputBoundary;
 
     @GetMapping
-    public ResponseEntity<?> getAll(@RequestParam String orderStatus,
+    public ResponseEntity<?> getAll(@RequestParam(required = false) String orderStatus,
                                     @RequestParam(defaultValue = "orderDate") String sortBy,
                                     @RequestParam(defaultValue = "desc") String sortDirection) {
         return ResponseEntity.ok(orderManagementInputBoundary.getAll(orderStatus, sortBy, sortDirection));

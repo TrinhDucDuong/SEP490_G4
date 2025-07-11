@@ -7,9 +7,9 @@ import com.fourfingers.quangvinhstore.infrastructure.schema.OrderEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.OrderManagementInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.OrderManagementOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.staff.ProcessOrderInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.ListOrderOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.ProcessOrderInputData;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,7 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final OrderManagementOutputBoundary orderManagementOutputBoundary;
+
     @Override
     @Transactional
     public ListOrderOutputData getAll(String orderStatus, String sortBy, String sortDirection) {
@@ -59,6 +60,4 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
                         .map(orderMapper::toModel)
                         .toList();
     }
-
-
 }
