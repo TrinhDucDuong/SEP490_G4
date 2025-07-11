@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, ChevronDown } from 'lucide-react';
-import SidebarForStaff from '../../components/layout/admin/SidebarForStaff.jsx';
+import SidebarForAdmin from '../../components/layout/admin/SidebarForAdmin.jsx';
 import HeaderForManager from '../../components/layout/admin/HeaderForManager.jsx';
+import SearchBar from '../../components/common/Admin/SearchBar';
 import Modal from '../../components/common/Admin/Modals.jsx';
-import SearchBar from '../../components/common/Admin/SearchBar.jsx';
 import Pagination from '../../components/common/Admin/Paginations.jsx';
-import DataTable from '../../components/common/Admin/DataTable.jsx';
+import DataTable from '../../components/common/Admin/DataTable';
 
 const CustomerList = () => {
     const [customers, setCustomers] = useState([]);
@@ -515,7 +515,7 @@ const CustomerList = () => {
                 <div className="fixed inset-0 z-50 lg:hidden">
                     <div className="absolute inset-0 bg-black opacity-50" onClick={() => setSidebarOpen(false)}></div>
                     <div className="relative w-64 h-full">
-                        <SidebarForStaff />
+                        <SidebarForAdmin />
                     </div>
                 </div>
             )}
@@ -527,11 +527,11 @@ const CustomerList = () => {
 
             {/* Sidebar cố định */}
             <div className="fixed left-0 top-16 z-40 hidden lg:block">
-                <SidebarForStaff />
+                <SidebarForAdmin />
             </div>
 
             {/* Main content - THÊM margin-left để tránh sidebar */}
-            <div className="ml-0 lg:ml-64 pt-16">
+            <div>
                 {/* Mobile Menu Button */}
                 <div className="lg:hidden p-4">
                     <button

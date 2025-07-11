@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import defaultImage from "../../../assets/images/404.jpg";
 
 function NewsCard({ news = {} }) {
-    const imageUrl = Array.isArray(news.images)
-        ? news.images[0]
-        : news.images || "https://via.placeholder.com/600x400?text=No+Image";
+    const imageUrl = Array.isArray(news.images) && news.images.length > 0
+        ? news.images[0].imageUrl
+        : "https://via.placeholder.com/600x400?text=No+Image";
+
     const title = news.blogTitle || "Không có tiêu đề";
     const description = news.content || "Không có nội dung mô tả";
     const blogUrl = news.blogId ? `/blog/${news.blogId}` : "#";

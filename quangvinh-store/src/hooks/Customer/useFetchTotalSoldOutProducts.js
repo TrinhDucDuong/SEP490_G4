@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchProducts} from '../utils/api/TotalSoldOutProductAPI.js';
+import { fetchProducts} from '../../utils/api/Customer/TotalSoldOutProductAPI.js';
 
 export const useFetchTotalSoldOutProducts = () => {
     const [productTotal, setProductTotal] = useState([]);

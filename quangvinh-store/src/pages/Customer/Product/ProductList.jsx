@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useFetchCategories } from '../../../hooks/useFetchCategories.js';
-import { useFetchFilteredProducts } from '../../../hooks/useFetchFilteredProducts.js';
+import { useFetchCategories } from '../../../hooks/Customer/useFetchCategories.js';
+import { useFetchFilteredProducts } from '../../../hooks/Customer/useFetchFilteredProducts.js';
 import ProductFilter from '../../../components/ui/product/Filter/ProductFilter.jsx';
 import ProductCard from '../../../components/ui/product/Common/ProductCard.jsx';
 import Pagination from '../../../components/common/Customer/Pagination.jsx';
