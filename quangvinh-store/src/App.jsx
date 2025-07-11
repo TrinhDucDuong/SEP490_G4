@@ -16,15 +16,15 @@ import ProtectedRouteForManager from './components/auth/ProtectedRouteForManager
 import LoginForManager from './pages/Admin/LoginForManager';
 
 // Customer pages
-import Home from './pages/Customer/Home';
-import ProductList from './pages/Customer/ProductList';
-import ProductDetail from './pages/Customer/ProductDetails';
-import Login from './pages/Customer/Login';
-import Register from './pages/Customer/Register';
-import ForgotPassword from './pages/Customer/ForgotPassword';
-import Cart from './pages/Customer/Cart';
-import Payment from './pages/Customer/Payment';
-import NotFound from './pages/Customer/NotFound';
+import Home from './pages/Customer/Home/Home.jsx';
+import ProductList from './pages/Customer/Product/ProductList.jsx';
+import ProductDetail from './pages/Customer/Product/ProductDetails.jsx';
+import Login from './pages/Customer/Login/Login.jsx';
+import Register from './pages/Customer/Login/Register.jsx';
+import ForgotPassword from './pages/Customer/Login/ForgotPassword.jsx';
+import Cart from './pages/Customer/Payment/Cart.jsx';
+import Payment from './pages/Customer/Payment/Payment.jsx';
+import NotFound from './pages/Customer/Common/NotFound.jsx';
 import ProfileLayout from './pages/Customer/Profile/ProfileLayout';
 import Info from './pages/Customer/Profile/Information/Info';
 import Address from './pages/Customer/Profile/Address/Address';
