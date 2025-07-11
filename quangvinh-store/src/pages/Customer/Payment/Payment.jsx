@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from "../../../context/AuthContext.jsx";
-import useCart from "../../../hooks/useCart.js";
-import useFetchAddress from "../../../hooks/useFetchAddress.js";
+import useCart from "../../../hooks/Customer/useCart.js";
+import useFetchAddress from "../../../hooks/Customer/useFetchAddress.js";
 import { toast } from "react-toastify";
 import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
 import AddressCard from "../Profile/Address/AddressCard.jsx";
@@ -14,7 +14,7 @@ import Modal from "../../../components/common/Customer/Modal.jsx";
 import AddAddressForm from "../Profile/Address/AddAddressForm.jsx";
 import UpdateAddressForm from "../Profile/Address/UpdateAddressForm.jsx";
 import AddressSelectModal from "./AddressSelectModal.jsx";
-import { createAddress } from "../../../utils/api/AddressAPI.js";
+import { createAddress } from "../../../utils/api/Customer/AddressAPI.js";
 
 function Payment() {
     const { user } = useContext(AuthContext);

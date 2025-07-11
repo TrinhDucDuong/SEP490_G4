@@ -3,8 +3,8 @@ import { faFacebook, faInstagram, faYoutube, faTiktok } from '@fortawesome/free-
 import { faCreditCard, faMoneyBill, faUniversity } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
 
-import { useFetchPolicy } from "../../../hooks/useFetchPolicy";
-import { useFetchInstruction } from "../../../hooks/useFetchInstruction";
+import { useFetchPolicy } from "../../../hooks/Customer/useFetchPolicy.js";
+import { useFetchInstruction } from "../../../hooks/Customer/useFetchInstruction.js";
 
 function Footer() {
     const { policies, loading: loadingPolicy } = useFetchPolicy();

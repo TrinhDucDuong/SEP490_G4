@@ -9,7 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import { AuthContext } from "../../../context/AuthContext.jsx";
-import useCart from "../../../hooks/useCart.js";
+import useCart from "../../../hooks/Customer/useCart.js";
 import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
 
 const ProductDetail = () => {

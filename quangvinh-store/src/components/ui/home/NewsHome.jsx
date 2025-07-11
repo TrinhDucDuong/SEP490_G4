@@ -1,5 +1,5 @@
 import React from "react";
-import { useFetchBlogs } from "../../../hooks/useFetchBlog.js";
+import { useFetchBlogs } from "../../../hooks/Customer/useFetchBlog.js";
 import NewsCard from "./NewsCard.jsx";
 
 function NewsHome() {

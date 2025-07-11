@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import {CartProvider} from "./context/CartContext.jsx";
 import { ToastContainer } from 'react-toastify';
@@ -33,10 +33,7 @@ import PoliciesManagement from './pages/Staff/PoliciesManagement';
 import AboutUsManagement from './pages/Staff/AboutUsManagement';
 import CustomerList from './pages/Staff/CustomerList';
 import OrderManagement from './pages/Staff/OrderManagement';
-import CategoryManagement from './pages/Staff/CategoryManagement';
 import ProductType from './pages/Staff/ProductType';
-import BrandManagement from './pages/Staff/BrandManagement';
-import ProductManagement from './pages/Staff/ProductManagement';
 import EmployeeManagement from './pages/Staff/EmployeeManagement';
 import PolicyPage from "./pages/Customer/Policy/PolicyPage.jsx";
 import InstructionPage from "./pages/Customer/Instruction/InstructionPage.jsx";
@@ -44,13 +41,21 @@ import SocialCallback from "./pages/Customer/Login/SocialCallback.jsx";
 import OAuth2RedirectHandler from "./components/common/Customer/OAuth2RedirectHandler.jsx";
 import BlogDetail from "./pages/Customer/Blog/BlogDetail.jsx";
 import BlogList from "./pages/Customer/Blog/BlogList.jsx";
+import CategoryManagement from "./pages/Staff/Category/CategoryManagement.jsx";
+import BrandManagement from "./pages/Staff/Brand/BrandManagement.jsx";
+import ProductManagement from "./pages/Staff/Product/ProductManagement.jsx";
+import ProtectedRouteForManager from "./components/auth/ProtectedRouteForManager.jsx";
+import LoginForManager from "./pages/Admin/LoginForManager.jsx";
+import {AuthProviderForManager} from "./context/AuthContextForManager.jsx";
 
 
 function App() {
     return (
         <AuthProvider>
+            <AuthProviderForManager>
             <CartProvider>
             <ToastContainer position="top-right" autoClose={3000} />
+
             <Routes>
                 <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
                 <Route path="/" element={<CustomerLayout />}>
@@ -80,26 +85,58 @@ function App() {
                     <Route path="/blog/:blogId" element={<BlogDetail />} />
                 </Route>
 
+                {/* Admin login route - KHÔNG PROTECTED */}
+                <Route path="/admin/login" element={<LoginForManager />} />
 
-                <Route path="/admin" element={<AdminLayout />}>
+                {/* Admin redirect route */}
+                <Route
+                    path="/admin"
+                    element={<Navigate to="/admin/category-management" replace />}
+                />
+
+                {/* Protected Admin routes */}
+                <Route
+                    path="/admin"
+                    element={
+                        <ProtectedRouteForManager>
+                            <AdminLayout />
+                        </ProtectedRouteForManager>
+                    }
+                >
+                    <Route path="category-management" element={<CategoryManagement />} />
+                    <Route path="product-type" element={<ProductType />} />
+                    <Route path="products-management" element={<ProductManagement />} />
+                    <Route path="brands-management" element={<BrandManagement />} />
+                    <Route path="customers-management" element={<CustomerList />} />
+                    <Route path="orders-management" element={<OrderManagement />} />
+                    <Route path="employee-management" element={<EmployeeManagement />} />
+                    <Route path="customer-list" element={<CustomerList />} />
+                    <Route path="order-management" element={<OrderManagement />} />
                     <Route path="instruction-management" element={<InstructionManagement />} />
                     <Route path="policies-management" element={<PoliciesManagement />} />
-                    <Route path="store-management" element={<AboutUsManagement />} />
-                    <Route path="customers" element={<CustomerList />} />
-                    <Route path="orders" element={<OrderManagement />} />
-                    <Route path="categories" element={<CategoryManagement />} />
-                    <Route path="product-types" element={<ProductType />} />
-                    <Route path="brands" element={<BrandManagement />} />
-                    <Route path="products-management" element={<ProductManagement />} />
-                    <Route path="employee-management" element={<EmployeeManagement />} />
-                    <Route path="feedbacks" element={<div>Feedbacks Page</div>} />
-                    <Route path="statistics" element={<div>Statistics Page</div>} />
-                    <Route path="campaign-management" element={<div>Campaign Management Page</div>} />
-                    <Route path="settings-management" element={<div>Settings Management Page</div>} />
-                    <Route path="logout" element={<div>Logout Page</div>} />
+                    <Route path="about-us-management" element={<AboutUsManagement />} />
+                    <Route path="feedbacks" element={<div className="p-6 bg-white rounded-lg shadow">Feedbacks Page</div>} />
+                    <Route path="statistics" element={<div className="p-6 bg-white rounded-lg shadow">Statistics Page</div>} />
+                    <Route path="campaign-management" element={<div className="p-6 bg-white rounded-lg shadow">Campaign Management Page</div>} />
+                    <Route path="store-management" element={<div className="p-6 bg-white rounded-lg shadow">Store Management Page</div>} />
+                    <Route path="settings-management" element={<div className="p-6 bg-white rounded-lg shadow">Settings Management Page</div>} />
+                    {/* Default redirect cho admin */}
+                    <Route index element={<Navigate to="category-management" replace />} />
                 </Route>
             </Routes>
+                <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                />
             </CartProvider>
+                </AuthProviderForManager>
         </AuthProvider>
     );
 }

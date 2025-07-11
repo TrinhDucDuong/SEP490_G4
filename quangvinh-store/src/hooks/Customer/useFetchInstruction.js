@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
-import {fetchPolicies} from "../utils/api/PolicyAPI.js";
+import { fetchInstructions } from '../../utils/api/Customer/InstructionAPI.js';
 
-
-export const useFetchPolicy = () => {
-    const [policies, setPolicies] = useState([]);
+export const useFetchInstruction = () => {
+    const [instructions, setInstructions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await fetchPolicies();
-                setPolicies(data.policies || []);
+                const data = await fetchInstructions();
+                setInstructions(data.instructions || []);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -21,5 +20,5 @@ export const useFetchPolicy = () => {
         fetchData();
     }, []);
 
-    return { policies, loading, error };
+    return { instructions, loading, error };
 };

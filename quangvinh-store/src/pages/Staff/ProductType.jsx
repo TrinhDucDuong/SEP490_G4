@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Plus, Edit, Trash2, ArrowUpDown } from 'lucide-react';
-import SidebarForStaff from '../../components/layout/admin/SidebarForStaff.jsx';
+import SidebarForAdmin from '../../components/layout/admin/SidebarForAdmin.jsx';
 import HeaderForManager from '../../components/layout/admin/HeaderForManager.jsx';
 import Modal from '../../components/common/Admin/Modals.jsx';
-import SearchBar from '../../components/common/Admin/SearchBar.jsx';
 import Pagination from '../../components/common/Admin/Paginations.jsx';
-import DataTable from '../../components/common/Admin/DataTable.jsx';
+import SearchBar from '../../components/common/Admin/SearchBar';
+
+import DataTable from '../../components/common/Admin/DataTable';
 
 const ProductType = () => {
     const [productTypes, setProductTypes] = useState([]);
@@ -394,7 +395,7 @@ const ProductType = () => {
 
             {/* Sidebar cố định */}
             <div className="fixed left-0 top-16 z-40">
-                <SidebarForStaff/>
+                <SidebarForAdmin/>
             </div>
 
             {/* Main content - THÊM margin-left */}
