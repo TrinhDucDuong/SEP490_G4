@@ -50,4 +50,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
             """)
     List<DailyRevenue> getRevenuePerDay(@Param("start") LocalDateTime start,
                                         @Param("end") LocalDateTime end);
+
+    Long countByOrderStatus(OrderStatus orderStatus);
 }

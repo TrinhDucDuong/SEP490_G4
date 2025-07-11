@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.List;
 
 @Entity
 @Table(name = "star_rates")
@@ -20,19 +20,36 @@ public class StarRateEntity {
     private Long starRateId;
 
     @ManyToOne
-    @JoinColumn(name = "account_id" , nullable = false)
+    @JoinColumn(name = "account_id", nullable = false)
     private AccountEntity account;
 
-    @Column(name = "star_rate" , nullable = false, columnDefinition = "TINYINT CHECK (star_rate BETWEEN 1 AND 5)")
+    @Column(name = "star_rate", nullable = true, columnDefinition = "TINYINT CHECK (star_rate BETWEEN 1 AND 5)")
     private Long starRate;
 
     @ManyToOne
-    @JoinColumn(name = "product_variant_id" , nullable = false)
+    @JoinColumn(name = "product_variant_id", nullable = false)
     private ProductVariantEntity productVariant;
 
-    @Column(name = "comment" , columnDefinition = "TEXT")
+    @Column(name = "comment", columnDefinition = "TEXT")
     private String comment;
 
-    @Column(name = "created_at" , nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_to", nullable = true)
+    private StarRateEntity replyTo;
+
+    @OneToMany(mappedBy = "replyTo", fetch = FetchType.LAZY)
+    private List<StarRateEntity> staffReplies;
+
+    @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1", nullable = false)
+    private boolean isActive;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by", referencedColumnName = "account_id")
+    private AccountEntity updatedBy;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }
