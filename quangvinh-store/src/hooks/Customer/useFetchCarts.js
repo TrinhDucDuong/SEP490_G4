@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import {fetchCartAPI} from "../utils/api/CartAPI.js";
+import {fetchCartAPI} from "../../utils/api/Customer/CartAPI.js";
 
 
 const useFetchCarts = (accountId) => {

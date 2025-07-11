@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useFetchCategories } from '../../../hooks/useFetchCategories.js';
-import { useFetchFilteredProducts } from '../../../hooks/useFetchFilteredProducts.js';
+import { useFetchCategories } from '../../../hooks/Customer/useFetchCategories.js';
+import { useFetchFilteredProducts } from '../../../hooks/Customer/useFetchFilteredProducts.js';
 import ProductFilter from '../../../components/ui/product/Filter/ProductFilter.jsx';
 import ProductCard from '../../../components/ui/product/Common/ProductCard.jsx';
 import Pagination from '../../../components/common/Customer/Pagination.jsx';
@@ -71,7 +71,7 @@ const ProductList = () => {
                         <select
                             value={currentSort}
                             onChange={handleSortChange}
-                            className="w-full sm:w-auto border border-gray-300 rounded-lg py-2.5 px-4 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
+                            className="w-full sm:w-auto border border-gray-300 rounded-full py-2 px-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
                         >
                             {sortOptions.map(opt => (
                                 <option key={opt.value} value={opt.value}>{opt.label}</option>

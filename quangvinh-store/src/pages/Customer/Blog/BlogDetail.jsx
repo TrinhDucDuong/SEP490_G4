@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
+import defaultImage from "../../../assets/images/404.jpg";
 
 function BlogDetail() {
     const { blogId } = useParams();
@@ -16,7 +17,7 @@ function BlogDetail() {
                     throw new Error("Không thể tải bài viết");
                 }
                 const data = await res.json();
-                setBlog(data);
+                setBlog(data.blog); // ✅ Sửa tại đây
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -39,7 +40,7 @@ function BlogDetail() {
                 />
             </div>
 
-            <div className="container mx-auto p-4 px-28 max-w-4xl">
+            <div className="container mx-auto p-4 px-28 max-w-8xl">
                 {loading && <p className="text-gray-500">Đang tải...</p>}
                 {error && <p className="text-red-500">Lỗi: {error}</p>}
                 {!loading && !error && blog && (
@@ -51,14 +52,16 @@ function BlogDetail() {
                                 Ngày đăng: {new Date(blog.createdAt).toLocaleDateString()}
                             </p>
                         )}
+                        <div className="max-w-8xl mx-auto max-h-4xl">
+                            {blog.images?.[0]?.imageUrl && (
+                                <img
+                                    src={blog.images[0].imageUrl || defaultImage}
+                                    alt={blog.blogTitle}
+                                    className="w-full h-auto rounded-lg mb-6 shadow"
+                                />
+                            ) }
+                        </div>
 
-                        {blog.images?.[0] && (
-                            <img
-                                src={blog.images[0]}
-                                alt={blog.blogTitle}
-                                className="w-full h-auto rounded-lg mb-6 shadow"
-                            />
-                        )}
 
                         <div className="prose max-w-none">
                             <p className="text-gray-800 leading-relaxed whitespace-pre-line">

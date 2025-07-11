@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import Modal from "../../../../components/common/Customer/Modal.jsx";
 import ConfirmDialog from "../../../../components/common/Customer/ConfirmDialog.jsx";
 import AddressCard from "./AddressCard.jsx";
-import useFetchAddress from '../../../../hooks/useFetchAddress';
+import useFetchAddress from '../../../../hooks/Customer/useFetchAddress.js';
 import { AuthContext } from '../../../../context/AuthContext';
 import AddAddressForm from "./AddAddressForm.jsx";
 import UpdateAddressForm from "./UpdateAddressForm.jsx";

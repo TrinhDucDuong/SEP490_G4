@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import { getAddresses } from "../utils/api/AddressAPI.js";
+import { AuthContext } from '../../context/AuthContext.jsx';
+import { getAddresses } from "../../utils/api/Customer/AddressAPI.js";
 
 const useFetchAddress = () => {
     const { token } = useContext(AuthContext);

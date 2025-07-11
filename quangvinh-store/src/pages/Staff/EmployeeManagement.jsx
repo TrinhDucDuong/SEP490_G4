@@ -3,9 +3,10 @@ import { Plus, Edit, Trash2, Eye, ArrowUpDown, Phone, User, Lock } from 'lucide-
 import SidebarForAdmin from '../../components/layout/admin/SidebarForAdmin.jsx';
 import HeaderForManager from '../../components/layout/admin/HeaderForManager.jsx';
 import SearchBar from '../../components/common/Admin/SearchBar.jsx';
-import Pagination from '../../components/common/Paginations.jsx';
+
+import Modal from '../../components/common/Admin/Modals.jsx';
 import DataTable from '../../components/common/Admin/DataTable.jsx';
-import Modal from '../../components/common/Modals.jsx'
+import Pagination from "../../components/common/Customer/Pagination.jsx";
 
 const EmployeeManagement = () => {
     const [employees, setEmployees] = useState([]);
