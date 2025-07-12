@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Image, Plus } from 'lucide-react';
 import DataTable from '../../../components/common/Admin/DataTable';
+
 import Modal from '../../../components/common/Admin/Modals.jsx';
 import Pagination from '../../../components/common/Admin/Paginations.jsx';
 import { CKEditor } from '@ckeditor/ckeditor5-react';

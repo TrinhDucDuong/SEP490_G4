@@ -4,7 +4,6 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { User, Package, Users, FileText, MessageSquare, Wifi, BarChart3, UserPlus, Settings, LogOut, Search, Filter, X, Edit, Trash2, Eye, Plus } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 
-
 const PoliciesManagement = () => {
     const [policies, setPolicies] = useState({});
     const [selectedPolicy, setSelectedPolicy] = useState(null);
