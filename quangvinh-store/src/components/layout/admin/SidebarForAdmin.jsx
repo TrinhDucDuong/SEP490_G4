@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
     Package,
     FileText,
@@ -13,11 +13,9 @@ import {
     Receipt,
     Store,
     Megaphone,
-    Award,
-    User
+    Award
 } from 'lucide-react';
 import { useAuthForManager } from '../../../context/AuthContextForManager';
-import { useNavigate } from 'react-router-dom';
 import Modal from '../../common/Admin/Modals.jsx';
 
 const SidebarForAdmin = () => {
@@ -34,7 +32,7 @@ const SidebarForAdmin = () => {
 
     return (
         <>
-            <div className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-200 shadow-lg overflow-y-auto z-40">
+            <div className="fixed top-0 left-0 h-screen w-64 bg-white border-r border-gray-200 shadow-md flex flex-col z-40 overflow-hidden">
                 {/* User Info Section */}
                 <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
                     <div className="flex items-center space-x-3">
@@ -54,7 +52,12 @@ const SidebarForAdmin = () => {
                     </div>
                 </div>
 
-                <nav className="p-4 space-y-2">
+                {/* Navigation Section */}
+                <div className="flex-1 overflow-y-auto p-3 space-y-1 no-scrollbar">
+                    <NavLink to="/admin/blogs" className={navClass}>
+                        <Package className="h-5 w-5 mr-3" />
+                        Bài viết
+                    </NavLink>
                     <NavLink to="/admin/products-management" className={navClass}>
                         <Package className="h-5 w-5 mr-3" />
                         Quản lý sản phẩm
@@ -122,25 +125,22 @@ const SidebarForAdmin = () => {
                         Cài đặt
                     </NavLink>
 
-                    {/* Enhanced Logout Button */}
                     <button
                         onClick={() => setShowLogoutModal(true)}
-                        className="w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 text-red-600 hover:bg-red-50 hover:text-red-700 hover:shadow-md border border-transparent hover:border-red-200 group"
+                        className="w-full flex items-center px-4 py-3 text-sm font-medium rounded-md transition-all text-red-600 hover:bg-red-50 hover:text-red-700 hover:shadow border border-transparent hover:border-red-200"
                     >
-                        <LogOut className="h-5 w-5 mr-3 group-hover:animate-pulse" />
+                        <LogOut className="h-5 w-5 mr-3" />
                         Đăng xuất
                     </button>
-                </nav>
+                </div>
 
                 {/* Footer */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-gray-50">
-                    <p className="text-xs text-gray-500 text-center">
-                        © 2024 Quang Vinh Authentic
-                    </p>
+                <div className="p-4 border-t border-gray-200 bg-gray-50 text-center">
+                    <p className="text-xs text-gray-500">© 2024 Quang Vinh Authentic</p>
                 </div>
             </div>
 
-            {/* Logout Confirmation Modal */}
+            {/* Logout Modal */}
             <Modal
                 isOpen={showLogoutModal}
                 onClose={() => setShowLogoutModal(false)}
@@ -166,7 +166,7 @@ const SidebarForAdmin = () => {
                         </button>
                         <button
                             onClick={handleLogout}
-                            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"s
+                            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
                         >
                             Đăng xuất
                         </button>
@@ -177,12 +177,11 @@ const SidebarForAdmin = () => {
     );
 };
 
-// Reusable className generators
 const navClass = ({ isActive }) =>
-    `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+    `flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all ${
         isActive
-            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg transform scale-105'
-            : 'text-gray-700 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-50 hover:text-gray-900 hover:shadow-sm'
+            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow'
+            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
     }`;
 
 export default SidebarForAdmin;

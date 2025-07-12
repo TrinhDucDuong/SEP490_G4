@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import HeaderForManager from "../components/layout/admin/HeaderForManager.jsx";
-import SidebarForAdmin from "../components/layout/admin/SidebarForAdmin.jsx";
 
+import HeaderForManager from '../components/layout/admin/HeaderForManager.jsx';
+import SidebarForAdmin from '../components/layout/admin/SidebarForAdmin.jsx';
 
 const AdminLayout = () => {
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-blue-50">
-            <HeaderForManager />
-            <SidebarForAdmin />
-            <main className="ml-64 pt-20"> {/* Tăng pt-16 thành pt-20 để tránh overlap */}
-                <div className="p-6">
+        <div className="flex min-h-screen">
+            <div className="w-64">
+                <SidebarForAdmin />
+            </div>
+            <div className="flex-1 flex flex-col min-w-0">
+
+                <main className="flex-1 overflow-y-auto px-6">
                     <Outlet />
-                </div>
-            </main>
+                </main>
+            </div>
         </div>
     );
 };
