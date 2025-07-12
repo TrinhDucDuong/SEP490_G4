@@ -12,4 +12,5 @@ public class SNS {
     private String snsName;
     private String snsUrl;
     private String snsChatUrl;
+    private Boolean isActive;
 }
