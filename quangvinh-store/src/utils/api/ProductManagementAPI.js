@@ -1,168 +1,290 @@
 // src/utils/api/ProductManagementAPI.js
 
-import axios from 'axios';
+const API_BASE_URL = 'http://localhost:9999/product'; // CẬP NHẬT URL MỚI
+const COLOR_API_URL = 'http://localhost:9999/staff/color';
 
-const API_BASE_URL = 'http://localhost:9999/staff/product';
+// Helper function để tự động tạo tên màu từ hex
+const getColorName = (hex) => {
+    const colorMap = {
+        '#000000': 'Đen',
+        '#0000FF': 'Xanh dương',
+        '#008000': 'Xanh lá',
+        '#00FFFF': 'Xanh lơ',
+        '#228B22': 'Xanh lá đậm',
+        '#4B0082': 'Chàm',
+        '#800080': 'Tím',
+        '#808080': 'Xám',
+        '#A52A2A': 'Nâu',
+        '#C0C0C0': 'Bạc',
+        '#DC143C': 'Đỏ thẫm',
+        '#F0E68C': 'Vàng nhạt',
+        '#FF0000': 'Đỏ',
+        '#FF00FF': 'Hồng tím',
+        '#FF4500': 'Cam đỏ',
+        '#FFA500': 'Cam',
+        '#FFC0CB': 'Hồng',
+        '#FFD700': 'Vàng kim',
+        '#FFFF00': 'Vàng',
+        '#FFFFFF': 'Trắng'
+    };
 
-// Helper function để lấy token
-const getAuthToken = () => {
-    const token = localStorage.getItem('adminAuthToken') || sessionStorage.getItem('adminAuthToken');
-    console.log('Getting token:', token ? 'Token found' : 'No token');
-    return token;
+    return colorMap[hex] || `Màu ${hex}`;
 };
 
-// Tạo axios instance với interceptor
-const apiClient = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
+// GET - Lấy tất cả products - CẬP NHẬT ĐỂ SỬ DỤNG API MỚI
+export const getAllProducts = async () => {
+    try {
+        console.log('Fetching all products from:', API_BASE_URL);
 
-// Interceptor để tự động thêm token vào header
-apiClient.interceptors.request.use(
-    (config) => {
-        const token = getAuthToken();
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-            console.log('Token added to request:', config.headers.Authorization.substring(0, 20) + '...');
+        const response = await fetch(API_BASE_URL, {
+            method: 'GET',
+            headers: {
+                'accept': '*/*',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('Products fetched successfully:', data);
+
+        // API mới đã có brand và category trong mỗi product
+        if (data && data.products && Array.isArray(data.products)) {
+            return { success: true, data: data.products };
+        } else if (Array.isArray(data)) {
+            return { success: true, data: data };
         } else {
-            console.warn('No token available for request');
+            throw new Error('Invalid response structure');
         }
-        return config;
-    },
-    (error) => {
-        console.error('Request interceptor error:', error);
-        return Promise.reject(error);
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        return { success: false, error: error.message };
     }
-);
+};
 
-// Interceptor để xử lý lỗi response
-apiClient.interceptors.response.use(
-    (response) => {
-        console.log('API Response success:', response.status);
-        return response;
-    },
-    (error) => {
-        console.error('API Response error:', error.response?.status, error.response?.data);
-        if (error.response?.status === 401) {
-            console.warn('401 Unauthorized - Token may be invalid');
-            localStorage.removeItem('adminAuthToken');
-            sessionStorage.removeItem('adminAuthToken');
-            window.location.href = '/admin/login';
+// GET - Lấy tất cả colors
+export const getAllColors = async () => {
+    try {
+        console.log('Fetching all colors from:', COLOR_API_URL);
+
+        const response = await fetch(COLOR_API_URL, {
+            method: 'GET',
+            headers: {
+                'accept': '*/*',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
-        return Promise.reject(error);
+
+        const data = await response.json();
+        console.log('Colors fetched successfully:', data);
+
+        if (data && data.color && Array.isArray(data.color)) {
+            const formattedColors = data.color.map((colorItem, index) => ({
+                colorId: index + 1,
+                colorName: getColorName(colorItem.colorHex),
+                colorHex: colorItem.colorHex
+            }));
+            return { success: true, data: formattedColors };
+        } else {
+            throw new Error('Invalid response structure');
+        }
+    } catch (error) {
+        console.error('Error fetching colors:', error);
+        return { success: false, error: error.message };
     }
-);
+};
 
-export const ProductManagementAPI = {
-    // POST - Tạo sản phẩm mới (CẦN TOKEN)
-    createProduct: async (productData, images) => {
-        try {
-            console.log('Creating product with data:', productData);
-            console.log('Images count:', images?.length || 0);
+// POST - Tạo product mới (giữ nguyên URL cũ cho staff)
+export const createProduct = async (productData, productImages) => {
+    try {
+        console.log('Creating product with data:', productData);
+        console.log('Number of images:', productImages?.length || 0);
 
-            const formData = new FormData();
+        const formData = new FormData();
 
-            // Thêm dữ liệu sản phẩm
-            formData.append('productInputData', JSON.stringify(productData));
+        const productInput = {
+            productName: productData.productName?.trim(),
+            productDescription: productData.productDescription?.trim() || '',
+            unitPrice: productData.unitPrice.toString(),
+            brandId: parseInt(productData.brandId),
+            categoryId: parseInt(productData.categoryId),
+            productVariants: productData.productVariants.map(variant => ({
+                color: variant.color?.trim() || '',
+                productSize: variant.productSize?.trim() || '',
+                quantity: parseInt(variant.quantity) || 0
+            }))
+        };
 
-            // Thêm hình ảnh
-            if (images && images.length > 0) {
-                images.forEach((image) => {
-                    if (image instanceof File) {
-                        formData.append('productImages', image);
-                        console.log('Added image:', image.name);
-                    }
-                });
-            }
+        console.log('Product input data:', productInput);
 
-            const token = getAuthToken();
-            if (!token) {
-                throw new Error('Không có token xác thực');
-            }
+        const productInputBlob = new Blob([JSON.stringify(productInput)], {
+            type: 'application/json'
+        });
 
-            const response = await axios.post(API_BASE_URL, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
-                },
+        formData.append('productInputData', productInputBlob);
+
+        if (productImages && productImages.length > 0) {
+            productImages.forEach((image, index) => {
+                if (image instanceof File) {
+                    console.log(`Adding image ${index + 1}:`, image.name, image.type, image.size);
+                    formData.append('productImages', image);
+                }
             });
-
-            console.log('Create product response:', response.data);
-            return response.data;
-        } catch (error) {
-            console.error('Create product API error:', error);
-            if (error.response?.status === 401) {
-                throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-            }
-            throw new Error(error.response?.data?.message || 'Không thể tạo sản phẩm mới');
-        }
-    },
-
-    // PUT - Cập nhật sản phẩm (CẦN TOKEN)
-    updateProduct: async (id, productData, images) => {
-        try {
-            console.log('Updating product ID:', id, 'with data:', productData);
-
-            const formData = new FormData();
-
-            // Thêm dữ liệu sản phẩm
-            formData.append('productInputData', JSON.stringify(productData));
-
-            // Thêm hình ảnh nếu có
-            if (images && images.length > 0) {
-                images.forEach((image) => {
-                    if (image instanceof File) {
-                        formData.append('productImages', image);
-                        console.log('Added image for update:', image.name);
-                    }
-                });
-            }
-
-            const token = getAuthToken();
-            if (!token) {
-                throw new Error('Không có token xác thực');
-            }
-
-            const response = await axios.put(`${API_BASE_URL}/${id}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
-                },
+        } else {
+            const emptyFile = new File([''], 'no_image.txt', {
+                type: 'text/plain',
+                lastModified: Date.now()
             });
+            formData.append('productImages', emptyFile);
+        }
 
-            console.log('Update product response:', response.data);
-            return response.data;
-        } catch (error) {
-            console.error('Update product API error:', error);
-            if (error.response?.status === 401) {
-                throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        // SỬ DỤNG URL CŨ CHO STAFF OPERATIONS
+        const response = await fetch('http://localhost:9999/staff/product', {
+            method: 'POST',
+            headers: {
+                'accept': '*/*'
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Create product error response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('Product created successfully:', data);
+
+        if (data && data.product) {
+            return { success: true, data: data.product };
+        } else if (data) {
+            return { success: true, data: data };
+        } else {
+            throw new Error('Invalid response structure');
+        }
+    } catch (error) {
+        console.error('Error creating product:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+// PUT - Cập nhật product (giữ nguyên URL cũ cho staff)
+export const updateProduct = async (productId, productData, productImages) => {
+    try {
+        console.log('Updating product:', productId, 'with data:', productData);
+        console.log('Number of new images:', productImages?.length || 0);
+
+        const formData = new FormData();
+
+        const productInput = {
+            productName: productData.productName?.trim(),
+            productDescription: productData.productDescription?.trim() || '',
+            unitPrice: productData.unitPrice.toString(),
+            brandId: parseInt(productData.brandId),
+            categoryId: parseInt(productData.categoryId),
+            productVariants: productData.productVariants.map(variant => ({
+                color: variant.color?.trim() || '',
+                productSize: variant.productSize?.trim() || '',
+                quantity: parseInt(variant.quantity) || 0
+            }))
+        };
+
+        console.log('Product update data:', productInput);
+
+        const productInputBlob = new Blob([JSON.stringify(productInput)], {
+            type: 'application/json'
+        });
+
+        formData.append('productInputData', productInputBlob);
+
+        if (productImages && productImages.length > 0) {
+            productImages.forEach((image, index) => {
+                if (image instanceof File) {
+                    console.log(`Adding new image ${index + 1}:`, image.name, image.type, image.size);
+                    formData.append('productImages', image);
+                }
+            });
+        } else {
+            const emptyFile = new File([''], 'keep_existing.txt', {
+                type: 'text/plain',
+                lastModified: Date.now()
+            });
+            formData.append('productImages', emptyFile);
+        }
+
+        // SỬ DỤNG URL CŨ CHO STAFF OPERATIONS
+        const response = await fetch(`http://localhost:9999/staff/product/${productId}`, {
+            method: 'PUT',
+            headers: {
+                'accept': '*/*'
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Update product error response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('Product updated successfully:', data);
+
+        if (data && data.product) {
+            return { success: true, data: data.product };
+        } else if (data) {
+            return { success: true, data: data };
+        } else {
+            throw new Error('Invalid response structure');
+        }
+    } catch (error) {
+        console.error('Error updating product:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+// DELETE - Xóa product (giữ nguyên URL cũ cho staff)
+export const deleteProduct = async (productId) => {
+    try {
+        console.log('Deleting product:', productId);
+
+        // SỬ DỤNG URL CŨ CHO STAFF OPERATIONS
+        const response = await fetch(`http://localhost:9999/staff/product/${productId}`, {
+            method: 'DELETE',
+            headers: {
+                'accept': '*/*',
+                'Content-Type': 'application/json'
             }
-            throw new Error(error.response?.data?.message || `Không thể cập nhật sản phẩm với ID: ${id}`);
-        }
-    },
+        });
 
-    // GET - Lấy tất cả sản phẩm (không cần token)
-    getAllProducts: async () => {
-        try {
-            const response = await apiClient.get('');
-            return response.data;
-        } catch (error) {
-            throw new Error('Không thể tải danh sách sản phẩm');
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Delete product error response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
-    },
 
-    // DELETE - Xóa sản phẩm (CẦN TOKEN)
-    deleteProduct: async (id) => {
-        try {
-            const response = await apiClient.delete(`/${id}`);
-            return response.data;
-        } catch (error) {
-            if (error.response?.status === 401) {
-                throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-            }
-            throw new Error(`Không thể xóa sản phẩm với ID: ${id}`);
+        const data = await response.json();
+        console.log('Product deleted successfully:', data);
+
+        if (data && data.product) {
+            return { success: true, data: data.product };
+        } else if (data) {
+            return { success: true, data: data };
+        } else {
+            throw new Error('Invalid response structure');
         }
-    },
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        return { success: false, error: error.message };
+    }
 };

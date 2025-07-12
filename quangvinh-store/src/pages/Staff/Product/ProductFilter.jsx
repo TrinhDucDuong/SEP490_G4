@@ -1,21 +1,11 @@
-import React, { useState } from 'react';
+// src/pages/Staff/Product/ProductFilter.jsx
+
+import React from 'react';
 import { ChevronDown, X } from 'lucide-react';
 import DateRangePicker from '../../../components/common/Admin/DateRangePicker';
-import {
-    PRODUCT_COLOR_OPTIONS,
-    PRODUCT_SIZE_OPTIONS,
-    PRODUCT_BRAND_OPTIONS,
-    PRODUCT_STATUS_OPTIONS
-} from '../../../utils/constants';
+import { PRODUCT_STATUS_OPTIONS } from '../../../utils/constants/ProductConstants';
 
-const ProductFilter = ({ filters, onFilterChange, onClearFilters }) => {
-    const [showColorFilter, setShowColorFilter] = useState(false);
-
-    const colorOptions = PRODUCT_COLOR_OPTIONS;
-    const sizeOptions = PRODUCT_SIZE_OPTIONS;
-    const brandOptions = PRODUCT_BRAND_OPTIONS;
-    const statusOptions = PRODUCT_STATUS_OPTIONS.map(s => s.value);
-
+const ProductFilter = ({ filters, onFilterChange, onClearFilters, brands, categories }) => {
     const handleDateRangeChange = (dateRange) => {
         onFilterChange('startDate', dateRange.startDate);
         onFilterChange('endDate', dateRange.endDate);
@@ -25,98 +15,70 @@ const ProductFilter = ({ filters, onFilterChange, onClearFilters }) => {
     const hasActiveFilters = Object.values(filters).some(value => value !== '');
 
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-            <div className="flex flex-wrap gap-4 items-center">
+        <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* Brand Filter */}
-                <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700 mb-1">Thương hiệu</label>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Thương hiệu
+                    </label>
                     <select
                         value={filters.brand}
                         onChange={(e) => onFilterChange('brand', e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="">Tất cả thương hiệu</option>
-                        {brandOptions.map(brand => (
-                            <option key={brand} value={brand}>{brand}</option>
+                        {brands.map(brand => (
+                            <option key={brand.brandId} value={brand.brandId}>
+                                {brand.brandName}
+                            </option>
                         ))}
                     </select>
                 </div>
 
-                {/* Color Filter */}
-                <div className="flex flex-col relative">
-                    <label className="text-sm font-medium text-gray-700 mb-1">Màu sắc</label>
-                    <button
-                        onClick={() => setShowColorFilter(!showColorFilter)}
-                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between min-w-[120px]"
-                    >
-                        <span>{filters.color ? colorOptions.find(c => c.hex === filters.color)?.name : 'Tất cả màu'}</span>
-                        <ChevronDown className="h-4 w-4" />
-                    </button>
-
-                    {showColorFilter && (
-                        <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 p-2 min-w-[200px]">
-                            <div
-                                className="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded"
-                                onClick={() => {
-                                    onFilterChange('color', '');
-                                    setShowColorFilter(false);
-                                }}
-                            >
-                                <span>Tất cả màu</span>
-                            </div>
-                            {colorOptions.map(color => (
-                                <div
-                                    key={color.hex}
-                                    className="flex items-center p-2 hover:bg-gray-50 cursor-pointer rounded"
-                                    onClick={() => {
-                                        onFilterChange('color', color.hex);
-                                        setShowColorFilter(false);
-                                    }}
-                                >
-                                    <div
-                                        className="w-4 h-4 rounded-full mr-2 border border-gray-300"
-                                        style={{ backgroundColor: color.hex }}
-                                    />
-                                    <span>{color.name}</span>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                {/* Size Filter */}
-                <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700 mb-1">Kích thước</label>
+                {/* Category Filter */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Danh mục
+                    </label>
                     <select
-                        value={filters.size}
-                        onChange={(e) => onFilterChange('size', e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={filters.category}
+                        onChange={(e) => onFilterChange('category', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option value="">Tất cả kích thước</option>
-                        {sizeOptions.map(size => (
-                            <option key={size} value={size}>{size}</option>
+                        <option value="">Tất cả danh mục</option>
+                        {categories.map(category => (
+                            <option key={category.categoryId} value={category.categoryId}>
+                                {category.categoryName}
+                            </option>
                         ))}
                     </select>
                 </div>
 
                 {/* Status Filter */}
-                <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Trạng thái
+                    </label>
                     <select
                         value={filters.status}
                         onChange={(e) => onFilterChange('status', e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="">Tất cả trạng thái</option>
-                        {statusOptions.map(status => (
-                            <option key={status} value={status}>{status}</option>
+                        {PRODUCT_STATUS_OPTIONS.map(status => (
+                            <option key={status.value} value={status.value}>
+                                {status.label}
+                            </option>
                         ))}
                     </select>
                 </div>
 
-                {/* Date Range Filter */}
-                <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700 mb-1">Ngày tạo</label>
+                {/* Date Filter - THÊM LABEL */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Lọc theo ngày
+                    </label>
                     <DateRangePicker
                         value={{
                             startDate: filters.startDate,
@@ -125,22 +87,23 @@ const ProductFilter = ({ filters, onFilterChange, onClearFilters }) => {
                         }}
                         onChange={handleDateRangeChange}
                         placeholder="Chọn khoảng thời gian"
+                        className="w-full"
                     />
                 </div>
-
-                {/* Clear Filters */}
-                {hasActiveFilters && (
-                    <div className="flex flex-col justify-end">
-                        <button
-                            onClick={onClearFilters}
-                            className="px-4 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md transition-colors duration-200 flex items-center"
-                        >
-                            <X className="h-4 w-4 mr-1" />
-                            Xóa bộ lọc
-                        </button>
-                    </div>
-                )}
             </div>
+
+            {/* Clear Filters */}
+            {hasActiveFilters && (
+                <div className="mt-4 flex justify-end">
+                    <button
+                        onClick={onClearFilters}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+                    >
+                        <X className="w-4 h-4" />
+                        Xóa bộ lọc
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
