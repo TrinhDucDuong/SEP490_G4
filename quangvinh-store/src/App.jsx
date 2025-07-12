@@ -55,6 +55,8 @@ import ProductManagement from "./pages/Staff/Product/ProductManagement.jsx";
 import ProtectedRouteForManager from "./components/auth/ProtectedRouteForManager.jsx";
 import LoginForManager from "./pages/Admin/LoginForManager.jsx";
 import {AuthProviderForManager} from "./context/AuthContextForManager.jsx";
+import BlogManagement from "./pages/Admin/BlogManagement.jsx";
+import BlogDetailManager from "./pages/Admin/BlogDetailManager.jsx";
 
 function App() {
     return (
@@ -110,6 +112,9 @@ function App() {
                         </ProtectedRouteForManager>
                     }
                 >
+                    <Route path="blogs" element={<BlogManagement/>}/>
+                    <Route path="/admin/blogs/:id" element={<BlogDetailManager />} />
+
                     <Route path="category-management" element={<CategoryManagement />} />
                     <Route path="product-type" element={<ProductType />} />
                     <Route path="products-management" element={<ProductManagement />} />
