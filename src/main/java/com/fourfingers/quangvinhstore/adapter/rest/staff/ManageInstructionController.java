@@ -4,6 +4,8 @@ import com.fourfingers.quangvinhstore.usecase.boundary.staff.InstructionManageme
 import com.fourfingers.quangvinhstore.usecase.data.staff.InstructionInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,17 +25,19 @@ public class ManageInstructionController {
     }
 
     @PostMapping("/instruction")
-    public ResponseEntity<?> saveInstruction(@RequestBody InstructionInputData inputData) {
-        return ResponseEntity.ok(instructionManagementInputBoundary.save(null, inputData));
+    public ResponseEntity<?> saveInstruction(@RequestBody InstructionInputData inputData,
+                                             @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(instructionManagementInputBoundary.save(null, inputData, userDetails));
     }
 
     @PutMapping("/instruction/{id}")
-    public ResponseEntity<?> updateInstruction(@PathVariable String id, @RequestBody InstructionInputData inputData) {
-        return ResponseEntity.ok(instructionManagementInputBoundary.save(id, inputData));
+    public ResponseEntity<?> updateInstruction(@PathVariable String id, @RequestBody InstructionInputData inputData,
+                                               @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(instructionManagementInputBoundary.save(id, inputData, userDetails));
     }
 
     @DeleteMapping("/instruction/{id}")
-    public ResponseEntity<?> deleteInstruction(@PathVariable String id) {
-        return ResponseEntity.ok(instructionManagementInputBoundary.delete(id));
+    public ResponseEntity<?> deleteInstruction(@PathVariable String id, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(instructionManagementInputBoundary.delete(id, userDetails));
     }
 }
