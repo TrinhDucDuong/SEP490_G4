@@ -14,18 +14,6 @@ const ProductViewModal = ({
                           }) => {
     if (!isOpen || !product) return null;
 
-    // Get brand name
-    const getBrandName = (brandId) => {
-        const brand = brands.find(b => b.brandId === brandId);
-        return brand ? brand.brandName : '';
-    };
-
-    // Get category name
-    const getCategoryName = (categoryId) => {
-        const category = categories.find(c => c.categoryId === categoryId);
-        return category ? category.categoryName : '';
-    };
-
     // SỬ DỤNG colors parameter để mapping màu sắc từ API
     const getColorInfo = (colorValue) => {
         if (!colorValue || !colors || !Array.isArray(colors)) {
@@ -70,7 +58,7 @@ const ProductViewModal = ({
                 {/* Content */}
                 <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        {/* Left Column - Basic Info */}
+                        {/* Left Column - Basic Info - BỎ BRAND VÀ CATEGORY */}
                         <div className="space-y-6">
                             {/* Basic Information */}
                             <div>
@@ -92,16 +80,6 @@ const ProductViewModal = ({
                                                 {PRODUCT_HELPERS.formatPrice(product.unitPrice)}đ
                                             </p>
                                         </div>
-                                    </div>
-
-                                    <div className="border-t pt-4">
-                                        <span className="text-sm text-gray-600">Thương hiệu:</span>
-                                        <p className="font-medium text-lg">{getBrandName(product.brandId)}</p>
-                                    </div>
-
-                                    <div>
-                                        <span className="text-sm text-gray-600">Danh mục:</span>
-                                        <p className="font-medium text-lg">{getCategoryName(product.categoryId)}</p>
                                     </div>
 
                                     <div>

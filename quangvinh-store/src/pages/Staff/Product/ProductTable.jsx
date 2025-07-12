@@ -117,37 +117,45 @@ const ProductTable = ({
         setSelectedProduct(null);
     };
 
-    // CẬP NHẬT: Lấy brand name trực tiếp từ product.brand
+    // Get brand name - SỬA: Lấy từ nested object hoặc brandId
     const getBrandName = (product) => {
         console.log('🏷️ Getting brand name for product:', product);
 
-        if (product && product.brand && product.brand.brandName) {
+        // Trường hợp 1: Có nested brand object (từ API mới)
+        if (product.brand && product.brand.brandName) {
             return String(product.brand.brandName);
         }
 
-        // Fallback: tìm từ brands array nếu chỉ có brandId
-        if (product && product.brandId && brands && Array.isArray(brands)) {
-            const brand = brands.find(b => b.brandId === product.brandId);
-            return brand ? String(brand.brandName) : '';
+        // Trường hợp 2: Chỉ có brandId, tìm trong brands array
+        if (product.brandId && brands && Array.isArray(brands)) {
+            const brand = brands.find(b => b.brandId === parseInt(product.brandId));
+            if (brand) {
+                return String(brand.brandName);
+            }
         }
 
+        console.log('❌ No brand found for product:', product.productId);
         return '';
     };
 
-    // CẬP NHẬT: Lấy category name trực tiếp từ product.category
+    // Get category name - SỬA: Lấy từ nested object hoặc categoryId
     const getCategoryName = (product) => {
         console.log('📂 Getting category name for product:', product);
 
-        if (product && product.category && product.category.categoryName) {
+        // Trường hợp 1: Có nested category object (từ API mới)
+        if (product.category && product.category.categoryName) {
             return String(product.category.categoryName);
         }
 
-        // Fallback: tìm từ categories array nếu chỉ có categoryId
-        if (product && product.categoryId && categories && Array.isArray(categories)) {
-            const category = categories.find(c => c.categoryId === product.categoryId);
-            return category ? String(category.categoryName) : '';
+        // Trường hợp 2: Chỉ có categoryId, tìm trong categories array
+        if (product.categoryId && categories && Array.isArray(categories)) {
+            const category = categories.find(c => c.categoryId === parseInt(product.categoryId));
+            if (category) {
+                return String(category.categoryName);
+            }
         }
 
+        console.log('❌ No category found for product:', product.productId);
         return '';
     };
 
@@ -280,13 +288,18 @@ const ProductTable = ({
                         ) : (
                             currentProducts.map((product, index) => {
                                 // Debug cho từng product
-                                console.log(`Product ${index}:`, {
+                                const brandName = getBrandName(product);
+                                const categoryName = getCategoryName(product);
+
+                                console.log(`🔍 Product ${index + 1} display data:`, {
                                     productId: product.productId,
                                     productName: product.productName,
-                                    brand: product.brand,
-                                    category: product.category,
-                                    brandName: getBrandName(product),
-                                    categoryName: getCategoryName(product)
+                                    brandName,
+                                    categoryName,
+                                    rawBrand: product.brand,
+                                    rawCategory: product.category,
+                                    rawBrandId: product.brandId,
+                                    rawCategoryId: product.categoryId
                                 });
 
                                 return (
@@ -310,17 +323,21 @@ const ProductTable = ({
                                             {renderImages(product)}
                                         </td>
 
-                                        {/* Brand - CẬP NHẬT: Sử dụng product.brand */}
+                                        {/* Brand - SỬA: Hiển thị tên brand hoặc dấu gạch ngang */}
                                         <td className="px-6 py-4 text-center">
                                             <div className="text-center text-gray-700">
-                                                {getBrandName(product)}
+                                                {brandName || (
+                                                    <span className="text-gray-400 italic">-</span>
+                                                )}
                                             </div>
                                         </td>
 
-                                        {/* Category - CẬP NHẬT: Sử dụng product.category */}
+                                        {/* Category - SỬA: Hiển thị tên category hoặc dấu gạch ngang */}
                                         <td className="px-6 py-4 text-center">
                                             <div className="text-center text-gray-700">
-                                                {getCategoryName(product)}
+                                                {categoryName || (
+                                                    <span className="text-gray-400 italic">-</span>
+                                                )}
                                             </div>
                                         </td>
 
@@ -403,14 +420,14 @@ const ProductTable = ({
                 )}
             </div>
 
-            {/* Modals */}
+            {/* Modals - THÊM SAFE PROPS */}
             <ProductModal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
                 onSubmit={onCreateProduct}
-                colors={colors}
-                brands={brands}
-                categories={categories}
+                colors={colors || []}
+                brands={brands || []}
+                categories={categories || []}
                 mode="create"
             />
 
@@ -418,9 +435,9 @@ const ProductTable = ({
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 onSubmit={onUpdateProduct}
-                colors={colors}
-                brands={brands}
-                categories={categories}
+                colors={colors || []}
+                brands={brands || []}
+                categories={categories || []}
                 mode="edit"
                 initialData={selectedProduct}
             />
@@ -429,9 +446,9 @@ const ProductTable = ({
                 isOpen={isViewModalOpen}
                 onClose={() => setIsViewModalOpen(false)}
                 product={selectedProduct}
-                colors={colors}
-                brands={brands}
-                categories={categories}
+                colors={colors || []}
+                brands={brands || []}
+                categories={categories || []}
             />
 
             <ProductImageModal
