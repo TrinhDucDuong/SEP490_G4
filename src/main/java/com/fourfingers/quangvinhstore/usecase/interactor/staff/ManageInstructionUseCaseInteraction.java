@@ -4,6 +4,7 @@ import com.fourfingers.quangvinhstore.adapter.exception.InstructionNotFoundExcep
 import com.fourfingers.quangvinhstore.domain.model.staff.Instruction;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.InstructionStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.InstructionRepository;
+import com.fourfingers.quangvinhstore.infrastructure.schema.AccountEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.InstructionEntity;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.InstructionManagementOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.InstructionManagementInputBoundary;
@@ -12,8 +13,10 @@ import com.fourfingers.quangvinhstore.usecase.data.staff.InstructionOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.ListInstructionOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -46,7 +49,7 @@ public class ManageInstructionUseCaseInteraction implements InstructionManagemen
     }
 
     @Override
-    public InstructionOutputData save(String id, InstructionInputData instructionInputData) {
+    public InstructionOutputData save(String id, InstructionInputData instructionInputData, UserDetails userDetails) {
         if(id != null) {
             try {
                 Long instructionId = Long.parseLong(id);
@@ -54,6 +57,8 @@ public class ManageInstructionUseCaseInteraction implements InstructionManagemen
                         .orElseThrow(() -> new InstructionNotFoundException("Instruction not found"));
                 instructionEntity.setInstructionName(instructionInputData.getInstructionName());
                 instructionEntity.setInstructionDescription(instructionInputData.getInstructionDescription());
+                instructionEntity.setUpdatedBy((AccountEntity) userDetails);
+                instructionEntity.setUpdatedAt(LocalDateTime.now());
                 return instructionManagementOutputBoundary.convertToInstructionOutputData(instructionMapper
                         .toModel(instructionRepository
                                 .save(instructionEntity)));
@@ -65,6 +70,8 @@ public class ManageInstructionUseCaseInteraction implements InstructionManagemen
                     .instructionName(instructionInputData.getInstructionName())
                     .instructionDescription(instructionInputData.getInstructionDescription())
                     .isActive(true)
+                    .createdBy((AccountEntity) userDetails)
+                    .createdAt(LocalDateTime.now())
                     .build();
             return instructionManagementOutputBoundary.convertToInstructionOutputData(
                     instructionMapper.toModel(instructionRepository.save(instructionEntity))
@@ -73,12 +80,14 @@ public class ManageInstructionUseCaseInteraction implements InstructionManagemen
     }
 
     @Override
-    public InstructionOutputData delete(String id) {
+    public InstructionOutputData delete(String id, UserDetails userDetails) {
         try {
             Long instructionId = Long.parseLong(id);
             InstructionEntity instructionEntity = instructionRepository.findById(instructionId)
                     .orElseThrow(() -> new InstructionNotFoundException("Instruction not found"));
             instructionEntity.setIsActive(false);
+            instructionEntity.setUpdatedBy((AccountEntity) userDetails);
+            instructionEntity.setUpdatedAt(LocalDateTime.now());
             return instructionManagementOutputBoundary.convertToInstructionOutputData(
                     instructionMapper.toModel(instructionRepository.save(instructionEntity))
             );
