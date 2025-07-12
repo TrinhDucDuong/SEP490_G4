@@ -16,18 +16,20 @@ public class ManageSNSController {
     private final SNSManagementInputBoundary snsManagementInputBoundary;
 
     @GetMapping
-    public ResponseEntity<?> getAllSNSs() {
-        return ResponseEntity.ok(snsManagementInputBoundary.getAllSNSs());
+    public ResponseEntity<?> getAllSNSs(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(snsManagementInputBoundary.getAllSNSs(userDetails));
     }
 
     @PostMapping
-    public ResponseEntity<?> saveSNS(@RequestBody SNSInputData snsInputData) {
-        return ResponseEntity.ok(snsManagementInputBoundary.save(snsInputData));
+    public ResponseEntity<?> saveSNS(@RequestBody SNSInputData snsInputData,
+                                     @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(snsManagementInputBoundary.save(snsInputData, userDetails));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getSNS(@PathVariable String id) {
-        return ResponseEntity.ok(snsManagementInputBoundary.getSNS(id));
+    public ResponseEntity<?> getSNS(@PathVariable Long id,
+                                    @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(snsManagementInputBoundary.getSNS(id, userDetails));
     }
 
 //    @PutMapping
@@ -36,8 +38,8 @@ public class ManageSNSController {
 //    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteSNS(@PathVariable String id,
-                                           @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> deleteSNS(@PathVariable Long id,
+                                       @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(snsManagementInputBoundary.delete(id, userDetails));
     }
 }

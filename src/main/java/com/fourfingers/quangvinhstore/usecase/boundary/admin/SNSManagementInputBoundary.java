@@ -6,11 +6,11 @@ import com.fourfingers.quangvinhstore.usecase.data.auth.SNSOutputData;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface SNSManagementInputBoundary {
-    ListSNSOutputData getAllSNSs();
+    ListSNSOutputData getAllSNSs(UserDetails userDetails);
 
-    SNSOutputData save(SNSInputData snsInputData);
+    SNSOutputData save(SNSInputData snsInputData, UserDetails userDetails);
 
-    SNSOutputData getSNS(String id);
+    SNSOutputData getSNS(Long id, UserDetails userDetails);
 
-    SNSOutputData delete(String id, UserDetails userDetails);
+    SNSOutputData delete(Long id, UserDetails userDetails);
 }
