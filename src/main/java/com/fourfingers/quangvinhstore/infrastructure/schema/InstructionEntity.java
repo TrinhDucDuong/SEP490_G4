@@ -34,4 +34,11 @@ public class InstructionEntity {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by", referencedColumnName = "account_id")
+    private AccountEntity updatedBy;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }
