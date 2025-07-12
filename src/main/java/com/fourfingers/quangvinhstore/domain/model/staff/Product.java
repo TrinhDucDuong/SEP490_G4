@@ -25,4 +25,6 @@ public class Product {
     private Account updatedBy;
     private List<Image> images;
     private List<ProductVariant> productVariants;
+    private Brand brand;
+    private Category category;
 }
