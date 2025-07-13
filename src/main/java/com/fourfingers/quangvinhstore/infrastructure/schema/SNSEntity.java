@@ -26,5 +26,5 @@ public class SNSEntity {
     private String snsChatUrl;
 
     @Column(name = "is_active", columnDefinition = "boolean default true")
-    private boolean isActive;
+    private Boolean isActive;
 }
