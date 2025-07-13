@@ -1,22 +1,35 @@
-// src/api/BlogManagementAPI.js
 import axios from "axios";
 
 const BASE_URL = "http://localhost:9999/staff/blog";
 
-export const BlogManagementAPI = {
-    getAll: () => axios.get(BASE_URL),
-    getById: (id) => axios.get(`${BASE_URL}/${id}`),
-    create: (blogInputData, blogImages) => {
-        const formData = new FormData();
-        formData.append("blogInputData", JSON.stringify(blogInputData));
-        blogImages.forEach((image) => {
-            formData.append("blogImages", image);
-        });
+const getToken = () => {
+    return localStorage.getItem("adminAuthToken") || sessionStorage.getItem("adminAuthToken") || "";
+};
 
-        return axios.post(BASE_URL, formData, {
+const authHeaders = () => ({
+    Authorization: `Bearer ${getToken()}`,
+});
+
+export const BlogManagementAPI = {
+    getAll: () => axios.get(BASE_URL, { headers: authHeaders() }),
+
+    getById: (id) => axios.get(`${BASE_URL}/${id}`, { headers: authHeaders() }),
+
+    create: (formData) =>
+        axios.post(BASE_URL, formData, {
             headers: {
+                ...authHeaders(),
                 "Content-Type": "multipart/form-data",
             },
-        });
-    },
+        }),
+
+    update: (id, formData) =>
+        axios.put(`${BASE_URL}/${id}`, formData, {
+            headers: {
+                ...authHeaders(),
+                "Content-Type": "multipart/form-data",
+            },
+        }),
+
+    delete: (id) => axios.delete(`${BASE_URL}/${id}`, { headers: authHeaders() }),
 };

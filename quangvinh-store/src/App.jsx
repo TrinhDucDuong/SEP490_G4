@@ -13,8 +13,7 @@ import CustomerLayout from './layouts/CustomerLayout';
 import AdminLayout from './layouts/AdminLayout';
 
 // Auth Components
-import ProtectedRouteForManager from './components/auth/ProtectedRouteForManager';
-import LoginForManager from './pages/Admin/LoginForManager';
+
 
 // Customer pages
 import Home from './pages/Customer/Home/Home.jsx';
@@ -52,11 +51,12 @@ import BlogList from "./pages/Customer/Blog/BlogList.jsx";
 import CategoryManagement from "./pages/Staff/Category/CategoryManagement.jsx";
 import BrandManagement from "./pages/Staff/Brand/BrandManagement.jsx";
 import ProductManagement from "./pages/Staff/Product/ProductManagement.jsx";
-import ProtectedRouteForManager from "./components/auth/ProtectedRouteForManager.jsx";
-import LoginForManager from "./pages/Admin/LoginForManager.jsx";
 import {AuthProviderForManager} from "./context/AuthContextForManager.jsx";
 import BlogManagement from "./pages/Admin/BlogManagement.jsx";
 import BlogDetailManager from "./pages/Admin/BlogDetailManager.jsx";
+import BlogForm from "./pages/Admin/BlogForm.jsx";
+import ProtectedRouteForManager from "./components/auth/ProtectedRouteForManager.jsx";
+import LoginForManager from "./pages/Admin/LoginForManager.jsx";
 
 function App() {
     return (
@@ -114,6 +114,8 @@ function App() {
                 >
                     <Route path="blogs" element={<BlogManagement/>}/>
                     <Route path="/admin/blogs/:id" element={<BlogDetailManager />} />
+                    <Route path="/admin/blogs/create" element={<BlogForm />} />
+                    <Route path="/admin/blogs/:id/edit" element={<BlogForm isEdit />} />
 
                     <Route path="category-management" element={<CategoryManagement />} />
                     <Route path="product-type" element={<ProductType />} />
