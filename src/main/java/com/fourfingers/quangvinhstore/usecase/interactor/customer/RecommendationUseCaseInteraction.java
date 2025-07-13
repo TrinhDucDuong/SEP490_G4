@@ -7,6 +7,7 @@ import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.domain.model.customer.Product;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductMapper;
+import com.fourfingers.quangvinhstore.infrastructure.repository.AccountRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ActionLogRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
@@ -20,6 +21,8 @@ import com.fourfingers.quangvinhstore.usecase.boundary.customer.RecommendationIn
 import com.fourfingers.quangvinhstore.usecase.data.customer.ListProductOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +41,7 @@ public class RecommendationUseCaseInteraction implements RecommendationInputBoun
     private final ProductMapper productMapper;
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
+    private final AccountRepository accountRepository;
 
     private String getRecommendation(String productInfo, String actionLogInfo) {
         return genAiUtilBoundary.getRecommendation(productInfo, actionLogInfo);
@@ -110,24 +114,37 @@ public class RecommendationUseCaseInteraction implements RecommendationInputBoun
     @Override
     public ListProductOutputData getRecommendation(UserDetails userDetails) {
         AccountEntity accountEntity = (AccountEntity) userDetails;
+        String recommendedProductInfo = accountEntity.getRecommendedProduct();
+        List<Product> recommendedProduct = null;
+        if (recommendedProductInfo != null && !recommendedProductInfo.isBlank()) {
+             recommendedProduct = getListProductIdFromResponse(recommendedProductInfo)
+                    .stream()
+                    .map(this::getProductInformation)
+                    .toList();
+        }
+        if(recommendedProduct == null)  {
+            Pageable pageable = PageRequest.of(0, 15);
+            recommendedProduct = productRepository.findAll(pageable).stream().map(productMapper::toModel).toList();
+        }
+        return productOutputBoundary.convertToListProductOutputData(recommendedProduct);
+    }
+
+    @Override
+    public void saveRecommendation(UserDetails userDetails) {
+        AccountEntity accountEntity = (AccountEntity) userDetails;
         String actionLogInfo = getUserActionLogsAsJson(accountEntity.getAccountId());
         String productInfo = getProductInfo();
-        String response = getRecommendation(productInfo, actionLogInfo);
-        List<Product> recommendedProduct = getListProductIdFromResponse(response)
-                .stream()
-                .map(this::getProductInformation)
-                .toList();
-        return productOutputBoundary.convertToListProductOutputData(recommendedProduct);
+        accountEntity.setRecommendedProduct(getRecommendation(productInfo, actionLogInfo));
+        accountRepository.save(accountEntity);
     }
 
     private List<Long> getListProductIdFromResponse(String response) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            // 1. Làm sạch Markdown: loại bỏ phần ```json và ``` (cả các khoảng trắng thừa)
             String cleaned = response
-                    .replaceAll("(?s)```json\\s*", "")  // xóa dòng mở đầu ```json
-                    .replaceAll("(?s)```", "")          // xóa dòng đóng ```
-                    .trim();                            // xóa khoảng trắng đầu-cuối
+                    .replaceAll("(?s)```json\\s*", "")
+                    .replaceAll("(?s)```", "")
+                    .trim();
 
             return objectMapper.readValue(cleaned, new TypeReference<List<Long>>() {});
         } catch (JsonProcessingException e) {

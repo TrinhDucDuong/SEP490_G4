@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,10 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class RecommendationController {
     private final RecommendationInputBoundary recommendationInputBoundary;
 
-    //TODO: fix if the user is not logged in.
     @GetMapping
     public ResponseEntity<?> getRecommendation(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(recommendationInputBoundary.getRecommendation(userDetails));
+    }
+
+    @PostMapping("/cache")
+    public ResponseEntity<?> saveRecommendationOnLogout(@AuthenticationPrincipal UserDetails userDetails) {
+        recommendationInputBoundary.saveRecommendation(userDetails);
+        return ResponseEntity.noContent().build();
     }
 
 }
