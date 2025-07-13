@@ -83,6 +83,7 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.POST, "/staff/**").permitAll();
                     auth.requestMatchers(HttpMethod.DELETE, "/staff/**").permitAll();
                     auth.requestMatchers(HttpMethod.PUT, "/staff/**").permitAll();
+                    auth.requestMatchers(HttpMethod.PATCH, "/staff/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/store").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/store/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/instruction").permitAll();

@@ -2,6 +2,7 @@ package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 
 import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.domain.model.staff.Feedback;
+import com.fourfingers.quangvinhstore.domain.model.staff.Store;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.FeedbackStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.StoreStaffMapper;
@@ -96,11 +97,55 @@ public class ManageFeedbackUseCaseInteraction implements FeedbackManagementInput
         //Save information
         FeedbackEntity updatedFeedbackEntity = feedbackRepository.save(needToUpdateFeedbackEntity);
 
-        //save and get a list new images
+        //save and get a list of new images
         Feedback updatedFeedback = feedbackStaffMapper.toModel(updatedFeedbackEntity);
         updatedFeedback.setFeedbackImages(saveFeedbackImages(feedbackImages, needToUpdateFeedbackEntity));
         return feedbackManagementOutputBoundary.convertToFeedbackOutputData(
                 updatedFeedback, storeStaffMapper.toModel(relatedStore)
+        );
+    }
+
+    @Override
+    public FeedbackOutputData delete(String id, UserDetails userDetails) {
+        FeedbackEntity needToDeleteFeedbackEntity = feedbackRepository.findById(Long.valueOf(id)).orElseThrow(
+                () -> new EntityNotFoundException("Feedback not found")
+        );
+        needToDeleteFeedbackEntity.setUpdatedBy((AccountEntity) userDetails);
+        needToDeleteFeedbackEntity.setUpdatedAt(LocalDateTime.now());
+        needToDeleteFeedbackEntity.setIsActive(false);
+        Feedback feedback = feedbackStaffMapper.toModel(feedbackRepository.save(needToDeleteFeedbackEntity));
+        return feedbackManagementOutputBoundary.convertToFeedbackOutputData(
+                feedback, storeStaffMapper.toModel(needToDeleteFeedbackEntity.getStore())
+        );
+    }
+
+    @Override
+    public FeedbackOutputData unDelete(String id, UserDetails userDetails) {
+        FeedbackEntity needToUnDeleteFeedbackEntity = feedbackRepository.findById(Long.valueOf(id)).orElseThrow(
+                () -> new EntityNotFoundException("Feedback not found")
+        );
+        needToUnDeleteFeedbackEntity.setUpdatedAt(LocalDateTime.now());
+        needToUnDeleteFeedbackEntity.setUpdatedBy((AccountEntity) userDetails);
+        needToUnDeleteFeedbackEntity.setIsActive(true);
+        Feedback feedback = feedbackStaffMapper.toModel(feedbackRepository.save(needToUnDeleteFeedbackEntity));
+        return feedbackManagementOutputBoundary.convertToFeedbackOutputData(
+                feedback, storeStaffMapper.toModel(needToUnDeleteFeedbackEntity.getStore())
+        );
+    }
+
+    @Override
+    public FeedbackOutputData get(String id) {
+        FeedbackEntity feedbackEntity = feedbackRepository.findById(Long.valueOf(id)).orElseThrow(
+                () -> new EntityNotFoundException("Feedback not found")
+        );
+        Feedback feedback = feedbackStaffMapper.toModel(feedbackEntity);
+        feedback.setFeedbackImages(getFeedbackImages(feedbackEntity));
+        Store relatedStore = null;
+        if(feedbackEntity.getStore() != null) {
+            relatedStore = storeStaffMapper.toModel(feedbackEntity.getStore());
+        }
+        return feedbackManagementOutputBoundary.convertToFeedbackOutputData(
+                feedback, relatedStore
         );
     }
 
