@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useFetchBlogById } from '../../hooks/Admin/useFetchBlogManagementAPI';
 import { format } from 'date-fns';
+import {BlogManagementAPI} from "../../utils/api/Admin/BlogManagementAPI.js";
 
 function BlogDetailManager() {
     const { id } = useParams();
@@ -12,9 +13,37 @@ function BlogDetailManager() {
 
     return (
         <div className="p-6 max-w-4xl mx-auto">
-            <Link to="/admin/blogs" className="text-blue-600 hover:underline mb-4 inline-block">
-                ← Quay lại danh sách
-            </Link>
+            <div className="flex justify-between items-center mb-6">
+                <Link to="/admin/blogs" className="text-blue-600 hover:underline mb-4 inline-block">
+                    ← Quay lại danh sách
+                </Link>
+                <div className="mt-6 flex gap-4">
+                    <Link
+                        to={`/admin/blogs/${blog.blogId}/edit`}
+                        className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                    >
+                        Chỉnh sửa
+                    </Link>
+                    <button
+                        onClick={async () => {
+                            if (window.confirm("Bạn có chắc chắn muốn xoá bài viết này không?")) {
+                                try {
+                                    await BlogManagementAPI.delete(blog.blogId);
+                                    alert("Đã xoá bài viết");
+                                    window.location.href = "/admin/blogs";
+                                } catch (e) {
+                                    alert("Xoá thất bại!");
+                                    console.error(e);
+                                }
+                            }
+                        }}
+                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                        Xoá
+                    </button>
+                </div>
+            </div>
+
 
             {blog.blogImages.length > 0 && (
                 <img
@@ -30,6 +59,8 @@ function BlogDetailManager() {
             </div>
 
             <div className="prose max-w-none whitespace-pre-line">{blog.content}</div>
+
+
         </div>
     );
 }

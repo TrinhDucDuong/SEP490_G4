@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import {BlogManagementAPI} from "../../utils/api/Admin/BlogManagementAPI.js";
-
+import { BlogManagementAPI } from "../../utils/api/Admin/BlogManagementAPI";
 
 export const useFetchBlogs = () => {
     const [blogs, setBlogs] = useState([]);

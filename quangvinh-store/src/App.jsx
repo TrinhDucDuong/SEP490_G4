@@ -49,6 +49,7 @@ import LoginForManager from "./pages/Admin/LoginForManager.jsx";
 import {AuthProviderForManager} from "./context/AuthContextForManager.jsx";
 import BlogManagement from "./pages/Admin/BlogManagement.jsx";
 import BlogDetailManager from "./pages/Admin/BlogDetailManager.jsx";
+import BlogForm from "./pages/Admin/BlogForm.jsx";
 
 
 function App() {
@@ -107,6 +108,8 @@ function App() {
                 >
                     <Route path="blogs" element={<BlogManagement/>}/>
                     <Route path="/admin/blogs/:id" element={<BlogDetailManager />} />
+                    <Route path="/admin/blogs/create" element={<BlogForm />} />
+                    <Route path="/admin/blogs/:id/edit" element={<BlogForm isEdit />} />
 
                     <Route path="category-management" element={<CategoryManagement />} />
                     <Route path="product-type" element={<ProductType />} />

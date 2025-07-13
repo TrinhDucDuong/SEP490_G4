@@ -1,6 +1,6 @@
 const API_BASE_URL = 'http://localhost:9999/staff/brand';
 
-// GET - Lấy tất cả brands
+
 export const getAllBrands = async () => {
     try {
         const response = await fetch(API_BASE_URL, {
@@ -22,7 +22,7 @@ export const getAllBrands = async () => {
     }
 };
 
-// GET - Lấy brand theo ID
+
 export const getBrandById = async (brandId) => {
     try {
         const response = await fetch(`${API_BASE_URL}/${brandId}`, {
