@@ -16,4 +16,10 @@ public interface FeedbackManagementInputBoundary {
 
     FeedbackOutputData update(String id, FeedbackInputData feedbackInputData, List<MultipartFile> feedbackImages,
                               UserDetails userDetails) throws Exception;
+
+    FeedbackOutputData delete(String id, UserDetails userDetails);
+
+    FeedbackOutputData unDelete(String id, UserDetails userDetails);
+
+    FeedbackOutputData get(String id);
 }

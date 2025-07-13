@@ -38,4 +38,21 @@ public class ManageFeedbackController {
                                     @PathVariable String id) throws Exception {
         return ResponseEntity.ok(feedBackManagementInputBoundary.update(id, feedbackInputData, feedbackImages, userDetails));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable String id,
+                                    @AuthenticationPrincipal UserDetails userDetails) throws Exception {
+        return ResponseEntity.ok(feedBackManagementInputBoundary.delete(id, userDetails));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> unDelete(@PathVariable String id,
+                                      @AuthenticationPrincipal UserDetails userDetails) throws Exception {
+        return ResponseEntity.ok(feedBackManagementInputBoundary.unDelete(id, userDetails));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getFeedback(@PathVariable String id) {
+        return ResponseEntity.ok(feedBackManagementInputBoundary.get(id));
+    }
 }
