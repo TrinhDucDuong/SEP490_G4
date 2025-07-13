@@ -131,6 +131,7 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.DELETE, "/staff/star-rate/**").permitAll();
                     auth.requestMatchers(HttpMethod.PATCH, "/staff/star-rate/**").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/feedback/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session ->
