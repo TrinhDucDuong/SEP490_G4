@@ -1,15 +1,21 @@
+
 import {Routes, Route, Navigate} from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import {CartProvider} from "./context/CartContext.jsx";
-import { ToastContainer } from 'react-toastify';
 
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
+// Layout
 import CustomerLayout from './layouts/CustomerLayout';
 import AdminLayout from './layouts/AdminLayout';
 
+// Auth Components
+
+
+// Customer pages
 import Home from './pages/Customer/Home/Home.jsx';
 import ProductList from './pages/Customer/Product/ProductList.jsx';
 import ProductDetail from './pages/Customer/Product/ProductDetails.jsx';
@@ -19,7 +25,6 @@ import ForgotPassword from './pages/Customer/Login/ForgotPassword.jsx';
 import Cart from './pages/Customer/Payment/Cart.jsx';
 import Payment from './pages/Customer/Payment/Payment.jsx';
 import NotFound from './pages/Customer/Common/NotFound.jsx';
-
 import ProfileLayout from './pages/Customer/Profile/ProfileLayout';
 import Info from './pages/Customer/Profile/Information/Info';
 import Address from './pages/Customer/Profile/Address/Address';
@@ -28,11 +33,13 @@ import Notifications from './pages/Customer/Profile/Setting/Notifications';
 import Privacy from './pages/Customer/Profile/Setting/Privacy';
 import OrderHistory from './pages/Customer/Profile/Order/OrderHistory';
 
+// Admin pages
 import InstructionManagement from './pages/Staff/InstructionManagement';
 import PoliciesManagement from './pages/Staff/PoliciesManagement';
 import AboutUsManagement from './pages/Staff/AboutUsManagement';
 import CustomerList from './pages/Staff/CustomerList';
 import OrderManagement from './pages/Staff/OrderManagement';
+
 import ProductType from './pages/Staff/ProductType';
 import EmployeeManagement from './pages/Staff/EmployeeManagement';
 import PolicyPage from "./pages/Customer/Policy/PolicyPage.jsx";
@@ -44,10 +51,12 @@ import BlogList from "./pages/Customer/Blog/BlogList.jsx";
 import CategoryManagement from "./pages/Staff/Category/CategoryManagement.jsx";
 import BrandManagement from "./pages/Staff/Brand/BrandManagement.jsx";
 import ProductManagement from "./pages/Staff/Product/ProductManagement.jsx";
+import {AuthProviderForManager} from "./context/AuthContextForManager.jsx";
+import BlogManagement from "./pages/Admin/BlogManagement.jsx";
+import BlogDetailManager from "./pages/Admin/BlogDetailManager.jsx";
+import BlogForm from "./pages/Admin/BlogForm.jsx";
 import ProtectedRouteForManager from "./components/auth/ProtectedRouteForManager.jsx";
 import LoginForManager from "./pages/Admin/LoginForManager.jsx";
-import {AuthProviderForManager} from "./context/AuthContextForManager.jsx";
-
 
 function App() {
     return (
@@ -103,6 +112,11 @@ function App() {
                         </ProtectedRouteForManager>
                     }
                 >
+                    <Route path="blogs" element={<BlogManagement/>}/>
+                    <Route path="/admin/blogs/:id" element={<BlogDetailManager />} />
+                    <Route path="/admin/blogs/create" element={<BlogForm />} />
+                    <Route path="/admin/blogs/:id/edit" element={<BlogForm isEdit />} />
+
                     <Route path="category-management" element={<CategoryManagement />} />
                     <Route path="product-type" element={<ProductType />} />
                     <Route path="products-management" element={<ProductManagement />} />

@@ -1,20 +1,25 @@
 import { useState } from "react";
 import { FaComments } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
+import {useFetchChatBoxAPI} from "../../../hooks/Customer/useFetchChatBoxAPI.js";
 
 function ChatBoxAI() {
     const [isOpen, setIsOpen] = useState(false);
     const [input, setInput] = useState("");
     const [messages, setMessages] = useState([]);
+    const { handleSendToBot, loading } = useFetchChatBoxAPI();
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!input.trim()) return;
-        setMessages([...messages, { from: "user", text: input }]);
+
+        const userMsg = { from: "user", text: input };
+        setMessages((prev) => [...prev, userMsg]);
         setInput("");
 
-        setTimeout(() => {
-            setMessages((prev) => [...prev, { from: "bot", text: "Xin chào! Tôi là AI hỗ trợ." }]);
-        }, 600);
+        const botReply = await handleSendToBot(input);
+        const botMsg = { from: "bot", text: botReply };
+
+        setMessages((prev) => [...prev, botMsg]);
     };
 
     return (
@@ -37,8 +42,6 @@ function ChatBoxAI() {
                             <IoClose size={20} />
                         </button>
                     </div>
-
-                    {/* Messages */}
                     <div className="flex-1 p-4 overflow-y-auto space-y-3 text-sm">
                         {messages.map((msg, i) => (
                             <div
@@ -52,6 +55,11 @@ function ChatBoxAI() {
                                 {msg.text}
                             </div>
                         ))}
+                        {loading && (
+                            <div className="bg-gray-200 mr-auto text-left px-4 py-2 rounded-lg max-w-[75%] text-sm italic text-gray-500">
+                                Đang trả lời...
+                            </div>
+                        )}
                     </div>
 
                     {/* Input */}
@@ -64,10 +72,12 @@ function ChatBoxAI() {
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                                disabled={loading}
                             />
                             <button
                                 onClick={handleSend}
                                 className="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800 transition"
+                                disabled={loading}
                             >
                                 Gửi
                             </button>

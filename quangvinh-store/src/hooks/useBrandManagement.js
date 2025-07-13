@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllBrands, createBrand, updateBrand, deleteBrand } from '../utils/api/BrandManagementAPI';
+import { getAllBrands, createBrand, updateBrand, deleteBrand } from '../utils/api/Admin/BrandManagementAPI.js';
 import { BRAND_HELPERS } from '../utils/constants/BrandConstants';
 
 export const useBrandManagement = () => {
