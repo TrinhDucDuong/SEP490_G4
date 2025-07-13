@@ -101,6 +101,22 @@ export const useProductManagement = () => {
         setLoading(true);
         try {
             console.log('📝 Creating product:', productData, productImages?.length || 0, 'images');
+
+            // FIXED: Validation trước khi gửi
+            if (!productData.brandId || !productData.categoryId) {
+                return {
+                    success: false,
+                    error: 'Thiếu thông tin thương hiệu hoặc danh mục'
+                };
+            }
+
+            if (!productData.productVariants || productData.productVariants.length === 0) {
+                return {
+                    success: false,
+                    error: 'Sản phẩm phải có ít nhất một biến thể'
+                };
+            }
+
             const result = await createProduct(productData, productImages);
             if (result.success) {
                 console.log('✅ Product created successfully:', result.data);
@@ -118,11 +134,27 @@ export const useProductManagement = () => {
         }
     };
 
-    // Update product
+// FIXED: Update product với validation tốt hơn
     const updateProductHandler = async (productId, productData, productImages) => {
         setLoading(true);
         try {
             console.log('🔄 Updating product:', productId, productData, productImages?.length || 0, 'images');
+
+            // FIXED: Validation trước khi gửi
+            if (!productData.brandId || !productData.categoryId) {
+                return {
+                    success: false,
+                    error: 'Thiếu thông tin thương hiệu hoặc danh mục'
+                };
+            }
+
+            if (!productData.productVariants || productData.productVariants.length === 0) {
+                return {
+                    success: false,
+                    error: 'Sản phẩm phải có ít nhất một biến thể'
+                };
+            }
+
             const result = await updateProduct(productId, productData, productImages);
             if (result.success) {
                 console.log('✅ Product updated successfully:', result.data);

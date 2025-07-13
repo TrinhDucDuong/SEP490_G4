@@ -1,7 +1,6 @@
 // src/pages/Staff/Product/ProductModal.jsx
-
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2, Upload, ImageIcon } from 'lucide-react';
+import { X, Plus, Trash2, Upload } from 'lucide-react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { PRODUCT_DEFAULTS, PRODUCT_SIZE_OPTIONS, PRODUCT_HELPERS } from '../../../utils/constants/ProductConstants';
@@ -10,9 +9,9 @@ const ProductModal = ({
                           isOpen,
                           onClose,
                           onSubmit,
-                          colors,
                           brands,
                           categories,
+                          colors = [],
                           mode = 'create',
                           initialData = null
                       }) => {
@@ -22,25 +21,73 @@ const ProductModal = ({
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
-    // Initialize form data
+    // FIXED: Initialize form data với xử lý màu sắc hiện tại từ nested objects
     useEffect(() => {
         if (mode === 'edit' && initialData) {
             console.log('🔧 Edit mode - Initial data:', initialData);
             console.log('🏷️ Available brands for edit:', brands);
             console.log('📂 Available categories for edit:', categories);
 
+            // Xử lý brandId từ nested object hoặc trực tiếp
+            let brandId = '';
+            if (initialData.brandId) {
+                brandId = initialData.brandId;
+            } else if (initialData.brand && initialData.brand.brandId) {
+                brandId = initialData.brand.brandId;
+            }
+
+            // Xử lý categoryId từ nested object hoặc trực tiếp
+            let categoryId = '';
+            if (initialData.categoryId) {
+                categoryId = initialData.categoryId;
+            } else if (initialData.category && initialData.category.categoryId) {
+                categoryId = initialData.category.categoryId;
+            }
+
+            // FIXED: Xử lý productVariants với màu sắc hiện tại
+            let processedVariants = [];
+            if (initialData.productVariants && initialData.productVariants.length > 0) {
+                processedVariants = initialData.productVariants.map(variant => {
+                    // FIXED: Lấy colorHex từ nested object hoặc trực tiếp
+                    let colorHex = '#000000'; // Default color
+
+                    if (variant.color && variant.color.colorHex) {
+                        // Trường hợp có nested object color.colorHex
+                        colorHex = variant.color.colorHex;
+                    } else if (variant.color && typeof variant.color === 'string') {
+                        // Trường hợp color là string trực tiếp
+                        colorHex = variant.color;
+                    } else if (variant.colorHex) {
+                        // Trường hợp có colorHex trực tiếp
+                        colorHex = variant.colorHex;
+                    }
+
+                    console.log('🎨 Processing variant color:', {
+                        originalVariant: variant,
+                        extractedColor: colorHex
+                    });
+
+                    return {
+                        color: colorHex,
+                        productSize: variant.productSize || '',
+                        quantity: variant.quantity || 0
+                    };
+                });
+            }
+
             setFormData({
                 productName: initialData.productName || '',
                 productDescription: initialData.productDescription || '',
                 unitPrice: initialData.unitPrice ? PRODUCT_HELPERS.formatPrice(initialData.unitPrice) : '',
-                brandId: initialData.brandId || '',
-                categoryId: initialData.categoryId || '',
-                productVariants: initialData.productVariants || []
+                brandId: brandId,
+                categoryId: categoryId,
+                productVariants: processedVariants
             });
 
-            console.log('🔧 Form data set:', {
-                brandId: initialData.brandId,
-                categoryId: initialData.categoryId
+            console.log('🎨 Form data set with processed variants:', {
+                brandId,
+                categoryId,
+                processedVariants
             });
 
             // Set existing images for preview
@@ -58,6 +105,7 @@ const ProductModal = ({
             setPreviewImages(newPreviewImages);
             setProductImages([null, null, null, null, null, null]);
         } else {
+            // Reset form cho CREATE mode
             setFormData(PRODUCT_DEFAULTS.NEW_PRODUCT);
             setPreviewImages([null, null, null, null, null, null]);
             setProductImages([null, null, null, null, null, null]);
@@ -68,35 +116,22 @@ const ProductModal = ({
     // Handle form input changes
     const handleInputChange = (field, value) => {
         if (field === 'unitPrice') {
-            // SỬA LỖI: Xử lý input giá bán để tránh lỗi với bàn phím tiếng Việt
+            // Xử lý input giá bán để tránh lỗi với bàn phím tiếng Việt
             let numericValue = value.replace(/[^\d]/g, ''); // Chỉ giữ lại số
-
             // Format với dấu chấm
             if (numericValue) {
                 const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                setFormData(prev => ({
-                    ...prev,
-                    [field]: formattedValue
-                }));
+                setFormData(prev => ({ ...prev, [field]: formattedValue }));
             } else {
-                setFormData(prev => ({
-                    ...prev,
-                    [field]: ''
-                }));
+                setFormData(prev => ({ ...prev, [field]: '' }));
             }
         } else {
-            setFormData(prev => ({
-                ...prev,
-                [field]: value
-            }));
+            setFormData(prev => ({ ...prev, [field]: value }));
         }
 
         // Clear error when user starts typing
         if (errors[field]) {
-            setErrors(prev => ({
-                ...prev,
-                [field]: ''
-            }));
+            setErrors(prev => ({ ...prev, [field]: '' }));
         }
     };
 
@@ -160,44 +195,110 @@ const ProductModal = ({
         }));
     };
 
-    // Handle form submission
+    // Handle form submission với validation tốt hơn cho cả CREATE và UPDATE
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Parse price back to number
+        console.log('📝 === FORM SUBMISSION START ===');
+        console.log('📝 Mode:', mode);
+        console.log('📝 Raw form data:', formData);
+
+        // Parse và validate dữ liệu đúng cách cho cả CREATE và UPDATE
         const parsedFormData = {
             ...formData,
-            unitPrice: PRODUCT_HELPERS.parsePrice(formData.unitPrice)
+            unitPrice: PRODUCT_HELPERS.parsePrice(formData.unitPrice),
+            brandId: formData.brandId ? formData.brandId.toString() : '',
+            categoryId: formData.categoryId ? formData.categoryId.toString() : ''
         };
 
-        // Validate form
-        const validation = PRODUCT_HELPERS.validateProductData(parsedFormData);
-        if (!validation.isValid) {
-            const errorObj = {};
-            validation.errors.forEach(error => {
-                if (error.includes('tên sản phẩm')) errorObj.productName = error;
-                if (error.includes('giá')) errorObj.unitPrice = error;
-                if (error.includes('thương hiệu')) errorObj.brandId = error;
-                if (error.includes('danh mục')) errorObj.categoryId = error;
-                if (error.includes('biến thể')) errorObj.variants = error;
+        console.log('📝 Parsed form data for', mode, ':', parsedFormData);
+
+        // Validation tốt hơn
+        const validationErrors = {};
+
+        if (!parsedFormData.productName?.trim()) {
+            validationErrors.productName = 'Tên sản phẩm không được để trống';
+        }
+
+        if (!parsedFormData.unitPrice || parsedFormData.unitPrice <= 0) {
+            validationErrors.unitPrice = 'Giá sản phẩm phải lớn hơn 0';
+        }
+
+        if (!parsedFormData.brandId) {
+            validationErrors.brandId = 'Vui lòng chọn thương hiệu';
+        }
+
+        if (!parsedFormData.categoryId) {
+            validationErrors.categoryId = 'Vui lòng chọn danh mục';
+        }
+
+        if (!parsedFormData.productVariants || parsedFormData.productVariants.length === 0) {
+            validationErrors.variants = 'Sản phẩm phải có ít nhất một biến thể';
+        } else {
+            // Validate từng variant
+            parsedFormData.productVariants.forEach((variant, index) => {
+                if (!variant.color?.trim()) {
+                    validationErrors[`variant_color_${index}`] = 'Vui lòng chọn màu sắc';
+                }
+                if (!variant.productSize?.trim()) {
+                    validationErrors[`variant_size_${index}`] = 'Vui lòng chọn kích thước';
+                }
+                if (variant.quantity === undefined || variant.quantity < 0) {
+                    validationErrors[`variant_quantity_${index}`] = 'Số lượng phải >= 0';
+                }
             });
-            setErrors(errorObj);
+        }
+
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            console.log('❌ Validation errors:', validationErrors);
             return;
         }
 
         setLoading(true);
         try {
-            // Filter out null images
+            // FIXED: Logic xử lý images mới - phân biệt CREATE và UPDATE
             const validImages = productImages.filter(img => img !== null);
+
+            // FIXED: Phân biệt logic gửi images giữa CREATE và UPDATE
+            let shouldSendImages = false;
+            let imagesToSend = [];
+
+            if (mode === 'create') {
+                // CREATE: Luôn gửi images (kể cả empty array)
+                shouldSendImages = true;
+                imagesToSend = validImages;
+                console.log('📝 CREATE mode: Will send images (even if empty)');
+            } else {
+                // UPDATE: Chỉ gửi khi có ảnh mới
+                if (validImages.length > 0) {
+                    shouldSendImages = true;
+                    imagesToSend = validImages;
+                    console.log('📝 UPDATE mode: Will send new images');
+                } else {
+                    shouldSendImages = false;
+                    imagesToSend = [];
+                    console.log('📝 UPDATE mode: No new images - will keep existing images');
+                }
+            }
+
+            console.log('📝 Submitting', mode, 'with data:', parsedFormData);
+            console.log('📝 Should send images:', shouldSendImages);
+            console.log('📝 Images to send:', imagesToSend.length);
 
             let result;
             if (mode === 'create') {
-                result = await onSubmit(parsedFormData, validImages);
+                console.log('📝 Calling CREATE function');
+                result = await onSubmit(parsedFormData, imagesToSend, shouldSendImages);
             } else {
-                result = await onSubmit(initialData.productId, parsedFormData, validImages);
+                console.log('📝 Calling UPDATE function for product:', initialData.productId);
+                result = await onSubmit(initialData.productId, parsedFormData, imagesToSend, shouldSendImages);
             }
 
+            console.log('📝 Submission result:', result);
+
             if (result.success) {
+                console.log('✅ Form submission successful');
                 onClose();
                 // Reset form
                 setFormData(PRODUCT_DEFAULTS.NEW_PRODUCT);
@@ -205,12 +306,15 @@ const ProductModal = ({
                 setPreviewImages([null, null, null, null, null, null]);
                 setErrors({});
             } else {
+                console.log('❌ Form submission failed:', result.error);
                 setErrors({ submit: result.error || 'Có lỗi xảy ra' });
             }
         } catch (error) {
+            console.error('💥 Error in form submission:', error);
             setErrors({ submit: 'Có lỗi xảy ra khi xử lý yêu cầu' });
         } finally {
             setLoading(false);
+            console.log('📝 === FORM SUBMISSION END ===');
         }
     };
 
@@ -218,315 +322,323 @@ const ProductModal = ({
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            <div className="bg-white rounded-lg w-full max-w-7xl max-h-[90vh] overflow-y-auto">
                 {/* Header */}
-                <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                    <h2 className="text-xl font-semibold text-gray-900">
-                        {mode === 'create' ? 'Thêm sản phẩm mới' : 'Chỉnh sửa sản phẩm'}
+                <div className="flex justify-between items-center p-6 border-b">
+                    <h2 className="text-xl font-semibold">
+                        {mode === 'edit' ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'}
                     </h2>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="text-gray-400 hover:text-gray-600"
                     >
-                        <X className="w-5 h-5" />
+                        <X size={24} />
                     </button>
                 </div>
 
-                {/* Content */}
-                <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Basic Information */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="p-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Left Column - Basic Info */}
+                        <div className="space-y-6">
+                            {/* Product Name */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Tên sản phẩm *
+                                    Tên sản phẩm <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
                                     value={formData.productName}
                                     onChange={(e) => handleInputChange('productName', e.target.value)}
-                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                                         errors.productName ? 'border-red-500' : 'border-gray-300'
                                     }`}
                                     placeholder="Nhập tên sản phẩm"
                                 />
                                 {errors.productName && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.productName}</p>
+                                    <p className="text-red-500 text-sm mt-1">{errors.productName}</p>
                                 )}
                             </div>
 
+                            {/* Price */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Giá bán * (VNĐ)
+                                    Giá sản phẩm (VNĐ) <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
                                     value={formData.unitPrice}
                                     onChange={(e) => handleInputChange('unitPrice', e.target.value)}
-                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                                         errors.unitPrice ? 'border-red-500' : 'border-gray-300'
                                     }`}
-                                    placeholder="Ví dụ: 1.000.000"
+                                    placeholder="Nhập giá sản phẩm"
                                 />
                                 {errors.unitPrice && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.unitPrice}</p>
+                                    <p className="text-red-500 text-sm mt-1">{errors.unitPrice}</p>
                                 )}
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Thương hiệu *
-                                </label>
-                                <select
-                                    value={formData.brandId}
-                                    onChange={(e) => handleInputChange('brandId', e.target.value)}
-                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                        errors.brandId ? 'border-red-500' : 'border-gray-300'
-                                    }`}
-                                >
-                                    <option value="">Chọn thương hiệu</option>
-                                    {brands.map(brand => (
-                                        <option key={brand.brandId} value={brand.brandId}>
-                                            {brand.brandName}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errors.brandId && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.brandId}</p>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Danh mục *
-                                </label>
-                                <select
-                                    value={formData.categoryId}
-                                    onChange={(e) => handleInputChange('categoryId', e.target.value)}
-                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                        errors.categoryId ? 'border-red-500' : 'border-gray-300'
-                                    }`}
-                                >
-                                    <option value="">Chọn danh mục</option>
-                                    {categories.map(category => (
-                                        <option key={category.categoryId} value={category.categoryId}>
-                                            {category.categoryName}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errors.categoryId && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.categoryId}</p>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Description với CKEditor5 */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Mô tả sản phẩm
-                            </label>
-                            <div className="border border-gray-300 rounded-lg overflow-hidden">
-                                <CKEditor
-                                    editor={ClassicEditor}
-                                    data={formData.productDescription}
-                                    onChange={(event, editor) => {
-                                        const data = editor.getData();
-                                        handleInputChange('productDescription', data);
-                                    }}
-                                    config={{
-                                        toolbar: [
-                                            'heading', '|',
-                                            'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
-                                            'outdent', 'indent', '|',
-                                            'blockQuote', 'insertTable', '|',
-                                            'undo', 'redo'
-                                        ],
-                                        placeholder: 'Nhập mô tả sản phẩm...',
-                                        height: 200
-                                    }}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Product Images - 6 Ô RIÊNG BIỆT */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Hình ảnh sản phẩm (Tối đa 6 ảnh)
-                            </label>
-                            <p className="text-sm text-gray-500 mb-4">
-                                Ảnh đầu tiên sẽ được hiển thị làm ảnh chính của sản phẩm
-                            </p>
-
-                            <div className="grid grid-cols-3 gap-4">
-                                {[0, 1, 2, 3, 4, 5].map((index) => (
-                                    <div key={index} className="relative">
-                                        <div className="aspect-square border-2 border-dashed border-gray-300 rounded-lg overflow-hidden">
-                                            {previewImages[index] ? (
-                                                <div className="relative w-full h-full">
-                                                    <img
-                                                        src={previewImages[index].url}
-                                                        alt={`Preview ${index + 1}`}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeImage(index)}
-                                                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                                                    >
-                                                        <X className="w-3 h-3" />
-                                                    </button>
-                                                    {index === 0 && (
-                                                        <div className="absolute bottom-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
-                                                            Ảnh chính
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ) : (
-                                                <label className="cursor-pointer w-full h-full flex flex-col items-center justify-center hover:bg-gray-50">
-                                                    <input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        onChange={(e) => handleImageUpload(index, e.target.files[0])}
-                                                        className="hidden"
-                                                    />
-                                                    <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                                                    <span className="text-sm text-gray-600 text-center">
-                            Ảnh {index + 1}
-                          </span>
-                                                </label>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Product Variants */}
-                        <div>
-                            <div className="flex justify-between items-center mb-4">
-                                <label className="block text-sm font-medium text-gray-700">
-                                    Biến thể sản phẩm *
-                                </label>
-                                <button
-                                    type="button"
-                                    onClick={addVariant}
-                                    className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                                >
-                                    <Plus className="w-4 h-4" />
-                                    Thêm biến thể
-                                </button>
-                            </div>
-
-                            {formData.productVariants.length === 0 ? (
-                                <div className="border border-gray-200 rounded-lg p-4 text-center text-gray-500">
-                                    Chưa có biến thể nào. Nhấp "Thêm biến thể" để bắt đầu.
+                            {/* Brand & Category */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Thương hiệu <span className="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        value={formData.brandId}
+                                        onChange={(e) => handleInputChange('brandId', e.target.value)}
+                                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                            errors.brandId ? 'border-red-500' : 'border-gray-300'
+                                        }`}
+                                    >
+                                        <option value="">Chọn thương hiệu</option>
+                                        {brands && brands.map(brand => (
+                                            <option key={brand.brandId} value={brand.brandId}>
+                                                {brand.brandName}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.brandId && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.brandId}</p>
+                                    )}
                                 </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    {formData.productVariants.map((variant, index) => (
-                                        <div key={index} className="border border-gray-200 rounded-lg p-4">
-                                            <div className="flex justify-between items-center mb-3">
-                                                <h4 className="font-medium text-gray-900">Biến thể {index + 1}</h4>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeVariant(index)}
-                                                    className="text-red-600 hover:text-red-800"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
 
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Danh mục <span className="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        value={formData.categoryId}
+                                        onChange={(e) => handleInputChange('categoryId', e.target.value)}
+                                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                            errors.categoryId ? 'border-red-500' : 'border-gray-300'
+                                        }`}
+                                    >
+                                        <option value="">Chọn danh mục</option>
+                                        {categories && categories.map(category => (
+                                            <option key={category.categoryId} value={category.categoryId}>
+                                                {category.categoryName}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.categoryId && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.categoryId}</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Product Description */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Mô tả sản phẩm
+                                </label>
+                                <div className="border border-gray-300 rounded-md">
+                                    <CKEditor
+                                        editor={ClassicEditor}
+                                        data={formData.productDescription}
+                                        onChange={(event, editor) => {
+                                            const data = editor.getData();
+                                            handleInputChange('productDescription', data);
+                                        }}
+                                        config={{
+                                            toolbar: [
+                                                'heading', '|',
+                                                'bold', 'italic', 'link', '|',
+                                                'bulletedList', 'numberedList', '|',
+                                                'outdent', 'indent', '|',
+                                                'blockQuote', 'insertTable', '|',
+                                                'undo', 'redo'
+                                            ]
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right Column - Images & Variants */}
+                        <div className="space-y-6">
+                            {/* Product Images */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-3">
+                                    Hình ảnh sản phẩm (Tối đa 6 ảnh)
+                                </label>
+                                <div className="grid grid-cols-3 gap-4">
+                                    {previewImages.map((preview, index) => (
+                                        <div key={index} className="relative">
+                                            <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                                                {preview ? (
+                                                    <>
+                                                        <img
+                                                            src={preview.url}
+                                                            alt={`Preview ${index + 1}`}
+                                                            className="w-full h-full object-cover rounded-lg"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeImage(index)}
+                                                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                                        >
+                                                            <Trash2 size={12} />
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <label className="cursor-pointer flex flex-col items-center">
+                                                        <Upload size={24} className="text-gray-400" />
+                                                        <span className="text-xs text-gray-500 mt-1">Upload</span>
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={(e) => handleImageUpload(index, e.target.files[0])}
+                                                            className="hidden"
+                                                        />
+                                                    </label>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Product Variants với color picker */}
+                            <div>
+                                <div className="flex justify-between items-center mb-3">
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Biến thể sản phẩm <span className="text-red-500">*</span>
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={addVariant}
+                                        className="flex items-center px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+                                    >
+                                        <Plus size={16} className="mr-1" />
+                                        Thêm biến thể
+                                    </button>
+                                </div>
+
+                                {errors.variants && (
+                                    <p className="text-red-500 text-sm mb-3">{errors.variants}</p>
+                                )}
+
+                                <div className="space-y-4 max-h-80 overflow-y-auto">
+                                    {formData.productVariants.map((variant, index) => (
+                                        <div key={index} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                                            <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+                                                {/* FIXED: Màu sắc với color picker và dropdown */}
+                                                <div className="md:col-span-2">
+                                                    <label className="block text-xs font-medium text-gray-600 mb-1">
                                                         Màu sắc
                                                     </label>
                                                     <select
                                                         value={variant.color}
                                                         onChange={(e) => updateVariant(index, 'color', e.target.value)}
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+                                                            errors[`variant_color_${index}`] ? 'border-red-500' : 'border-gray-300'
+                                                        }`}
                                                     >
-                                                        <option value="">Chọn màu</option>
-                                                        {colors.map(color => (
+                                                        <option value="">Chọn màu sắc</option>
+                                                        {colors && colors.map(color => (
                                                             <option key={color.colorId} value={color.colorHex}>
-                                                                {color.colorName} ({color.colorHex})
+                                                                {color.colorName}
                                                             </option>
                                                         ))}
                                                     </select>
+                                                    {errors[`variant_color_${index}`] && (
+                                                        <p className="text-red-500 text-xs mt-1">{errors[`variant_color_${index}`]}</p>
+                                                    )}
+
+                                                    {errors[`variant_color_${index}`] && (
+                                                        <p className="text-red-500 text-xs mt-1">{errors[`variant_color_${index}`]}</p>
+                                                    )}
                                                 </div>
 
-                                                <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                {/* Kích thước */}
+                                                <div className="md:col-span-2">
+                                                    <label className="block text-xs font-medium text-gray-600 mb-1">
                                                         Kích thước
                                                     </label>
                                                     <select
                                                         value={variant.productSize}
                                                         onChange={(e) => updateVariant(index, 'productSize', e.target.value)}
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+                                                            errors[`variant_size_${index}`] ? 'border-red-500' : 'border-gray-300'
+                                                        }`}
                                                     >
                                                         <option value="">Chọn size</option>
                                                         {PRODUCT_SIZE_OPTIONS.map(size => (
-                                                            <option key={size} value={size}>
-                                                                {size}
-                                                            </option>
+                                                            <option key={size} value={size}>{size}</option>
                                                         ))}
                                                     </select>
+                                                    {errors[`variant_size_${index}`] && (
+                                                        <p className="text-red-500 text-xs mt-1">{errors[`variant_size_${index}`]}</p>
+                                                    )}
                                                 </div>
 
-                                                <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                {/* Số lượng */}
+                                                <div className="md:col-span-1">
+                                                    <label className="block text-xs font-medium text-gray-600 mb-1">
                                                         Số lượng
                                                     </label>
                                                     <input
                                                         type="number"
-                                                        value={variant.quantity}
-                                                        onChange={(e) => updateVariant(index, 'quantity', parseInt(e.target.value) || 0)}
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                         min="0"
+                                                        value={variant.quantity}
+                                                        onChange={(e) => updateVariant(index, 'quantity', e.target.value)}
+                                                        className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+                                                            errors[`variant_quantity_${index}`] ? 'border-red-500' : 'border-gray-300'
+                                                        }`}
                                                         placeholder="0"
                                                     />
+                                                    {errors[`variant_quantity_${index}`] && (
+                                                        <p className="text-red-500 text-xs mt-1">{errors[`variant_quantity_${index}`]}</p>
+                                                    )}
+                                                </div>
+
+                                                {/* Nút xóa */}
+                                                <div className="md:col-span-1 flex items-end">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeVariant(index)}
+                                                        className="w-full px-3 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 flex items-center justify-center"
+                                                    >
+                                                        <Trash2 size={14} className="mr-1" />
+                                                        Xóa
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                            )}
-
-                            {errors.variants && (
-                                <p className="mt-1 text-sm text-red-600">{errors.variants}</p>
-                            )}
-                        </div>
-
-                        {/* Submit Error */}
-                        {errors.submit && (
-                            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                                <p className="text-sm text-red-600">{errors.submit}</p>
                             </div>
-                        )}
-                    </form>
-                </div>
+                        </div>
+                    </div>
 
-                {/* Footer */}
-                <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                        disabled={loading}
-                    >
-                        Hủy
-                    </button>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={loading}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                    >
-                        {loading && (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        )}
-                        {mode === 'create' ? 'Tạo sản phẩm' : 'Cập nhật'}
-                    </button>
-                </div>
+                    {/* Submit Error */}
+                    {errors.submit && (
+                        <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                            {errors.submit}
+                        </div>
+                    )}
+
+                    {/* Form Actions */}
+                    <div className="flex justify-end space-x-3 mt-8 pt-6 border-t">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="px-6 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                            disabled={loading}
+                        >
+                            Hủy
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {loading ? 'Đang xử lý...' : (mode === 'edit' ? 'Cập nhật' : 'Tạo mới')}
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     );
