@@ -111,6 +111,9 @@ public class AccountEntity implements UserDetails {
     @OneToMany(mappedBy = "account")
     private List<ShippingAddressEntity> shippingAddresses;
 
+    @Column(name = "recommended_product", columnDefinition = "TEXT")
+    private String recommendedProduct;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
