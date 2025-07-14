@@ -53,6 +53,7 @@ import BlogDetailManager from "./pages/Admin/BlogDetailManager.jsx";
 import BlogForm from "./pages/Admin/BlogForm.jsx";
 import ProtectedRouteForManager from "./components/auth/ProtectedRouteForManager.jsx";
 import LoginForManager from "./pages/Admin/LoginForManager.jsx";
+import SNSManagement from "./pages/Admin/SNS/SNSManagement";
 
 function App() {
     return (
@@ -114,10 +115,11 @@ function App() {
                             <Route path="instruction-management" element={<InstructionManagement />} />
                             <Route path="policies-management" element={<PoliciesManagement />} />
                             <Route path="about-us-management" element={<AboutUsManagement />} />
+                            <Route path="sns-management" element={<SNSManagement />} />
                             <Route path="feedbacks" element={<div className="p-6 bg-white rounded-lg shadow">Feedbacks Page</div>} />
                             <Route path="statistics" element={<div className="p-6 bg-white rounded-lg shadow">Statistics Page</div>} />
                             <Route path="campaign-management" element={<div className="p-6 bg-white rounded-lg shadow">Campaign Management Page</div>} />
-                            <Route path="store-management" element={<div className="p-6 bg-white rounded-lg shadow">Store Management Page</div>} />
+                            <Route path="store-management" element={<AboutUsManagement />} />
                             <Route path="settings-management" element={<div className="p-6 bg-white rounded-lg shadow">Settings Management Page</div>} />
                         </Route>
                     </Routes>
