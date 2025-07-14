@@ -30,12 +30,16 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     INNER JOIN profiles p ON a.account_id = p.account_id
     LEFT JOIN orders o ON o.process_by = a.account_id
     LEFT JOIN order_details od ON od.order_id = o.order_id
-    WHERE a.working_at IS NOT NULL
+    WHERE (a.working_at IS NOT NULL)
+        AND (:accountId IS NULL OR a.account_id = :accountId)
     GROUP BY a.account_id, p.first_name, p.last_name, a.created_by,
     	a.created_at, a.updated_by, a.updated_at
 """, nativeQuery = true
     )
     Page<Object[]> getStaffAccountWithCondition(
-            Pageable pageable
+            Pageable pageable,
+            @Param("accountId") Long accountId
     );
+
+    boolean existsByUsername(String username);
 }
