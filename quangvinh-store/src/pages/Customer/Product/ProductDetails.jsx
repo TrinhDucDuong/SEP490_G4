@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
@@ -8,10 +8,9 @@ import {
     faTruck, faBoxesPacking, faThumbsUp, faThumbsDown, faPhoneVolume, faStar
 } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
-import { AuthContext } from "../../../context/AuthContext.jsx";
-import useCart from "../../../hooks/Customer/useCart.js";
 import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
 import { useFetchStarRate } from "../../../hooks/Customer/useFetchStarRate";
+import {useCart} from "../../../context/CartContext.jsx";
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -26,8 +25,8 @@ const ProductDetail = () => {
     const [filterStar, setFilterStar] = useState('');
     const [pageNumber, setPageNumber] = useState(0);
 
-    const { account, token } = useContext(AuthContext);
-    const { addToCart } = useCart(account?.accountId, token);
+
+    const { addToCart } = useCart();
     const { starRates, totalCount, loading: starRateLoading } = useFetchStarRate(product?.productId, filterStar, pageNumber, 3);
 
     useEffect(() => {

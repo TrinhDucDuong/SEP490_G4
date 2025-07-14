@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet";
 
 import { useFetchProducts } from "../../../hooks/Customer/useFetchProducts.js";
 import { useFetchBrands } from "../../../hooks/Customer/useFetchBrands.js";
 import { useFetchCategories } from "../../../hooks/Customer/useFetchCategories.js";
 import { useFetchTotalSoldOutProducts } from "../../../hooks/Customer/useFetchTotalSoldOutProducts.js";
-
 
 import Carousel from "../../../components/ui/home/Carousel.jsx";
 import BrandSlider from "../../../components/ui/home/BrandSlider.jsx";
@@ -17,93 +17,123 @@ import NewsHome from "../../../components/ui/home/NewsHome.jsx";
 import ChatBoxAI from "../Common/chatBoxAI.jsx";
 
 function Home() {
-    const { products = [], loading: loadingProducts, error: errorProducts } = useFetchProducts();
-    const { brands = [], loading: loadingBrands, error: errorBrands } = useFetchBrands();
-    const { categories = [], loading: loadingCategories, error: errorCategories } = useFetchCategories();
-    const { productTotal: totalSoldoutProducts = [], loadingTotal: loadingTotalSoldoutProducts, errorTotal: errorTotalSoldOutProduct } = useFetchTotalSoldOutProducts();
+    const { products = [], loading: loadingProducts, error: errorProducts } = useFetchProducts({ limit: 10 });
+    const { brands = [], loading: loadingBrands, error: errorBrands } = useFetchBrands({ limit: 10 });
+    const { categories = [], loading: loadingCategories, error: errorCategories } = useFetchCategories({ limit: 3 });
+    const { productTotal: totalSoldoutProducts = [], loadingTotal: loadingTotalSoldoutProducts, errorTotal: errorTotalSoldOutProduct } = useFetchTotalSoldOutProducts({ limit: 10 });
 
     const topBrands = useMemo(() => brands.slice(0, 10), [brands]);
     const trendingProducts = useMemo(() => products.slice(0, 10), [products]);
     const hotProducts = useMemo(() => totalSoldoutProducts.slice(0, 10), [totalSoldoutProducts]);
 
     return (
-        <div className="bg-[#F2F2EE] text-black">
-            <Carousel />
-            <div className="w-full px-40 bg-black">
-                {loadingBrands ? (
-                    <p className="text-center text-white py-4">Đang tải thương hiệu...</p>
-                ) : errorBrands ? (
-                    <p className="text-center text-red-500 py-4">{errorBrands}</p>
-                ) : (
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7 }}
-                    >
-                        <BrandSlider brands={topBrands} />
-                    </motion.div>
-                )}
-            </div>
-            <div className="w-full px-28">
-                <div className="flex justify-between items-center py-10">
-                    <h2 className="text-4xl font-bold">ĐÓN ĐẦU XU HƯỚNG</h2>
-                    <Link to="/products?category=all" className="text-black hover:text-yellow-400 transition flex items-center">
-                        Xem thêm <FontAwesomeIcon className="ml-2" icon={faArrowRight} />
-                    </Link>
-                </div>
-                {loadingProducts ? (
-                    <p className="text-center">Đang tải sản phẩm...</p>
-                ) : errorProducts ? (
-                    <p className="text-center text-red-500">{errorProducts}</p>
-                ) : (
-                    <ProductScrollSlider products={trendingProducts} />
-                )}
-            </div>
-            {!loadingCategories && !errorCategories && categories.length > 0 && (
-                <div className="px-28 py-10 flex flex-col gap-8">
-                    {categories.slice(0, 3).map((category) => (
-                        <Link
-                            key={category.categoryId}
-                            to={`/products?categoryIds=${category.categoryId}`}
-                            className="w-full h-[500px] overflow-hidden shadow-md rounded-lg group relative"
+        <>
+            <Helmet>
+                <title>Trang chủ - QuangVinhAuthentic</title>
+                <meta name="description" content="Khám phá các sản phẩm thời trang mới nhất và hot nhất tại QuangVinhAuthentic. Đón đầu xu hướng với các thương hiệu nổi bật!" />
+                <meta name="keywords" content="thời trang, sản phẩm hot, thương hiệu, xu hướng, mua sắm" />
+                <meta property="og:title" content="Trang chủ - QuangVinhAuthentic" />
+                <meta property="og:description" content="Khám phá các sản phẩm thời trang mới nhất và hot nhất tại QuangVinhAuthentic." />
+                <meta property="og:image" content="https://uangvinhauthentic.com/images/og-image.jpg" />
+                <meta property="og:url" content="https://uangvinhauthentic.com" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebPage",
+                        "name": "Trang chủ - QuangVinhAuthentic",
+                        "description": "Khám phá các sản phẩm thời trang mới nhất và hot nhất tại QuangVinhAuthentic.",
+                        "url": "https://quangvinhauthentic.com"
+                    })}
+                </script>
+            </Helmet>
+            <main className="bg-[#F2F2EE] text-black">
+                <section aria-label="Hình ảnh quảng cáo nổi bật">
+                    <Carousel />
+                </section>
+                <section className="w-full px-40 bg-black" aria-label="Thương hiệu nổi bật">
+                    {loadingBrands ? (
+                        <p className="text-center text-white py-4">Đang tải thương hiệu...</p>
+                    ) : errorBrands ? (
+                        <p className="text-center text-red-500 py-4">Đã có lỗi xảy ra. Vui lòng thử lại sau.</p>
+                    ) : (
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7 }}
                         >
-                            <img
-                                src={category.images?.[0]?.imageUrl}
-                                alt={category.categoryName}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            />
-                            <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                                <h3 className="text-white text-2xl font-bold">{category.categoryName}</h3>
-                            </div>
+                            <BrandSlider brands={topBrands} />
+                        </motion.div>
+                    )}
+                </section>
+                <section className="w-full px-28" aria-label="Sản phẩm xu hướng">
+                    <header className="flex justify-between items-center py-10">
+                        <h1 className="text-4xl font-bold">ĐÓN ĐẦU XU HƯỚNG</h1>
+                        <Link
+                            to="/products/all"
+                            className="text-black hover:text-yellow-400 transition flex items-center"
+                            aria-label="Xem tất cả sản phẩm xu hướng"
+                        >
+                            Xem thêm <FontAwesomeIcon className="ml-2" icon={faArrowRight} />
                         </Link>
-                    ))}
-                </div>
-            )}
-
-
-            <div className="w-full px-28">
-                <div className="flex justify-between items-center py-10">
-                    <h2 className="text-4xl font-bold">ĐIỂM MẶT MÓN HOT</h2>
-                    <Link to="/products?category=all" className="text-black hover:text-yellow-400 transition flex items-center">
-                        Xem thêm <FontAwesomeIcon className="ml-2" icon={faArrowRight} />
-                    </Link>
-                </div>
-                {loadingTotalSoldoutProducts ? (
-                    <p className="text-center">Đang tải sản phẩm...</p>
-                ) : errorTotalSoldOutProduct ? (
-                    <p className="text-center text-red-500">{errorTotalSoldOutProduct}</p>
-                ) : (
-                    <ProductScrollSlider products={hotProducts} />
+                    </header>
+                    {loadingProducts ? (
+                        <p className="text-center">Đang tải sản phẩm...</p>
+                    ) : errorProducts ? (
+                        <p className="text-center text-red-500">Đã có lỗi xảy ra. Vui lòng thử lại sau.</p>
+                    ) : (
+                        <ProductScrollSlider products={trendingProducts} />
+                    )}
+                </section>
+                {!loadingCategories && !errorCategories && categories.length > 0 && (
+                    <section className="px-28 py-10 flex flex-col gap-8" aria-label="Danh mục sản phẩm">
+                        {categories.slice(0, 4).map((category) => (
+                            <Link
+                                key={category.categoryId}
+                                to={`/products/${category.categoryId}`}
+                                className="w-full h-[500px] overflow-hidden shadow-md rounded-lg group relative"
+                                aria-label={`Xem sản phẩm trong danh mục ${category.categoryName}`}
+                            >
+                                <img
+                                    src={category.images?.[0]?.imageUrl || "https://yourwebsite.com/images/placeholder.jpg"}
+                                    alt={`Hình ảnh danh mục ${category.categoryName}`}
+                                    loading="lazy"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                                    <h2 className="text-white text-2xl font-bold">{category.categoryName}</h2>
+                                </div>
+                            </Link>
+                        ))}
+                    </section>
                 )}
-            </div>
-
-            <div className="py-10 w-full px-28">
-                <NewsHome/>
-            </div>
-            <div className="fixed bottom-6 right-6 z-50">
-                <ChatBoxAI />
-            </div>
-        </div>
+                <section className="w-full px-28" aria-label="Sản phẩm hot">
+                    <header className="flex justify-between items-center py-10">
+                        <h2 className="text-4xl font-bold">ĐIỂM MẶT MÓN HOT</h2>
+                        <Link
+                            to="/products/all"
+                            className="text-black hover:text-yellow-400 transition flex items-center"
+                            aria-label="Xem tất cả sản phẩm hot"
+                        >
+                            Xem thêm <FontAwesomeIcon className="ml-2" icon={faArrowRight} />
+                        </Link>
+                    </header>
+                    {loadingTotalSoldoutProducts ? (
+                        <p className="text-center">Đang tải sản phẩm...</p>
+                    ) : errorTotalSoldOutProduct ? (
+                        <p className="text-center text-red-500">Đã có lỗi xảy ra. Vui lòng thử lại sau.</p>
+                    ) : (
+                        <ProductScrollSlider products={hotProducts} />
+                    )}
+                </section>
+                <section className="py-10 w-full px-28" aria-label="Tin tức nổi bật">
+                    <NewsHome />
+                </section>
+                <div className="fixed bottom-6 right-6 z-50">
+                    <ChatBoxAI />
+                </div>
+            </main>
+        </>
     );
 }
 

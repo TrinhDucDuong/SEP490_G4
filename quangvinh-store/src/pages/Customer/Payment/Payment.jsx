@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from "../../../context/AuthContext.jsx";
-import useCart from "../../../hooks/Customer/useCart.js";
 import useFetchAddress from "../../../hooks/Customer/useFetchAddress.js";
 import { toast } from "react-toastify";
 import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
@@ -28,7 +27,7 @@ function Payment() {
     const [editingAddress, setEditingAddress] = useState(null);
     const [showAddressModal, setShowAddressModal] = useState(false);
 
-    const { cartItems, removeItem, updateQuantity } = useCart(accountId, token);
+    const { cartItems, removeItem, updateQuantity } = useCart();
     const { addresses, refetch } = useFetchAddress();
 
     useEffect(() => {
