@@ -159,7 +159,7 @@ function Header() {
             )}
 
             <Sidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
-            <Cart isOpen={isCartOpen} accountId={accountId} onClose={() => setCartOpen(false)} />
+            <Cart isOpen={isCartOpen} onClose={() => setCartOpen(false)}></Cart>
             <Search isOpen={isSearchOpen} onClose={() => setSearchOpen(false)} />
             <div className='h-20'></div>
         </>

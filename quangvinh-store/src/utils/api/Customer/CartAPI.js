@@ -28,7 +28,7 @@ export const addToCartAPI = async ({accountId, productId, colorHexCode, sizeCode
     }
 
     const res = await fetch('http://localhost:9999/cart', {
-        method: 'POST', // Sửa từ PUT thành POST
+        method: 'POST',
         headers,
         body: JSON.stringify({
             accountId,
