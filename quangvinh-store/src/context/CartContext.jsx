@@ -1,21 +1,18 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import {
     fetchCartAPI,
     addToCartAPI,
     updateCartQuantityAPI,
-    deleteCartItemAPI
-} from '../utils/api/Customer/CartAPI.js';
-import { fetchProductById } from '../utils/api/Customer/ProductAPI.js';
+    deleteCartItemAPI,
+} from '../utils/api/Customer/CartAPI';
+import { fetchProductById } from '../utils/api/Customer/ProductAPI';
 import { toast } from 'react-toastify';
-import {AuthContext} from "./AuthContext.jsx";
-
 
 const CartContext = createContext();
 
-export const CartProvider = ({ children }) => {
-    const { account, token } = useContext(AuthContext);
-    const accountId = account?.accountId || null;
+export const useCart = () => useContext(CartContext);
 
+export const CartProvider = ({ accountId, token, children }) => {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const syncedRef = useRef(false);
@@ -126,7 +123,14 @@ export const CartProvider = ({ children }) => {
                              }) => {
         try {
             if (accountId) {
-                await addToCartAPI({ accountId, productId, colorHexCode, sizeCode, quantity, token });
+                await addToCartAPI({
+                    accountId,
+                    productId,
+                    colorHexCode,
+                    sizeCode,
+                    quantity,
+                    token,
+                });
                 const updated = await fetchAndFormatCartFromServer();
                 setCartItems(updated);
             } else {
@@ -175,6 +179,7 @@ export const CartProvider = ({ children }) => {
             if (accountId) {
                 const item = cartItems.find((i) => i.id === id);
                 if (!item) throw new Error('Không tìm thấy sản phẩm');
+
                 if (newQuantity === item.quantity) return;
 
                 if (newQuantity > item.quantity) {
@@ -198,6 +203,7 @@ export const CartProvider = ({ children }) => {
                         token,
                     });
                 }
+
                 const updated = await fetchAndFormatCartFromServer();
                 setCartItems(updated);
             } else {
@@ -265,5 +271,3 @@ export const CartProvider = ({ children }) => {
         </CartContext.Provider>
     );
 };
-
-export const useCartContext = () => useContext(CartContext);
