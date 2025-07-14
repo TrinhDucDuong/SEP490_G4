@@ -3,9 +3,8 @@
 const API_BASE_URL = 'http://localhost:9999/staff/product';
 const COLOR_API_URL = 'http://localhost:9999/staff/color';
 
-// FIXED: Function để lấy Bearer Token với key đúng từ AuthContext
+// Function để lấy Bearer Token từ localStorage/sessionStorage
 const getAuthToken = () => {
-    // Tìm token với key đúng từ AuthContextForManager
     const token = localStorage.getItem('adminAuthToken') ||
         sessionStorage.getItem('adminAuthToken') ||
         localStorage.getItem('authToken') ||
@@ -18,16 +17,12 @@ const getAuthToken = () => {
     console.log('🔑 Getting Bearer Token:', token ? 'Token found' : 'No token found');
     if (token) {
         console.log('🔑 Token preview:', token.substring(0, 20) + '...');
-        console.log('🔑 Token length:', token.length);
-    } else {
-        console.log('🔍 Available localStorage keys:', Object.keys(localStorage));
-        console.log('🔍 Available sessionStorage keys:', Object.keys(sessionStorage));
     }
 
     return token;
 };
 
-// FIXED: Function để tạo headers với Bearer Token
+// Function để tạo headers với Bearer Token
 const createAuthHeaders = (additionalHeaders = {}) => {
     const token = getAuthToken();
     const headers = {
@@ -67,17 +62,16 @@ const getColorName = (hex) => {
         '#FFC0CB': 'Hồng',
         '#FFD700': 'Vàng kim',
         '#FFFF00': 'Vàng',
-        '#FFFFFF': 'Trắng',
-        '#ae2929': 'Đỏ đô'
+        '#ae2929': 'Đỏ đô',
+        '#FFFFFF': 'Trắng'
     };
     return colorMap[hex] || `Màu ${hex}`;
 };
 
-// FIXED: Function xử lý lỗi authentication
+// Function xử lý lỗi authentication
 const handleAuthError = (response) => {
     if (response.status === 401) {
         console.error('🚫 Bearer Token expired or invalid');
-        // Xóa tất cả token có thể (bao gồm adminAuthToken)
         localStorage.removeItem('adminAuthToken');
         sessionStorage.removeItem('adminAuthToken');
         localStorage.removeItem('authToken');
@@ -86,10 +80,6 @@ const handleAuthError = (response) => {
         sessionStorage.removeItem('authToken');
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('token');
-        localStorage.removeItem('bearerToken');
-        localStorage.removeItem('jwt');
-
-        // Cũng xóa user info
         localStorage.removeItem('adminUserInfo');
         sessionStorage.removeItem('adminUserInfo');
 
@@ -97,7 +87,7 @@ const handleAuthError = (response) => {
     }
 };
 
-// GET - Lấy tất cả products với Bearer Token
+// GET - Lấy tất cả products
 export const getAllProducts = async () => {
     try {
         console.log('📦 Fetching all products from:', API_BASE_URL);
@@ -120,7 +110,6 @@ export const getAllProducts = async () => {
         const data = await response.json();
         console.log('✅ Products API response:', data);
 
-        // FIXED: Xử lý response structure nhất quán
         if (data && Array.isArray(data.products)) {
             return { success: true, data: data.products };
         } else if (Array.isArray(data)) {
@@ -135,7 +124,7 @@ export const getAllProducts = async () => {
     }
 };
 
-// GET - Lấy tất cả colors với Bearer Token
+// GET - Lấy tất cả colors
 export const getAllColors = async () => {
     try {
         console.log('🎨 Fetching all colors from:', COLOR_API_URL);
@@ -175,19 +164,14 @@ export const getAllColors = async () => {
     }
 };
 
-// FIXED: POST - Tạo sản phẩm mới với Bearer Token
+// FIXED: POST - Tạo sản phẩm mới với xử lý hình ảnh đúng
 export const createProduct = async (productData, productImages) => {
     try {
-        console.log('📝 === CREATE PRODUCT START ===');
-        console.log('📝 Product data received:', productData);
-        console.log('📷 Images received:', productImages?.length || 0);
+        console.log('📝 Creating product with data:', productData);
+        console.log('📷 Number of images:', productImages?.length || 0);
 
         // Validation trước khi gửi
         if (!productData.brandId || !productData.categoryId) {
-            console.error('❌ Missing brandId or categoryId:', {
-                brandId: productData.brandId,
-                categoryId: productData.categoryId
-            });
             return {
                 success: false,
                 error: 'Thiếu thông tin thương hiệu hoặc danh mục'
@@ -195,14 +179,12 @@ export const createProduct = async (productData, productImages) => {
         }
 
         if (!productData.productVariants || productData.productVariants.length === 0) {
-            console.error('❌ Missing or empty productVariants');
             return {
                 success: false,
                 error: 'Sản phẩm phải có ít nhất một biến thể'
             };
         }
 
-        // Kiểm tra Bearer Token
         const token = getAuthToken();
         if (!token) {
             console.error('🚫 No Bearer Token found for create request');
@@ -215,13 +197,13 @@ export const createProduct = async (productData, productImages) => {
 
         const formData = new FormData();
 
-        // FIXED: Cấu trúc productInput theo đúng schema backend
+        // Cấu trúc productInput theo đúng schema backend
         const productInput = {
             productName: productData.productName?.trim(),
             productDescription: productData.productDescription?.trim() || '',
             unitPrice: productData.unitPrice.toString(),
-            brandId: productData.brandId.toString(), // String theo schema
-            categoryId: productData.categoryId.toString(), // String theo schema
+            brandId: productData.brandId.toString(),
+            categoryId: productData.categoryId.toString(),
             productVariants: productData.productVariants.map(variant => ({
                 productSize: variant.productSize?.trim() || '',
                 color: {
@@ -231,23 +213,23 @@ export const createProduct = async (productData, productImages) => {
             }))
         };
 
-        console.log('📋 Final productInput for CREATE:', JSON.stringify(productInput, null, 2));
+        console.log('📋 Processed product input:', productInput);
 
         const productInputBlob = new Blob([JSON.stringify(productInput)], {
             type: 'application/json'
         });
         formData.append('productInputData', productInputBlob);
 
-        // FIXED: Xử lý images cho CREATE - vẫn gửi empty file nếu cần
+        // FIXED: Xử lý images cho CREATE - gửi empty file nếu không có ảnh
         if (productImages && productImages.length > 0) {
             productImages.forEach((image) => {
                 if (image instanceof File) {
                     formData.append('productImages', image);
-                    console.log('📷 Added image:', image.name, 'size:', image.size);
                 }
             });
+            console.log('📷 Added', productImages.length, 'images to form data');
         } else {
-            // CREATE: Gửi file trống nếu không có ảnh (backend có thể yêu cầu)
+            // Gửi file trống cho CREATE
             const emptyFile = new File([''], 'no_image.txt', {
                 type: 'text/plain',
                 lastModified: Date.now()
@@ -258,17 +240,12 @@ export const createProduct = async (productData, productImages) => {
 
         const headers = createAuthHeaders();
 
-        console.log('📤 Sending CREATE request to:', API_BASE_URL);
-        console.log('📤 Request headers:', headers);
-
+        console.log('📤 Sending CREATE request with Bearer Token');
         const response = await fetch(API_BASE_URL, {
             method: 'POST',
             headers: headers,
             body: formData
         });
-
-        console.log('📥 CREATE response status:', response.status);
-        console.log('📥 CREATE response headers:', Object.fromEntries(response.headers.entries()));
 
         if (!response.ok) {
             handleAuthError(response);
@@ -279,7 +256,6 @@ export const createProduct = async (productData, productImages) => {
 
         const data = await response.json();
         console.log('✅ Create product success:', data);
-        console.log('📝 === CREATE PRODUCT END ===');
         return { success: true, data: data.product || data };
     } catch (error) {
         console.error('💥 Error creating product:', error);
@@ -287,10 +263,9 @@ export const createProduct = async (productData, productImages) => {
     }
 };
 
-// FIXED: PUT - Cập nhật sản phẩm với Bearer Token (không gửi empty file để giữ ảnh cũ)
+// FIXED: PUT - Cập nhật sản phẩm với xử lý hình ảnh đúng
 export const updateProduct = async (productId, productData, productImages) => {
     try {
-        console.log('🔄 === UPDATE PRODUCT START ===');
         console.log('🔄 Updating product:', productId, 'with data:', productData);
         console.log('📷 Number of new images:', productImages?.length || 0);
 
@@ -302,7 +277,6 @@ export const updateProduct = async (productId, productData, productImages) => {
             };
         }
 
-        // Kiểm tra Bearer Token
         const token = getAuthToken();
         if (!token) {
             console.error('🚫 No Bearer Token found for update request');
@@ -315,13 +289,13 @@ export const updateProduct = async (productId, productData, productImages) => {
 
         const formData = new FormData();
 
-        // FIXED: Cấu trúc productInput theo đúng schema backend
+        // Cấu trúc productInput theo đúng schema backend
         const productInput = {
             productName: productData.productName?.trim(),
             productDescription: productData.productDescription?.trim() || '',
             unitPrice: productData.unitPrice.toString(),
-            brandId: productData.brandId.toString(), // String theo schema
-            categoryId: productData.categoryId.toString(), // String theo schema
+            brandId: productData.brandId.toString(),
+            categoryId: productData.categoryId.toString(),
             productVariants: productData.productVariants.map(variant => ({
                 productSize: variant.productSize?.trim() || '',
                 color: {
@@ -338,20 +312,22 @@ export const updateProduct = async (productId, productData, productImages) => {
         });
         formData.append('productInputData', productInputBlob);
 
-        // FIXED: Xử lý images cho UPDATE - chỉ gửi khi có ảnh mới thực sự
-        const hasNewImages = productImages && productImages.some(img => img instanceof File);
+        // FIXED: Xử lý images cho UPDATE - chỉ gửi khi có ảnh mới
+        if (productImages && productImages.length > 0) {
+            const hasNewImages = productImages.some(image => image instanceof File);
 
-        if (hasNewImages) {
-            console.log('📷 Adding new images to form data');
-            productImages.forEach((image) => {
-                if (image instanceof File) {
-                    formData.append('productImages', image);
-                    console.log('📷 Added new image:', image.name, 'size:', image.size);
-                }
-            });
+            if (hasNewImages) {
+                productImages.forEach((image) => {
+                    if (image instanceof File) {
+                        formData.append('productImages', image);
+                    }
+                });
+                console.log('📷 Added new images to form data for UPDATE');
+            } else {
+                console.log('📷 No new images for UPDATE - keeping existing images');
+            }
         } else {
-            console.log('📷 No new images - keeping existing images (not sending productImages field)');
-            // FIXED: Không gửi field productImages để giữ nguyên ảnh cũ
+            console.log('📷 No images provided for UPDATE - keeping existing images');
         }
 
         const headers = createAuthHeaders();
@@ -363,8 +339,6 @@ export const updateProduct = async (productId, productData, productImages) => {
             body: formData
         });
 
-        console.log('📥 UPDATE response status:', response.status);
-
         if (!response.ok) {
             handleAuthError(response);
             const errorText = await response.text();
@@ -374,7 +348,6 @@ export const updateProduct = async (productId, productData, productImages) => {
 
         const data = await response.json();
         console.log('✅ Update product success:', data);
-        console.log('🔄 === UPDATE PRODUCT END ===');
         return { success: true, data: data.product || data };
     } catch (error) {
         console.error('💥 Error updating product:', error);
@@ -382,7 +355,7 @@ export const updateProduct = async (productId, productData, productImages) => {
     }
 };
 
-// DELETE - Xóa sản phẩm với Bearer Token
+// DELETE - Xóa sản phẩm
 export const deleteProduct = async (productId) => {
     try {
         console.log('🗑️ Deleting product:', productId);
@@ -411,7 +384,7 @@ export const deleteProduct = async (productId) => {
     }
 };
 
-// GET - Lấy chi tiết sản phẩm theo ID với Bearer Token
+// GET - Lấy chi tiết sản phẩm theo ID
 export const getProductById = async (productId) => {
     try {
         console.log('🔍 Fetching product by ID:', productId);

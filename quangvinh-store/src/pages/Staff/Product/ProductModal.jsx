@@ -25,8 +25,6 @@ const ProductModal = ({
     useEffect(() => {
         if (mode === 'edit' && initialData) {
             console.log('🔧 Edit mode - Initial data:', initialData);
-            console.log('🏷️ Available brands for edit:', brands);
-            console.log('📂 Available categories for edit:', categories);
 
             // Xử lý brandId từ nested object hoặc trực tiếp
             let brandId = '';
@@ -116,9 +114,7 @@ const ProductModal = ({
     // Handle form input changes
     const handleInputChange = (field, value) => {
         if (field === 'unitPrice') {
-            // Xử lý input giá bán để tránh lỗi với bàn phím tiếng Việt
-            let numericValue = value.replace(/[^\d]/g, ''); // Chỉ giữ lại số
-            // Format với dấu chấm
+            let numericValue = value.replace(/[^\d]/g, '');
             if (numericValue) {
                 const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
                 setFormData(prev => ({ ...prev, [field]: formattedValue }));
@@ -129,7 +125,6 @@ const ProductModal = ({
             setFormData(prev => ({ ...prev, [field]: value }));
         }
 
-        // Clear error when user starts typing
         if (errors[field]) {
             setErrors(prev => ({ ...prev, [field]: '' }));
         }
@@ -143,7 +138,6 @@ const ProductModal = ({
 
             newProductImages[index] = file;
 
-            // Create preview
             const reader = new FileReader();
             reader.onload = (e) => {
                 newPreviewImages[index] = {
@@ -195,7 +189,7 @@ const ProductModal = ({
         }));
     };
 
-    // Handle form submission với validation tốt hơn cho cả CREATE và UPDATE
+    // FIXED: Handle form submission với validation tốt hơn
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -203,7 +197,7 @@ const ProductModal = ({
         console.log('📝 Mode:', mode);
         console.log('📝 Raw form data:', formData);
 
-        // Parse và validate dữ liệu đúng cách cho cả CREATE và UPDATE
+        // FIXED: Parse và validate dữ liệu đúng cách
         const parsedFormData = {
             ...formData,
             unitPrice: PRODUCT_HELPERS.parsePrice(formData.unitPrice),
@@ -213,7 +207,7 @@ const ProductModal = ({
 
         console.log('📝 Parsed form data for', mode, ':', parsedFormData);
 
-        // Validation tốt hơn
+        // Enhanced validation
         const validationErrors = {};
 
         if (!parsedFormData.productName?.trim()) {
@@ -235,7 +229,6 @@ const ProductModal = ({
         if (!parsedFormData.productVariants || parsedFormData.productVariants.length === 0) {
             validationErrors.variants = 'Sản phẩm phải có ít nhất một biến thể';
         } else {
-            // Validate từng variant
             parsedFormData.productVariants.forEach((variant, index) => {
                 if (!variant.color?.trim()) {
                     validationErrors[`variant_color_${index}`] = 'Vui lòng chọn màu sắc';
@@ -257,42 +250,19 @@ const ProductModal = ({
 
         setLoading(true);
         try {
-            // FIXED: Logic xử lý images mới - phân biệt CREATE và UPDATE
-            const validImages = productImages.filter(img => img !== null);
-
-            // FIXED: Phân biệt logic gửi images giữa CREATE và UPDATE
-            let shouldSendImages = false;
-            let imagesToSend = [];
-
-            if (mode === 'create') {
-                // CREATE: Luôn gửi images (kể cả empty array)
-                shouldSendImages = true;
-                imagesToSend = validImages;
-                console.log('📝 CREATE mode: Will send images (even if empty)');
-            } else {
-                // UPDATE: Chỉ gửi khi có ảnh mới
-                if (validImages.length > 0) {
-                    shouldSendImages = true;
-                    imagesToSend = validImages;
-                    console.log('📝 UPDATE mode: Will send new images');
-                } else {
-                    shouldSendImages = false;
-                    imagesToSend = [];
-                    console.log('📝 UPDATE mode: No new images - will keep existing images');
-                }
-            }
+            // FIXED: Chỉ gửi ảnh mới, không gửi null
+            const validImages = productImages.filter(img => img !== null && img instanceof File);
 
             console.log('📝 Submitting', mode, 'with data:', parsedFormData);
-            console.log('📝 Should send images:', shouldSendImages);
-            console.log('📝 Images to send:', imagesToSend.length);
+            console.log('📝 Valid images:', validImages.length);
 
             let result;
             if (mode === 'create') {
                 console.log('📝 Calling CREATE function');
-                result = await onSubmit(parsedFormData, imagesToSend, shouldSendImages);
+                result = await onSubmit(parsedFormData, validImages);
             } else {
                 console.log('📝 Calling UPDATE function for product:', initialData.productId);
-                result = await onSubmit(initialData.productId, parsedFormData, imagesToSend, shouldSendImages);
+                result = await onSubmit(initialData.productId, parsedFormData, validImages);
             }
 
             console.log('📝 Submission result:', result);
@@ -300,7 +270,6 @@ const ProductModal = ({
             if (result.success) {
                 console.log('✅ Form submission successful');
                 onClose();
-                // Reset form
                 setFormData(PRODUCT_DEFAULTS.NEW_PRODUCT);
                 setProductImages([null, null, null, null, null, null]);
                 setPreviewImages([null, null, null, null, null, null]);
@@ -500,7 +469,7 @@ const ProductModal = ({
                                 </div>
                             </div>
 
-                            {/* Product Variants với color picker */}
+                            {/* Product Variants */}
                             <div>
                                 <div className="flex justify-between items-center mb-3">
                                     <label className="block text-sm font-medium text-gray-700">
@@ -524,7 +493,7 @@ const ProductModal = ({
                                     {formData.productVariants.map((variant, index) => (
                                         <div key={index} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
                                             <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                                                {/* FIXED: Màu sắc với color picker và dropdown */}
+                                                {/* FIXED: Màu sắc và dropdown */}
                                                 <div className="md:col-span-2">
                                                     <label className="block text-xs font-medium text-gray-600 mb-1">
                                                         Màu sắc

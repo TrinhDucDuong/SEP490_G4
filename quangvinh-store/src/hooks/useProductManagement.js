@@ -1,10 +1,10 @@
 // src/hooks/useProductManagement.js
 
 import { useState, useEffect } from 'react';
-import { getAllProducts, getAllColors, createProduct, updateProduct, deleteProduct } from '../utils/api/ProductManagementAPI';
-import { getAllBrands } from '../utils/api/BrandManagementAPI';
-import { getAllCategories } from '../utils/api/CategoryManagementAPI';
-import { PRODUCT_HELPERS } from '../utils/constants/ProductConstants';
+import {getAllColors, getAllProducts} from "../utils/api/Admin/ProductManagementAPI.js";
+import {getAllBrands} from "../utils/api/Admin/BrandManagementAPI.js";
+import {getAllCategories} from "../utils/api/Admin/CategoryManagementAPI.js";
+
 
 export const useProductManagement = () => {
     // Data state
@@ -46,6 +46,7 @@ export const useProductManagement = () => {
                 getAllBrands(),
                 getAllCategories()
             ]);
+
 
             // Handle products
             if (productsResult.success) {
