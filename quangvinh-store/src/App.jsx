@@ -54,6 +54,7 @@ import BlogForm from "./pages/Admin/BlogForm.jsx";
 import ProtectedRouteForManager from "./components/auth/ProtectedRouteForManager.jsx";
 import LoginForManager from "./pages/Admin/LoginForManager.jsx";
 import SNSManagement from "./pages/Admin/SNS/SNSManagement";
+import StoreManagement from "./pages/Admin/Store/StoreManagement";
 
 function App() {
     return (
@@ -119,7 +120,7 @@ function App() {
                             <Route path="feedbacks" element={<div className="p-6 bg-white rounded-lg shadow">Feedbacks Page</div>} />
                             <Route path="statistics" element={<div className="p-6 bg-white rounded-lg shadow">Statistics Page</div>} />
                             <Route path="campaign-management" element={<div className="p-6 bg-white rounded-lg shadow">Campaign Management Page</div>} />
-                            <Route path="store-management" element={<AboutUsManagement />} />
+                            <Route path="store-management" element={<StoreManagement />} />
                             <Route path="settings-management" element={<div className="p-6 bg-white rounded-lg shadow">Settings Management Page</div>} />
                         </Route>
                     </Routes>
