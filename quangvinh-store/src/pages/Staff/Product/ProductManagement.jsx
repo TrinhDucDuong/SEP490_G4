@@ -101,16 +101,6 @@ const ProductManagement = () => {
                                 Quản lý các sản phẩm và biến thể trong hệ thống
                             </p>
                         </div>
-
-                        {/* Quick Actions */}
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => window.location.reload()}
-                                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                            >
-                                Làm mới
-                            </button>
-                        </div>
                     </div>
                 </div>
 
