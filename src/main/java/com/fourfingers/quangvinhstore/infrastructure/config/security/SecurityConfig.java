@@ -119,6 +119,11 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/staff/brand").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "staff/brand/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "admin/staff").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "admin/staff/**").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "admin/staff").permitAll();
+                    auth.requestMatchers(HttpMethod.PUT, "admin/staff/**").permitAll();
+                    auth.requestMatchers(HttpMethod.DELETE, "admin/staff/**").permitAll();
+                    auth.requestMatchers(HttpMethod.PATCH, "/admin/staff/**").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/chatbot/new").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/recommendation").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/blog/**").permitAll();

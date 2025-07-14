@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface ProfileRepository extends JpaRepository<ProfileEntity, Long> {
     Optional<ProfileEntity> findByAccount_AccountId(Long userId);
+
+    boolean existsByPhoneNumber(String phoneNumber);
 }
