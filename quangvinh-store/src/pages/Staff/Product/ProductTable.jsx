@@ -69,7 +69,8 @@ const ProductTable = ({
     };
 
     const handleEdit = (product) => {
-        setSelectedProduct(product);
+        console.log('📝 Editing product with full data:', product);
+        setSelectedProduct(product); // product đã có images array
         setIsEditModalOpen(true);
     };
 
@@ -435,9 +436,9 @@ const ProductTable = ({
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 onSubmit={onUpdateProduct}
-                colors={colors || []}
-                brands={brands || []}
-                categories={categories || []}
+                brands={brands}
+                categories={categories}
+                colors={colors}
                 mode="edit"
                 initialData={selectedProduct}
             />

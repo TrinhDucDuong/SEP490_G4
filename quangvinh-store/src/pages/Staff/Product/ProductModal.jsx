@@ -18,10 +18,18 @@ const ProductModal = ({
     const [formData, setFormData] = useState(PRODUCT_DEFAULTS.NEW_PRODUCT);
     const [productImages, setProductImages] = useState([null, null, null, null, null, null]);
     const [previewImages, setPreviewImages] = useState([null, null, null, null, null, null]);
+    const [existingImageUrls, setExistingImageUrls] = useState([]); // FIXED: Thêm state cho existing URLs
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
-    // FIXED: Initialize form data với xử lý màu sắc hiện tại từ nested objects
+    // Hàm chuyển URL ảnh thành File (nếu backend chỉ nhận file)
+    async function urlToFile(url, filename = 'image.jpg') {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new File([blob], filename, { type: blob.type });
+    }
+
+    // FIXED: Initialize form data với xử lý màu sắc hiện tại và existing image URLs
     useEffect(() => {
         if (mode === 'edit' && initialData) {
             console.log('🔧 Edit mode - Initial data:', initialData);
@@ -46,24 +54,15 @@ const ProductModal = ({
             let processedVariants = [];
             if (initialData.productVariants && initialData.productVariants.length > 0) {
                 processedVariants = initialData.productVariants.map(variant => {
-                    // FIXED: Lấy colorHex từ nested object hoặc trực tiếp
-                    let colorHex = '#000000'; // Default color
+                    let colorHex = '#000000';
 
                     if (variant.color && variant.color.colorHex) {
-                        // Trường hợp có nested object color.colorHex
                         colorHex = variant.color.colorHex;
                     } else if (variant.color && typeof variant.color === 'string') {
-                        // Trường hợp color là string trực tiếp
                         colorHex = variant.color;
                     } else if (variant.colorHex) {
-                        // Trường hợp có colorHex trực tiếp
                         colorHex = variant.colorHex;
                     }
-
-                    console.log('🎨 Processing variant color:', {
-                        originalVariant: variant,
-                        extractedColor: colorHex
-                    });
 
                     return {
                         color: colorHex,
@@ -82,14 +81,10 @@ const ProductModal = ({
                 productVariants: processedVariants
             });
 
-            console.log('🎨 Form data set with processed variants:', {
-                brandId,
-                categoryId,
-                processedVariants
-            });
-
-            // Set existing images for preview
+            // FIXED: Set existing images for preview và lưu URLs
             const newPreviewImages = [null, null, null, null, null, null];
+            const imageUrls = [];
+
             if (initialData.images && initialData.images.length > 0) {
                 initialData.images.forEach((img, index) => {
                     if (index < 6) {
@@ -97,16 +92,22 @@ const ProductModal = ({
                             url: img.imageUrl,
                             isExisting: true
                         };
+                        imageUrls.push(img.imageUrl);
                     }
                 });
             }
+
             setPreviewImages(newPreviewImages);
+            setExistingImageUrls(imageUrls); // FIXED: Lưu existing URLs
             setProductImages([null, null, null, null, null, null]);
+
+            console.log('📷 Existing image URLs saved:', imageUrls);
         } else {
             // Reset form cho CREATE mode
             setFormData(PRODUCT_DEFAULTS.NEW_PRODUCT);
             setPreviewImages([null, null, null, null, null, null]);
             setProductImages([null, null, null, null, null, null]);
+            setExistingImageUrls([]);
         }
         setErrors({});
     }, [mode, initialData, isOpen, brands, categories]);
@@ -189,7 +190,7 @@ const ProductModal = ({
         }));
     };
 
-    // FIXED: Handle form submission với validation tốt hơn
+    // FIXED: Handle form submission với existing image URLs
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -197,7 +198,7 @@ const ProductModal = ({
         console.log('📝 Mode:', mode);
         console.log('📝 Raw form data:', formData);
 
-        // FIXED: Parse và validate dữ liệu đúng cách
+        // Parse và validate dữ liệu đúng cách cho cả CREATE và UPDATE
         const parsedFormData = {
             ...formData,
             unitPrice: PRODUCT_HELPERS.parsePrice(formData.unitPrice),
@@ -207,7 +208,7 @@ const ProductModal = ({
 
         console.log('📝 Parsed form data for', mode, ':', parsedFormData);
 
-        // Enhanced validation
+        // Validation tốt hơn
         const validationErrors = {};
 
         if (!parsedFormData.productName?.trim()) {
@@ -229,6 +230,7 @@ const ProductModal = ({
         if (!parsedFormData.productVariants || parsedFormData.productVariants.length === 0) {
             validationErrors.variants = 'Sản phẩm phải có ít nhất một biến thể';
         } else {
+            // Validate từng variant
             parsedFormData.productVariants.forEach((variant, index) => {
                 if (!variant.color?.trim()) {
                     validationErrors[`variant_color_${index}`] = 'Vui lòng chọn màu sắc';
@@ -250,26 +252,46 @@ const ProductModal = ({
 
         setLoading(true);
         try {
-            // FIXED: Chỉ gửi ảnh mới, không gửi null
-            const validImages = productImages.filter(img => img !== null && img instanceof File);
+            // Xử lý logic gửi ảnh: chỉ gửi khi có ảnh mới trong UPDATE, luôn gửi trong CREATE
+
+            let shouldSendImages = false;
+            let imagesToSend = [];
+            const hasNewImages = productImages.some(img => img instanceof File);
+
+            if (mode === 'create') {
+                imagesToSend = productImages.filter(img => img instanceof File);
+            } else {
+                if (hasNewImages) {
+                    // Có ảnh mới, gửi ảnh mới
+                    imagesToSend = productImages.filter(img => img instanceof File);
+                } else {
+                    // Không có ảnh mới, gửi lại ảnh hiện tại
+                    // Nếu backend nhận URL: imagesToSend = existingImageUrls;
+                    // Nếu backend chỉ nhận file:
+                    imagesToSend = await Promise.all(
+                        existingImageUrls.map(async (url, idx) => await urlToFile(url, `old_${idx}.jpg`))
+                    );
+                }
+            }
 
             console.log('📝 Submitting', mode, 'with data:', parsedFormData);
-            console.log('📝 Valid images:', validImages.length);
+            console.log('📝 Should send images:', shouldSendImages);
+            console.log('📝 Images to send:', imagesToSend.length);
 
             let result;
             if (mode === 'create') {
-                console.log('📝 Calling CREATE function');
-                result = await onSubmit(parsedFormData, validImages);
+                result = await onSubmit(parsedFormData, imagesToSend);
             } else {
-                console.log('📝 Calling UPDATE function for product:', initialData.productId);
-                result = await onSubmit(initialData.productId, parsedFormData, validImages);
+                result = await onSubmit(initialData.productId, parsedFormData, imagesToSend);
             }
+
 
             console.log('📝 Submission result:', result);
 
             if (result.success) {
                 console.log('✅ Form submission successful');
                 onClose();
+                // Reset form
                 setFormData(PRODUCT_DEFAULTS.NEW_PRODUCT);
                 setProductImages([null, null, null, null, null, null]);
                 setPreviewImages([null, null, null, null, null, null]);
@@ -493,29 +515,43 @@ const ProductModal = ({
                                     {formData.productVariants.map((variant, index) => (
                                         <div key={index} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
                                             <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                                                {/* FIXED: Màu sắc và dropdown */}
+                                                {/* Màu sắc với color picker và dropdown */}
                                                 <div className="md:col-span-2">
                                                     <label className="block text-xs font-medium text-gray-600 mb-1">
                                                         Màu sắc
                                                     </label>
-                                                    <select
-                                                        value={variant.color}
-                                                        onChange={(e) => updateVariant(index, 'color', e.target.value)}
-                                                        className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 ${
-                                                            errors[`variant_color_${index}`] ? 'border-red-500' : 'border-gray-300'
-                                                        }`}
-                                                    >
-                                                        <option value="">Chọn màu sắc</option>
-                                                        {colors && colors.map(color => (
-                                                            <option key={color.colorId} value={color.colorHex}>
-                                                                {color.colorName}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    {errors[`variant_color_${index}`] && (
-                                                        <p className="text-red-500 text-xs mt-1">{errors[`variant_color_${index}`]}</p>
-                                                    )}
+                                                    <div className="flex items-center space-x-2">
+                                                        <input
+                                                            type="color"
+                                                            value={variant.color || '#000000'}
+                                                            onChange={(e) => updateVariant(index, 'color', e.target.value)}
+                                                            className="w-10 h-8 border border-gray-300 rounded cursor-pointer"
+                                                            title="Chọn màu từ bảng màu"
+                                                        />
 
+                                                        <select
+                                                            value={variant.color}
+                                                            onChange={(e) => updateVariant(index, 'color', e.target.value)}
+                                                            className={`flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+                                                                errors[`variant_color_${index}`] ? 'border-red-500' : 'border-gray-300'
+                                                            }`}
+                                                        >
+                                                            <option value="">Chọn màu sắc</option>
+                                                            {colors && colors.map(color => (
+                                                                <option key={color.colorId} value={color.colorHex}>
+                                                                    {color.colorName}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+
+                                                        {variant.color && (
+                                                            <div
+                                                                className="w-4 h-8 border border-gray-300 rounded flex-shrink-0"
+                                                                style={{ backgroundColor: variant.color }}
+                                                                title={`Màu hiện tại: ${variant.color}`}
+                                                            ></div>
+                                                        )}
+                                                    </div>
                                                     {errors[`variant_color_${index}`] && (
                                                         <p className="text-red-500 text-xs mt-1">{errors[`variant_color_${index}`]}</p>
                                                     )}
