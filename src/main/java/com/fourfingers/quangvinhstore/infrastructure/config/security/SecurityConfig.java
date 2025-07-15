@@ -124,8 +124,10 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/recommendation").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/blog/**").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/staff/blog").hasAuthority("STAFF");
-                    auth.requestMatchers(HttpMethod.GET, "/order/**").permitAll();
+                    auth.requestMatchers("/order/**").permitAll();
                     auth.requestMatchers("/addresses/**").permitAll();
+                    auth.requestMatchers("/vnpay/**").permitAll();
+                    auth.requestMatchers("/momo/**").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
                     auth.anyRequest().authenticated();
                 })

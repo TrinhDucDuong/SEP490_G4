@@ -4,6 +4,7 @@ import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,6 +23,12 @@ public class OrderEntity {
 
     @Column(name = "order_date")
     private LocalDateTime orderDate;
+
+    @Column(name = "total_price")
+    private BigDecimal totalPrice;
+
+    @Column(name = "secure_hash", unique = true)
+    private String secureHash;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailsEntity> orderDetails;
