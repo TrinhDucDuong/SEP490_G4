@@ -7,16 +7,26 @@ function BlogList() {
     const { blogs, loading, error } = useFetchBlogs();
 
     const [filterOption, setFilterOption] = useState("all");
+    const [searchTerm, setSearchTerm] = useState("");
 
     const handleFilterChange = (e) => {
         setFilterOption(e.target.value);
     };
 
-    // Hàm xử lý lọc/sắp xếp
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
     const getFilteredAndSortedBlogs = () => {
         if (!blogs) return [];
 
         let filtered = [...blogs];
+
+        if (searchTerm.trim() !== "") {
+            filtered = filtered.filter(blog =>
+                blog.blogTitle?.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
 
         if (filterOption === "latest") {
             filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -26,7 +36,7 @@ function BlogList() {
             const sevenDaysAgo = new Date();
             sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
             filtered = filtered.filter(blog => new Date(blog.createdAt) >= sevenDaysAgo);
-            filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Mới nhất trước
+            filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         }
 
         return filtered;
@@ -47,28 +57,33 @@ function BlogList() {
 
             <div className="container mx-auto p-4 px-4 md:px-28">
                 <h1 className="text-3xl font-bold mb-6">Danh sách bài viết</h1>
-
-                {/* Dropdown lọc bài viết */}
-                <div className="mb-6">
-                    <label htmlFor="filter" className="mr-2 font-medium text-gray-700">Lọc theo:</label>
-                    <select
-                        id="filter"
-                        value={filterOption}
-                        onChange={handleFilterChange}
-                        className="border rounded px-3 py-2 text-gray-700"
-                    >
-                        <option value="all">Tất cả</option>
-                        <option value="latest">Mới nhất</option>
-                        <option value="oldest">Cũ nhất</option>
-                        <option value="last7days">Trong 7 ngày gần đây</option>
-                    </select>
+                <div className="mb-6 flex flex-col md:flex-row gap-4">
+                    <div className="flex-1">
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            placeholder="Tìm kiếm theo tiêu đề..."
+                            className="w-full border rounded-full px-3 py-2 text-gray-700"
+                        />
+                    </div>
+                    <div>
+                        <select
+                            value={filterOption}
+                            onChange={handleFilterChange}
+                            className="border rounded-full px-3 py-2 text-gray-700"
+                        >
+                            <option value="all">Tất cả</option>
+                            <option value="latest">Mới nhất</option>
+                            <option value="oldest">Cũ nhất</option>
+                            <option value="last7days">Trong 7 ngày gần đây</option>
+                        </select>
+                    </div>
                 </div>
 
-                {/* Hiển thị trạng thái */}
                 {loading && <p>Đang tải...</p>}
                 {error && <p className="text-red-500">Lỗi: {error}</p>}
 
-                {/* Danh sách blog */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {!loading && !error && displayedBlogs.length > 0 ? (
                         displayedBlogs.map((blog) => (

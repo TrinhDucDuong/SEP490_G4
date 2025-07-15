@@ -54,15 +54,21 @@ function BlogForm({ isEdit = false }) {
         e.preventDefault();
         try {
             const formData = new FormData();
+
             formData.append(
                 "blogInputData",
                 new Blob([JSON.stringify(blogInputData)], {
                     type: "application/json",
                 })
             );
-            blogImages.forEach((file) => {
-                formData.append("blogImages", file);
-            });
+            if (blogImages.length > 0) {
+                blogImages.forEach((file) => {
+                    formData.append("blogImages", file);
+                });
+            }else{
+                formData.append("blogImages", new Blob([], {}))
+            }
+
             if (isEdit) {
                 await BlogManagementAPI.update(id, formData);
             } else {
