@@ -45,19 +45,19 @@ function BlogManagement() {
                 </Link>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex flex-col rounded-full md:flex-row gap-4 mb-6">
                 <input
                     type="text"
                     placeholder="Tìm kiếm theo tiêu đề..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="px-3 py-2 border rounded w-full md:w-1/2"
+                    className="px-3 py-2 border rounded-full w-full md:w-1/2"
                 />
 
                 <select
                     value={sortOption}
                     onChange={(e) => setSortOption(e.target.value)}
-                    className="px-3 py-2 border rounded w-full md:w-1/4"
+                    className="px-3 py-2 border rounded-full w-full md:w-1/4"
                 >
                     <option value="newest">Mới nhất</option>
                     <option value="oldest">Cũ nhất</option>

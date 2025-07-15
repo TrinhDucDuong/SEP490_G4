@@ -6,7 +6,20 @@ function AddressSelectModal({ isOpen, onClose, addresses, onSelect, onAddNew, on
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <div className="p-4 space-y-4 max-h-[500px] overflow-y-auto custom-scroll">
-                <h3 className="text-lg font-semibold text-black mb-2">Chọn địa chỉ giao hàng</h3>
+                <div className="flex flex-row space-y-4 justify-between items-center">
+                    <h3 className="text-lg font-semibold text-black mb-2">Chọn địa chỉ giao hàng</h3>
+
+                    <button
+                        className="mt-4 px-4 py-2 bg-black text-white border border-black rounded-full hover:bg-white hover:text-black"
+                        onClick={() => {
+                            onClose();
+                            onAddNew();
+                        }}
+                    >
+                        + Thêm địa chỉ mới
+                    </button>
+                </div>
+
 
                 {addresses.map(addr => (
                     <div
@@ -26,15 +39,7 @@ function AddressSelectModal({ isOpen, onClose, addresses, onSelect, onAddNew, on
                     </div>
                 ))}
 
-                <button
-                    className="mt-4 px-4 py-2 bg-black text-white border border-black rounded-full hover:bg-white hover:text-black"
-                    onClick={() => {
-                        onClose();
-                        onAddNew();
-                    }}
-                >
-                    + Thêm địa chỉ mới
-                </button>
+
             </div>
         </Modal>
     );

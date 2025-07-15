@@ -14,6 +14,7 @@ import AddAddressForm from "../Profile/Address/AddAddressForm.jsx";
 import UpdateAddressForm from "../Profile/Address/UpdateAddressForm.jsx";
 import AddressSelectModal from "./AddressSelectModal.jsx";
 import { createAddress } from "../../../utils/api/Customer/AddressAPI.js";
+import {useCart} from "../../../context/CartContext.jsx";
 
 function Payment() {
     const { user } = useContext(AuthContext);
