@@ -55,6 +55,7 @@ import ProtectedRouteForManager from "./components/auth/ProtectedRouteForManager
 import LoginForManager from "./pages/Admin/LoginForManager.jsx";
 import SNSManagement from "./pages/Admin/SNS/SNSManagement";
 import StoreManagement from "./pages/Admin/Store/StoreManagement";
+import DashboardManagement from "./pages/Admin/Dashboard/DashboardManagement";
 
 function App() {
     return (
@@ -94,7 +95,7 @@ function App() {
 
                         {/* Admin routes */}
                         <Route path="/admin/login" element={<LoginForManager />} />
-                        <Route path="/admin" element={<Navigate to="/admin/category-management" replace />} />
+                        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
                         <Route path="/admin" element={
                             <ProtectedRouteForManager>
                                 <AdminLayout />
@@ -118,7 +119,7 @@ function App() {
                             <Route path="about-us-management" element={<AboutUsManagement />} />
                             <Route path="sns-management" element={<SNSManagement />} />
                             <Route path="feedbacks" element={<div className="p-6 bg-white rounded-lg shadow">Feedbacks Page</div>} />
-                            <Route path="statistics" element={<div className="p-6 bg-white rounded-lg shadow">Statistics Page</div>} />
+                            <Route path="dashboard" element={<DashboardManagement />} />
                             <Route path="campaign-management" element={<div className="p-6 bg-white rounded-lg shadow">Campaign Management Page</div>} />
                             <Route path="store-management" element={<StoreManagement />} />
                             <Route path="settings-management" element={<div className="p-6 bg-white rounded-lg shadow">Settings Management Page</div>} />

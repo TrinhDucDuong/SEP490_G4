@@ -54,9 +54,9 @@ const SidebarForAdmin = () => {
 
                 {/* Navigation Section */}
                 <div className="flex-1 overflow-y-auto p-3 space-y-1 no-scrollbar">
-                    <NavLink to="/admin/statistics" className={navClass}>
+                    <NavLink to="/admin/dashboard" className={navClass}>
                         <BarChart3 className="h-5 w-5 mr-3" />
-                        Thống kê
+                        Trang chủ
                     </NavLink>
 
                     <NavLink to="/admin/blogs" className={navClass}>
