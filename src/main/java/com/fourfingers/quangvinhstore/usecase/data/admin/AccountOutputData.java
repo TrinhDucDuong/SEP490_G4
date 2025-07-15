@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.usecase.data.admin;
 
-import com.fourfingers.quangvinhstore.domain.model.Account;
+import com.fourfingers.quangvinhstore.domain.model.admin.CustomerAccount;
 import lombok.*;
 
 @AllArgsConstructor
@@ -9,5 +9,5 @@ import lombok.*;
 @Setter
 @Builder
 public class AccountOutputData {
-    private Account account;
+    private CustomerAccount account;
 }

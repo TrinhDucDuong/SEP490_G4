@@ -21,6 +21,7 @@ import com.fourfingers.quangvinhstore.usecase.data.customer.ProductDetailsOutput
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -45,7 +46,8 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                                         String sortDirection,
                                         String sortBy,
                                         String pageNumber,
-                                        String pageSize) {
+                                        String pageSize
+    ) {
         // Create a Pageable object with page number, size and sort
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNumber), Integer.parseInt(pageSize));
 
