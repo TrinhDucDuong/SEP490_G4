@@ -81,8 +81,11 @@ const CategoryManagement = () => {
         <div>
             <div>
                 {/* Header */}
-                <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-gray-900">Quản lý danh mục sản phẩm</h1>
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-gray-900">Quản lý danh mục sản phẩm</h1>
+                    <p className="text-gray-600 mt-2">
+                        Quản lý các danh mục sản phẩm
+                    </p>
                 </div>
 
                 {/* Statistics Cards - ĐỒNG NHẤT với Brand */}

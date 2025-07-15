@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Plus, Edit, Trash2, ArrowUpDown } from 'lucide-react';
 import SidebarForAdmin from '../../components/layout/admin/SidebarForAdmin.jsx';
 import HeaderForManager from '../../components/layout/admin/HeaderForManager.jsx';
-
 import Modal from '../../components/common/Admin/Modals.jsx';
 import Pagination from '../../components/common/Admin/Paginations.jsx';
 import SearchBar from '../../components/common/Admin/SearchBar';

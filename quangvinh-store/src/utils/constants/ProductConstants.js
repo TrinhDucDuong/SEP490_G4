@@ -1,64 +1,40 @@
-// Product Color Options - Sync với database
-export const PRODUCT_COLOR_OPTIONS = [
-    { name: 'Đen', hex: '#000000' },
-    { name: 'Trắng', hex: '#FFFFFF' },
-    { name: 'Đỏ', hex: '#FF0000' },
-    { name: 'Xanh dương', hex: '#0000FF' },
-    { name: 'Vàng', hex: '#FFFF00' },
-    { name: 'Xanh lá', hex: '#008000' },
-    { name: 'Hồng', hex: '#FFC0CB' },
-    { name: 'Tím', hex: '#800080' },
-    { name: 'Cam', hex: '#FFA500' },
-    { name: 'Nâu', hex: '#A52A2A' },
-    { name: 'Xám', hex: '#808080' },
-    { name: 'Cyan', hex: '#00FFFF' },
-    { name: 'Magenta', hex: '#FF00FF' },
-    { name: 'Vàng kim', hex: '#FFD700' },
-    { name: 'Bạc', hex: '#C0C0C0' },
-    { name: 'Xanh rừng', hex: '#228B22' },
-    { name: 'Đỏ thẫm', hex: '#DC143C' },
-    { name: 'Tím đậm', hex: '#4B0082' },
-    { name: 'Vàng nhạt', hex: '#F0E68C' },
-    { name: 'Cam đỏ', hex: '#FF4500' }
-];
-
-// Product Size Options - Sync với database
-export const PRODUCT_SIZE_OPTIONS = [
-    'S', 'M', 'L', 'XL', 'XXL', 'SIZE_42', 'SIZE_43'
-];
+// src/utils/constants/ProductConstants.js
 
 // Product Status Options
 export const PRODUCT_STATUS_OPTIONS = [
-    { value: 'Đang bán', label: 'Đang bán', color: 'green' },
-    { value: 'Đã ngừng bán', label: 'Đã ngừng bán', color: 'red' }
+    { value: true, label: 'Đang bán', color: 'green' },
+    { value: false, label: 'Đã ngừng bán', color: 'red' }
 ];
 
-// Brand Options
-export const PRODUCT_BRAND_OPTIONS = [
-    'Nike', 'Adidas', 'Puma', 'Gucci', 'Chanel', 'Dior', 'Prada',
-    'Supreme', 'Balenciaga', 'Louis Vuitton', 'Under Armour',
-    'North Face', 'Burberry', 'Moncler', 'Levi\'s', 'Zara',
-    'H&M', 'COS', 'Stussy', 'Patagonia', 'Forever 21', 'Other'
+// Size Options
+export const PRODUCT_SIZE_OPTIONS = [
+    'XS', 'S', 'M', 'L', 'XL', 'XXL',
+    'SIZE_36', 'SIZE_37', 'SIZE_38', 'SIZE_39', 'SIZE_40',
+    'SIZE_41', 'SIZE_42', 'SIZE_43', 'SIZE_44', 'SIZE_45'
 ];
 
 // Helper Functions
 export const PRODUCT_HELPERS = {
-    getColorName: (hex) => {
-        const color = PRODUCT_COLOR_OPTIONS.find(c => c.hex === hex);
-        return color ? color.name : hex;
+    getStatusText: (isActive) => {
+        return isActive ? 'Đang bán' : 'Đã ngừng bán';
     },
 
-    isValidColor: (hex) => {
-        return PRODUCT_COLOR_OPTIONS.some(c => c.hex === hex);
+    getStatusColorClass: (isActive) => {
+        return isActive
+            ? 'bg-green-100 text-green-800 border border-green-200'
+            : 'bg-red-100 text-red-800 border border-red-200';
     },
 
-    isValidSize: (size) => {
-        return PRODUCT_SIZE_OPTIONS.includes(size);
-    },
-
-    getStatusColorClass: (status) => {
-        const statusOption = PRODUCT_STATUS_OPTIONS.find(s => s.value === status);
-        return statusOption ? `text-${statusOption.color}-600 bg-${statusOption.color}-100` : 'text-gray-600 bg-gray-100';
+    formatDate: (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('vi-VN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     },
 
     formatPrice: (price) => {
@@ -67,30 +43,95 @@ export const PRODUCT_HELPERS = {
     },
 
     parsePrice: (priceString) => {
-        if (!priceString) return '';
-        return priceString.replace(/\./g, '');
+        if (!priceString) return 0;
+        return parseInt(priceString.replace(/\./g, ''));
+    },
+
+    getUsername: (userObject) => {
+        if (!userObject) return '';
+        return userObject.username || userObject.email || '';
+    },
+
+    hasImages: (product) => {
+        return product.images && Array.isArray(product.images) && product.images.length > 0;
+    },
+
+    getFirstImageUrl: (product) => {
+        if (PRODUCT_HELPERS.hasImages(product)) {
+            return product.images[0].imageUrl;
+        }
+        return null;
+    },
+
+    getTotalQuantity: (productVariants) => {
+        if (!productVariants || !Array.isArray(productVariants)) return 0;
+        return productVariants.reduce((total, variant) => total + (variant.quantity || 0), 0);
+    },
+
+    validateProductData: (productData) => {
+        const errors = [];
+
+        if (!productData.productName || productData.productName.trim() === '') {
+            errors.push('Tên sản phẩm không được để trống');
+        }
+
+        if (!productData.unitPrice || productData.unitPrice <= 0) {
+            errors.push('Giá sản phẩm phải lớn hơn 0');
+        }
+
+        if (!productData.brandId) {
+            errors.push('Vui lòng chọn thương hiệu');
+        }
+
+        if (!productData.categoryId) {
+            errors.push('Vui lòng chọn danh mục');
+        }
+
+        if (!productData.productVariants || productData.productVariants.length === 0) {
+            errors.push('Sản phẩm phải có ít nhất một biến thể');
+        }
+
+        return {
+            isValid: errors.length === 0,
+            errors
+        };
     }
 };
 
 // Default values
 export const PRODUCT_DEFAULTS = {
     NEW_PRODUCT: {
-        name: '',
-        code: '',
-        price: '',
-        brand: '',
-        brandId: null, // ✅ THÊM
-        categoryId: null, // ✅ THÊM
-        description: '',
-        coverImage: null,
-        productImages: [null, null, null, null, null, null],
-        variants: []
+        productName: '',
+        productDescription: '',
+        unitPrice: '',
+        brandId: '',
+        categoryId: '',
+        productVariants: [],
+        productImages: []
     },
 
     NEW_VARIANT: {
-        code: '',
         color: '',
-        size: '',
+        productSize: '',
         quantity: 0
     }
+};
+
+// Sort Options
+export const PRODUCT_SORT_OPTIONS = [
+    { key: 'productName', label: 'Tên sản phẩm', type: 'string' },
+    { key: 'productId', label: 'ID sản phẩm', type: 'number' },
+    { key: 'unitPrice', label: 'Giá bán', type: 'number' },
+    { key: 'createdAt', label: 'Ngày tạo', type: 'date' }
+];
+
+// Error Messages
+export const PRODUCT_ERROR_MESSAGES = {
+    PRODUCT_NAME_REQUIRED: 'Tên sản phẩm không được để trống',
+    PRICE_REQUIRED: 'Giá sản phẩm không được để trống',
+    BRAND_REQUIRED: 'Vui lòng chọn thương hiệu',
+    CATEGORY_REQUIRED: 'Vui lòng chọn danh mục',
+    VARIANTS_REQUIRED: 'Sản phẩm phải có ít nhất một biến thể',
+    NETWORK_ERROR: 'Có lỗi xảy ra khi kết nối với server',
+    UNKNOWN_ERROR: 'Có lỗi không xác định xảy ra'
 };
