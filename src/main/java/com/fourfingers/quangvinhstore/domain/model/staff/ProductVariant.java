@@ -12,4 +12,12 @@ public class ProductVariant {
     private String productSize;
     private Color color;
     private Long quantity;
+    private String productName;
+
+    public ProductVariant(Long productVariantId, String productSize, Color color, Long quantity) {
+        this.productVariantId = productVariantId;
+        this.productSize = productSize;
+        this.color = color;
+        this.quantity = quantity;
+    }
 }
