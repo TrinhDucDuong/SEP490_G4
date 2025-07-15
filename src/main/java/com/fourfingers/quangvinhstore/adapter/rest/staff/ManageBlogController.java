@@ -45,7 +45,7 @@ public class ManageBlogController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> update(@AuthenticationPrincipal UserDetails userDetails,
                                     @RequestPart BlogInputData blogInputData,
-                                    @RequestPart List<MultipartFile> blogImages,
+                                    @RequestPart(required = false) List<MultipartFile> blogImages,
                                     @PathVariable String id) throws Exception {
         return ResponseEntity.ok(blogManagementInputBoundary.update(blogInputData, userDetails, blogImages, id));
     }
