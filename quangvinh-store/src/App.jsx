@@ -130,7 +130,6 @@ function App() {
 const CartProviderWrapper = ({ children }) => {
     const accountId = localStorage.getItem('accountId');
     const { account, token } = useContext(AuthContext);
-    console.log('CartProviderWrapper:', { account, token });
     return (
         <CartProvider accountId={accountId} token={token}>
             {children}
