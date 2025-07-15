@@ -77,8 +77,8 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         orderEntity.setOrderDate(LocalDateTime.now());
         orderEntity.setOwner(accountEntity);
         orderEntity.setShippingAddress(shippingAddressEntity);
-
-        orderEntity.setOrderStatus(OrderStatus.PREPARING);
+        //TODO: fix order status
+//        orderEntity.setOrderStatus(OrderStatus.PREPARING);
 
         List<CartDetailsEntity> cartDetailsEntities = cartDetailsRepository.findByAccount_AccountId(accountEntity.getAccountId());
         List<OrderDetailsEntity> orderDetailsEntities = mapCartDetailsEntityToOrderDetailsEntity(cartDetailsEntities, orderEntity);
@@ -118,7 +118,8 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         Optional<OrderEntity> orderEntity = orderRepository.findByOrderIdAndOwnerAccountId(purchaseInputData.getOrderId(),
                                                                                             accountEntity.getAccountId());
         if (orderEntity.isPresent()) {
-            orderEntity.get().setOrderStatus(OrderStatus.PAID_AND_SHIPPING);
+            //TODO: fix order status
+//            orderEntity.get().setOrderStatus(OrderStatus.PAID_AND_SHIPPING);
             OrderEntity placedOrder = orderRepository.save(orderEntity.get());
             return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(placedOrder));
         } else {
@@ -147,7 +148,8 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
             Optional<OrderEntity> orderEntity = orderRepository.findBySecureHash(vnp_SecureHash);
             if(orderEntity.isPresent()) {
                 OrderEntity order = orderEntity.get();
-                order.setOrderStatus(OrderStatus.PAID_AND_SHIPPING);
+                //TODO: Fix order status
+//                order.setOrderStatus(OrderStatus.PAID_AND_SHIPPING);
                 StringBuilder allTransactionInfo = new StringBuilder();
                 for (Map.Entry<String, String> entry : map.entrySet()) {
                     allTransactionInfo.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
