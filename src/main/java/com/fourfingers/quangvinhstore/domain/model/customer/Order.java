@@ -3,6 +3,7 @@ package com.fourfingers.quangvinhstore.domain.model.customer;
 import com.fourfingers.quangvinhstore.domain.model.Account;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,4 +18,5 @@ public class Order {
     private LocalDateTime orderDate;
     private List<OrderDetails> orderDetails;
     private String orderStatus;
+    private BigDecimal totalPrice;
 }
