@@ -12,5 +12,7 @@ public interface CartDetailsRepository extends JpaRepository<CartDetailsEntity, 
     List<CartDetailsEntity> findByAccount_AccountId(Long accountAccountId);
 
     Optional<CartDetailsEntity> findByAccount_AccountIdAndProductVariant_ProductVariantId(Long accountAccountId, Long productVariantId);
+
+    void deleteByAccount_AccountId(Long accountAccountId);
     
 }

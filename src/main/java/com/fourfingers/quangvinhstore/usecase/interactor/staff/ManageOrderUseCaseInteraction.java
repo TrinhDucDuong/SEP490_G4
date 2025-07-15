@@ -3,6 +3,7 @@ package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 import com.fourfingers.quangvinhstore.domain.model.customer.Order;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.OrderMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.OrderRepository;
+import com.fourfingers.quangvinhstore.infrastructure.schema.AccountEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.OrderEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.OrderManagementInputBoundary;
@@ -14,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -37,7 +39,7 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
     }
 
     @Override
-    public OrderOutputData processOrder(String id, ProcessOrderInputData processOrderInputData) {
+    public OrderOutputData processOrder(String id, ProcessOrderInputData processOrderInputData, UserDetails userDetails) {
         Long orderId = Long.parseLong(id);
         OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(
                 () -> new RuntimeException("Order not found")
