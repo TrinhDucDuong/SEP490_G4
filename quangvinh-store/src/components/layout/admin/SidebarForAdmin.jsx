@@ -89,10 +89,10 @@ const SidebarForAdmin = () => {
                         Hóa đơn
                     </NavLink>
 
-                    {/*<NavLink to="/admin/feedbacks" className={navClass}>*/}
-                    {/*    <MessageSquare className="h-5 w-5 mr-3" />*/}
-                    {/*    Feedback*/}
-                    {/*</NavLink>*/}
+                    <NavLink to="/admin/feedbacks-management" className={navClass}>
+                        <MessageSquare className="h-5 w-5 mr-3" />
+                        Quản lý đánh giá
+                    </NavLink>
 
                     <NavLink to="/admin/policies-management" className={navClass}>
                         <FileText className="h-5 w-5 mr-3" />

@@ -7,6 +7,7 @@ export * from './CategoryConstants';
 export * from './SNSConstants';
 export * from './StoreConstants';
 export * from './DashboardConstants';
+export * from './StarRateConstants.js';
 
 // Grouped exports cho organization
 import * as ProductConstants from './ProductConstants';
@@ -15,6 +16,7 @@ import * as CategoryConstants from './CategoryConstants';
 import * as SNSConstants from './SNSConstants';
 import * as StoreConstants from './StoreConstants';
 import * as DashboardConstants from './DashboardConstants';
+import * as StarRateConstants from './StarRateConstants';
 
 export const CONSTANTS = {
     PRODUCT: ProductConstants,
@@ -23,4 +25,5 @@ export const CONSTANTS = {
     SNS: SNSConstants,
     Store: StoreConstants,
     Dashboard: DashboardConstants,
+    StarRate: StarRateConstants,
 };

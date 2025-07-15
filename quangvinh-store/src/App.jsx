@@ -56,6 +56,7 @@ import LoginForManager from "./pages/Admin/LoginForManager.jsx";
 import SNSManagement from "./pages/Admin/SNS/SNSManagement";
 import StoreManagement from "./pages/Admin/Store/StoreManagement";
 import DashboardManagement from "./pages/Admin/Dashboard/DashboardManagement";
+import StarRateManagement from "./pages/Staff/StarRate/StarRateManagement";
 
 function App() {
     return (
@@ -118,7 +119,7 @@ function App() {
                             <Route path="policies-management" element={<PoliciesManagement />} />
                             <Route path="about-us-management" element={<AboutUsManagement />} />
                             <Route path="sns-management" element={<SNSManagement />} />
-                            <Route path="feedbacks" element={<div className="p-6 bg-white rounded-lg shadow">Feedbacks Page</div>} />
+                            <Route path="feedbacks-management" element={<StarRateManagement />} />
                             <Route path="dashboard" element={<DashboardManagement />} />
                             <Route path="campaign-management" element={<div className="p-6 bg-white rounded-lg shadow">Campaign Management Page</div>} />
                             <Route path="store-management" element={<StoreManagement />} />
