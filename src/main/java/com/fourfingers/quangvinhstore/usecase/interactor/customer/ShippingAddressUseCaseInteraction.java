@@ -1,9 +1,11 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.customer;
 
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ShippingAddressMapper;
+import com.fourfingers.quangvinhstore.infrastructure.repository.AccountRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ShippingAddressRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.AccountEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ShippingAddressEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ShippingAddressType;
 import com.fourfingers.quangvinhstore.usecase.boundary.ShippingAddressOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.ShippingAddressInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ListShippingAddressOutputData;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -21,6 +24,7 @@ public class ShippingAddressUseCaseInteraction implements ShippingAddressInputBo
     private final ShippingAddressRepository shippingAddressRepository;
     private final ShippingAddressOutputBoundary shippingAddressOutputBoundary;
     private final ShippingAddressMapper shippingAddressMapper;
+    private final AccountRepository accountRepository;
 
     @Override
     public ListShippingAddressOutputData getShippingAddress(UserDetails userDetails) {
@@ -48,22 +52,39 @@ public class ShippingAddressUseCaseInteraction implements ShippingAddressInputBo
 
             if (existingEntityOpt.isPresent()) {
                 shippingAddressEntity = existingEntityOpt.get();
-                updateShippingAddressFromInput(shippingAddressEntity, shippingAddressInputData);
+                updateShippingAddressFromInput(accountEntity.getAccountId(), shippingAddressEntity, shippingAddressInputData);
                 shippingAddressRepository.save(shippingAddressEntity);
-            } else {
-                saveNewShippingAddress(accountEntity, shippingAddressInputData);
             }
         } else {
-            saveNewShippingAddress(accountEntity, shippingAddressInputData);
+            saveNewShippingAddress(accountEntity.getAccountId(), accountEntity, shippingAddressInputData);
         }
 
         return getShippingAddress(userDetails);
     }
 
-    void saveNewShippingAddress(AccountEntity accountEntity, ShippingAddressInputData inputData) {
+    @Override
+    public ListShippingAddressOutputData updateIsMainShippingAddress(UserDetails userDetails, ShippingAddressInputData shippingAddressInputData) {
+        AccountEntity accountEntity = (AccountEntity) userDetails;
+        if(shippingAddressInputData.getIsMain() == true ) {
+            setIsMainToFalse(accountEntity.getAccountId());
+        }
+        Optional<ShippingAddressEntity> shippingAddressEntity = shippingAddressRepository.findById(shippingAddressInputData.getShippingAddressId());
+        shippingAddressEntity.ifPresent(shippingAddressRepository::save);
+        return getShippingAddress(userDetails);
+    }
+
+    private void setIsMainToFalse(Long accountId) {
+        List<ShippingAddressEntity> shippingAddressEntities = shippingAddressRepository.findAllByAccount_AccountIdAndIsMain(accountId, true);
+        for(ShippingAddressEntity shippingAddressEntity : shippingAddressEntities) {
+            shippingAddressEntity.setIsMain(false);
+            shippingAddressRepository.save(shippingAddressEntity);
+        }
+    }
+
+    void saveNewShippingAddress(Long accountId, AccountEntity accountEntity, ShippingAddressInputData inputData) {
         ShippingAddressEntity newEntity = new ShippingAddressEntity();
         newEntity.setAccount(accountEntity);
-        updateShippingAddressFromInput(newEntity, inputData);
+        updateShippingAddressFromInput(accountId, newEntity, inputData);
 
         if (inputData.getShippingAddressId() != null) {
             newEntity.setShippingAddressId(inputData.getShippingAddressId());
@@ -72,12 +93,26 @@ public class ShippingAddressUseCaseInteraction implements ShippingAddressInputBo
         shippingAddressRepository.save(newEntity);
     }
 
-    private void updateShippingAddressFromInput(ShippingAddressEntity entity, ShippingAddressInputData inputData) {
+    private void updateShippingAddressFromInput(Long accountId, ShippingAddressEntity entity, ShippingAddressInputData inputData) {
         entity.setAddress(inputData.getAddress());
         entity.setExactAddress(inputData.getExactAddress());
         entity.setName(inputData.getName());
         entity.setPhoneNumber(inputData.getPhoneNumber());
-        entity.setMain(inputData.isMain());
+        if(inputData.getIsMain() == true) {
+            setIsMainToFalse(accountId);
+            entity.setIsMain(true);
+        }
+        switch (entity.getType().toString().toUpperCase()) {
+            case "HOME":
+                entity.setType(ShippingAddressType.HOME);
+                break;
+            case "WORK":
+                entity.setType(ShippingAddressType.WORK);
+                break;
+            default:
+                entity.setType(ShippingAddressType.OTHER);
+                break;
+        }
     }
 
 

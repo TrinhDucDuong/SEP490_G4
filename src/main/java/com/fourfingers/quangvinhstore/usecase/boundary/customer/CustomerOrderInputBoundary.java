@@ -12,7 +12,7 @@ import java.util.Map;
 public interface CustomerOrderInputBoundary {
     ListOrderOutputData getOrders(UserDetails userDetails);
 
-    OrderOutputData placeOrders(UserDetails userDetails, ShippingAddressInputData shippingAddressInputData);
+    OrderOutputData placeOrders(UserDetails userDetails, Long shippingAddressId);
 
     OrderOutputData placeOrderPayLater(UserDetails userDetails, PurchaseInputData purchaseInputData);
 

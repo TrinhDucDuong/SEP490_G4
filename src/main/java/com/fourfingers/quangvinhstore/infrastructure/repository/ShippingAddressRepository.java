@@ -12,4 +12,6 @@ public interface ShippingAddressRepository extends JpaRepository<ShippingAddress
     List<ShippingAddressEntity> findAllByAccount_AccountId(Long accountAccountId);
 
     Optional<ShippingAddressEntity> findByAccount_AccountIdAndShippingAddressId(Long accountAccountId, Long shippingAddressId);
+
+    List<ShippingAddressEntity> findAllByAccount_AccountIdAndIsMain(Long accountAccountId, Boolean isMain);
 }
