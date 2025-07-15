@@ -109,9 +109,6 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                 () -> new RuntimeException("Product not found")
         );
 
-        //delete the old images
-        deleteProductImages(productEntity);
-
         productEntity.setUnitPrice(BigDecimal.valueOf(Double.parseDouble(productInputData.getUnitPrice())));
         productEntity.setProductDescription(productInputData.getProductDescription());
         productEntity.setProductName(productInputData.getProductName());
@@ -126,7 +123,17 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         Product product = productMapper.toModel(savedProduct);
 
         //Update and setNewImage
-        product.setImages(saveProductImages(productInputData.getProductImages(), savedProduct));
+        List<MultipartFile> productImages = productInputData.getProductImages();
+
+        boolean hasValidImages = productImages != null &&
+                                 productImages.stream().anyMatch(file -> file != null && !file.isEmpty());
+
+        if (hasValidImages) {
+            deleteProductImages(productEntity); // xóa ảnh cũ
+            product.setImages(saveProductImages(productImages, savedProduct)); // lưu ảnh mới
+        } else {
+            product.setImages(getProductImages(productEntity)); // giữ ảnh cũ
+        }
 
         //Update and set new product variants
         product.setProductVariants(updateProductVariants(productInputData, savedProduct, (AccountEntity) userDetails));

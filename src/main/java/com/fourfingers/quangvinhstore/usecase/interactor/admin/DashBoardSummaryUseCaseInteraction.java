@@ -46,8 +46,7 @@ public class DashBoardSummaryUseCaseInteraction implements DashBoardSummaryInput
         Double orderGrowthRate = getOrderGrowthRate(totalOrderCurrent, totalOrderLast);
         Long notProcessedOrder = orderRepository.countByOrderStatus(OrderStatus.PROCESSING);
 
-        //TODO: Define what is an un-processed orders
-        Long processedOrder = orderRepository.countByOrderStatus(OrderStatus.PREPARING);
+        Long processedOrder = orderRepository.countByOrderStatus(OrderStatus.SHIPPING);
         return new OrderSummary(totalOrderCurrent, orderGrowthRate, notProcessedOrder, processedOrder);
     }
 

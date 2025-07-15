@@ -25,7 +25,7 @@ public class GenAiUtil implements GenAiUtilBoundary {
                     .temperature(0.4f)
                     .topK(40.0f)
                     .topP(0.9f)
-                    .maxOutputTokens(512)
+                    .maxOutputTokens(20000)
                     .build();
 
 
@@ -45,6 +45,15 @@ public class GenAiUtil implements GenAiUtilBoundary {
                             hiệu.
                             Khi nào yêu cầu thêm thông tin về sản phẩm cụ thể hãy liệt kê chi tiết từ sản phẩm đến các
                             biến thể bao gồm cả màu sắc
+                            Liệt kê nên dùng cách gạch đầu dòng để tách biệt.
+                            Ví dụ: "- Sản phẩm:
+                                        - Phân loại
+                                        - Thương hiệu
+                                        - Các loại:
+                                            - Màu đỏ, Size L: 30 cái...."
+                            Xuống dòng sau mỗi phân loại
+                            Bỏ hết ** cho việc in đậm, thay việc in đậm bằng việc bọc chữ cần in đậm
+                            nằm trong thẻ <i> của HTML
                             """
                     ),
                     Part.fromText("Thông tin: " + info),

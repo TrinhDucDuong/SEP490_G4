@@ -34,7 +34,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
                 SELECT SUM(od.quantity * od.unitPrice)
                 FROM OrderDetailsEntity od
                 JOIN od.order o
-                WHERE o.orderStatus = 'PAID'
+                WHERE o.paymentStatus = true
                 AND o.orderDate BETWEEN :start AND :end
             """)
     BigDecimal getTotalRevenueBetween(@Param("start") LocalDateTime start,
@@ -47,7 +47,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
                 )
                 FROM OrderDetailsEntity d
                 JOIN d.order o
-                WHERE o.orderStatus = 'PAID'
+                WHERE o.paymentStatus = true
                   AND o.orderDate BETWEEN :start AND :end
                 GROUP BY o.orderDate
                 ORDER BY o.orderDate

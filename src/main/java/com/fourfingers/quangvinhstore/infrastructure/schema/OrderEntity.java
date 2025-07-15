@@ -48,4 +48,7 @@ public class OrderEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status")
     private OrderStatus orderStatus;
+
+    @Column(name = "payment_status", columnDefinition = "BIT DEFAULT 0", nullable = false)
+    private Boolean paymentStatus;
 }
