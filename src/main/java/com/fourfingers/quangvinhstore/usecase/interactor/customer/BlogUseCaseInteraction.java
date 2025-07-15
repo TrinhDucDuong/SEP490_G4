@@ -35,13 +35,13 @@ public class BlogUseCaseInteraction implements BlogInputBoundary {
             blogRepository.findAllByIsActiveTrue()
                     .stream()
                     .map(blogEntity -> {
-                        Blog blog = Blog.builder()
+                        return Blog.builder()
                                 .blogId(blogEntity.getBlogId())
                                 .blogTitle(blogEntity.getBlogTitle())
                                 .images(getBlogImages(blogEntity))
                                 .content(blogEntity.getContent())
+                                .createdAt(blogEntity.getCreatedAt())
                                 .build();
-                        return blog;
                     })
                     .toList()
         );

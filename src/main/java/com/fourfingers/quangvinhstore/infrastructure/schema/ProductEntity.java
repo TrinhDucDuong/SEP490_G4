@@ -63,4 +63,11 @@ public class ProductEntity {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "relatedProducts")
     private List<BlogEntity> relatedBlogs;
+
+    public BigDecimal getDiscountedPrice() {
+        if (this.discounts == null)
+            return this.unitPrice;
+        else
+            return this.unitPrice.subtract(this.unitPrice.multiply(this.discounts.getDiscountPercent()));
+    }
 }

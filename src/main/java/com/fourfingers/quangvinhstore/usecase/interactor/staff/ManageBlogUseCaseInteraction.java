@@ -143,9 +143,14 @@ public class ManageBlogUseCaseInteraction implements BlogManagementInputBoundary
         Blog updatedBlog = blogStaffMapper.toModel(blogRepository.saveAndFlush(blogEntity));
 
         //Delete and save new blog images
-        if (!blogImages.isEmpty()) {
+        boolean hasRealImages = blogImages != null && blogImages.stream()
+                .anyMatch(file -> file != null && !file.isEmpty());
+
+        if (hasRealImages) {
             deleteOldBlogImages(blogId);
             updatedBlog.setBlogImages(saveBlogImages(blogId, blogImages));
+        } else {
+            updatedBlog.setBlogImages(getBlogImage(blogEntity)); // giữ lại ảnh cũ
         }
         return blogManagementOutputBoundary.convertToBlogOutputData(updatedBlog);
     }

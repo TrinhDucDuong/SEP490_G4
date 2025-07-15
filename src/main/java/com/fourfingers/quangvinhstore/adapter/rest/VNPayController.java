@@ -1,5 +1,7 @@
 package com.fourfingers.quangvinhstore.adapter.rest;
 
+import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderInputBoundary;
+import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -11,13 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
-@RequestMapping("/payment")
+@RequestMapping("/vnpay")
 public class VNPayController {
 
     @Value("${vnpay.tmn-code}")
@@ -33,12 +36,20 @@ public class VNPayController {
     private String vnp_ReturnUrl;
 
 
-    @GetMapping
-    public String showQRPage(@RequestParam Integer amount, Model model, HttpServletRequest request) throws UnsupportedEncodingException {
+//    @GetMapping
+//    public String showQRPage(@RequestParam BigDecimal amount
+////                             , Model model
+//                             , HttpServletRequest request
+//    ) throws UnsupportedEncodingException {
+    public String showQRPage(
+                                OrderOutputData orderOutputData,
+                                CustomerOrderInputBoundary customerOrderInputBoundary,
+                                HttpServletRequest request
+                            ) throws UnsupportedEncodingException {
         String vnp_TxnRef = String.valueOf(System.currentTimeMillis());
-        String vnp_OrderInfo = "Thanh toan don hang test";
+        String vnp_OrderInfo = "Thanh toán đơn hàng Quang Vinh Authentic #DH" + orderOutputData.getOrder().getOrderId();
         String orderType = "other";
-        String vnp_Amount = String.valueOf(amount * 100);
+        String vnp_Amount = String.valueOf(orderOutputData.getOrder().getTotalPrice().multiply(BigDecimal.valueOf(100)));
         String vnp_Locale = "vn";
         String vnp_BankCode = "";
         String vnp_IpAddr = request.getRemoteAddr();
@@ -65,7 +76,7 @@ public class VNPayController {
 
         for (String fieldName : fieldNames) {
             String value = vnp_Params.get(fieldName);
-            if ((value != null) && (value.length() > 0)) {
+            if ((value != null) && (!value.isEmpty())) {
                 hashData.append(fieldName).append('=').append(URLEncoder.encode(value, StandardCharsets.US_ASCII)).append('&');
                 query.append(fieldName).append('=').append(URLEncoder.encode(value, StandardCharsets.US_ASCII)).append('&');
             }
@@ -77,9 +88,11 @@ public class VNPayController {
         String secureHash = hmacSHA512(vnp_HashSecret, hashData.toString());
         query.append("&vnp_SecureHash=").append(secureHash);
 
+        // set secureHash to order
+        customerOrderInputBoundary.setSecureHash(orderOutputData.getOrder().getOrderId(), secureHash);
+
         String paymentUrl = vnp_PayUrl + "?" + query.toString();
 
-        // 🔁 Chuyển hướng trình duyệt tới URL VNPay
         return "redirect:" + paymentUrl;
     }
 

@@ -10,11 +10,15 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     List<OrderEntity> findAllByOrderStatus(OrderStatus orderStatus);
 
     List<OrderEntity> findAllByOwnerAccountId(Long ownerAccountId);
+    Optional<OrderEntity> findByOrderIdAndOwnerAccountId(Long orderId, Long ownerAccountId);
+
+    Optional<OrderEntity> findBySecureHash(String secureHash);
 
     Long countByOrderDateBetween(LocalDateTime start, LocalDateTime now);
 
@@ -30,7 +34,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
                 SELECT SUM(od.quantity * od.unitPrice)
                 FROM OrderDetailsEntity od
                 JOIN od.order o
-                WHERE o.orderStatus = 'PAID'
+                WHERE o.paymentStatus = true
                 AND o.orderDate BETWEEN :start AND :end
             """)
     BigDecimal getTotalRevenueBetween(@Param("start") LocalDateTime start,
@@ -43,7 +47,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
                 )
                 FROM OrderDetailsEntity d
                 JOIN d.order o
-                WHERE o.orderStatus = 'PAID'
+                WHERE o.paymentStatus = true
                   AND o.orderDate BETWEEN :start AND :end
                 GROUP BY o.orderDate
                 ORDER BY o.orderDate

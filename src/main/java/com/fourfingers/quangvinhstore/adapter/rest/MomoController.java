@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/payment2")
+@RequestMapping("/momo")
 public class MomoController {
 
     @Value("${momo.access-key}")
@@ -32,15 +33,21 @@ public class MomoController {
     @Value("${momo.partner-code}")
     private String partnerCode;
 
+    @Value("${momo.redirect-url}")
+    private String redirectUrlBase;
+
+    @Value("${momo.ipn-url}")
+    private String ipnUrl;
+
     private static final Map<String, String> paymentStatusStore = new HashMap<>();
-    @GetMapping
-    public ResponseEntity<Void> createMomoPayment(@RequestParam Integer amount) throws Exception {
+
+//    @GetMapping
+//    public ResponseEntity<Void> createMomoPayment(@RequestParam BigDecimal amount) throws Exception {
+    public ResponseEntity<?> createMomoPayment(BigDecimal amount) throws Exception {
         String orderId = UUID.randomUUID().toString();
         String requestId = UUID.randomUUID().toString();
-        String redirectUrl = "http://localhost:8081/payment/momo-return?orderId=" + orderId;
-        String ipnUrl = "http://localhost:8081/payment/momo-ipn";
+        String redirectUrl = redirectUrlBase + "?orderId=" + orderId;
         String orderInfo = "Test momo";
-//        String amount = "21062025";
         String requestType = "captureWallet";
         String extraData = "";
 
