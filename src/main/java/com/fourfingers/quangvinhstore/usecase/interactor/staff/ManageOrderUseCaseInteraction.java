@@ -42,7 +42,7 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
         OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(
                 () -> new RuntimeException("Order not found")
         );
-        orderEntity.setOrderStatus(OrderStatus.PREPARING);
+        orderEntity = setOrderStatus(orderEntity, processOrderInputData.getOrderStatus());
         return orderManagementOutputBoundary.createOrderOutputData(
                 orderMapper.toModel(orderRepository.save(orderEntity))
         );
@@ -59,5 +59,28 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
                         .stream()
                         .map(orderMapper::toModel)
                         .toList();
+    }
+
+    private OrderEntity setOrderStatus(OrderEntity orderEntity, String orderStatus) {
+        OrderStatus currentStatus = orderEntity.getOrderStatus();
+        OrderStatus newStatus = OrderStatus.valueOf(orderStatus);
+
+        boolean isForward = newStatus.ordinal() >= currentStatus.ordinal();
+        boolean isCancelFromValidState = newStatus == OrderStatus.CANCELED
+                                         && (currentStatus == OrderStatus.PROCESSING ||
+                                             currentStatus == OrderStatus.SHIPPING);
+
+        if (!isForward && !isCancelFromValidState) {
+            throw new IllegalStateException("Không thể chuyển từ " + currentStatus + " sang " + newStatus);
+        }
+
+        if (newStatus == OrderStatus.CANCELED) {
+            orderEntity.setOrderStatus(newStatus);
+            orderEntity.setPaymentStatus(false);
+            return orderRepository.save(orderEntity);
+        }
+
+        orderEntity.setOrderStatus(newStatus);
+        return orderEntity;
     }
 }
