@@ -39,7 +39,7 @@ import BlogList from "./pages/Customer/Blog/BlogList.jsx";
 
 // Admin Pages
 import InstructionManagement from './pages/Staff/InstructionManagement';
-import PoliciesManagement from './pages/Staff/PoliciesManagement';
+import PoliciesManagement from './pages/Staff/Policy/PoliciesManagement.jsx';
 import AboutUsManagement from './pages/Staff/AboutUsManagement';
 import CustomerList from './pages/Staff/CustomerList';
 import OrderManagement from './pages/Staff/OrderManagement';
