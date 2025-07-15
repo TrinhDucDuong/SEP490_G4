@@ -33,7 +33,7 @@ public class ShippingAddressEntity {
     String phoneNumber;
 
     @Column(name = "is_main_address")
-    boolean isMain;
+    Boolean isMain;
 
     @Column(name = "address_type")
     @Enumerated(EnumType.STRING)

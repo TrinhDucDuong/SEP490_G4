@@ -41,8 +41,8 @@ public class OrderController {
 
     @PostMapping(produces = "application/json")
     public ResponseEntity<?> placeOrderFromCart(@AuthenticationPrincipal UserDetails userDetails,
-                                        @RequestBody ShippingAddressInputData shippingAddressInputData) {
-        return ResponseEntity.ok(customerOrderInputBoundary.placeOrders(userDetails, shippingAddressInputData));
+                                        @RequestBody Long shippingAddressId) {
+        return ResponseEntity.ok(customerOrderInputBoundary.placeOrders(userDetails, shippingAddressId));
     }
 
     @PostMapping("/purchase")

@@ -10,4 +10,6 @@ public interface ShippingAddressInputBoundary {
     ListShippingAddressOutputData saveShippingAddress(UserDetails userDetails, ShippingAddressInputData shippingAddressInputData);
 
     ListShippingAddressOutputData deleteShippingAddress(UserDetails userDetails, Long shippingAddressId);
+
+    ListShippingAddressOutputData updateIsMainShippingAddress(UserDetails userDetails, ShippingAddressInputData shippingAddressInputData);
 }
