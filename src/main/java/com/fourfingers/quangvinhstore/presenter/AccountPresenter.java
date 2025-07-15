@@ -1,6 +1,6 @@
 package com.fourfingers.quangvinhstore.presenter;
 
-import com.fourfingers.quangvinhstore.domain.model.Account;
+import com.fourfingers.quangvinhstore.domain.model.admin.CustomerAccount;
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.AccountManagementOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.admin.AccountOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.admin.ListAccountOutputData;
@@ -12,12 +12,12 @@ import java.util.List;
 public class AccountPresenter implements AccountManagementOutputBoundary {
 
     @Override
-    public AccountOutputData convertToAccountOutputData(Account account) {
-        return new AccountOutputData(account);
+    public AccountOutputData convertToAccountOutputData(CustomerAccount customerAccount) {
+        return new AccountOutputData(customerAccount);
     }
 
     @Override
-    public ListAccountOutputData convertToListAccountOutputData(List<Account> accounts) {
+    public ListAccountOutputData convertToListAccountOutputData(List<CustomerAccount> accounts) {
         return new ListAccountOutputData(accounts);
     }
 }
