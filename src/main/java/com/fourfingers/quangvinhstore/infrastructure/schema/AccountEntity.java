@@ -30,7 +30,7 @@ public class AccountEntity implements UserDetails {
     @Column(name = "email", unique = true)
     private String email;
 
-    @JoinColumn(name = "facebook_id")
+    @JoinColumn(name = "facebook_id", unique = true)
     private String facebookId;
 
     @Column(name = "password", nullable = false, length = 68)

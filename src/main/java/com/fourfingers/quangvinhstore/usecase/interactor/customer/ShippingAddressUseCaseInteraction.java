@@ -22,7 +22,6 @@ public class ShippingAddressUseCaseInteraction implements ShippingAddressInputBo
     private final ShippingAddressOutputBoundary shippingAddressOutputBoundary;
     private final ShippingAddressMapper shippingAddressMapper;
 
-
     @Override
     public ListShippingAddressOutputData getShippingAddress(UserDetails userDetails) {
         AccountEntity accountEntity = (AccountEntity) userDetails;
@@ -49,26 +48,38 @@ public class ShippingAddressUseCaseInteraction implements ShippingAddressInputBo
 
             if (existingEntityOpt.isPresent()) {
                 shippingAddressEntity = existingEntityOpt.get();
+                updateShippingAddressFromInput(shippingAddressEntity, shippingAddressInputData);
+                shippingAddressRepository.save(shippingAddressEntity);
             } else {
-                shippingAddressEntity = new ShippingAddressEntity();
-                shippingAddressEntity.setShippingAddressId(shippingAddressInputData.getShippingAddressId());
-                shippingAddressEntity.setAccount(accountEntity);
+                saveNewShippingAddress(accountEntity, shippingAddressInputData);
             }
         } else {
-            shippingAddressEntity = new ShippingAddressEntity();
-            shippingAddressEntity.setAccount(accountEntity);
+            saveNewShippingAddress(accountEntity, shippingAddressInputData);
         }
-
-        shippingAddressEntity.setAddress(shippingAddressInputData.getAddress());
-        shippingAddressEntity.setExactAddress(shippingAddressInputData.getExactAddress());
-        shippingAddressEntity.setName(shippingAddressInputData.getName());
-        shippingAddressEntity.setPhoneNumber(shippingAddressInputData.getPhoneNumber());
-        shippingAddressEntity.setMain(shippingAddressInputData.isMain());
-
-        shippingAddressRepository.save(shippingAddressEntity);
 
         return getShippingAddress(userDetails);
     }
+
+    void saveNewShippingAddress(AccountEntity accountEntity, ShippingAddressInputData inputData) {
+        ShippingAddressEntity newEntity = new ShippingAddressEntity();
+        newEntity.setAccount(accountEntity);
+        updateShippingAddressFromInput(newEntity, inputData);
+
+        if (inputData.getShippingAddressId() != null) {
+            newEntity.setShippingAddressId(inputData.getShippingAddressId());
+        }
+
+        shippingAddressRepository.save(newEntity);
+    }
+
+    private void updateShippingAddressFromInput(ShippingAddressEntity entity, ShippingAddressInputData inputData) {
+        entity.setAddress(inputData.getAddress());
+        entity.setExactAddress(inputData.getExactAddress());
+        entity.setName(inputData.getName());
+        entity.setPhoneNumber(inputData.getPhoneNumber());
+        entity.setMain(inputData.isMain());
+    }
+
 
 
     @Override

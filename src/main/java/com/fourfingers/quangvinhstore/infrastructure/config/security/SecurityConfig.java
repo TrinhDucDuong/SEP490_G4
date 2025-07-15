@@ -83,7 +83,6 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.POST, "/staff/**").permitAll();
                     auth.requestMatchers(HttpMethod.DELETE, "/staff/**").permitAll();
                     auth.requestMatchers(HttpMethod.PUT, "/staff/**").permitAll();
-                    auth.requestMatchers(HttpMethod.PATCH, "/staff/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/store").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/store/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/instruction").permitAll();
@@ -128,8 +127,10 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/recommendation").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/blog/**").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/staff/blog").hasAuthority("STAFF");
-                    auth.requestMatchers(HttpMethod.GET, "/order/**").permitAll();
+                    auth.requestMatchers("/order/**").permitAll();
                     auth.requestMatchers("/addresses/**").permitAll();
+                    auth.requestMatchers("/vnpay/**").permitAll();
+                    auth.requestMatchers("/momo/**").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/admin/dashboard/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/staff/star-rate").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/staff/star-rate").permitAll();
@@ -159,7 +160,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:5182"); // Allow your frontend origin
+        configuration.addAllowedOrigin("http://localhost:5173"); // Allow your frontend origin
         configuration.addAllowedMethod("*"); // Allow all HTTP methods (GET, POST, etc.)
         configuration.addAllowedHeader("*"); // Allow all headers
         configuration.setAllowCredentials(true); // Allow credentials (e.g., cookies, Authorization headers)

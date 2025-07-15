@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "shipping_addresses")
@@ -44,6 +45,9 @@ public class ShippingAddressEntity {
             referencedColumnName = "account_id"
     )
     private AccountEntity account;
+
+    @OneToMany(mappedBy = "shippingAddress")
+    private List<OrderEntity> orders;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
