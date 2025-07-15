@@ -120,7 +120,7 @@ function Payment() {
                             />
                             <div>
                                 <div className='font-semibold text-black'>
-                                    Xin chào, {profile.firstName} {profile.lastName}
+                                   {profile.firstName} {profile.lastName}
                                 </div>
                                 <div className='text-sm text-gray-600'>{profile.email}</div>
                             </div>
@@ -135,39 +135,39 @@ function Payment() {
                     )}
 
                     <form className='space-y-4' onSubmit={handleSubmit}>
-                        <div className='flex gap-4'>
-                            <input
-                                type='text'
-                                name='firstname'
-                                placeholder='Tên đệm*'
-                                defaultValue={profile?.firstName || ''}
-                                className='w-full border rounded-xl px-3 py-2 text-black'
-                            />
-                            <input
-                                type='text'
-                                name='lastname'
-                                placeholder='Tên*'
-                                defaultValue={profile?.lastName || ''}
-                                className='w-full border rounded-xl px-3 py-2 text-black'
-                            />
-                        </div>
+                        {!user && (
+                            <>
+                                <div className='flex gap-4'>
+                                    <input
+                                        type='text'
+                                        name='firstname'
+                                        placeholder='Tên đệm*'
+                                        className='w-full border rounded-xl px-3 py-2 text-black'
+                                    />
+                                    <input
+                                        type='text'
+                                        name='lastname'
+                                        placeholder='Tên*'
+                                        className='w-full border rounded-xl px-3 py-2 text-black'
+                                    />
+                                </div>
 
-                        <input
-                            type='email'
-                            name='email'
-                            placeholder='Email'
-                            defaultValue={profile?.email || ''}
-                            className='w-full border rounded-xl px-3 py-2 text-black'
-                        />
+                                <input
+                                    type='email'
+                                    name='email'
+                                    placeholder='Email'
+                                    className='w-full border rounded-xl px-3 py-2 text-black'
+                                />
 
-                        <input
-                            type='number'
-                            name='phone_number'
-                            placeholder='Số điện thoại*'
-                            required
-                            defaultValue={profile?.phoneNumber || ''}
-                            className='w-full border rounded-xl px-3 py-2 text-black'
-                        />
+                                <input
+                                    type='number'
+                                    name='phone_number'
+                                    placeholder='Số điện thoại*'
+                                    required
+                                    className='w-full border rounded-xl px-3 py-2 text-black'
+                                />
+                            </>
+                        )}
 
                         {user ? (
                             <div className='space-y-4'>
@@ -210,6 +210,7 @@ function Payment() {
                             Tiếp tục phương thức thanh toán
                         </button>
                     </form>
+
                 </div>
 
                 <div className='basis-full md:basis-1/3 bg-gray-50 p-6 flex flex-col'>
