@@ -30,11 +30,18 @@ public class ManageStarRateUseCaseInteraction implements StarRateManagementInput
     private final StarRateManagementOutputBoundary starRateManageMentOutputBoundary;
 
     @Override
+    @Transactional
     public ListStarRateOutputData getAll() {
         return starRateManageMentOutputBoundary.convertToListStarRateOutputData(
                 starRateRepository.findAll()
                         .stream()
-                        .map(starRateStaffMapper::toModel)
+                        .map(starRateEntity -> {
+                            StarRate starRate = starRateStaffMapper.toModel(starRateEntity);
+                            starRate.getProductVariant().setProductName(
+                                    starRateEntity.getProductVariant().getProduct().getProductName()
+                            );
+                            return starRate;
+                        })
                         .toList()
         );
     }
@@ -61,13 +68,17 @@ public class ManageStarRateUseCaseInteraction implements StarRateManagementInput
     }
 
     @Override
+    @Transactional
     public StarRateOutputData get(String id) {
         StarRateEntity starRateEntity = starRateRepository.findById(Long.parseLong(id)).orElseThrow(
                 () -> new EntityNotFoundException("Star rate not found")
         );
         List<StarRate> staffReplies = getStaffReply(starRateEntity);
-        return starRateManageMentOutputBoundary.convertToStarRateOutputData(starRateStaffMapper
-                .toModel(starRateEntity), staffReplies);
+        StarRate starRate = starRateStaffMapper.toModel(starRateEntity);
+        starRate.getProductVariant().setProductName(
+                starRateEntity.getProductVariant().getProduct().getProductName()
+        );
+        return starRateManageMentOutputBoundary.convertToStarRateOutputData(starRate, staffReplies);
     }
 
     @Override
