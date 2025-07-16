@@ -21,75 +21,76 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ShippingAddressUseCaseInteraction implements ShippingAddressInputBoundary {
+
     private final ShippingAddressRepository shippingAddressRepository;
     private final ShippingAddressOutputBoundary shippingAddressOutputBoundary;
     private final ShippingAddressMapper shippingAddressMapper;
-    private final AccountRepository accountRepository;
 
     @Override
     public ListShippingAddressOutputData getShippingAddress(UserDetails userDetails) {
-        AccountEntity accountEntity = (AccountEntity) userDetails;
+        Long accountId = ((AccountEntity) userDetails).getAccountId();
+        List<ShippingAddressEntity> entities = shippingAddressRepository.findAllByAccount_AccountIdAndIsActive(accountId, true);
         return shippingAddressOutputBoundary.convertToListShippingAddressOutputData(
-                shippingAddressRepository.findAllByAccount_AccountId(accountEntity.getAccountId())
-                        .stream()
-                        .map(shippingAddressMapper::toModel)
-                        .toList()
+                entities.stream().map(shippingAddressMapper::toModel).toList()
         );
     }
 
     @Override
-    public ListShippingAddressOutputData saveShippingAddress(UserDetails userDetails, ShippingAddressInputData shippingAddressInputData) {
-        AccountEntity accountEntity = (AccountEntity) userDetails;
+    public ListShippingAddressOutputData saveShippingAddress(UserDetails userDetails, ShippingAddressInputData inputData) {
+        AccountEntity account = (AccountEntity) userDetails;
+        Long accountId = account.getAccountId();
 
-        ShippingAddressEntity shippingAddressEntity;
-
-        if (shippingAddressInputData.getShippingAddressId() != null) {
-            Optional<ShippingAddressEntity> existingEntityOpt = shippingAddressRepository
-                    .findByAccount_AccountIdAndShippingAddressId(
-                            accountEntity.getAccountId(),
-                            shippingAddressInputData.getShippingAddressId()
-                    );
-
-            if (existingEntityOpt.isPresent()) {
-                shippingAddressEntity = existingEntityOpt.get();
-                updateShippingAddressFromInput(accountEntity.getAccountId(), shippingAddressEntity, shippingAddressInputData);
-                shippingAddressRepository.save(shippingAddressEntity);
-            }
+        if (inputData.getShippingAddressId() != null) {
+            shippingAddressRepository
+                    .findByAccount_AccountIdAndShippingAddressId(accountId, inputData.getShippingAddressId())
+                    .ifPresent(entity -> {
+                        updateShippingAddressFromInput(accountId, entity, inputData);
+                        shippingAddressRepository.save(entity);
+                    });
         } else {
-            saveNewShippingAddress(accountEntity.getAccountId(), accountEntity, shippingAddressInputData);
+            saveNewShippingAddress(account, inputData);
         }
 
         return getShippingAddress(userDetails);
     }
 
     @Override
-    public ListShippingAddressOutputData updateIsMainShippingAddress(UserDetails userDetails, ShippingAddressInputData shippingAddressInputData) {
-        AccountEntity accountEntity = (AccountEntity) userDetails;
-        if(shippingAddressInputData.getIsMain() == true ) {
-            setIsMainToFalse(accountEntity.getAccountId());
+    public ListShippingAddressOutputData updateIsMainShippingAddress(UserDetails userDetails, Long shippingAddressId) {
+        AccountEntity account = (AccountEntity) userDetails;
+        Long accountId = account.getAccountId();
+
+        if(shippingAddressId == null) {
+            throw new RuntimeException("Shipping address id is null");
         }
-        Optional<ShippingAddressEntity> shippingAddressEntity = shippingAddressRepository.findById(shippingAddressInputData.getShippingAddressId());
-        shippingAddressEntity.ifPresent(shippingAddressRepository::save);
+
+        setAllIsMainToFalse(accountId);
+
+        shippingAddressRepository.findById(shippingAddressId)
+                .ifPresent(entity -> {
+                    entity.setIsMain(true);
+                    shippingAddressRepository.save(entity);
+                });
+
         return getShippingAddress(userDetails);
     }
 
-    private void setIsMainToFalse(Long accountId) {
-        List<ShippingAddressEntity> shippingAddressEntities = shippingAddressRepository.findAllByAccount_AccountIdAndIsMain(accountId, true);
-        for(ShippingAddressEntity shippingAddressEntity : shippingAddressEntities) {
-            shippingAddressEntity.setIsMain(false);
-            shippingAddressRepository.save(shippingAddressEntity);
-        }
+    private void setAllIsMainToFalse(Long accountId) {
+        List<ShippingAddressEntity> entities = shippingAddressRepository.findAllByAccount_AccountIdAndIsMain(accountId, true);
+        entities.forEach(entity -> {
+            entity.setIsMain(false);
+            shippingAddressRepository.save(entity);
+        });
     }
 
-    void saveNewShippingAddress(Long accountId, AccountEntity accountEntity, ShippingAddressInputData inputData) {
+    private void saveNewShippingAddress(AccountEntity account, ShippingAddressInputData inputData) {
         ShippingAddressEntity newEntity = new ShippingAddressEntity();
-        newEntity.setAccount(accountEntity);
-        updateShippingAddressFromInput(accountId, newEntity, inputData);
+        newEntity.setAccount(account);
 
         if (inputData.getShippingAddressId() != null) {
             newEntity.setShippingAddressId(inputData.getShippingAddressId());
         }
 
+        updateShippingAddressFromInput(account.getAccountId(), newEntity, inputData);
         shippingAddressRepository.save(newEntity);
     }
 
@@ -98,34 +99,35 @@ public class ShippingAddressUseCaseInteraction implements ShippingAddressInputBo
         entity.setExactAddress(inputData.getExactAddress());
         entity.setName(inputData.getName());
         entity.setPhoneNumber(inputData.getPhoneNumber());
-        if(inputData.getIsMain() == true) {
-            setIsMainToFalse(accountId);
+        entity.setIsActive(true);
+
+        if (Boolean.TRUE.equals(inputData.getIsMain())) {
+            setAllIsMainToFalse(accountId);
             entity.setIsMain(true);
         }
-        switch (entity.getType().toString().toUpperCase()) {
-            case "HOME":
-                entity.setType(ShippingAddressType.HOME);
-                break;
-            case "WORK":
-                entity.setType(ShippingAddressType.WORK);
-                break;
-            default:
-                entity.setType(ShippingAddressType.OTHER);
-                break;
+
+        String typeStr = inputData.getType();
+        ShippingAddressType type = parseShippingAddressType(typeStr);
+        entity.setType(type);
+    }
+
+    private ShippingAddressType parseShippingAddressType(String typeStr) {
+        if (typeStr == null) return ShippingAddressType.OTHER;
+        try {
+            return ShippingAddressType.valueOf(typeStr.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            return ShippingAddressType.OTHER;
         }
     }
 
-
-
     @Override
     public ListShippingAddressOutputData deleteShippingAddress(UserDetails userDetails, Long shippingAddressId) {
-        AccountEntity accountEntity = (AccountEntity) userDetails;
-        Optional<ShippingAddressEntity> shippingAddressEntity = shippingAddressRepository
-                .findByAccount_AccountIdAndShippingAddressId(
-                        accountEntity.getAccountId(),
-                        shippingAddressId
-                );
-        shippingAddressEntity.ifPresent(shippingAddressRepository::delete);
+        AccountEntity account = (AccountEntity) userDetails;
+        shippingAddressRepository.findByAccount_AccountIdAndShippingAddressId(account.getAccountId(), shippingAddressId)
+                .ifPresent(address -> {
+                    address.setIsActive(false);
+                    shippingAddressRepository.save(address);
+                });
         return getShippingAddress(userDetails);
     }
 }

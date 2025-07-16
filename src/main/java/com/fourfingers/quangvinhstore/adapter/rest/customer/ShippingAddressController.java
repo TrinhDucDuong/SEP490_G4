@@ -26,13 +26,13 @@ public class ShippingAddressController {
         return ResponseEntity.ok(shippingAddressInputBoundary.saveShippingAddress(userDetails, shippingAddressInputData));
     }
 
-    @PostMapping("main")
+    @PatchMapping
     public ResponseEntity<?> updateIsMainShippingAddress(@AuthenticationPrincipal UserDetails userDetails,
-                                                           @RequestBody ShippingAddressInputData shippingAddressInputData) {
-        return ResponseEntity.ok(shippingAddressInputBoundary.updateIsMainShippingAddress(userDetails, shippingAddressInputData));
+                                                           @RequestParam Long shippingAddressId) {
+        return ResponseEntity.ok(shippingAddressInputBoundary.updateIsMainShippingAddress(userDetails, shippingAddressId));
     }
 
-    @PutMapping
+    @DeleteMapping
     public ResponseEntity<?> deleteCustomerShippingAddress(@AuthenticationPrincipal UserDetails userDetails,
                                                            @RequestParam Long shippingAddressId) {
         return ResponseEntity.ok(shippingAddressInputBoundary.deleteShippingAddress(userDetails, shippingAddressId));

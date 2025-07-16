@@ -11,5 +11,5 @@ public interface ShippingAddressInputBoundary {
 
     ListShippingAddressOutputData deleteShippingAddress(UserDetails userDetails, Long shippingAddressId);
 
-    ListShippingAddressOutputData updateIsMainShippingAddress(UserDetails userDetails, ShippingAddressInputData shippingAddressInputData);
+    ListShippingAddressOutputData updateIsMainShippingAddress(UserDetails userDetails, Long shippingAddressId);
 }

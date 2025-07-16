@@ -21,19 +21,22 @@ public class ShippingAddressEntity {
     private Long shippingAddressId;
 
     @Column(name = "address")
-    String address;
+    private String address;
 
     @Column(name = "exact_address")
-    String exactAddress;
+    private String exactAddress;
 
     @Column(name = "name")
-    String name;
+    private String name;
 
     @Column(name = "phone_number")
-    String phoneNumber;
+    private String phoneNumber;
 
-    @Column(name = "is_main_address")
-    Boolean isMain;
+    @Column(name = "is_main_address", columnDefinition = "BIT DEFAULT 0")
+    private Boolean isMain;
+
+    @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1")
+    private Boolean isActive;
 
     @Column(name = "address_type")
     @Enumerated(EnumType.STRING)
