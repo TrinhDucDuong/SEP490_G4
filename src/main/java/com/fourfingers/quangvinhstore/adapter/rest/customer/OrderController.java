@@ -19,8 +19,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 
-//@RestController
-@Controller
+@RestController
+//@Controller
 @RequestMapping("/order")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class OrderController {
@@ -39,7 +39,7 @@ public class OrderController {
         return ResponseEntity.ok(customerOrderInputBoundary.getOrder(id, userDetails));
     }
 
-    @PostMapping(produces = "application/json")
+    @PostMapping //(produces = "application/json")
     public ResponseEntity<?> placeOrderFromCart(@AuthenticationPrincipal UserDetails userDetails,
                                         @RequestBody Long shippingAddressId) {
         return ResponseEntity.ok(customerOrderInputBoundary.placeOrders(userDetails, shippingAddressId));
