@@ -53,20 +53,26 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         AccountEntity accountEntity = (AccountEntity) userDetails;
 
         Optional<ShippingAddressEntity> shippingAddressEntity = shippingAddressRepository
-                                                                .findByAccount_AccountIdAndShippingAddressId(
+                                                                .findByAccount_AccountIdAndShippingAddressIdAndIsActive(
                                                                         accountEntity.getAccountId(),
-                                                                        shippingAddressIdInputData.getShippingAddressId()
+                                                                        shippingAddressIdInputData.getShippingAddressId(),
+                                                                        true
                                                                 );
         if (shippingAddressIdInputData.getShippingAddressId() == null || shippingAddressEntity.isEmpty()) {
             throw new RuntimeException("Shipping address not found");
         }
+
+        List<CartDetailsEntity> cartDetailsEntities = cartDetailsRepository.findByAccount_AccountId(accountEntity.getAccountId());
+        if(cartDetailsEntities.isEmpty()) {
+            throw new RuntimeException("Customer doesn't have any product in cart");
+        }
+
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setOrderDate(LocalDateTime.now());
         orderEntity.setOwner(accountEntity);
         orderEntity.setShippingAddress(shippingAddressEntity.get());
         orderEntity.setOrderStatus(OrderStatus.PROCESSING);
 
-        List<CartDetailsEntity> cartDetailsEntities = cartDetailsRepository.findByAccount_AccountId(accountEntity.getAccountId());
         List<OrderDetailsEntity> orderDetailsEntities = mapCartDetailsEntityToOrderDetailsEntity(cartDetailsEntities, orderEntity);
         orderEntity.setOrderDetails(orderDetailsEntities);
 
@@ -173,7 +179,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
                         .quantity(cartDetails.getQuantity().longValue())
                         .unitPrice(cartDetails.getProductVariant().getProduct().getDiscountedPrice())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private BigDecimal calculateTotalOrderPrice(Long orderId) {
