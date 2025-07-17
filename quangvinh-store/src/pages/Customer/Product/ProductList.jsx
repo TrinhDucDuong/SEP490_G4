@@ -87,7 +87,7 @@ const ProductList = () => {
                         <p className="text-center text-gray-500 text-sm">Không tìm thấy sản phẩm phù hợp</p>
                     ) : (
                         <>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1 md:gap-2">
                                 {products.map((product) => (
                                     <ProductCard key={product.productId} product={product} />
                                 ))}

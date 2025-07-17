@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
     const [form, setForm] = useState({
-        ...currentAddress,
+        shippingAddressId: currentAddress.shippingAddressId || '',
+        name: currentAddress.name || '',
+        phoneNumber: currentAddress.phoneNumber || '',
+        address: currentAddress.address || '',
+        exactAddress: currentAddress.exactAddress || '',
+        main: currentAddress.isMain || false,
+        type: currentAddress.type === 'HOME' ? 'Nhà riêng' : currentAddress.type === 'OFFICE' ? 'Văn phòng' : 'Khác',
         province: '',
         district: '',
         ward: '',
@@ -16,14 +23,21 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
         fetch('https://provinces.open-api.vn/api/?depth=1')
             .then(res => res.json())
             .then(setProvinces)
-            .catch(console.error);
+            .catch(error => {
+                console.error('Lỗi khi tải danh sách tỉnh:', error);
+                toast.error('Không thể tải danh sách tỉnh');
+            });
     }, []);
 
     useEffect(() => {
         if (form.province) {
             fetch(`https://provinces.open-api.vn/api/p/${form.province}?depth=2`)
                 .then(res => res.json())
-                .then(data => setDistricts(data.districts || []));
+                .then(data => setDistricts(data.districts || []))
+                .catch(error => {
+                    console.error('Lỗi khi tải danh sách huyện:', error);
+                    toast.error('Không thể tải danh sách huyện');
+                });
         } else {
             setDistricts([]);
             setWards([]);
@@ -34,17 +48,60 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
         if (form.district) {
             fetch(`https://provinces.open-api.vn/api/d/${form.district}?depth=2`)
                 .then(res => res.json())
-                .then(data => setWards(data.wards || []));
+                .then(data => setWards(data.wards || []))
+                .catch(error => {
+                    console.error('Lỗi khi tải danh sách xã:', error);
+                    toast.error('Không thể tải danh sách xã');
+                });
         } else {
             setWards([]);
         }
     }, [form.district]);
 
-    const mapTypeToEnum = (type) => {
-        if (type === 'Nhà riêng') return 'HOME';
-        if (type === 'Văn phòng') return 'OFFICE';
-        return null;
-    };
+    // Initialize province, district, and ward from address
+    useEffect(() => {
+        const initializeAddress = async () => {
+            if (currentAddress.address && provinces.length > 0) {
+                const [wardName, districtName, provinceName] = currentAddress.address.split(', ').map(s => s.trim());
+
+                // Find province
+                const province = provinces.find(p => p.name === provinceName);
+                if (province) {
+                    setForm(prev => ({ ...prev, province: province.code.toString() }));
+
+                    // Fetch districts for the province
+                    try {
+                        const districtRes = await fetch(`https://provinces.open-api.vn/api/p/${province.code}?depth=2`);
+                        const districtData = await districtRes.json();
+                        const districtList = districtData.districts || [];
+                        setDistricts(districtList);
+
+                        // Find district
+                        const district = districtList.find(d => d.name === districtName);
+                        if (district) {
+                            setForm(prev => ({ ...prev, district: district.code.toString() }));
+
+                            // Fetch wards for the district
+                            const wardRes = await fetch(`https://provinces.open-api.vn/api/d/${district.code}?depth=2`);
+                            const wardData = await wardRes.json();
+                            const wardList = wardData.wards || [];
+                            setWards(wardList);
+
+                            // Find ward
+                            const ward = wardList.find(w => w.name === wardName);
+                            if (ward) {
+                                setForm(prev => ({ ...prev, ward: ward.code.toString() }));
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Lỗi khi khởi tạo địa chỉ:', error);
+                        toast.error('Không thể khởi tạo địa chỉ');
+                    }
+                }
+            }
+        };
+        initializeAddress();
+    }, [currentAddress.address, provinces]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -54,17 +111,27 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
         }));
     };
 
+    const mapTypeToEnum = (type) => {
+        if (type === 'Nhà riêng') return 'HOME';
+        if (type === 'Văn phòng') return 'OFFICE';
+        return null;
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
         const selectedProvince = provinces.find(p => p.code === Number(form.province))?.name || '';
         const selectedDistrict = districts.find(d => d.code === Number(form.district))?.name || '';
         const selectedWard = wards.find(w => w.code === Number(form.ward))?.name || '';
-        const combinedAddress = selectedWard && selectedDistrict && selectedProvince
-            ? `${selectedWard}, ${selectedDistrict}, ${selectedProvince}`
-            : form.address;
 
-        const updatedAddress = {
+        if (!selectedProvince || !selectedDistrict || !selectedWard) {
+            toast.error('Vui lòng chọn đầy đủ tỉnh, huyện, xã!');
+            return;
+        }
+
+        const combinedAddress = `${selectedWard}, ${selectedDistrict}, ${selectedProvince}`;
+
+        onUpdate({
             shippingAddressId: form.shippingAddressId,
             name: form.name,
             phoneNumber: form.phoneNumber,
@@ -72,9 +139,10 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
             exactAddress: form.exactAddress,
             main: form.main,
             type: mapTypeToEnum(form.type),
-        };
-
-        onUpdate(updatedAddress);
+            provinceCode: form.province,
+            districtCode: form.district,
+            wardCode: form.ward,
+        });
     };
 
     return (
@@ -113,6 +181,7 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
                         value={form.province}
                         onChange={handleChange}
                         className="w-full border border-gray-300 rounded-full py-2 px-3 text-sm"
+                        required
                     >
                         <option value="">Chọn tỉnh</option>
                         {provinces.map(p => (
@@ -120,6 +189,7 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
                         ))}
                     </select>
                 </div>
+
                 <div className="flex flex-col">
                     <label className="text-sm font-medium text-gray-700 mb-1">Quận / Huyện</label>
                     <select
@@ -127,6 +197,7 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
                         value={form.district}
                         onChange={handleChange}
                         className="w-full border border-gray-300 rounded-full py-2 px-3 text-sm"
+                        required
                     >
                         <option value="">Chọn huyện</option>
                         {districts.map(d => (
@@ -134,6 +205,7 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
                         ))}
                     </select>
                 </div>
+
                 <div className="flex flex-col">
                     <label className="text-sm font-medium text-gray-700 mb-1">Phường / Xã</label>
                     <select
@@ -141,6 +213,7 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
                         value={form.ward}
                         onChange={handleChange}
                         className="w-full border border-gray-300 rounded-full py-2 px-3 text-sm"
+                        required
                     >
                         <option value="">Chọn xã</option>
                         {wards.map(w => (
@@ -184,7 +257,7 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
             <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                     type="checkbox"
-                    name="main" // ✅ sửa từ isMain
+                    name="main"
                     checked={form.main}
                     onChange={handleChange}
                     className="h-4 w-4 text-gray-900"
@@ -197,7 +270,7 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
                     type="submit"
                     className="bg-green-300 text-green-800 px-6 py-1 rounded-full text-sm font-medium hover:bg-green-600 hover:text-white transition"
                 >
-                    Lưu
+                    Cập nhật
                 </button>
                 <button
                     type="button"

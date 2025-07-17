@@ -17,7 +17,7 @@ function OrderItem({ order }) {
 
             {order.items.map((item, index) => (
                 <div key={index} className="flex items-center gap-4 mb-3">
-                    <img src={item.image} alt={item.name} className="w-14 h-14 rounded border" />
+                    {/*<img src={item.image} alt={item.name} className="w-14 h-14 rounded border" />*/}
                     <div className="flex-1">
                         <p className="font-medium text-black">{item.name}</p>
                         <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>

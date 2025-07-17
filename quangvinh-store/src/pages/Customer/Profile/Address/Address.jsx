@@ -35,6 +35,7 @@ function Address() {
                 },
                 body: JSON.stringify(newAddress),
             });
+            console.log(newAddress);
             if (response.ok) {
                 const created = await response.json();
                 setAddress(prev => [...prev, created]);
@@ -59,12 +60,14 @@ function Address() {
                     'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    shippingAddresses: [updated]
+                    ...updated,
                 }),
             });
+
             if (response.ok) {
+                const updatedResult = await response.json();
                 setAddress(prev =>
-                    prev.map(addr => addr.shippingAddressId === updated.shippingAddressId ? updated : addr)
+                    prev.map(addr => addr.shippingAddressId === updatedResult.shippingAddressId ? updatedResult : addr)
                 );
                 setEditingAddress(null);
                 toast.success("Đã cập nhật địa chỉ!");
@@ -78,11 +81,12 @@ function Address() {
         }
     };
 
+
     const handleDeleteConfirmed = async () => {
         if (!confirmDelete) return;
         try {
             const response = await fetch(`http://localhost:9999/addresses?shippingAddressId=${confirmDelete.shippingAddressId}`, {
-                method: 'PUT',
+                method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -100,6 +104,28 @@ function Address() {
         }
         setConfirmDelete(null);
     };
+
+    const handleSetMain = async (addressId) => {
+        try {
+            const response = await fetch(`http://localhost:9999/addresses?shippingAddressId=${addressId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                toast.success("Đã đặt làm địa chỉ chính!");
+                refetch();
+            } else {
+                toast.error("Đặt địa chỉ chính thất bại!");
+            }
+        } catch (error) {
+            console.error("Lỗi khi đặt địa chỉ chính:", error);
+            toast.error("Lỗi khi đặt địa chỉ chính!");
+        }
+    };
+
+
 
     return (
         <div className="bg-white rounded-2xl shadow-sm p-6 md:p-8">
@@ -149,9 +175,7 @@ function Address() {
                             key={item.shippingAddressId}
                             item={item}
                             onEdit={() => setEditingAddress(item)}
-                            onSetMain={() => {
-                                handleUpdate({ ...item, main: true });
-                            }}
+                            onSetMain={() => handleSetMain(item.shippingAddressId)}
                             onDelete={() => setConfirmDelete(item)}
                         />
                     ))}

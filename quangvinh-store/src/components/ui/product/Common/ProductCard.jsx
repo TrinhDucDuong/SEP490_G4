@@ -37,7 +37,7 @@ const ProductCard = memo(function ProductCard({ product }) {
     return (
         <div
             onClick={handleClick}
-            className="relative bg-white rounded-sm shadow-sm p-4 cursor-pointer group hover:shadow-md hover:-translate-y-1 hover:border-indigo-100 border border-transparent transition-all duration-300"
+            className="relative bg-white rounded-sm shadow-sm p-1 cursor-pointer group hover:shadow-md hover:-translate-y-1 hover:border-indigo-100 border border-transparent transition-all duration-300"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
         >
