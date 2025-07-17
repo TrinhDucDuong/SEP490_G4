@@ -13,6 +13,6 @@ public class ShippingAddressInputData {
     private String phoneNumber;
     private String address;
     private String exactAddress;
-    private boolean isMain;
+    private Boolean isMain;
     private String type;
 }
