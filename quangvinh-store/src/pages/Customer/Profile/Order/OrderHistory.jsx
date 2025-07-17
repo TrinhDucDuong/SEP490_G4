@@ -8,7 +8,6 @@ function OrderHistory() {
 
     const completedOrders = orders.filter(order => order.status === 'COMPLETED');
     const processingOrders = orders.filter(order => order.status !== 'COMPLETED');
-    console.log(orders);
 
     if (loading) return <p>Đang tải đơn hàng...</p>;
     if (error) return <p className="text-red-500">Lỗi: {error}</p>;
