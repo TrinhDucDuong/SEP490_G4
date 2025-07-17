@@ -54,7 +54,7 @@ function Payment() {
         };
 
         try {
-            const res = await fetch('http://localhost:9999/checkout', {
+            const res = await fetch('http://localhost:9999/order', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ function Payment() {
                 },
                 body: JSON.stringify(formData),
             });
-
+            console.log(formData);
             if (res.ok) {
                 toast.success('Đặt hàng thành công!');
             } else {
@@ -85,14 +85,7 @@ function Payment() {
     };
 
     const handleUpdateAddress = async (updated) => {
-        // try {
-        //     await updateAddress(updated, token);
-        //     toast.success("Cập nhật địa chỉ thành công!");
-        //     setEditingAddress(null);
-        //     refetch();
-        // } catch (err) {
-        //     toast.error("Lỗi khi cập nhật địa chỉ");
-        // }
+
     };
 
     return (

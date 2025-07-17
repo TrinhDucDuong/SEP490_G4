@@ -20,7 +20,7 @@ import ProductDetail from './pages/Customer/Product/ProductDetails.jsx';
 import Login from './pages/Customer/Login/Login.jsx';
 import Register from './pages/Customer/Login/Register.jsx';
 import ForgotPassword from './pages/Customer/Login/ForgotPassword.jsx';
-import Cart from './pages/Customer/Payment/Cart.jsx';
+import Cart from './pages/Customer/Cart/Cart.jsx';
 import Payment from './pages/Customer/Payment/Payment.jsx';
 import NotFound from './pages/Customer/Common/NotFound.jsx';
 import ProfileLayout from './pages/Customer/Profile/ProfileLayout';
