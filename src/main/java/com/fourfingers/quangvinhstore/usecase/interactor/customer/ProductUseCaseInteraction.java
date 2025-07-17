@@ -1,14 +1,13 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.customer;
 
-import com.fourfingers.quangvinhstore.domain.model.customer.Brand;
-import com.fourfingers.quangvinhstore.domain.model.customer.Category;
-import com.fourfingers.quangvinhstore.domain.model.customer.Color;
+import com.fourfingers.quangvinhstore.domain.model.ProductVariant;
+import com.fourfingers.quangvinhstore.domain.model.customer.*;
 import com.fourfingers.quangvinhstore.domain.model.Image;
-import com.fourfingers.quangvinhstore.domain.model.customer.Product;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.BrandMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.CategoryMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductVariantMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.*;
@@ -21,6 +20,7 @@ import com.fourfingers.quangvinhstore.usecase.data.customer.ProductDetailsOutput
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -38,6 +38,7 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
     private final ImageMapper imageMapper;
     private final BrandMapper brandMapper;
     private final CategoryMapper categoryMapper;
+    private final ProductVariantMapper productVariantMapper;
 
     @Override
     @Transactional
@@ -45,7 +46,8 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                                         String sortDirection,
                                         String sortBy,
                                         String pageNumber,
-                                        String pageSize) {
+                                        String pageSize
+    ) {
         // Create a Pageable object with page number, size and sort
         Pageable pageable = PageRequest.of(Integer.parseInt(pageNumber), Integer.parseInt(pageSize));
 
@@ -115,6 +117,19 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
         Brand brand = brandMapper.toModel(productEntity.getBrand());
         brand.setImages(brandImages);
         product.setBrand(brand);
+
+        //Set variants
+        List<ProductDetailsVariant> productVariants = productEntity.getProductVariants().stream()
+                .map(productVariantEntity -> {
+                    return ProductDetailsVariant.builder()
+                            .productSize(productVariantEntity.getProductSize().toString())
+                            .colorHex(productVariantEntity.getColor().getColorHex())
+                            .quantity(productVariantEntity.getQuantity())
+                            .build();
+                })
+                .toList();
+        product.setProductVariants(productVariants);
+
         return product;
     }
 

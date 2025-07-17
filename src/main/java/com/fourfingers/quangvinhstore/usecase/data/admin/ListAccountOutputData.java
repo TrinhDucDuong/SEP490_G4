@@ -1,6 +1,7 @@
 package com.fourfingers.quangvinhstore.usecase.data.admin;
 
 import com.fourfingers.quangvinhstore.domain.model.Account;
+import com.fourfingers.quangvinhstore.domain.model.admin.CustomerAccount;
 import lombok.*;
 
 import java.util.List;
@@ -11,5 +12,5 @@ import java.util.List;
 @Setter
 @Builder
 public class ListAccountOutputData {
-    private List<Account> accounts;
+    private List<CustomerAccount> accounts;
 }

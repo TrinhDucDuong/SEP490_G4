@@ -1,6 +1,7 @@
 package com.fourfingers.quangvinhstore.domain.model.customer;
 
 import com.fourfingers.quangvinhstore.domain.model.Image;
+import com.fourfingers.quangvinhstore.domain.model.ProductVariant;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -21,6 +22,8 @@ public class Product {
     private Long totalSoldOut;
     private Brand brand;
     private Category category;
+    private Long totalQuantity;
+    private List<ProductDetailsVariant> productVariants;
 
     public Product(Long productId, String productName, String productDescription, BigDecimal unitPrice,
                    Double starRateAvg, Long totalSoldOut) {

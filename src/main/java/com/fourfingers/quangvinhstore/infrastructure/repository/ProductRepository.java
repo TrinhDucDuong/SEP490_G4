@@ -63,6 +63,19 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>,
                 CASE WHEN :sortBy = 'createdAt' AND :sortDirection = 'asc' THEN created_at END ASC,
                 CASE WHEN :sortBy = 'createdAt' AND :sortDirection = 'desc' THEN created_at END DESC
             """,
+            countQuery = """
+            SELECT COUNT(DISTINCT p.product_id)
+            FROM products p
+            JOIN product_variants pv ON p.product_id = pv.product_id
+            JOIN colors c ON pv.color_code = c.color_code
+            WHERE (:minPrice IS NULL OR p.unit_price >= :minPrice)
+                AND (:maxPrice IS NULL OR p.unit_price <= :maxPrice)
+                AND (:categoryIds IS NULL OR FIND_IN_SET(p.category_id, :categoryIds) > 0)
+                AND (:brandIds IS NULL OR FIND_IN_SET(p.brand_id, :brandIds) > 0)
+                AND (:colorHexes IS NULL OR FIND_IN_SET(pv.color_code, :colorHexes) > 0)
+                AND (:productSizes IS NULL OR FIND_IN_SET(pv.size_code, :productSizes) > 0)
+                AND (:searchText IS NULL OR p.product_name LIKE CONCAT('%', :searchText, '%'))
+            """,
             nativeQuery = true)
     Page<Object[]> searchProduct(
             @Param("minPrice") BigDecimal minPrice,
@@ -74,7 +87,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>,
             @Param("sortDirection") String sortDirection,
             @Param("sortBy") String sortBy,
             @Param("searchText") String searchText,
-            Pageable pageable);
+            Pageable pageable
+    );
 
     List<ProductEntity> findAllByIsActiveTrueAndProductIdIn(List<Long> relatedProductIds);
 }
