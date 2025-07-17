@@ -1,6 +1,5 @@
 package com.fourfingers.quangvinhstore.adapter.rest.customer;
 
-import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.ShippingAddressInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressInputData;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,13 @@ public class ShippingAddressController {
         return ResponseEntity.ok(shippingAddressInputBoundary.saveShippingAddress(userDetails, shippingAddressInputData));
     }
 
-    @PutMapping
+    @PatchMapping
+    public ResponseEntity<?> updateIsMainShippingAddress(@AuthenticationPrincipal UserDetails userDetails,
+                                                           @RequestParam Long shippingAddressId) {
+        return ResponseEntity.ok(shippingAddressInputBoundary.updateIsMainShippingAddress(userDetails, shippingAddressId));
+    }
+
+    @DeleteMapping
     public ResponseEntity<?> deleteCustomerShippingAddress(@AuthenticationPrincipal UserDetails userDetails,
                                                            @RequestParam Long shippingAddressId) {
         return ResponseEntity.ok(shippingAddressInputBoundary.deleteShippingAddress(userDetails, shippingAddressId));

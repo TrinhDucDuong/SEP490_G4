@@ -4,6 +4,7 @@ import com.fourfingers.quangvinhstore.adapter.rest.MomoController;
 import com.fourfingers.quangvinhstore.adapter.rest.VNPayController;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.customer.PurchaseInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressIdInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +20,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 
-//@RestController
-@Controller
+@RestController
+//@Controller
 @RequestMapping("/order")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class OrderController {
@@ -39,10 +40,10 @@ public class OrderController {
         return ResponseEntity.ok(customerOrderInputBoundary.getOrder(id, userDetails));
     }
 
-    @PostMapping(produces = "application/json")
+    @PostMapping //(produces = "application/json")
     public ResponseEntity<?> placeOrderFromCart(@AuthenticationPrincipal UserDetails userDetails,
-                                        @RequestBody ShippingAddressInputData shippingAddressInputData) {
-        return ResponseEntity.ok(customerOrderInputBoundary.placeOrders(userDetails, shippingAddressInputData));
+                                        @RequestBody ShippingAddressIdInputData shippingAddressIdInputData) {
+        return ResponseEntity.ok(customerOrderInputBoundary.placeOrders(userDetails, shippingAddressIdInputData));
     }
 
     @PostMapping("/purchase")
