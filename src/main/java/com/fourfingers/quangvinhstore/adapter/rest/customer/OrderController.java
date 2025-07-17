@@ -4,6 +4,7 @@ import com.fourfingers.quangvinhstore.adapter.rest.MomoController;
 import com.fourfingers.quangvinhstore.adapter.rest.VNPayController;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.customer.PurchaseInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressIdInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,8 +42,8 @@ public class OrderController {
 
     @PostMapping //(produces = "application/json")
     public ResponseEntity<?> placeOrderFromCart(@AuthenticationPrincipal UserDetails userDetails,
-                                        @RequestBody Long shippingAddressId) {
-        return ResponseEntity.ok(customerOrderInputBoundary.placeOrders(userDetails, shippingAddressId));
+                                        @RequestBody ShippingAddressIdInputData shippingAddressIdInputData) {
+        return ResponseEntity.ok(customerOrderInputBoundary.placeOrders(userDetails, shippingAddressIdInputData));
     }
 
     @PostMapping("/purchase")

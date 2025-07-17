@@ -7,6 +7,7 @@ import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.customer.PurchaseInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressIdInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.ListOrderOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
 import lombok.RequiredArgsConstructor;
@@ -48,30 +49,15 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
     }
 
     @Override
-    public OrderOutputData placeOrders(UserDetails userDetails, Long shippingAddressId) throws RuntimeException {
+    public OrderOutputData placeOrders(UserDetails userDetails, ShippingAddressIdInputData shippingAddressIdInputData) throws RuntimeException {
         AccountEntity accountEntity = (AccountEntity) userDetails;
 
-//        ShippingAddressEntity shippingAddressEntity = null;
-//        if (shippingAddressInputData.getShippingAddressId() == null) {
-//            shippingAddressUseCaseInteraction.saveNewShippingAddress(accountEntity, shippingAddressInputData);
-//            List<ShippingAddressEntity> shippingAddressEntities = shippingAddressRepository.findAllByAccount_AccountId(accountEntity.getAccountId());
-//            shippingAddressEntity = shippingAddressEntities.get(shippingAddressEntities.size() - 1);
-//        } else {
-//            Optional<ShippingAddressEntity> existingEntityOpt = shippingAddressRepository
-//                    .findByAccount_AccountIdAndShippingAddressId(
-//                            accountEntity.getAccountId(),
-//                            shippingAddressInputData.getShippingAddressId()
-//                    );
-//            if (existingEntityOpt.isPresent()) {
-//                shippingAddressEntity = existingEntityOpt.get();
-//            }
-//        }
         Optional<ShippingAddressEntity> shippingAddressEntity = shippingAddressRepository
                                                                 .findByAccount_AccountIdAndShippingAddressId(
                                                                         accountEntity.getAccountId(),
-                                                                        shippingAddressId
+                                                                        shippingAddressIdInputData.getShippingAddressId()
                                                                 );
-        if (shippingAddressId == null || shippingAddressEntity.isEmpty()) {
+        if (shippingAddressIdInputData.getShippingAddressId() == null || shippingAddressEntity.isEmpty()) {
             throw new RuntimeException("Shipping address not found");
         }
         OrderEntity orderEntity = new OrderEntity();
@@ -197,10 +183,6 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
             throw new RuntimeException("Order not found");
         }
         return orderDetails.get().getUnitPrice().multiply(BigDecimal.valueOf(orderDetails.get().getQuantity().longValue()));
-
-//        return orderDetails.stream()
-//                .map(od -> od.getUnitPrice().multiply(BigDecimal.valueOf(od.getQuantity())))
-//                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
 }

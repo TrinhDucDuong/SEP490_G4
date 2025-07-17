@@ -1,18 +1,18 @@
 package com.fourfingers.quangvinhstore.usecase.boundary.customer;
 
 import com.fourfingers.quangvinhstore.usecase.data.customer.PurchaseInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressIdInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.ListOrderOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 public interface CustomerOrderInputBoundary {
     ListOrderOutputData getOrders(UserDetails userDetails);
 
-    OrderOutputData placeOrders(UserDetails userDetails, Long shippingAddressId);
+    OrderOutputData placeOrders(UserDetails userDetails, ShippingAddressIdInputData shippingAddressIdInputData);
 
     OrderOutputData placeOrderPayLater(UserDetails userDetails, PurchaseInputData purchaseInputData);
 
