@@ -1,0 +1,11 @@
+package com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer;
+
+import com.fourfingers.quangvinhstore.domain.model.ProductVariant;
+import com.fourfingers.quangvinhstore.infrastructure.schema.ProductVariantEntity;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring", uses = {ProductMapper.class})
+public interface ProductVariantMapper {
+    ProductVariant toModel(ProductVariantEntity productVariantEntity);
+    ProductVariantEntity toEntity(ProductVariant productVariant);
+}

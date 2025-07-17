@@ -1,0 +1,26 @@
+package com.fourfingers.quangvinhstore.usecase.boundary.customer;
+
+import com.fourfingers.quangvinhstore.usecase.data.customer.PurchaseInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressIdInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.order.ListOrderOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Map;
+
+public interface CustomerOrderInputBoundary {
+    ListOrderOutputData getOrders(UserDetails userDetails);
+
+    OrderOutputData placeOrders(UserDetails userDetails, ShippingAddressIdInputData shippingAddressIdInputData);
+
+    OrderOutputData placeOrderPayLater(UserDetails userDetails, PurchaseInputData purchaseInputData);
+
+//    OrderOutputData placeOrderPayInAdvance(UserDetails userDetails, PurchaseInputData purchaseInputData);
+
+    OrderOutputData getOrder(Long orderId, UserDetails userDetails);
+
+    Object verifyAndPlaceOrderPayInAdvance(Map<String, String> map);
+
+    void setSecureHash(Long orderId, String secureHash);
+}
+
