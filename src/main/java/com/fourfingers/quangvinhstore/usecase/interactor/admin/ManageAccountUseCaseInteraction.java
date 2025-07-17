@@ -150,9 +150,9 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
     /*
     * Using to check for updating account
     * Case if email existed with the same id: it shows that not updating new email for this account
-    * Case if email existed with the different id: it shows that other account used this email
+    * Case if email existed with the different id: it shows that another account used this email
     * @Return: true when not updating email
-    * @Return: false when other account used same email
+    * @Return: false when another account used the same email
     */
     private boolean checkNotUpdateEmail(String email, Long accountId) {
         return accountRepository.findByEmailAndAccountIdNot(email, accountId).isEmpty();
@@ -160,10 +160,10 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
 
     /*
      * Using to check for updating account
-     * Case if username existed with the same id: it shows that not updating new username for this account
-     * Case if username existed with the different id: it shows that other account used this username
+     * Case if the username existed with the same id: it shows that not updating new username for this account
+     * Case if the username existed with the different id: it shows that other account used this username
      * @Return: true when not updating username
-     * @Return: false when other account used same username
+     * @Return: false when another account used the same username
      */
     private boolean checkNotUpdateUsername(String username, Long accountId) {
         return accountRepository.findByUsernameAndAccountIdNot(username, accountId).isEmpty();
@@ -175,7 +175,7 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
                 .username(accountEntity.getUsername())
                 .birthDate(accountEntity.getProfile().getBirthDate())
                 .phoneNumber(accountEntity.getProfile().getPhoneNumber())
-                .fullName(accountEntity.getProfile() + " " + accountEntity.getProfile().getLastName())
+                .fullName(accountEntity.getProfile().getFirstName() + " " + accountEntity.getProfile().getLastName())
                 .email(accountEntity.getEmail())
                 .isActive(accountEntity.isActive())
                 .build();
