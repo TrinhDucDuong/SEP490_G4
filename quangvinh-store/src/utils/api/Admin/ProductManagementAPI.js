@@ -1,168 +1,423 @@
 // src/utils/api/ProductManagementAPI.js
 
-import axios from 'axios';
-
 const API_BASE_URL = 'http://localhost:9999/staff/product';
+const COLOR_API_URL = 'http://localhost:9999/staff/color';
 
-// Helper function để lấy token
+// Function để lấy Bearer Token với key đúng từ AuthContext
 const getAuthToken = () => {
-    const token = localStorage.getItem('adminAuthToken') || sessionStorage.getItem('adminAuthToken');
-    console.log('Getting token:', token ? 'Token found' : 'No token');
+    const token = localStorage.getItem('adminAuthToken') ||
+        sessionStorage.getItem('adminAuthToken') ||
+        localStorage.getItem('authToken') ||
+        localStorage.getItem('accessToken') ||
+        localStorage.getItem('token') ||
+        sessionStorage.getItem('authToken') ||
+        sessionStorage.getItem('accessToken') ||
+        sessionStorage.getItem('token');
+
+    console.log('🔑 Getting Bearer Token:', token ? 'Token found' : 'No token found');
+    if (token) {
+        console.log('🔑 Token preview:', token.substring(0, 20) + '...');
+    }
+
     return token;
 };
 
-// Tạo axios instance với interceptor
-const apiClient = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
+// Function để tạo headers với Bearer Token
+const createAuthHeaders = (additionalHeaders = {}) => {
+    const token = getAuthToken();
+    const headers = {
+        'accept': '*/*',
+        ...additionalHeaders
+    };
 
-// Interceptor để tự động thêm token vào header
-apiClient.interceptors.request.use(
-    (config) => {
-        const token = getAuthToken();
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-            console.log('Token added to request:', config.headers.Authorization.substring(0, 20) + '...');
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+        console.log('✅ Bearer Token added to headers');
+    } else {
+        console.warn('⚠️ No Bearer Token found');
+    }
+
+    return headers;
+};
+
+// Helper function để tự động tạo tên màu từ hex
+const getColorName = (hex) => {
+    const colorMap = {
+        '#000000': 'Đen',
+        '#0000FF': 'Xanh dương',
+        '#008000': 'Xanh lá',
+        '#00FFFF': 'Xanh lơ',
+        '#228B22': 'Xanh lá đậm',
+        '#4B0082': 'Chàm',
+        '#800080': 'Tím',
+        '#808080': 'Xám',
+        '#A52A2A': 'Nâu',
+        '#C0C0C0': 'Bạc',
+        '#DC143C': 'Đỏ thẫm',
+        '#F0E68C': 'Vàng nhạt',
+        '#FF0000': 'Đỏ',
+        '#FF00FF': 'Hồng tím',
+        '#FF4500': 'Cam đỏ',
+        '#FFA500': 'Cam',
+        '#FFC0CB': 'Hồng',
+        '#FFD700': 'Vàng kim',
+        '#FFFF00': 'Vàng',
+        '#ae2929': 'Đỏ đô',
+        '#FFFFFF': 'Trắng'
+    };
+    return colorMap[hex] || `Màu ${hex}`;
+};
+
+// Function xử lý lỗi authentication
+const handleAuthError = (response) => {
+    if (response.status === 401) {
+        console.error('🚫 Bearer Token expired or invalid');
+        localStorage.removeItem('adminAuthToken');
+        sessionStorage.removeItem('adminAuthToken');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('authToken');
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('token');
+        localStorage.removeItem('adminUserInfo');
+        sessionStorage.removeItem('adminUserInfo');
+
+        throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+    }
+};
+
+// GET - Lấy tất cả products với Bearer Token
+export const getAllProducts = async () => {
+    try {
+        console.log('📦 Fetching all products from:', API_BASE_URL);
+
+        const headers = createAuthHeaders({
+            'Content-Type': 'application/json'
+        });
+
+        const response = await fetch(API_BASE_URL, {
+            method: 'GET',
+            headers: headers
+        });
+
+        if (!response.ok) {
+            handleAuthError(response);
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Products API response:', data);
+
+        if (data && Array.isArray(data.products)) {
+            return { success: true, data: data.products };
+        } else if (Array.isArray(data)) {
+            return { success: true, data: data };
         } else {
-            console.warn('No token available for request');
+            console.error('❌ Invalid products response structure:', data);
+            return { success: false, error: 'Invalid response structure' };
         }
-        return config;
-    },
-    (error) => {
-        console.error('Request interceptor error:', error);
-        return Promise.reject(error);
+    } catch (error) {
+        console.error('💥 Error fetching products:', error);
+        return { success: false, error: error.message };
     }
-);
+};
 
-// Interceptor để xử lý lỗi response
-apiClient.interceptors.response.use(
-    (response) => {
-        console.log('API Response success:', response.status);
-        return response;
-    },
-    (error) => {
-        console.error('API Response error:', error.response?.status, error.response?.data);
-        if (error.response?.status === 401) {
-            console.warn('401 Unauthorized - Token may be invalid');
-            localStorage.removeItem('adminAuthToken');
-            sessionStorage.removeItem('adminAuthToken');
-            window.location.href = '/admin/login';
+// GET - Lấy tất cả colors với Bearer Token
+export const getAllColors = async () => {
+    try {
+        console.log('🎨 Fetching all colors from:', COLOR_API_URL);
+
+        const headers = createAuthHeaders({
+            'Content-Type': 'application/json'
+        });
+
+        const response = await fetch(COLOR_API_URL, {
+            method: 'GET',
+            headers: headers
+        });
+
+        if (!response.ok) {
+            handleAuthError(response);
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
-        return Promise.reject(error);
+
+        const data = await response.json();
+        console.log('✅ Colors API response:', data);
+
+        if (data && data.color && Array.isArray(data.color)) {
+            const formattedColors = data.color.map((colorItem, colorIndex) => ({
+                colorId: colorIndex + 1,
+                colorName: getColorName(colorItem.colorHex),
+                colorHex: colorItem.colorHex
+            }));
+            return { success: true, data: formattedColors };
+        } else {
+            console.error('❌ Invalid colors response structure:', data);
+            return { success: false, error: 'Invalid response structure' };
+        }
+    } catch (error) {
+        console.error('💥 Error fetching colors:', error);
+        return { success: false, error: error.message };
     }
-);
+};
 
-export const ProductManagementAPI = {
-    // POST - Tạo sản phẩm mới (CẦN TOKEN)
-    createProduct: async (productData, images) => {
-        try {
-            console.log('Creating product with data:', productData);
-            console.log('Images count:', images?.length || 0);
+// POST - Tạo sản phẩm mới với Bearer Token
+export const createProduct = async (productData, productImages) => {
+    try {
+        console.log('📝 Creating product with data:', productData);
+        console.log('📷 Number of images:', productImages?.length || 0);
 
-            const formData = new FormData();
+        // Validation trước khi gửi
+        if (!productData.brandId || !productData.categoryId) {
+            return {
+                success: false,
+                error: 'Thiếu thông tin thương hiệu hoặc danh mục'
+            };
+        }
 
-            // Thêm dữ liệu sản phẩm
-            formData.append('productInputData', JSON.stringify(productData));
+        if (!productData.productVariants || productData.productVariants.length === 0) {
+            return {
+                success: false,
+                error: 'Sản phẩm phải có ít nhất một biến thể'
+            };
+        }
 
-            // Thêm hình ảnh
-            if (images && images.length > 0) {
-                images.forEach((image) => {
-                    if (image instanceof File) {
-                        formData.append('productImages', image);
-                        console.log('Added image:', image.name);
-                    }
-                });
-            }
+        const token = getAuthToken();
+        if (!token) {
+            console.error('🚫 No Bearer Token found for create request');
+            return {
+                success: false,
+                error: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+                shouldRedirectToLogin: true
+            };
+        }
 
-            const token = getAuthToken();
-            if (!token) {
-                throw new Error('Không có token xác thực');
-            }
+        const formData = new FormData();
 
-            const response = await axios.post(API_BASE_URL, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
+        const productInput = {
+            productName: productData.productName?.trim(),
+            productDescription: productData.productDescription?.trim() || '',
+            unitPrice: productData.unitPrice.toString(),
+            brandId: productData.brandId.toString(),
+            categoryId: productData.categoryId.toString(),
+            productVariants: productData.productVariants.map(variant => ({
+                productSize: variant.productSize?.trim() || '',
+                color: {
+                    colorHex: variant.color?.trim() || '#000000'
                 },
+                quantity: parseInt(variant.quantity) || 0
+            }))
+        };
+
+        console.log('📋 Processed product input:', productInput);
+
+        const productInputBlob = new Blob([JSON.stringify(productInput)], {
+            type: 'application/json'
+        });
+        formData.append('productInputData', productInputBlob);
+
+        // Xử lý images cho CREATE - vẫn gửi empty file nếu không có ảnh
+        if (productImages && productImages.length > 0) {
+            productImages.forEach((image) => {
+                if (image instanceof File) {
+                    formData.append('productImages', image);
+                }
             });
-
-            console.log('Create product response:', response.data);
-            return response.data;
-        } catch (error) {
-            console.error('Create product API error:', error);
-            if (error.response?.status === 401) {
-                throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-            }
-            throw new Error(error.response?.data?.message || 'Không thể tạo sản phẩm mới');
-        }
-    },
-
-    // PUT - Cập nhật sản phẩm (CẦN TOKEN)
-    updateProduct: async (id, productData, images) => {
-        try {
-            console.log('Updating product ID:', id, 'with data:', productData);
-
-            const formData = new FormData();
-
-            // Thêm dữ liệu sản phẩm
-            formData.append('productInputData', JSON.stringify(productData));
-
-            // Thêm hình ảnh nếu có
-            if (images && images.length > 0) {
-                images.forEach((image) => {
-                    if (image instanceof File) {
-                        formData.append('productImages', image);
-                        console.log('Added image for update:', image.name);
-                    }
-                });
-            }
-
-            const token = getAuthToken();
-            if (!token) {
-                throw new Error('Không có token xác thực');
-            }
-
-            const response = await axios.put(`${API_BASE_URL}/${id}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
-                },
+            console.log('📷 Added', productImages.length, 'images to form data');
+        } else {
+            const emptyFile = new File([''], 'no_image.txt', {
+                type: 'text/plain',
+                lastModified: Date.now()
             });
+            formData.append('productImages', emptyFile);
+            console.log('📷 Added empty file (no images)');
+        }
 
-            console.log('Update product response:', response.data);
-            return response.data;
-        } catch (error) {
-            console.error('Update product API error:', error);
-            if (error.response?.status === 401) {
+        const headers = createAuthHeaders();
+
+        console.log('📤 Sending CREATE request with Bearer Token');
+        const response = await fetch(API_BASE_URL, {
+            method: 'POST',
+            headers: headers,
+            body: formData
+        });
+
+        if (!response.ok) {
+            handleAuthError(response);
+            const errorText = await response.text();
+            console.error('❌ Create product error response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Create product success:', data);
+        return { success: true, data: data.product || data };
+    } catch (error) {
+        console.error('💥 Error creating product:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+// FIXED: PUT - Cập nhật sản phẩm với xử lý ảnh cũ thành File
+export const updateProduct = async (productId, productData, productImages, existingImages) => {
+    try {
+        console.log('🔄 Updating product:', productId, 'with data:', productData);
+        console.log('📷 Number of new images:', productImages?.length || 0);
+        console.log('🖼 Existing images:', existingImages);
+
+        // Validation trước khi gửi
+        if (!productData.brandId || !productData.categoryId) {
+            return {
+                success: false,
+                error: 'Thiếu thông tin thương hiệu hoặc danh mục'
+            };
+        }
+
+        // Lấy Bearer Token
+        const token = localStorage.getItem('adminAuthToken') ||
+            sessionStorage.getItem('adminAuthToken') ||
+            localStorage.getItem('authToken') ||
+            localStorage.getItem('accessToken') ||
+            localStorage.getItem('token') ||
+            sessionStorage.getItem('authToken') ||
+            sessionStorage.getItem('accessToken') ||
+            sessionStorage.getItem('token');
+
+        if (!token) {
+            console.error('🚫 No Bearer Token found for update request');
+            return {
+                success: false,
+                error: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+                shouldRedirectToLogin: true
+            };
+        }
+
+        const formData = new FormData();
+
+        const productInput = {
+            productName: productData.productName?.trim(),
+            productDescription: productData.productDescription?.trim() || '',
+            unitPrice: productData.unitPrice.toString(),
+            brandId: productData.brandId.toString(),
+            categoryId: productData.categoryId.toString(),
+            productVariants: productData.productVariants.map(variant => ({
+                productSize: variant.productSize?.trim() || '',
+                color: { colorHex: variant.color?.trim() || '#000000' },
+                quantity: parseInt(variant.quantity) || 0
+            }))
+        };
+
+        const productInputBlob = new Blob([JSON.stringify(productInput)], {
+            type: 'application/json'
+        });
+        formData.append('productInputData', productInputBlob);
+
+        // CHỈ gửi file nếu thực sự có file mới
+        if (productImages && productImages.length > 0) {
+            productImages.forEach((image) => {
+                if (image instanceof File) {
+                    formData.append('productImages', image);
+                }
+            });
+        }
+        // KHÔNG append file rỗng hoặc bất kỳ thứ gì nếu không có ảnh mới
+
+        const headers = {
+            'accept': '*/*',
+            'Authorization': `Bearer ${getAuthToken()}`
+            // KHÔNG set Content-Type khi dùng FormData
+        };
+
+        const response = await fetch(`${API_BASE_URL}/${productId}`, {
+            method: 'PUT',
+            headers,
+            body: formData
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('adminAuthToken');
+                sessionStorage.removeItem('adminAuthToken');
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('token');
+                sessionStorage.removeItem('authToken');
+                sessionStorage.removeItem('accessToken');
+                sessionStorage.removeItem('token');
                 throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
             }
-            throw new Error(error.response?.data?.message || `Không thể cập nhật sản phẩm với ID: ${id}`);
+            const errorText = await response.text();
+            console.error('❌ Update product error response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
-    },
 
-    // GET - Lấy tất cả sản phẩm (không cần token)
-    getAllProducts: async () => {
-        try {
-            const response = await apiClient.get('');
-            return response.data;
-        } catch (error) {
-            throw new Error('Không thể tải danh sách sản phẩm');
-        }
-    },
+        const data = await response.json();
+        console.log('✅ Update product success:', data);
+        return { success: true, data: data.product || data };
+    } catch (error) {
+        console.error('💥 Error updating product:', error);
+        return { success: false, error: error.message };
+    }
+};
 
-    // DELETE - Xóa sản phẩm (CẦN TOKEN)
-    deleteProduct: async (id) => {
-        try {
-            const response = await apiClient.delete(`/${id}`);
-            return response.data;
-        } catch (error) {
-            if (error.response?.status === 401) {
-                throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-            }
-            throw new Error(`Không thể xóa sản phẩm với ID: ${id}`);
+// DELETE - Xóa sản phẩm với Bearer Token
+export const deleteProduct = async (productId) => {
+    try {
+        console.log('🗑️ Deleting product:', productId);
+
+        const headers = createAuthHeaders({
+            'Content-Type': 'application/json'
+        });
+
+        const response = await fetch(`${API_BASE_URL}/${productId}`, {
+            method: 'DELETE',
+            headers: headers
+        });
+
+        if (!response.ok) {
+            handleAuthError(response);
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
-    },
+
+        const data = await response.json();
+        console.log('✅ Delete product success:', data);
+        return { success: true, data: data.product || data };
+    } catch (error) {
+        console.error('💥 Error deleting product:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+// GET - Lấy chi tiết sản phẩm theo ID với Bearer Token
+export const getProductById = async (productId) => {
+    try {
+        console.log('🔍 Fetching product by ID:', productId);
+
+        const headers = createAuthHeaders({
+            'Content-Type': 'application/json'
+        });
+
+        const response = await fetch(`${API_BASE_URL}/${productId}`, {
+            method: 'GET',
+            headers: headers
+        });
+
+        if (!response.ok) {
+            handleAuthError(response);
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Product detail response:', data);
+
+        return { success: true, data: data.product || data };
+    } catch (error) {
+        console.error('💥 Error fetching product by ID:', error);
+        return { success: false, error: error.message };
+    }
 };
