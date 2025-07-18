@@ -1,20 +1,43 @@
-// src/components/common/SearchBar.jsx
-import React from 'react';
-import { Search } from 'lucide-react';
+// src/components/common/Admin/SearchBar.jsx
 
-const SearchBar = ({ value, onChange, placeholder = "Tìm kiếm..." }) => {
+import React from 'react';
+import { Search, X } from 'lucide-react';
+
+const SearchBar = ({
+                       value,
+                       onChange,
+                       placeholder = "Tìm kiếm...",
+                       className = "",
+                       onClear
+                   }) => {
+    const handleClear = () => {
+        onChange('');
+        if (onClear) onClear();
+    };
+
     return (
-        <div className="relative w-full">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <div className={`relative ${className}`}>
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
             </div>
             <input
                 type="text"
-                placeholder={placeholder}
-                className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm placeholder-gray-500"
                 value={value}
-                onChange={onChange}
+                onChange={(e) => onChange(e.target.value)}
+                className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                placeholder={placeholder}
             />
+            {value && (
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <button
+                        type="button"
+                        onClick={handleClear}
+                        className="text-gray-400 hover:text-gray-600 focus:outline-none"
+                    >
+                        <X className="h-4 w-4" />
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
