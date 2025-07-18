@@ -34,28 +34,33 @@ export const useFetchOrders = () => {
     }, []);
 
     const mapOrdersFromBackend = (data) => {
-        return data.orders.map(order => {
-            const items = order.orderDetails.map(detail => {
-                const product = detail.productVariant.product;
-                return {
-                    name: product.productName,
-                    image: product.images?.[0] || 'https://via.placeholder.com/60',
-                    quantity: detail.quantity,
-                    price: detail.unitPrice
-                };
-            });
+        if (!data.orders) return [];
 
-            const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        return data.orders.map(order => mapSingleOrder(order));
+    };
 
+    const mapSingleOrder = (order) => {
+        const items = order.orderDetails.map(detail => {
+            const product = detail.productVariant.product;
             return {
-                id: order.orderId,
-                status: order.orderStatus === 'DELIVERED' || order.orderStatus === 'COMPLETED' ? 'COMPLETED' : 'PENDING',
-                items,
-                total,
-                date: order.orderDate.split('T')[0]
+                name: product.productName,
+                image: product.images?.[0] || 'https://via.placeholder.com/60',
+                quantity: detail.quantity,
+                price: detail.unitPrice
             };
         });
+
+        const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+        return {
+            id: order.orderId,
+            status: order.orderStatus === 'DELIVERED' || order.orderStatus === 'COMPLETED' ? 'COMPLETED' : 'PENDING',
+            items,
+            total,
+            date: order.orderDate?.split('T')[0] ?? ''
+        };
     };
+
 
     return { orders, loading, error };
 };

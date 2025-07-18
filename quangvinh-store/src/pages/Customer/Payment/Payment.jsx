@@ -62,7 +62,7 @@ function Payment() {
                 },
                 body: JSON.stringify(formData),
             });
-            console.log(formData);
+            navigate('/payment-method');
             if (res.ok) {
                 toast.success('Đặt hàng thành công!');
             } else {

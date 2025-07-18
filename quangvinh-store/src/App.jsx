@@ -53,6 +53,7 @@ import BlogDetailManager from "./pages/Admin/BlogDetailManager.jsx";
 import BlogForm from "./pages/Admin/BlogForm.jsx";
 import ProtectedRouteForManager from "./components/auth/ProtectedRouteForManager.jsx";
 import LoginForManager from "./pages/Admin/LoginForManager.jsx";
+import PaymentMethod from "./pages/Customer/Payment/PaymentMethod.jsx";
 import SNSManagement from "./pages/Admin/SNS/SNSManagement";
 import StoreManagement from "./pages/Admin/Store/StoreManagement";
 import DashboardManagement from "./pages/Admin/Dashboard/DashboardManagement";
@@ -76,6 +77,7 @@ function App() {
                             <Route path="forgot-password" element={<ForgotPassword />} />
                             <Route path="cart" element={<Cart />} />
                             <Route path="payment" element={<Payment />} />
+                            <Route path="/payment-method/:orderId" element={<PaymentMethod />} />
                             <Route path="profile" element={<ProfileLayout />}>
                                 <Route index element={<Info />} />
                                 <Route path="address" element={<Address />} />
