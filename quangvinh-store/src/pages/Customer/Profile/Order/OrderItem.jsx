@@ -1,71 +1,60 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-function OrderItem({ order }) {
-    const isCompleted = order.status === 'COMPLETED';
+const OrderItem = ({ order }) => {
+    const navigate = useNavigate();
+    const isCompleted = order.orderStatus === 'COMPLETED';
+
+    const handleDetailClick = () => {
+        navigate(`/profile/orders/${order.orderId}`);
+    };
+
+    const handlePaymentClick = () => {
+        navigate(`/payment-method`, { state: { order } });
+    };
+
 
     return (
-        <div className="border border-gray-200 rounded-xl p-4 mb-6 bg-white shadow-sm">
-            <div className="flex justify-between items-center mb-3">
-                <div className="text-sm text-gray-500">
-                    Mã đơn: <span className="font-medium">#{order.id}</span>
+        <div className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="flex justify-between items-center">
+                <div>
+                    <p className="text-sm text-gray-700">
+                        Mã đơn: <span className="font-semibold">#{order.orderId}</span>
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                        {order.items[0]?.name} {order.items.length > 1 && `và ${order.items.length - 1} sản phẩm khác`}
+                    </p>
                 </div>
-                <div className={`text-xs px-2 py-1 rounded-full ${
-                    isCompleted ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                }`}>
-                    {isCompleted ? 'Đã hoàn thành' : 'Đang xử lý'}
+                <div className="text-right space-y-1">
+                    <div className={`text-xs font-medium px-2 py-1 rounded-full inline-block ${
+                        isCompleted ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                    }`}>
+                        {isCompleted ? 'Đã hoàn thành' : 'Đang xử lý'}
+                    </div>
+                    <p className="text-sm font-semibold text-gray-800">
+                        {order.total.toLocaleString()}₫
+                    </p>
                 </div>
             </div>
 
-            {Array.isArray(order.items) && order.items.map((item, index) => (
-                <div key={index} className="flex items-center gap-4 mb-3">
-                    {/* <img src={item.image} alt={item.name} className="w-14 h-14 rounded border" /> */}
-                    <div className="flex-1">
-                        <p className="font-medium text-black">{item.name}</p>
-                        <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
-                    </div>
-                    <div className="text-right text-blue-600 font-semibold">
-                        {(item.price * item.quantity).toLocaleString()}₫
-                    </div>
-                </div>
-            ))}
-
-            <div className="flex justify-between items-center mt-4 pt-3 border-t">
-                <span className="text-gray-600 text-sm">Ngày đặt: {order.date}</span>
-                <span className="text-black font-bold">
-                    Tổng: {order.total.toLocaleString()}₫
-                </span>
-            </div>
-
-            <div className="flex flex-wrap justify-end mt-4 gap-3">
-                <Link
-                    to={`/profile/orders/${order.id}`}
-                    className="px-4 py-1.5 bg-gray-900 text-white rounded-full text-sm hover:bg-gray-700 transition"
+            <div className="mt-4 flex justify-end gap-4">
+                <button
+                    onClick={handleDetailClick}
+                    className="text-sm text-blue-600 hover:underline"
                 >
                     Xem chi tiết
-                </Link>
+                </button>
 
                 {!isCompleted && (
-                    <>
-                        <button
-                            className="px-4 py-1.5 border border-gray-300 text-gray-700 rounded-full text-sm hover:bg-gray-100"
-                            onClick={() => alert('Yêu cầu hủy đơn')}
-                        >
-                            Hủy đơn
-                        </button>
-
-                        <Link
-                            to={`/payment-method/${order.id}`}
-                            className="px-4 py-1.5 border border-blue-500 text-blue-600 rounded-full text-sm hover:bg-blue-50 transition"
-                        >
-                            Tiếp tục thanh toán
-                        </Link>
-
-                    </>
+                    <button
+                        onClick={handlePaymentClick}
+                        className="text-sm text-white bg-orange-400 hover:bg-orange-800 px-4 py-1 rounded-full transition"
+                    >
+                        Tiến hành thanh toán
+                    </button>
                 )}
             </div>
         </div>
     );
-}
+};
 
 export default OrderItem;

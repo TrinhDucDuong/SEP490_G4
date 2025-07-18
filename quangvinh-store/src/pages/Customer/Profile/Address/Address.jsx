@@ -128,7 +128,7 @@ function Address() {
 
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+        <div className="bg-white rounded-2xl shadow-sm">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 sm:mb-0">Địa chỉ của tôi</h2>
                 <button

@@ -1,46 +1,84 @@
-import React from 'react';
-import { useFetchOrders } from "../../../../hooks/Customer/useFetchOrders.js";
+import React, { useState } from "react";
+import { useFetchOrders } from "../../../../hooks/Customer/Order/useFetchOrders.js";
 import OrderItem from "./OrderItem.jsx";
 
 function OrderHistory() {
     const { orders, loading, error } = useFetchOrders();
+    const [activeTab, setActiveTab] = useState("PROCESSING");
 
     const completedOrders = orders
-        .filter(order => order.orderStatus === 'COMPLETED')
+        .filter(order => order.orderStatus === "COMPLETED")
         .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
 
     const processingOrders = orders
-        .filter(order => order.orderStatus !== 'COMPLETED')
+        .filter(order => order.orderStatus !== "COMPLETED")
         .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
 
-    if (loading) return <p>Đang tải đơn hàng...</p>;
-    if (error) return <p className="text-red-500">Lỗi: {error}</p>;
+    if (loading) return <p className="text-center text-gray-600 text-lg">Đang tải đơn hàng...</p>;
+    if (error) return <p className="text-center text-red-500 text-lg">Lỗi: {error}</p>;
 
     return (
-        <div>
-            <h2 className="text-2xl font-bold mb-6 text-black">Lịch sử đơn hàng</h2>
+        <div className="max-w-5xl mx-auto bg-gray-50 min-h-screen">
+            <h2 className="text-3xl font-bold mb-8 text-gray-800">Lịch sử đơn hàng</h2>
 
-            <div className="mb-10">
-                <h3 className="text-xl font-semibold mb-4 text-gray-700">Đơn hàng đang xử lý</h3>
-                {processingOrders.length > 0 ? (
-                    processingOrders.map(order => (
-                        <OrderItem key={order.orderId} order={order} />
-                    ))
-                ) : (
-                    <p className="text-gray-500 italic">Không có đơn hàng nào đang xử lý.</p>
+            <div className="bg-white rounded-lg shadow-lg p-8">
+                <div className="flex mb-8">
+                    <button
+                        className={`px-5 py-2 font-medium transition ${
+                            activeTab === "PROCESSING"
+                                ? "bg-green-600 text-white"
+                                : "bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all duration-600"
+                        }`}
+                        onClick={() => setActiveTab("PROCESSING")}
+                    >
+                        Đơn đang xử lý
+                    </button>
+                    <button
+                        className={`px-5 py-2 font-medium transition ${
+                            activeTab === "COMPLETED"
+                                ? "bg-green-600 text-white"
+                                : "bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all duration-600"
+                        }`}
+                        onClick={() => setActiveTab("COMPLETED")}
+                    >
+                        Đơn đã hoàn thành
+                    </button>
+                </div>
+
+                {activeTab === "PROCESSING" && (
+                    <>
+                        {processingOrders.length > 0 ? (
+                            <div className="space-y-2">
+                                {processingOrders.map(order => (
+                                    <OrderItem key={order.orderId} order={order} />
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-gray-500 italic text-center py-6 bg-green-300 rounded-lg shadow-sm">
+                                Không có đơn hàng nào đang xử lý.
+                            </p>
+                        )}
+                    </>
+                )}
+
+                {activeTab === "COMPLETED" && (
+                    <>
+                        {completedOrders.length > 0 ? (
+                            <div className="space-y-6">
+                                {completedOrders.map(order => (
+                                    <OrderItem key={order.orderId} order={order} />
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-gray-500 italic text-center py-6 bg-green-300 rounded-lg shadow-sm">
+                                Chưa có đơn hàng hoàn thành.
+                            </p>
+                        )}
+                    </>
                 )}
             </div>
 
-            <div>
-                <h3 className="text-xl font-semibold mb-4 text-gray-700">Đơn hàng đã hoàn thành</h3>
-                {completedOrders.length > 0 ? (
-                    completedOrders.map(order => (
-                        <OrderItem key={order.orderId} order={order} />
-                    ))
-                ) : (
-                    <p className="text-gray-500 italic">Chưa có đơn hàng hoàn thành.</p>
-                )}
-            </div>
+
         </div>
     );
 }

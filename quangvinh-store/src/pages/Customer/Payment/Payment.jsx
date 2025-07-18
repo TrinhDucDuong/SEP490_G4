@@ -36,6 +36,7 @@ function Payment() {
     }, []);
 
     useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
         if (addresses && addresses.length > 0 && !selectedAddressId) {
             setSelectedAddressId(addresses[0].shippingAddressId.toString());
         }

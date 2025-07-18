@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, {useState, useContext, useEffect} from 'react';
+import {useNavigate, Link, useLocation} from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext.jsx';
 import { FcGoogle } from 'react-icons/fc';
 import logo from "../../../assets/images/logo_black.png";
@@ -11,6 +11,12 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
+
+    const location = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location.pathname]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
