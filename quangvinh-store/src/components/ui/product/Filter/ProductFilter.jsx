@@ -14,7 +14,6 @@ const ProductFilter = ({ categories }) => {
     const [sectionVisibility, setSectionVisibility] = useState({
         categories: true,
         brands: true,
-        materials: true,
         sizes: true,
         colors: true,
         price: true,
@@ -28,7 +27,6 @@ const ProductFilter = ({ categories }) => {
         brands: "brandIds",
         sizes: "productSizes",
         colors: "colorHexes",
-        materials: "materials",
         minPrice: "minPrice",
         maxPrice: "maxPrice",
     };
@@ -83,7 +81,6 @@ const ProductFilter = ({ categories }) => {
         setSearchParams(resetParams);
     };
 
-    const materialOptions = ["COTTON", "DENIM", "NYLON", "RECYCLED NYLON", "RECYCLED POLYESTER"];
     const sizeOptions = ["34", "35", "36", "37", "38", "39", "40", "42"];
 
     return (
@@ -118,15 +115,6 @@ const ProductFilter = ({ categories }) => {
                 )}
             </ShowSection>
 
-            <ShowSection label="CHẤT LIỆU" show={sectionVisibility.materials} onToggle={() => toggleSection("materials")}>
-                <FilterGroup
-                    label="Chất liệu"
-                    options={materialOptions}
-                    selectedOptions={localFilters.materials || []}
-                    onChange={(selected) => updateField("materials", selected)}
-                />
-            </ShowSection>
-
             <ShowSection label="KÍCH CỠ" show={sectionVisibility.sizes} onToggle={() => toggleSection("sizes")}>
                 <SizeFilterGroup
                     options={sizeOptions}
@@ -150,10 +138,10 @@ const ProductFilter = ({ categories }) => {
             <ShowSection label="KHOẢNG GIÁ" show={sectionVisibility.price} onToggle={() => toggleSection("price")}>
                 <PriceRangeFilter
                     min={0}
-                    max={3000000}
+                    max={10000000}
                     values={[
                         Number(localFilters.minPrice) || 0,
-                        Number(localFilters.maxPrice) || 3000000,
+                        Number(localFilters.maxPrice) || 10000000,
                     ]}
                     onChange={([min, max]) => {
                         updateField("minPrice", min);
