@@ -54,6 +54,8 @@ import BlogForm from "./pages/Admin/BlogForm.jsx";
 import ProtectedRouteForManager from "./components/auth/ProtectedRouteForManager.jsx";
 import LoginForManager from "./pages/Admin/LoginForManager.jsx";
 import PaymentMethod from "./pages/Customer/Payment/PaymentMethod.jsx";
+import OrderDetail from "./pages/Customer/Profile/Order/OrderDetails.jsx";
+
 
 function App() {
     return (
@@ -73,13 +75,14 @@ function App() {
                             <Route path="forgot-password" element={<ForgotPassword />} />
                             <Route path="cart" element={<Cart />} />
                             <Route path="payment" element={<Payment />} />
-                            <Route path="/payment-method/:orderId" element={<PaymentMethod />} />
+                            <Route path="/payment-method" element={<PaymentMethod />} />
                             <Route path="profile" element={<ProfileLayout />}>
                                 <Route index element={<Info />} />
                                 <Route path="address" element={<Address />} />
                                 <Route path="change-password" element={<ChangePassword />} />
                                 <Route path="notifications" element={<Notifications />} />
                                 <Route path="order-history" element={<OrderHistory />} />
+                                <Route path="orders/:orderId" element={<OrderDetail />} />
                                 <Route path="privacy" element={<Privacy />} />
                             </Route>
                             <Route path="*" element={<NotFound />} />
