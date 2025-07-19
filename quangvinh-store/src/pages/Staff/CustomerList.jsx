@@ -7,6 +7,7 @@ import Modal from '../../components/common/Admin/Modals.jsx';
 import Pagination from '../../components/common/Admin/Paginations.jsx';
 import DataTable from '../../components/common/Admin/DataTable';
 
+
 const CustomerList = () => {
     const [customers, setCustomers] = useState([]);
     const [filteredCustomers, setFilteredCustomers] = useState([]);

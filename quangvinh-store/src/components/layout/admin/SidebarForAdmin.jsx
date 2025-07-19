@@ -79,10 +79,10 @@ const SidebarForAdmin = () => {
                         Quản lý thương hiệu
                     </NavLink>
 
-                    <NavLink to="/admin/customers-management" className={navClass}>
-                        <Users className="h-5 w-5 mr-3" />
-                        Khách hàng
-                    </NavLink>
+                    {/*<NavLink to="/admin/customers-management" className={navClass}>*/}
+                    {/*    <Users className="h-5 w-5 mr-3" />*/}
+                    {/*    Khách hàng*/}
+                    {/*</NavLink>*/}
 
                     <NavLink to="/admin/orders-management" className={navClass}>
                         <Receipt className="h-5 w-5 mr-3" />
@@ -99,15 +99,15 @@ const SidebarForAdmin = () => {
                         Chính sách
                     </NavLink>
 
-                    <NavLink to="/admin/instruction-management" className={navClass}>
-                        <FileText className="h-5 w-5 mr-3" />
-                        Hướng dẫn
-                    </NavLink>
+                    {/*<NavLink to="/admin/instruction-management" className={navClass}>*/}
+                    {/*    <FileText className="h-5 w-5 mr-3" />*/}
+                    {/*    Hướng dẫn*/}
+                    {/*</NavLink>*/}
 
-                    <NavLink to="/admin/story-management" className={navClass}>
-                        <FileText className="h-5 w-5 mr-3" />
-                        Câu chuyện
-                    </NavLink>
+                    {/*<NavLink to="/admin/story-management" className={navClass}>*/}
+                    {/*    <FileText className="h-5 w-5 mr-3" />*/}
+                    {/*    Câu chuyện*/}
+                    {/*</NavLink>*/}
 
                     <NavLink to="/admin/store-management" className={navClass}>
                         <Store className="h-5 w-5 mr-3" />
@@ -119,10 +119,10 @@ const SidebarForAdmin = () => {
                         Quản lý mạng xã hội
                     </NavLink>
 
-                    <NavLink to="/admin/employee-management" className={navClass}>
-                        <UserPlus className="h-5 w-5 mr-3" />
-                        Quản lý nhân viên
-                    </NavLink>
+                    {/*<NavLink to="/admin/employee-management" className={navClass}>*/}
+                    {/*    <UserPlus className="h-5 w-5 mr-3" />*/}
+                    {/*    Quản lý nhân viên*/}
+                    {/*</NavLink>*/}
 
                     {/*<NavLink to="/admin/campaign-management" className={navClass}>*/}
                     {/*    <Megaphone className="h-5 w-5 mr-3" />*/}

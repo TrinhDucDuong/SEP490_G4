@@ -40,34 +40,6 @@ const createAuthHeaders = (additionalHeaders = {}) => {
     return headers;
 };
 
-// Helper function để tự động tạo tên màu từ hex
-const getColorName = (hex) => {
-    const colorMap = {
-        '#000000': 'Đen',
-        '#0000FF': 'Xanh dương',
-        '#008000': 'Xanh lá',
-        '#00FFFF': 'Xanh lơ',
-        '#228B22': 'Xanh lá đậm',
-        '#4B0082': 'Chàm',
-        '#800080': 'Tím',
-        '#808080': 'Xám',
-        '#A52A2A': 'Nâu',
-        '#C0C0C0': 'Bạc',
-        '#DC143C': 'Đỏ thẫm',
-        '#F0E68C': 'Vàng nhạt',
-        '#FF0000': 'Đỏ',
-        '#FF00FF': 'Hồng tím',
-        '#FF4500': 'Cam đỏ',
-        '#FFA500': 'Cam',
-        '#FFC0CB': 'Hồng',
-        '#FFD700': 'Vàng kim',
-        '#FFFF00': 'Vàng',
-        '#ae2929': 'Đỏ đô',
-        '#FFFFFF': 'Trắng'
-    };
-    return colorMap[hex] || `Màu ${hex}`;
-};
-
 // Function xử lý lỗi authentication
 const handleAuthError = (response) => {
     if (response.status === 401) {
@@ -150,7 +122,6 @@ export const getAllColors = async () => {
         if (data && data.color && Array.isArray(data.color)) {
             const formattedColors = data.color.map((colorItem, colorIndex) => ({
                 colorId: colorIndex + 1,
-                colorName: getColorName(colorItem.colorHex),
                 colorHex: colorItem.colorHex
             }));
             return { success: true, data: formattedColors };

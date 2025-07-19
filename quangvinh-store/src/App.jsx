@@ -42,8 +42,7 @@ import InstructionManagement from './pages/Staff/InstructionManagement';
 import PoliciesManagement from './pages/Staff/PoliciesManagement';
 import AboutUsManagement from './pages/Staff/AboutUsManagement';
 import CustomerList from './pages/Staff/CustomerList';
-import OrderManagement from './pages/Staff/OrderManagement';
-import ProductType from './pages/Staff/ProductType';
+import OrderManagement from './pages/Staff/Order/OrderManagement';
 import EmployeeManagement from './pages/Staff/EmployeeManagement';
 import CategoryManagement from "./pages/Staff/Category/CategoryManagement.jsx";
 import BrandManagement from "./pages/Staff/Brand/BrandManagement.jsx";
@@ -108,7 +107,6 @@ function App() {
                             <Route path="blogs/create" element={<BlogForm />} />
                             <Route path="blogs/:id/edit" element={<BlogForm isEdit />} />
                             <Route path="category-management" element={<CategoryManagement />} />
-                            <Route path="product-type" element={<ProductType />} />
                             <Route path="products-management" element={<ProductManagement />} />
                             <Route path="brands-management" element={<BrandManagement />} />
                             <Route path="customers-management" element={<CustomerList />} />
