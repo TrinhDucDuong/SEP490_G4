@@ -8,7 +8,5 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface AccountManagementInputBoundary {
     AccountOutputData getAccount(String id);
     ListAccountOutputData getAllAccounts();
-    AccountOutputData save(String id, AccountInputData accountInputData, UserDetails userDetails);
-    AccountOutputData save(AccountInputData accountInputData, UserDetails userDetails);
     AccountOutputData delete(String id, UserDetails userDetails);
 }
