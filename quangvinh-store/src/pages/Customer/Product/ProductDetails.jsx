@@ -46,9 +46,18 @@ const ProductDetail = () => {
         fetchProduct();
     }, [id]);
 
+    const currentVariant = product?.productVariants?.find(
+        v => v.colorHex === selectedColor && v.productSize === selectedSize
+    );
+
     const handleAddToCart = async () => {
         if (!selectedColor || !selectedSize) {
             toast.error("Vui lòng chọn màu sắc và kích thước");
+            return;
+        }
+
+        if (currentVariant && quantity > currentVariant.quantity) {
+            toast.error("Số lượng vượt quá số lượng tồn kho!");
             return;
         }
 
@@ -115,7 +124,18 @@ const ProductDetail = () => {
                     <div className="space-y-2 flex justify-between">
                         <div>
                             <h1 className="text-2xl font-bold text-gray-800">{product.productName}</h1>
-                            <div className="text-red-500 text-2xl font-semibold">
+                            <div className="flex flex-row gap-4">
+                                {/* Brand */}
+                                <div className="text-sm text-gray-600">
+                                    <strong>Thương hiệu:</strong> {product.brand?.brandName}
+                                </div>
+
+                                {/* Category */}
+                                <div className="text-sm text-gray-600">
+                                    <strong>Danh mục:</strong> {product.category?.categoryName}
+                                </div>
+                            </div>
+                            <div className="text-red-500 text-2xl mt-2 font-semibold">
                                 {product.unitPrice.toLocaleString()}₫
                             </div>
                         </div>
@@ -127,24 +147,7 @@ const ProductDetail = () => {
                         </div>
                     </div>
 
-                    {/* Brand */}
-                    <div className="text-sm text-gray-600">
-                        <strong>Thương hiệu:</strong> {product.brand?.brandName}
-                        {product.brand?.images?.length > 0 && (
-                            <div className="mt-2">
-                                <img
-                                    src={product.brand.images[0].imageUrl}
-                                    alt={product.brand.brandName}
-                                    className="h-12 object-contain"
-                                />
-                            </div>
-                        )}
-                    </div>
 
-                    {/* Category */}
-                    <div className="text-sm text-gray-600">
-                        <strong>Danh mục:</strong> {product.category?.categoryName}
-                    </div>
 
                     {/* Variants */}
                     {/* Color */}
@@ -178,7 +181,6 @@ const ProductDetail = () => {
                         </div>
                     </div>
 
-                    {/* Quantity */}
                     <div className="flex items-center gap-4">
                         <div className="text-sm font-medium text-gray-700">Số lượng:</div>
                         <div className="flex border rounded-md overflow-hidden w-fit">
@@ -190,10 +192,21 @@ const ProductDetail = () => {
                             <div className="w-10 h-10 flex items-center justify-center text-gray-700 font-semibold">{quantity}</div>
                             <button
                                 type="button"
-                                onClick={() => setQuantity(prev => prev + 1)}
+                                onClick={() => {
+                                    if (currentVariant && quantity + 1 > currentVariant.quantity) {
+                                        toast.info("Đã đạt số lượng tồn kho tối đa");
+                                        return;
+                                    }
+                                    setQuantity(prev => prev + 1);
+                                }}
                                 className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 border-l"
                             >+</button>
                         </div>
+                        {selectedColor && selectedSize && (
+                            <div className="text-sm text-gray-500">
+                                {currentVariant ? `Còn lại: ${currentVariant.quantity} sản phẩm` : 'Không có thông tin tồn kho'}
+                            </div>
+                        )}
                     </div>
 
                     {/* Buttons */}
