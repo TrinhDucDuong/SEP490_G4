@@ -160,8 +160,8 @@ public class ManageAccountUseCaseInteraction implements AccountManagementInputBo
 
     /*
      * Using to check for updating account
-     * Case if the username existed with the same id: it shows that not updating new username for this account
-     * Case if the username existed with the different id: it shows that other account used this username
+     * Case if the username existed with the same id: it shows that not updating a new username for this account
+     * Case if the username existed with the different id: it shows that another account used this username
      * @Return: true when not updating username
      * @Return: false when another account used the same username
      */
