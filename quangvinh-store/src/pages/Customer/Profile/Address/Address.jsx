@@ -128,11 +128,11 @@ function Address() {
 
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4 sm:mb-0">Địa chỉ của tôi</h2>
+        <div className="bg-white shadow-sm">
+            <div className="flex flex-col border-b border-b-black pb-2 sm:flex-row justify-between items-start sm:items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 m-4 sm:mb-0">Địa chỉ của tôi</h2>
                 <button
-                    className="bg-black text-white px-4 py-2.5 rounded-full text-sm font-medium flex items-center gap-2 hover:bg-gray-800 transition-colors duration-200"
+                    className="bg-black text-white px-4 py-2.5 rounded-sm text-sm font-medium flex items-center m-4 gap-2 hover:bg-gray-800 transition-colors duration-200"
                     onClick={() => setIsAdd(true)}
                 >
                     <FontAwesomeIcon icon={faPlus} />
@@ -169,7 +169,7 @@ function Address() {
             ) : error ? (
                 <p className="text-red-500">Lỗi khi tải địa chỉ</p>
             ) : (
-                <div className="space-y-4">
+                <div className="">
                     {address.map((item) => (
                         <AddressCard
                             key={item.shippingAddressId}

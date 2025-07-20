@@ -117,8 +117,8 @@ function Info() {
     const days = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, "0"));
 
     return (
-        <div className="flex flex-col lg:flex-row gap-6">
-            <section className="flex-1 bg-white rounded-2xl shadow-sm p-6 md:p-8">
+        <div className="flex flex-col lg:flex-row">
+            <section className="flex-1 bg-white rounded shadow-sm p-6 md:p-8">
                 <h2 className="text-2xl font-bold mb-2">Hồ sơ của tôi</h2>
                 <p className="text-sm text-gray-500 mb-6">Cập nhật thông tin cá nhân</p>
 
@@ -184,27 +184,29 @@ function Info() {
 
 function Input({ label, id, value, onChange, readOnly = false }) {
     return (
-        <div>
+        <div className="form-group">
             <label htmlFor={id} className="text-sm font-medium text-gray-700 block mb-1">{label}</label>
             <input
                 id={id}
                 value={value}
                 onChange={onChange}
                 readOnly={readOnly}
-                className={`w-full border border-gray-300 rounded-lg py-2.5 px-4 text-sm focus:outline-none focus:ring-2 ${
-                    readOnly ? "bg-gray-100 text-gray-500 cursor-not-allowed" : "focus:ring-gray-900"
-                }`}
+                className={` 
+                    form-input 
+                    ${readOnly ? "bg-gray-100 text-gray-500 cursor-not-allowed" : ""}
+                `}
             />
         </div>
     );
 }
+
 
 function Select({ options, value, onChange }) {
     return (
         <select
             value={value}
             onChange={onChange}
-            className="border border-gray-300 rounded-lg py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+            className="form-input"
         >
             {options.map((opt) => (
                 <option key={opt} value={opt}>{opt}</option>
@@ -212,5 +214,6 @@ function Select({ options, value, onChange }) {
         </select>
     );
 }
+
 
 export default Info;

@@ -27,7 +27,7 @@ function ChatBoxAI() {
             {!isOpen ? (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="bg-black text-white p-4 rounded-full shadow-xl hover:bg-gray-800 transition"
+                    className="bg-blue-600 text-white p-4 rounded-full shadow-xl hover:bg-gray-800 transition"
                 >
                     <FaComments size={22} />
                 </button>

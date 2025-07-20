@@ -63,9 +63,14 @@ function Payment() {
                 },
                 body: JSON.stringify(formData),
             });
-            navigate('/payment-method');
+
             if (res.ok) {
+                const data = await res.json();
+                const createdOrder = data.order;
+
+                localStorage.setItem("currentOrder", JSON.stringify(createdOrder));
                 toast.success('Đặt hàng thành công!');
+                navigate('/payment-method', { state: { order: createdOrder } });
             } else {
                 toast.error('Có lỗi xảy ra khi đặt hàng');
             }

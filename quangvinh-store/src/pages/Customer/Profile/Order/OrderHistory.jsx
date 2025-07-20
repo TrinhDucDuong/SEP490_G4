@@ -18,15 +18,13 @@ function OrderHistory() {
     if (error) return <p className="text-center text-red-500 text-lg">Lỗi: {error}</p>;
 
     return (
-        <div className="max-w-5xl mx-auto bg-gray-50 min-h-screen">
-            <h2 className="text-3xl font-bold mb-8 text-gray-800">Lịch sử đơn hàng</h2>
-
-            <div className="bg-white rounded-lg shadow-lg p-8">
-                <div className="flex mb-8">
+        <div className="">
+            <div className="bg-white">
+                <div className="flex mb-2 p-2 border-b border-b-black">
                     <button
                         className={`px-5 py-2 font-medium transition ${
                             activeTab === "PROCESSING"
-                                ? "bg-green-600 text-white"
+                                ? "bg-yellow-500 text-white"
                                 : "bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all duration-600"
                         }`}
                         onClick={() => setActiveTab("PROCESSING")}

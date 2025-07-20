@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
@@ -11,5 +10,16 @@
     scrollbar-width: none;
 }
 
+@layer components {
+    .form-group {
+        @apply relative;
+    }
 
+    .form-input {
+        @apply w-full p-2 text-base border-0 border-b border-b-gray-400 rounded-none outline-none transition-all duration-200;
+    }
 
+    .form-input:focus {
+        @apply border-2 border-[#4285f4];
+    }
+}

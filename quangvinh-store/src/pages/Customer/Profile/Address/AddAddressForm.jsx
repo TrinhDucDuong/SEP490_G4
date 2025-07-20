@@ -80,17 +80,24 @@ function AddAddressForm({ onAdd, onCancel }) {
 
         const combinedAddress = `${selectedWard}, ${selectedDistrict}, ${selectedProvince}`;
 
+        const typeMap = {
+            "Nhà riêng": "HOME",
+            "Văn phòng": "WORK",
+            "Khác": "OTHER",
+        };
+
         const newAddress = {
             name: form.name,
             phoneNumber: form.phoneNumber,
             address: combinedAddress,
             exactAddress: form.exactAddress,
             main: form.main,
-            type: form.type === 'Khác' ? null : form.type,
+            type: typeMap[form.type], // CHUẨN DỮ LIỆU
         };
 
         onAdd(newAddress);
     };
+
 
     return (
         <form onSubmit={handleSubmit} className="space-y-5 bg-white p-6 rounded-xl shadow-sm w-full max-w-3xl mx-auto">
