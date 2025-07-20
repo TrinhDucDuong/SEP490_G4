@@ -58,36 +58,30 @@ function UpdateAddressForm({ currentAddress, onUpdate, onCancel }) {
         }
     }, [form.district]);
 
-    // Initialize province, district, and ward from address
     useEffect(() => {
         const initializeAddress = async () => {
             if (currentAddress.address && provinces.length > 0) {
                 const [wardName, districtName, provinceName] = currentAddress.address.split(', ').map(s => s.trim());
 
-                // Find province
                 const province = provinces.find(p => p.name === provinceName);
                 if (province) {
                     setForm(prev => ({ ...prev, province: province.code.toString() }));
 
-                    // Fetch districts for the province
                     try {
                         const districtRes = await fetch(`https://provinces.open-api.vn/api/p/${province.code}?depth=2`);
                         const districtData = await districtRes.json();
                         const districtList = districtData.districts || [];
                         setDistricts(districtList);
 
-                        // Find district
                         const district = districtList.find(d => d.name === districtName);
                         if (district) {
                             setForm(prev => ({ ...prev, district: district.code.toString() }));
 
-                            // Fetch wards for the district
                             const wardRes = await fetch(`https://provinces.open-api.vn/api/d/${district.code}?depth=2`);
                             const wardData = await wardRes.json();
                             const wardList = wardData.wards || [];
                             setWards(wardList);
 
-                            // Find ward
                             const ward = wardList.find(w => w.name === wardName);
                             if (ward) {
                                 setForm(prev => ({ ...prev, ward: ward.code.toString() }));

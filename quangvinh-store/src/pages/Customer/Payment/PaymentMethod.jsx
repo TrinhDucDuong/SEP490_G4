@@ -49,12 +49,19 @@ const PaymentMethod = () => {
             console.log(Number(order.orderId), selectedMethod);
 
             if (res.ok) {
+                const data = await res.text();
+                console.log("Response body:", data);
+
                 toast.success("Chọn phương thức thanh toán thành công!");
-                window.location.href = "http://localhost:9999/order/payment/return";
                 localStorage.removeItem("currentOrder");
+                // window.location.href = "http://localhost:9999/order/payment/return";
             } else {
+                const errorText = await res.text();
+                console.error("Error response:", errorText);
                 toast.error("Chọn phương thức thanh toán thất bại.");
             }
+
+            console.log(res);
         } catch (err) {
             console.error(err);
             toast.error("Lỗi kết nối đến máy chủ.");

@@ -10,7 +10,7 @@ import {
 import { toast } from 'react-toastify';
 import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
 import { useFetchStarRate } from "../../../hooks/Customer/useFetchStarRate";
-import {useCart} from "../../../context/CartContext.jsx";
+import { useCart } from "../../../context/CartContext.jsx";
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -24,7 +24,6 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [filterStar, setFilterStar] = useState('');
     const [pageNumber, setPageNumber] = useState(0);
-
 
     const { addToCart } = useCart();
     const { starRates, totalCount, loading: starRateLoading } = useFetchStarRate(product?.productId, filterStar, pageNumber, 3);
@@ -87,9 +86,8 @@ const ProductDetail = () => {
         >
             <Breadcrumb items={breadcrumbItems} />
 
-            {/* Sản phẩm chính */}
             <div className="flex flex-col lg:flex-row gap-12 mt-6">
-                {/* Hình ảnh */}
+                {/* Left: Image */}
                 <div className="w-full lg:w-1/2">
                     <div className="rounded-xl overflow-hidden border aspect-square">
                         <Zoom>
@@ -106,33 +104,50 @@ const ProductDetail = () => {
                                 key={i}
                                 src={img}
                                 onClick={() => setSelectedImage(img)}
-                                className={`w-20 h-20 object-cover rounded-lg border cursor-pointer transition-all duration-200 ${
-                                    selectedImage === img
-                                        ? 'ring-2 ring-indigo-500 border-indigo-500 scale-105'
-                                        : 'hover:ring-2 hover:ring-gray-400 hover:scale-105'
-                                }`}
+                                className={`w-20 h-20 object-cover rounded-lg border cursor-pointer transition-all duration-200 ${selectedImage === img ? 'ring-2 ring-indigo-500 border-indigo-500 scale-105' : 'hover:ring-2 hover:ring-gray-400 hover:scale-105'}`}
                             />
                         ))}
                     </div>
                 </div>
 
-                {/* Thông tin sản phẩm */}
+                {/* Right: Info */}
                 <div className="w-full lg:w-1/2 space-y-6">
-                    <div className="space-y-2">
-                        <div className="flex justify-between text-sm text-gray-500">
-                            <span>Mã sản phẩm: #{product.productId}</span>
+                    <div className="space-y-2 flex justify-between">
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-800">{product.productName}</h1>
+                            <div className="text-red-500 text-2xl font-semibold">
+                                {product.unitPrice.toLocaleString()}₫
+                            </div>
+                        </div>
+                        <div className="text-sm text-gray-500">
                             <span className="flex items-center gap-1">
                                 <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
-                                {product.starRateAvg || 0}
+                                {product.starRateAvg?.toFixed(1) || '0.0'}
                             </span>
-                        </div>
-                        <h1 className="text-2xl font-bold text-gray-800">{product.productName}</h1>
-                        <div className="text-red-500 text-2xl font-semibold">
-                            {product.unitPrice.toLocaleString()}₫
                         </div>
                     </div>
 
-                    {/* Màu sắc */}
+                    {/* Brand */}
+                    <div className="text-sm text-gray-600">
+                        <strong>Thương hiệu:</strong> {product.brand?.brandName}
+                        {product.brand?.images?.length > 0 && (
+                            <div className="mt-2">
+                                <img
+                                    src={product.brand.images[0].imageUrl}
+                                    alt={product.brand.brandName}
+                                    className="h-12 object-contain"
+                                />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Category */}
+                    <div className="text-sm text-gray-600">
+                        <strong>Danh mục:</strong> {product.category?.categoryName}
+                    </div>
+
+                    {/* Variants */}
+                    {/* Color */}
                     <div>
                         <div className="text-sm font-medium text-gray-700 mb-1">Màu sắc:</div>
                         <div className="flex gap-2">
@@ -140,18 +155,14 @@ const ProductDetail = () => {
                                 <button
                                     key={i}
                                     onClick={() => setSelectedColor(color.colorHex)}
-                                    className={`w-8 h-8 rounded-full border-2 ${
-                                        selectedColor === color.colorHex
-                                            ? 'ring-2 ring-black'
-                                            : 'hover:border-black'
-                                    } border-gray-300`}
+                                    className={`w-8 h-8 rounded-full border-2 ${selectedColor === color.colorHex ? 'ring-2 ring-black' : 'hover:border-black'} border-gray-300`}
                                     style={{ backgroundColor: color.colorHex }}
                                 />
                             ))}
                         </div>
                     </div>
 
-                    {/* Kích thước */}
+                    {/* Size */}
                     <div>
                         <div className="text-sm font-medium text-gray-700 mb-1">Kích thước:</div>
                         <div className="flex gap-2 flex-wrap">
@@ -159,11 +170,7 @@ const ProductDetail = () => {
                                 <button
                                     key={i}
                                     onClick={() => setSelectedSize(size)}
-                                    className={`px-3 py-1.5 rounded-lg border text-sm font-medium ${
-                                        selectedSize === size
-                                            ? 'bg-black text-white border-black'
-                                            : 'bg-white border-gray-300 hover:bg-black hover:text-white'
-                                    }`}
+                                    className={`px-2 py-1 border border-black text-sm font-medium ${selectedSize === size ? 'bg-blue-200 text-black border-blue-200' : 'bg-white border-gray-200 hover:bg-blue-400 hover:text-white'}`}
                                 >
                                     {size}
                                 </button>
@@ -171,45 +178,48 @@ const ProductDetail = () => {
                         </div>
                     </div>
 
-                    {/* Số lượng */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Số lượng:</label>
-                        <input
-                            type="number"
-                            min="1"
-                            value={quantity}
-                            onChange={(e) => setQuantity(Number(e.target.value))}
-                            className="w-24 border border-gray-300 rounded-lg px-3 py-2 text-sm"
-                        />
+                    {/* Quantity */}
+                    <div className="flex items-center gap-4">
+                        <div className="text-sm font-medium text-gray-700">Số lượng:</div>
+                        <div className="flex border rounded-md overflow-hidden w-fit">
+                            <button
+                                type="button"
+                                onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
+                                className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 border-r"
+                            >-</button>
+                            <div className="w-10 h-10 flex items-center justify-center text-gray-700 font-semibold">{quantity}</div>
+                            <button
+                                type="button"
+                                onClick={() => setQuantity(prev => prev + 1)}
+                                className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 border-l"
+                            >+</button>
+                        </div>
                     </div>
 
-                    {/* Nút hành động */}
-                    <div className="flex flex-col gap-3">
+                    {/* Buttons */}
+                    <div className="flex gap-4">
                         <button
                             onClick={handleAddToCart}
-                            className="bg-black text-white py-2.5 rounded-full font-medium hover:bg-gray-800"
-                        >
-                            Thêm vào giỏ hàng
-                        </button>
-                        <button className="bg-white text-indigo-600 border border-indigo-600 py-2.5 rounded-full font-medium hover:bg-indigo-50">
+                            className="bg-black text-white hover:bg-white hover:text-black border border-black py-2 px-4 rounded font-medium w-1/2"
+                        >Thêm vào giỏ hàng</button>
+                        <button className="bg-white text-black border border-gray-600 py-2 px-4 rounded font-medium hover:bg-black hover:text-white w-1/2">
                             Mua ngay
                         </button>
                     </div>
 
-                    {/* Chính sách */}
+                    {/* Guarantees */}
                     <div className="text-sm text-gray-600 border-t pt-4 space-y-3">
-                        <div className="flex items-start gap-2"><FontAwesomeIcon icon={faTruck} className="text-teal-500 mt-1" /> <p>Miễn phí vận chuyển toàn quốc với đơn từ 500.000₫.</p></div>
-                        <div className="flex items-start gap-2"><FontAwesomeIcon icon={faBoxesPacking} className="text-teal-500 mt-1" /> <p>Đổi trả dễ dàng trong vòng 7 ngày nếu sản phẩm lỗi.</p></div>
-                        <div className="flex items-start gap-2"><FontAwesomeIcon icon={faThumbsUp} className="text-teal-500 mt-1" /> <p>Cam kết 100% chính hãng và chất lượng cao.</p></div>
-                        <div className="flex items-start gap-2"><FontAwesomeIcon icon={faPhoneVolume} className="text-teal-500 mt-1" /> <p>Hỗ trợ khách hàng 24/7 qua hotline: 1800 1234.</p></div>
+                        <div className="flex items-start gap-2"><FontAwesomeIcon icon={faTruck} className="text-teal-500 mt-1" /><p>Miễn phí vận chuyển toàn quốc với đơn từ 500.000₫.</p></div>
+                        <div className="flex items-start gap-2"><FontAwesomeIcon icon={faBoxesPacking} className="text-teal-500 mt-1" /><p>Đổi trả dễ dàng trong vòng 7 ngày nếu sản phẩm lỗi.</p></div>
+                        <div className="flex items-start gap-2"><FontAwesomeIcon icon={faThumbsUp} className="text-teal-500 mt-1" /><p>Cam kết 100% chính hãng và chất lượng cao.</p></div>
+                        <div className="flex items-start gap-2"><FontAwesomeIcon icon={faPhoneVolume} className="text-teal-500 mt-1" /><p>Hỗ trợ khách hàng 24/7 qua hotline: 1800 1234.</p></div>
                     </div>
                 </div>
             </div>
 
-            {/* Tabs */}
             <div className="mt-12">
                 <div className="flex gap-6 border-b">
-                    {['desc', 'story', 'detail', 'review'].map((key) => (
+                    {['review', 'desc', 'story', 'detail'].map((key) => (
                         <button
                             key={key}
                             className={`pb-2 text-sm font-medium ${
