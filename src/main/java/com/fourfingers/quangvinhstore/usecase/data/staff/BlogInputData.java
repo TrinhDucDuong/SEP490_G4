@@ -13,4 +13,5 @@ public class BlogInputData {
     private String blogTitle;
     private String content;
     private List<Long> relatedProductIds;
+    private List<String> blogTags;
 }

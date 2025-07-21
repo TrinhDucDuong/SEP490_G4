@@ -7,12 +7,10 @@ import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMap
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.BlogStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.ProductStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.BlogRepository;
+import com.fourfingers.quangvinhstore.infrastructure.repository.BlogTagRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ProductRepository;
-import com.fourfingers.quangvinhstore.infrastructure.schema.AccountEntity;
-import com.fourfingers.quangvinhstore.infrastructure.schema.BlogEntity;
-import com.fourfingers.quangvinhstore.infrastructure.schema.ImageEntity;
-import com.fourfingers.quangvinhstore.infrastructure.schema.ProductEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.AzureStorageBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.BlogManagementInputBoundary;
@@ -43,6 +41,7 @@ public class ManageBlogUseCaseInteraction implements BlogManagementInputBoundary
     private final BlogManagementOutputBoundary blogManagementOutputBoundary;
     private final ProductRepository productRepository;
     private final AzureStorageBoundary azureStorageBoundary;
+    private final BlogTagRepository blogTagRepository;
 
     @Override
     @Transactional
@@ -54,6 +53,9 @@ public class ManageBlogUseCaseInteraction implements BlogManagementInputBoundary
                             Blog blog = blogStaffMapper.toModel(blogEntity);
                             blog.setRelatedProducts(getRelatedProducts(blogEntity));
                             blog.setBlogImages(getBlogImage(blogEntity));
+                            blog.setTags(
+                                    blogEntity.getBlogTags().stream().map(BlogTagEntity::getTagName).toList()
+                            );
                             return blog;
                         })
                         .toList()
@@ -69,6 +71,9 @@ public class ManageBlogUseCaseInteraction implements BlogManagementInputBoundary
         Blog blog = blogStaffMapper.toModel(blogEntity);
         blog.setBlogImages(getBlogImage(blogEntity));
         blog.setRelatedProducts(getRelatedProducts(blogEntity));
+        blog.setTags(
+                blogEntity.getBlogTags().stream().map(BlogTagEntity::getTagName).toList()
+        );
         return blogManagementOutputBoundary.convertToBlogOutputData(blog);
     }
 
@@ -105,6 +110,7 @@ public class ManageBlogUseCaseInteraction implements BlogManagementInputBoundary
                 .createdAt(LocalDateTime.now())
                 .createdBy((AccountEntity) userDetails)
                 .relatedProducts(relatedProducts)
+                .blogTags(saveBlogTags(blogInputData.getBlogTags()))
                 .build();
         Blog blog = blogStaffMapper.toModel(blogRepository.saveAndFlush(blogEntity));
         if (!blogImages.isEmpty()) {
@@ -130,9 +136,13 @@ public class ManageBlogUseCaseInteraction implements BlogManagementInputBoundary
                     blogInputData.getRelatedProductIds()
             );
         }
-
+        //Change the related products
         blogEntity.getRelatedProducts().clear();
         blogEntity.getRelatedProducts().addAll(newRelatedProducts);
+
+        //Change the related tag
+        blogEntity.getBlogTags().clear();
+        blogEntity.getBlogTags().addAll(saveBlogTags(blogInputData.getBlogTags()));
 
         blogEntity.setBlogTitle(blogInputData.getBlogTitle());
         blogEntity.setContent(blogInputData.getContent());
@@ -141,6 +151,11 @@ public class ManageBlogUseCaseInteraction implements BlogManagementInputBoundary
 
         //Save blog information
         Blog updatedBlog = blogStaffMapper.toModel(blogRepository.saveAndFlush(blogEntity));
+
+        //Set the new tags
+        updatedBlog.setTags(
+                blogEntity.getBlogTags().stream().map(BlogTagEntity::getTagName).toList()
+        );
 
         //Delete and save new blog images
         boolean hasRealImages = blogImages != null && blogImages.stream()
@@ -202,5 +217,15 @@ public class ManageBlogUseCaseInteraction implements BlogManagementInputBoundary
         List<String> oldBlogImageUrls = oldBlogImages.stream().map(ImageEntity::getImageUrl).toList();
         azureStorageBoundary.deleteFile(oldBlogImageUrls);
         imageRepository.deleteAll(oldBlogImages);
+    }
+
+    private List<BlogTagEntity> saveBlogTags(List<String> blogTags) {
+        return blogTags.stream().map(blogTag -> {
+            if(blogTagRepository.existsById(blogTag) && blogTagRepository.findById(blogTag).isPresent()) {
+                return blogTagRepository.findById(blogTag).get();
+            } else {
+                return blogTagRepository.save(BlogTagEntity.builder().tagName(blogTag).build());
+            }
+        }).toList();
     }
 }
