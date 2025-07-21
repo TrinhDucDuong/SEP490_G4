@@ -18,4 +18,5 @@ public class Blog {
     private List<Image> images;
     private List<Long> relatedProductIds;
     private LocalDateTime createdAt;
+    private List<String> tags;
 }

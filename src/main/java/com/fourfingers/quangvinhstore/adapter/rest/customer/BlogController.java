@@ -4,10 +4,7 @@ import com.fourfingers.quangvinhstore.usecase.boundary.customer.BlogInputBoundar
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/blog")
@@ -16,8 +13,8 @@ public class BlogController {
     private final BlogInputBoundary blogInputBoundary;
 
     @GetMapping
-    public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(blogInputBoundary.getAll());
+    public ResponseEntity<?> getAll(@RequestParam(required = false) String blogTag) {
+        return ResponseEntity.ok(blogInputBoundary.getAll(blogTag));
     }
 
     @GetMapping("/{id}")

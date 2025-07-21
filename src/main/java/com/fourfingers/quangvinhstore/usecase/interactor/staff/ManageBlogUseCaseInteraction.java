@@ -45,20 +45,24 @@ public class ManageBlogUseCaseInteraction implements BlogManagementInputBoundary
 
     @Override
     @Transactional
-    public ListBlogOutputData getAll() {
-        return blogManagementOutputBoundary.convertToListBlogOutputData(
-                blogRepository.findAll()
-                        .stream()
-                        .map(blogEntity -> {
-                            Blog blog = blogStaffMapper.toModel(blogEntity);
-                            blog.setRelatedProducts(getRelatedProducts(blogEntity));
-                            blog.setBlogImages(getBlogImage(blogEntity));
-                            blog.setTags(
-                                    blogEntity.getBlogTags().stream().map(BlogTagEntity::getTagName).toList()
-                            );
-                            return blog;
-                        })
-                        .toList()
+    public ListBlogOutputData getAll(String blogTag) {
+        List<BlogEntity> blogEntities;
+        if (blogTag != null && !blogTag.isEmpty()) {
+            blogEntities = blogRepository.findByBlogTags_tagName(blogTag);
+        } else {
+            blogEntities = blogRepository.findAll();
+        }
+        return blogManagementOutputBoundary.convertToListBlogOutputData(blogEntities.stream()
+                .map(blogEntity -> {
+                    Blog blog = blogStaffMapper.toModel(blogEntity);
+                    blog.setRelatedProducts(getRelatedProducts(blogEntity));
+                    blog.setBlogImages(getBlogImage(blogEntity));
+                    blog.setTags(
+                            blogEntity.getBlogTags().stream().map(BlogTagEntity::getTagName).toList()
+                    );
+                    return blog;
+                })
+                .toList()
         );
     }
 
@@ -131,7 +135,7 @@ public class ManageBlogUseCaseInteraction implements BlogManagementInputBoundary
         List<ProductEntity> newRelatedProducts = new ArrayList<>();
 
         //Get a new related product
-        if(!blogInputData.getRelatedProductIds().isEmpty()) {
+        if (!blogInputData.getRelatedProductIds().isEmpty()) {
             newRelatedProducts = productRepository.findAllByIsActiveTrueAndProductIdIn(
                     blogInputData.getRelatedProductIds()
             );
@@ -221,7 +225,7 @@ public class ManageBlogUseCaseInteraction implements BlogManagementInputBoundary
 
     private List<BlogTagEntity> saveBlogTags(List<String> blogTags) {
         return blogTags.stream().map(blogTag -> {
-            if(blogTagRepository.existsById(blogTag) && blogTagRepository.findById(blogTag).isPresent()) {
+            if (blogTagRepository.existsById(blogTag) && blogTagRepository.findById(blogTag).isPresent()) {
                 return blogTagRepository.findById(blogTag).get();
             } else {
                 return blogTagRepository.save(BlogTagEntity.builder().tagName(blogTag).build());
