@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table (name = "blogs")
@@ -54,4 +53,16 @@ public class BlogEntity {
             name = "blogs_products_mapping"
     )
     private List<ProductEntity> relatedProducts;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            joinColumns = @JoinColumn(
+                    name = "blog_id", referencedColumnName = "blog_id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "tag_name", referencedColumnName = "tag_name"
+            )
+            ,name = "blogs_tags_mapping"
+    )
+    private List<BlogTagEntity> blogTags;
 }

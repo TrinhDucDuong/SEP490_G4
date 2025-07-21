@@ -1,7 +1,6 @@
 package com.fourfingers.quangvinhstore.adapter.rest.admin;
 
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.AccountManagementInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.admin.AccountInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,34 +9,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/customer-account")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
-public class ManageAccountController {
+public class ManageCustomerAccountController {
     private final AccountManagementInputBoundary accountManagementInputBoundary;
-    @GetMapping("/account")
+    @GetMapping()
     public ResponseEntity<?> getAllAccounts() {
         return ResponseEntity.ok(accountManagementInputBoundary.getAllAccounts());
     }
 
-    @PostMapping("/account")
-    public ResponseEntity<?> createAccount(@RequestBody AccountInputData accountInputData,
-                                           @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(accountManagementInputBoundary.save(accountInputData, userDetails));
-    }
-
-    @GetMapping("/account/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getAccount(@PathVariable String id) {
         return ResponseEntity.ok(accountManagementInputBoundary.getAccount(id));
     }
 
-    @PutMapping("/account/{id}")
-    public ResponseEntity<?> updateAccount(@PathVariable String id,
-                                           @RequestBody AccountInputData accountInputData,
-                                           @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(accountManagementInputBoundary.save(id, accountInputData, userDetails));
-    }
-
-    @DeleteMapping("/account/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAccount(@PathVariable String id,
                                            @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(accountManagementInputBoundary.delete(id, userDetails));

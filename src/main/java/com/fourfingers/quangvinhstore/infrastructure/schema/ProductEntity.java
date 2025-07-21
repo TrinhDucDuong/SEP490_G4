@@ -23,7 +23,7 @@ public class ProductEntity {
     @Column(name = "product_name", nullable = false, columnDefinition = "NVARCHAR(50)")
     private String productName;
 
-    @Column(name = "product_description", nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Column(name = "product_description", nullable = false, columnDefinition = "TEXT")
     private String productDescription;
 
     @Column(name = "unit_price", nullable = false, precision = 19 , scale = 2)

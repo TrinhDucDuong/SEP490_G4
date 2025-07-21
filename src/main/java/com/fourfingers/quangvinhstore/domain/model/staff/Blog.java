@@ -23,4 +23,5 @@ public class Blog {
     private Boolean isActive;
     private List<Product> relatedProducts;
     private List<Image> blogImages;
+    private List<String> tags;
 }

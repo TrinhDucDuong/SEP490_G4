@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface BlogManagementInputBoundary {
-    ListBlogOutputData getAll();
+    ListBlogOutputData getAll(String blogTags);
 
     BlogOutputData getById(String id);
 
