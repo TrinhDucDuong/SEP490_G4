@@ -25,6 +25,15 @@ function Header() {
         setDropdownOpen(!isDropdownOpen);
     };
 
+    const [searchText, setSearchText] = useState('');
+
+    const handleSearch = () => {
+        if (searchText.trim() !== '') {
+            setSearchOpen(true);
+        }
+    };
+
+
     useEffect(() => {
         if (isCartOpen) {
             document.body.style.overflow = 'hidden';
@@ -94,13 +103,16 @@ function Header() {
                                     type='text'
                                     className='outline-none text-sm bg-transparent placeholder-gray-400 w-28 md:w-40'
                                     placeholder='Tìm sản phẩm...'
+                                    value={searchText}
+                                    onChange={(e) => setSearchText(e.target.value)}
                                 />
                                 <button
-                                    onClick={() => setSearchOpen(true)}
+                                    onClick={handleSearch}
                                     className='text-gray-600 hover:text-yellow-500 transition'
                                 >
                                     <FontAwesomeIcon icon={faMagnifyingGlass} size='sm' />
                                 </button>
+
                             </div>
                         </div>
                         <button

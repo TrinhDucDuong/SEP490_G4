@@ -15,12 +15,15 @@ import UpdateAddressForm from "../Profile/Address/UpdateAddressForm.jsx";
 import AddressSelectModal from "./AddressSelectModal.jsx";
 import { createAddress } from "../../../utils/api/Customer/AddressAPI.js";
 import {useCart} from "../../../context/CartContext.jsx";
+import { useNavigate } from 'react-router-dom';
+
 
 function Payment() {
     const { user } = useContext(AuthContext);
     const profile = user?.profile;
     const accountId = localStorage.getItem('accountId');
     const token = localStorage.getItem('token');
+    const navigate = useNavigate();
 
     const [selectedAddressId, setSelectedAddressId] = useState('');
     const [promoList, setPromoList] = useState([]);
@@ -69,7 +72,7 @@ function Payment() {
                 const createdOrder = data.order;
 
                 localStorage.setItem("currentOrder", JSON.stringify(createdOrder));
-                toast.success('Đặt hàng thành công!');
+                toast.success('Đơn hàng đã được thêm vào thành công, bạn hãy tiếp tục tiến hành thanh toán!');
                 navigate('/payment-method', { state: { order: createdOrder } });
             } else {
                 toast.error('Có lỗi xảy ra khi đặt hàng');

@@ -16,7 +16,7 @@ function ProfileLayout() {
     ];
 
     return (
-        <div className="min-h-screen px-4 py-6 md:px-12 lg:px-20 bg-gradient-to-br from-yellow-100 via-yellow-100 to-yellow-100">
+        <div className="min-h-screen px-4 py-6 md:px-12 lg:px-20 bg-gradient-to-br from-black via-blue-400 to-blue-200">
             <div className="max-w-7xl mx-auto space-y-6">
                 <Breadcrumb items={breadcrumbItems} />
                 <div className="flex flex-col lg:flex-row">
