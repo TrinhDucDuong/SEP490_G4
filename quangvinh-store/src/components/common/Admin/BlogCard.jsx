@@ -14,7 +14,10 @@ const BlogCard = ({ blog }) => {
                     />
                 )}
                 <h2 className="text-xl font-semibold mb-2">{blog.blogTitle}</h2>
-                <p className="text-gray-600 text-sm line-clamp-4">{blog.content}</p>
+                <div
+                    className="prose max-w-none text-gray-600 text-sm line-clamp-4"
+                    dangerouslySetInnerHTML={{ __html: blog.content }}
+                ></div>
                 <div className="mt-4 text-sm text-gray-500">
                     <div>Người tạo: <span className="font-medium">{blog.createdBy.username}</span></div>
                     <div>Ngày tạo: {format(new Date(blog.createdAt), 'dd/MM/yyyy')}</div>

@@ -4,12 +4,14 @@ import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import productPicture from "../../../../assets/images/ao.png";
 import { useNavigate } from "react-router-dom";
+import {useActionLogger} from "../../../../utils/api/Customer/Log/useActionLogger.js";
 
 const ProductCard = memo(function ProductCard({ product }) {
     const [imageIndex, setImageIndex] = useState(0);
     const [hovered, setHovered] = useState(false);
     const intervalRef = useRef(null);
     const navigate = useNavigate();
+    const { logAction } = useActionLogger();
 
     const images = useMemo(() => (
         product.images?.length ? product.images.map(img => img.imageUrl) : [productPicture]
@@ -31,8 +33,10 @@ const ProductCard = memo(function ProductCard({ product }) {
     }, [hovered, images]);
 
     const handleClick = () => {
+        logAction('VIEW', product.productId);
         navigate(`/products/${product.productId}`);
     };
+
 
     return (
         <div
@@ -41,7 +45,7 @@ const ProductCard = memo(function ProductCard({ product }) {
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
         >
-            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4 relative flex items-center justify-center">
+            <div className="aspect-square bg-gray-100 overflow-hidden mb-4 relative flex items-center justify-center">
                 {images.map((image, index) => (
                     <img
                         key={index}

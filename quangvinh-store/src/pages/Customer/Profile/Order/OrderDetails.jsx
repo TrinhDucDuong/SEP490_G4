@@ -14,17 +14,16 @@ function OrderDetail() {
     const isPendingOrProcessing = order.orderStatus === "PENDING" || order.orderStatus === "PROCESSING";
 
     const handleGoToPayment = () => {
-        navigate(`/payment/${order.orderId}`, { state: { order } });
+        navigate(`/payment-method`, { state: { order } });
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg mt-6 border border-gray-100">
+        <div className="mx-auto p-6 bg-white shadow-lg mt-6 border border-gray-100">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">Chi tiết đơn hàng #{order.orderId}</h2>
                 <span className="text-sm text-gray-500"></span>
             </div>
 
-            {/* Status & Timeline */}
             <div className="mb-6 text-sm text-gray-600 space-y-2">
                 <div className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
@@ -34,7 +33,6 @@ function OrderDetail() {
                 <p>Dự kiến giao: {order.estimatedDeliveryDate || 'Đang cập nhật'}</p>
             </div>
 
-            {/* Shipping Address */}
             <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <h4 className="font-semibold text-gray-800 mb-2">Địa chỉ giao hàng</h4>
                 <p className="text-gray-600">{order.shippingAddress?.name} - {order.shippingAddress?.phoneNumber}</p>

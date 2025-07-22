@@ -11,6 +11,8 @@ import { toast } from 'react-toastify';
 import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
 import { useFetchStarRate } from "../../../hooks/Customer/useFetchStarRate";
 import { useCart } from "../../../context/CartContext.jsx";
+import {useActionLogger} from "../../../utils/api/Customer/Log/useActionLogger.js";
+import parse from 'html-react-parser';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -24,6 +26,7 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [filterStar, setFilterStar] = useState('');
     const [pageNumber, setPageNumber] = useState(0);
+    const { logAction } = useActionLogger();
 
     const { addToCart } = useCart();
     const { starRates, totalCount, loading: starRateLoading } = useFetchStarRate(product?.productId, filterStar, pageNumber, 3);
@@ -71,6 +74,7 @@ const ProductDetail = () => {
                 productName: product.productName,
                 productImage: selectedImage || product.images?.[0]?.imageUrl || '',
             });
+            await logAction('ADD_TO_CART', currentVariant?.productVariantId);
             toast.success("Đã thêm sản phẩm vào giỏ hàng");
         } catch (error) {
             toast.error(error.message || 'Lỗi khi thêm vào giỏ hàng');
@@ -246,7 +250,11 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="mt-4 text-sm text-gray-700">
-                    {tab === 'desc' && <p>{product.productDescription}</p>}
+                    {tab === 'desc' && (
+                        <div className="text-sm text-gray-700 leading-relaxed">
+                            {parse(product.productDescription)}
+                        </div>
+                    )}
                     {tab === 'story' && <p>{product.story || 'Không có câu chuyện sản phẩm.'}</p>}
                     {tab === 'detail' && (
                         <ul className="list-disc list-inside">
