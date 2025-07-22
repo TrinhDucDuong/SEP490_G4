@@ -29,7 +29,7 @@ const PolicyPage = () => {
     if (error) return <div className="text-center py-12 text-red-500 text-lg">{error}</div>;
 
     return (
-        <div className="bg-white min-h-screen py-8 text-gray-900">
+        <div className="bg-[#F2F2EE] min-h-screen py-8 text-gray-900">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <Breadcrumb
                     items={[
@@ -40,8 +40,7 @@ const PolicyPage = () => {
                     className="mb-6 text-gray-600"
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    {/* Sidebar */}
+                <div className="grid grid-cols-1 mt-4 mx-4 md:grid-cols-4 gap-8">
                     <aside className="md:col-span-1">
                         <h2 className="text-xl font-bold mb-6 text-gray-900 tracking-tight">Policy List</h2>
                         <ul className="space-y-3">
@@ -62,7 +61,6 @@ const PolicyPage = () => {
                         </ul>
                     </aside>
 
-                    {/* Content */}
                     <section className="md:col-span-3 bg-gray-50 rounded-xl p-8 shadow-lg min-h-[400px]">
                         {selectedPolicy ? (
                             <>

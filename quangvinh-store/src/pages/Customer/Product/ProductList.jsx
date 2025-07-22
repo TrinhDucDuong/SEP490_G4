@@ -49,7 +49,7 @@ const ProductList = () => {
     };
 
     return (
-        <div className="bg-gray-100 min-h-screen px-4 sm:px-6 lg:px-20 py-6 md:py-8 ">
+        <div className="bg-[#F2F2EE] min-h-screen px-4 sm:px-6 lg:px-20 py-6 md:py-8 ">
             <div className="mb-6">
                 <Banner
                     item={{

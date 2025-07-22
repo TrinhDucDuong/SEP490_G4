@@ -16,6 +16,7 @@ import AddressSelectModal from "./AddressSelectModal.jsx";
 import { createAddress } from "../../../utils/api/Customer/AddressAPI.js";
 import {useCart} from "../../../context/CartContext.jsx";
 import { useNavigate } from 'react-router-dom';
+import RecommendedProductList from "../Common/RecommendedProducts.jsx";
 
 
 function Payment() {
@@ -52,7 +53,6 @@ function Payment() {
             toast.error('Vui lòng chọn địa chỉ giao hàng');
             return;
         }
-
         const formData = {
             shippingAddressId: Number(selectedAddressId),
         };
@@ -66,11 +66,11 @@ function Payment() {
                 },
                 body: JSON.stringify(formData),
             });
-
+            console.log(formData);
             if (res.ok) {
                 const data = await res.json();
                 const createdOrder = data.order;
-
+                console.log(createdOrder);
                 localStorage.setItem("currentOrder", JSON.stringify(createdOrder));
                 toast.success('Đơn hàng đã được thêm vào thành công, bạn hãy tiếp tục tiến hành thanh toán!');
                 navigate('/payment-method', { state: { order: createdOrder } });
@@ -98,7 +98,7 @@ function Payment() {
     };
 
     return (
-        <div className='max-w-full md:max-w-[900px] lg:max-w-[1400px] mx-auto'>
+        <div className='max-w-full md:max-w-[900px] lg:max-w-[1400px] mx-auto bg-[#F2F2EE]'>
             <div className='breadcrumb mt-4'>
                 <Breadcrumb
                     items={[
@@ -109,7 +109,7 @@ function Payment() {
                 />
             </div>
 
-            <div className='flex flex-col md:flex-row gap-8 md:gap-12 p-4 md:p-8 min-h-screen items-stretch'>
+            <div className='flex flex-col md:flex-row gap-8 md:gap-12 p-4 md:p-8 items-stretch'>
                 <div className='basis-full md:basis-2/3 bg-white p-6 mb-8 md:mb-0 flex flex-col'>
                     <h2 className='text-2xl font-bold mb-4 text-black'>Liên Hệ</h2>
 
@@ -214,7 +214,6 @@ function Payment() {
                     </form>
 
                 </div>
-
                 <div className='basis-full md:basis-1/3 bg-gray-50 p-6 flex flex-col'>
                     <PaymentProduct
                         cartItems={cartItems}
@@ -223,6 +222,10 @@ function Payment() {
                         updateQuantity={updateQuantity}
                     />
                 </div>
+            </div>
+
+            <div className="flex flex-col items-center justify-center bg-white shadow-sm p-4 md:p-8 mb-8 md:mb-0">
+                <RecommendedProductList />
             </div>
 
             <Modal isOpen={isAdd} onClose={() => setIsAdd(false)}>

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { useFetchBlogs } from "../../hooks/Admin/useFetchBlogManagementAPI.js";
-import BlogCard from "../../components/common/Admin/BlogCard.jsx";
+import { useFetchBlogs } from "../../../hooks/Admin/useFetchBlogManagementAPI.js";
+import BlogCard from "../../../components/common/Admin/BlogCard.jsx";
 
 function BlogManagement() {
     const { blogs, loading } = useFetchBlogs();

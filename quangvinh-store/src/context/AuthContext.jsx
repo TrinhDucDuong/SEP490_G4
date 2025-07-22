@@ -42,14 +42,31 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem('cart');
-        localStorage.removeItem('accountId');
-        localStorage.removeItem('token');
-        localStorage.removeItem('guest_cart');
-        setToken(null);
-        setUser(null);
+    const logout = async () => {
+        try {
+            if (token) {
+                await fetch('http://localhost:9999/recommendation/cache', {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({}),
+                });
+            }
+        } catch (err) {
+            console.error('Lỗi khi gọi recommendation/cache:', err);
+        } finally {
+            localStorage.removeItem('cart');
+            localStorage.removeItem('accountId');
+            localStorage.removeItem('token');
+            localStorage.removeItem('guest_cart');
+            setToken(null);
+            setUser(null);
+            window.location.href = '/';
+        }
     };
+
 
     return (
         <AuthContext.Provider value={{ user, token, login, logout, loading }}>

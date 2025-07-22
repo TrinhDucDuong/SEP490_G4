@@ -46,15 +46,16 @@ import EmployeeManagement from './pages/Staff/EmployeeManagement';
 import CategoryManagement from "./pages/Staff/Category/CategoryManagement.jsx";
 import BrandManagement from "./pages/Staff/Brand/BrandManagement.jsx";
 import ProductManagement from "./pages/Staff/Product/ProductManagement.jsx";
-import BlogManagement from "./pages/Admin/BlogManagement.jsx";
-import BlogDetailManager from "./pages/Admin/BlogDetailManager.jsx";
-import BlogForm from "./pages/Admin/BlogForm.jsx";
+import BlogManagement from "./pages/Admin/Blog/BlogManagement.jsx";
+import BlogDetailManager from "./pages/Admin/Blog/BlogDetailManager.jsx";
+import BlogForm from "./pages/Admin/Blog/BlogForm.jsx";
 import ProtectedRouteForManager from "./components/auth/ProtectedRouteForManager.jsx";
 import LoginForManager from "./pages/Admin/LoginForManager.jsx";
 import PaymentMethod from "./pages/Customer/Payment/PaymentMethod.jsx";
 import OrderDetail from "./pages/Customer/Profile/Order/OrderDetails.jsx";
 import PoliciesManagement from "./pages/Staff/Policy/PoliciesManagement.jsx";
 import ProtectedRoute from "./components/common/Customer/Protecter/ProtectedRoute.jsx";
+import Feedback from "./pages/Customer/Feedback/Feedback.jsx";
 
 
 function App() {
@@ -74,6 +75,7 @@ function App() {
                             <Route path="login" element={<Login />} />
                             <Route path="register" element={<Register />} />
                             <Route path="forgot-password" element={<ForgotPassword />} />
+                            <Route path="feedbacks" element={<Feedback/>} />
                             <Route path="policies" element={<PolicyPage />} />
                             <Route path="policies/:id" element={<PolicyPage />} />
                             <Route path="instructions" element={<InstructionPage />} />
