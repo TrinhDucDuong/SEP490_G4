@@ -1,15 +1,15 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 
-import com.fourfingers.quangvinhstore.domain.model.customer.Order;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.OrderMapper;
+import com.fourfingers.quangvinhstore.domain.model.staff.Order;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ShippingAddressMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.OrderStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.OrderRepository;
-import com.fourfingers.quangvinhstore.infrastructure.schema.AccountEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.OrderEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.OrderManagementInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.OrderManagementOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.customer.order.ListOrderOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.ListOrderOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.OrderOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.ProcessOrderInputData;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,9 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ManageOrderUseCaseInteraction implements OrderManagementInputBoundary {
     private final OrderRepository orderRepository;
-    private final OrderMapper orderMapper;
+    private final OrderStaffMapper orderMapper;
     private final OrderManagementOutputBoundary orderManagementOutputBoundary;
+    private final ShippingAddressMapper shippingAddressMapper;
 
     @Override
     @Transactional
@@ -84,5 +85,16 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
 
         orderEntity.setOrderStatus(newStatus);
         return orderEntity;
+    }
+
+    private Order getOrderInformation(OrderEntity orderEntity) {
+        Order order = orderMapper.toModel(orderEntity);
+
+        order.setCustomerName(orderEntity.getOwner().getProfile().getFirstName() + " " +
+                              orderEntity.getOwner().getProfile().getLastName());
+
+        order.setCustomerPhoneNumber(orderEntity.getOwner().getProfile().getPhoneNumber());
+        order.setShippingAddress(shippingAddressMapper.toModel(orderEntity.getShippingAddress()));
+        return order;
     }
 }

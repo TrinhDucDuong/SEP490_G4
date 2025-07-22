@@ -1,9 +1,9 @@
 package com.fourfingers.quangvinhstore.presenter;
 
-import com.fourfingers.quangvinhstore.domain.model.customer.Order;
+import com.fourfingers.quangvinhstore.domain.model.staff.Order;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.OrderManagementOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.customer.order.ListOrderOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.ListOrderOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.OrderOutputData;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
