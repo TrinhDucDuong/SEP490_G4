@@ -42,7 +42,7 @@ import InstructionManagement from './pages/Staff/InstructionManagement';
 import AboutUsManagement from './pages/Staff/AboutUsManagement';
 import CustomerList from './pages/Staff/Customer/CustomerList.jsx';
 import OrderManagement from './pages/Staff/Order/OrderManagement';
-import EmployeeManagement from './pages/Staff/EmployeeManagement';
+import EmployeeManagement from './pages/Admin/Employee/EmployeeManagement.jsx';
 import CategoryManagement from "./pages/Staff/Category/CategoryManagement.jsx";
 import BrandManagement from "./pages/Staff/Brand/BrandManagement.jsx";
 import ProductManagement from "./pages/Staff/Product/ProductManagement.jsx";
@@ -58,6 +58,7 @@ import ProtectedRoute from "./components/common/Customer/Protecter/ProtectedRout
 import DashboardManagement from "./pages/Admin/Dashboard/DashboardManagement";
 import StarRateManagement from "./pages/Staff/StarRate/StarRateManagement";
 import StoreManagement from "./pages/Admin/Store/StoreManagement.jsx";
+import SNSManagement from "./pages/Admin/SNS/SNSManagement.jsx";
 
 
 function App() {
@@ -136,6 +137,7 @@ function App() {
                             <Route path="campaign-management" element={<div className="p-6 bg-white rounded-lg shadow">Campaign Management Page</div>} />
                             <Route path="store-management" element={< StoreManagement/>} />
                             <Route path="settings-management" element={<div className="p-6 bg-white rounded-lg shadow">Settings Management Page</div>} />
+                            <Route path="sns-management" element={< SNSManagement/>} />
                         </Route>
                     </Routes>
                 </CartProviderWrapper>

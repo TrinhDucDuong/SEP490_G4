@@ -119,10 +119,10 @@ const SidebarForAdmin = () => {
                         Quản lý mạng xã hội
                     </NavLink>
 
-                    {/*<NavLink to="/admin/employee-management" className={navClass}>*/}
-                    {/*    <UserPlus className="h-5 w-5 mr-3" />*/}
-                    {/*    Quản lý nhân viên*/}
-                    {/*</NavLink>*/}
+                    <NavLink to="/admin/employee-management" className={navClass}>
+                        <UserPlus className="h-5 w-5 mr-3" />
+                        Quản lý nhân viên
+                    </NavLink>
 
                     {/*<NavLink to="/admin/campaign-management" className={navClass}>*/}
                     {/*    <Megaphone className="h-5 w-5 mr-3" />*/}
