@@ -27,7 +27,7 @@ function Address() {
 
     const handleAdd = async (newAddress) => {
         try {
-            const response = await fetch('http://localhost:9999/addresses', {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addresses`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

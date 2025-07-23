@@ -1,7 +1,6 @@
-// src/utils/api/CategoryManagementAPI.js
-const API_BASE_URL = 'http://localhost:9999/staff/category';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/category`;
 
-// GET - Lấy tất cả categories
+
 export const getAllCategories = async () => {
     try {
         const response = await fetch(API_BASE_URL, {

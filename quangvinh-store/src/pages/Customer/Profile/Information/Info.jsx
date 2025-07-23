@@ -89,7 +89,7 @@ function Info() {
         }
 
         try {
-            const res = await fetch("http://localhost:9999/profile", {
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/profile`, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${token}`,

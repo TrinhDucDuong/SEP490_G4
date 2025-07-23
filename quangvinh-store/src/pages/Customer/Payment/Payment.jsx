@@ -58,7 +58,7 @@ function Payment() {
         };
 
         try {
-            const res = await fetch('http://localhost:9999/order', {
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/order`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

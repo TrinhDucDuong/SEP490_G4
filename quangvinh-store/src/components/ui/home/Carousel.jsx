@@ -8,12 +8,11 @@ function Carousel() {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
-        // Reset index nếu số lượng banner thay đổi
         if (currentIndex >= banners.length) setCurrentIndex(0);
     }, [banners.length, currentIndex]);
 
     const scrollToSlide = (index) => {
-        if (index === currentIndex) return; // Không scroll nếu đã ở slide này
+        if (index === currentIndex) return;
         const el = document.getElementById(`slide-${index}`);
         if (el) {
             el.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });

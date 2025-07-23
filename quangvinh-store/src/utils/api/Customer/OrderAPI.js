@@ -1,5 +1,5 @@
 export const fetchOrder = async (token) => {
-    const response = await fetch('http://localhost:9999/order', {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/order`, {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
@@ -14,7 +14,7 @@ export const fetchOrder = async (token) => {
 };
 
 export const fetchOrderById = async (token, orderId) => {
-    const response = await fetch(`http://localhost:9999/order/${orderId}`, {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/order/${orderId}`, {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,

@@ -29,7 +29,7 @@ const Login = () => {
 
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:9999/auth/login', {
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -55,7 +55,7 @@ const Login = () => {
 
 
     const handleSubmitGoogle = () => {
-        window.location.href = 'http://localhost:9999/oauth2/authorization/google';
+        window.location.href = `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`;
     };
 
     return (
@@ -77,7 +77,7 @@ const Login = () => {
                         </button>
 
                         <button
-                            onClick={() => window.location.href = 'http://localhost:9999/oauth2/authorization/facebook'}
+                            onClick={() => window.location.href = `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/facebook`}
                             className="flex items-center justify-center gap-2 px-3 py-3 border border-gray-300 rounded-xl shadow-sm hover:bg-gray-100 transition w-full"
                             disabled={loading}
                         >

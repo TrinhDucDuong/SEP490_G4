@@ -24,7 +24,7 @@ export const useFetchStarRate = (productId, filterStar = '', pageNumber = 0, pag
                     params.append('numberOfStarRate', filterStar);
                 }
 
-                const res = await fetch(`http://localhost:9999/star-rate?${params.toString()}`);
+                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/star-rate?${params.toString()}`);
                 const data = await res.json();
 
                 setStarRates(data.starRate || []);

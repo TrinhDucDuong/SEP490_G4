@@ -9,7 +9,7 @@ export const fetchStarRate = async ({ productId, pageNumber = 0, pageSize = 3, n
         params.append('numberOfStarRate', numberOfStarRate);
     }
 
-    const response = await fetch(`http://localhost:9999/star-rate?${params.toString()}`);
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/star-rate?${params.toString()}`);
 
     if (!response.ok) {
         throw new Error('Failed to fetch Star Rate');

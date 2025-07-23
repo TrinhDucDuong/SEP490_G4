@@ -22,7 +22,7 @@ function ForgotPassword() {
 
         try {
             const response = await fetch(
-                `http://localhost:9999/auth/social/forgot?contact=${encodeURIComponent(contact)}`,
+                `${import.meta.env.VITE_API_BASE_URL}/auth/social/forgot?contact=${encodeURIComponent(contact)}`,
                 {
                     method: "GET",
                     headers: { "Accept": "*/*" },

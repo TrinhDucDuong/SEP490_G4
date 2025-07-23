@@ -35,7 +35,7 @@ const ProductDetail = () => {
         window.scrollTo(0, 0);
         const fetchProduct = async () => {
             try {
-                const res = await fetch(`http://localhost:9999/product/${id}`);
+                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/product/${id}`);
                 if (!res.ok) throw new Error('Lỗi tải sản phẩm');
                 const data = await res.json();
                 setProduct(data.product);

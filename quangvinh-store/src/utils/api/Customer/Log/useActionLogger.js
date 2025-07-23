@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-const API_URL = 'http://localhost:9999/action-log';
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/action-log`;
 
 export const useActionLogger = () => {
     const logAction = useCallback(async (actionType, referenceId) => {
