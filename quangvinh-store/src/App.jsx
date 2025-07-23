@@ -40,9 +40,9 @@ import BlogList from "./pages/Customer/Blog/BlogList.jsx";
 // Admin Pages
 import InstructionManagement from './pages/Staff/InstructionManagement';
 import AboutUsManagement from './pages/Staff/AboutUsManagement';
-import CustomerList from './pages/Staff/CustomerList';
+import CustomerList from './pages/Staff/Customer/CustomerList.jsx';
 import OrderManagement from './pages/Staff/Order/OrderManagement';
-import EmployeeManagement from './pages/Staff/EmployeeManagement';
+import EmployeeManagement from './pages/Admin/Employee/EmployeeManagement.jsx';
 import CategoryManagement from "./pages/Staff/Category/CategoryManagement.jsx";
 import BrandManagement from "./pages/Staff/Brand/BrandManagement.jsx";
 import ProductManagement from "./pages/Staff/Product/ProductManagement.jsx";
@@ -55,6 +55,10 @@ import PaymentMethod from "./pages/Customer/Payment/PaymentMethod.jsx";
 import OrderDetail from "./pages/Customer/Profile/Order/OrderDetails.jsx";
 import PoliciesManagement from "./pages/Staff/Policy/PoliciesManagement.jsx";
 import ProtectedRoute from "./components/common/Customer/Protecter/ProtectedRoute.jsx";
+import DashboardManagement from "./pages/Admin/Dashboard/DashboardManagement";
+import StarRateManagement from "./pages/Staff/StarRate/StarRateManagement";
+import StoreManagement from "./pages/Admin/Store/StoreManagement.jsx";
+import SNSManagement from "./pages/Admin/SNS/SNSManagement.jsx";
 import Feedback from "./pages/Customer/Feedback/Feedback.jsx";
 
 
@@ -75,7 +79,8 @@ function App() {
                             <Route path="login" element={<Login />} />
                             <Route path="register" element={<Register />} />
                             <Route path="forgot-password" element={<ForgotPassword />} />
-                            <Route path="feedbacks" element={<Feedback/>} />
+                            <Route path="feedbacks" element={<
+                                                             />} />
                             <Route path="policies" element={<PolicyPage />} />
                             <Route path="policies/:id" element={<PolicyPage />} />
                             <Route path="instructions" element={<InstructionPage />} />
@@ -130,11 +135,12 @@ function App() {
                             <Route path="instruction-management" element={<InstructionManagement />} />
                             <Route path="policies-management" element={<PoliciesManagement />} />
                             <Route path="about-us-management" element={<AboutUsManagement />} />
-                            <Route path="feedbacks" element={<div className="p-6 bg-white rounded-lg shadow">Feedbacks Page</div>} />
-                            <Route path="statistics" element={<div className="p-6 bg-white rounded-lg shadow">Statistics Page</div>} />
+                            <Route path="star-rate-management" element={<StarRateManagement/>} />
+                            <Route path="dashboard" element={<DashboardManagement/>} />
                             <Route path="campaign-management" element={<div className="p-6 bg-white rounded-lg shadow">Campaign Management Page</div>} />
-                            <Route path="store-management" element={<div className="p-6 bg-white rounded-lg shadow">Store Management Page</div>} />
+                            <Route path="store-management" element={< StoreManagement/>} />
                             <Route path="settings-management" element={<div className="p-6 bg-white rounded-lg shadow">Settings Management Page</div>} />
+                            <Route path="sns-management" element={< SNSManagement/>} />
                         </Route>
                     </Routes>
                 </CartProviderWrapper>

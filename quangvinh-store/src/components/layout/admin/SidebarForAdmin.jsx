@@ -79,17 +79,17 @@ const SidebarForAdmin = () => {
                         Quản lý thương hiệu
                     </NavLink>
 
-                    {/*<NavLink to="/admin/customers-management" className={navClass}>*/}
-                    {/*    <Users className="h-5 w-5 mr-3" />*/}
-                    {/*    Khách hàng*/}
-                    {/*</NavLink>*/}
+                    <NavLink to="/admin/customers-management" className={navClass}>
+                        <Users className="h-5 w-5 mr-3" />
+                        Khách hàng
+                    </NavLink>
 
                     <NavLink to="/admin/orders-management" className={navClass}>
                         <Receipt className="h-5 w-5 mr-3" />
                         Hóa đơn
                     </NavLink>
 
-                    <NavLink to="/admin/feedbacks-management" className={navClass}>
+                    <NavLink to="/admin/star-rate-management" className={navClass}>
                         <MessageSquare className="h-5 w-5 mr-3" />
                         Quản lý đánh giá
                     </NavLink>
@@ -119,10 +119,10 @@ const SidebarForAdmin = () => {
                         Quản lý mạng xã hội
                     </NavLink>
 
-                    {/*<NavLink to="/admin/employee-management" className={navClass}>*/}
-                    {/*    <UserPlus className="h-5 w-5 mr-3" />*/}
-                    {/*    Quản lý nhân viên*/}
-                    {/*</NavLink>*/}
+                    <NavLink to="/admin/employee-management" className={navClass}>
+                        <UserPlus className="h-5 w-5 mr-3" />
+                        Quản lý nhân viên
+                    </NavLink>
 
                     {/*<NavLink to="/admin/campaign-management" className={navClass}>*/}
                     {/*    <Megaphone className="h-5 w-5 mr-3" />*/}
