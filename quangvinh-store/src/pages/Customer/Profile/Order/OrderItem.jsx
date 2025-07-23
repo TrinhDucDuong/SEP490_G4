@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 const OrderItem = ({ order }) => {
     const navigate = useNavigate();
-    const isCompleted = order.orderStatus === 'COMPLETED';
+    const isCompleted = order.orderStatus === 'DELIVERED';
 
     const handleDetailClick = () => {
         navigate(`/profile/orders/${order.orderId}`);
@@ -14,7 +14,7 @@ const OrderItem = ({ order }) => {
 
 
     return (
-        <div className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div className="border border-gray-200 p-4 bg-white shadow-sm hover:bg-gray-100 transition-all duration-500">
             <div className="flex justify-between items-center">
                 <div>
                     <p className="text-sm text-gray-700">

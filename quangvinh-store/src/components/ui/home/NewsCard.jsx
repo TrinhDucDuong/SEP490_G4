@@ -8,7 +8,6 @@ function NewsCard({ news = {} }) {
         : "https://via.placeholder.com/600x400?text=No+Image";
 
     const title = news.blogTitle || "Không có tiêu đề";
-    const description = news.content || "Không có nội dung mô tả";
     const blogUrl = news.blogId ? `/blog/${news.blogId}` : "#";
 
     return (
@@ -25,9 +24,10 @@ function NewsCard({ news = {} }) {
                     <h3 className="text-sm font-semibold text-black line-clamp-2">
                         {title}
                     </h3>
-                    <p className="text-gray-700 text-sm line-clamp-2">
-                        {description}
-                    </p>
+                    <div
+                        className="prose max-w-none text-gray-600 text-sm line-clamp-2"
+                        dangerouslySetInnerHTML={{ __html: news.content }}
+                    ></div>
                 </div>
             </div>
         </Link>

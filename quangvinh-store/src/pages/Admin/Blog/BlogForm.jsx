@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { BlogManagementAPI } from '../../utils/api/Admin/BlogManagementAPI';
+import { BlogManagementAPI } from '../../../utils/api/Admin/BlogManagementAPI.js';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { ArrowLeft } from 'lucide-react';
+import { useFetchProducts } from '../../../hooks/Customer/useFetchProducts.js';
 
 function BlogForm({ isEdit = false }) {
     const navigate = useNavigate();
@@ -10,9 +13,12 @@ function BlogForm({ isEdit = false }) {
         blogTitle: '',
         content: '',
         relatedProductIds: [],
+        blogTags: []
     });
+
     const [blogImages, setBlogImages] = useState([]);
     const [existingImages, setExistingImages] = useState([]);
+    const { products, loading: loadingProducts } = useFetchProducts();
 
     useEffect(() => {
         if (isEdit && id) {
@@ -21,7 +27,8 @@ function BlogForm({ isEdit = false }) {
                 setBlogInputData({
                     blogTitle: blog.blogTitle,
                     content: blog.content,
-                    relatedProductIds: blog.relatedProducts?.map(p => p.productId) || []
+                    relatedProductIds: blog.relatedProducts?.map(p => p.productId) || [],
+                    blogTags: blog.blogTags || []
                 });
                 setExistingImages(blog.blogImages || []);
             });
@@ -33,11 +40,17 @@ function BlogForm({ isEdit = false }) {
     };
 
     const handleRelatedProductsChange = (e) => {
-        const ids = e.target.value
+        const selectedOptions = Array.from(e.target.selectedOptions);
+        const selectedIds = selectedOptions.map(option => parseInt(option.value));
+        setBlogInputData({ ...blogInputData, relatedProductIds: selectedIds });
+    };
+
+    const handleTagsChange = (e) => {
+        const tags = e.target.value
             .split(',')
-            .map(id => parseInt(id.trim()))
-            .filter(id => !isNaN(id));
-        setBlogInputData({ ...blogInputData, relatedProductIds: ids });
+            .map(tag => tag.trim())
+            .filter(tag => tag !== "");
+        setBlogInputData({ ...blogInputData, blogTags: tags });
     };
 
     const handleImagesChange = (e) => {
@@ -61,12 +74,13 @@ function BlogForm({ isEdit = false }) {
                     type: "application/json",
                 })
             );
+
             if (blogImages.length > 0) {
                 blogImages.forEach((file) => {
                     formData.append("blogImages", file);
                 });
-            }else{
-                formData.append("blogImages", new Blob([], {}))
+            } else {
+                formData.append("blogImages", new Blob([], {}));
             }
 
             if (isEdit) {
@@ -81,7 +95,6 @@ function BlogForm({ isEdit = false }) {
             alert("Có lỗi xảy ra khi gửi blog");
         }
     };
-
 
     return (
         <div className="p-6 bg-white">
@@ -110,25 +123,79 @@ function BlogForm({ isEdit = false }) {
                         />
                     </div>
 
-                    <div>
+                    <div className="space-y-4">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Nội dung</label>
-                        <textarea
-                            name="content"
-                            value={blogInputData.content}
-                            onChange={handleChange}
-                            placeholder="Nội dung bài viết"
-                            className="w-full p-3 border rounded-lg h-40 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            required
-                        />
+                        <div className="border rounded-lg p-2">
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data={blogInputData.content}
+                                config={{
+                                    height: '400px',
+                                }}
+                                onReady={(editor) => {
+                                    editor.editing.view.change(writer => {
+                                        writer.setStyle("height", "400px", editor.editing.view.document.getRoot());
+                                    });
+                                }}
+                                onChange={(event, editor) => {
+                                    const data = editor.getData();
+                                    setBlogInputData(prev => ({ ...prev, content: data }));
+                                }}
+                            />
+
+                        </div>
+
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">ID sản phẩm liên quan</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Chọn sản phẩm liên quan</label>
+                        {loadingProducts ? (
+                            <p className="text-gray-500">Đang tải danh sách sản phẩm...</p>
+                        ) : (
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[400px] overflow-y-auto border rounded-lg p-4">
+                                {products.map((product) => {
+                                    const isChecked = blogInputData.relatedProductIds.includes(product.productId);
+                                    const thumbnail = product.images?.[0]?.imageUrl || "https://via.placeholder.com/150";
+                                    return (
+                                        <label
+                                            key={product.productId}
+                                            className={`flex items-center gap-3 border rounded-lg p-2 cursor-pointer transition ${
+                                                isChecked ? "bg-blue-100 border-blue-400" : "bg-white"
+                                            }`}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                value={product.productId}
+                                                checked={isChecked}
+                                                onChange={(e) => {
+                                                    const value = parseInt(e.target.value);
+                                                    const updated = isChecked
+                                                        ? blogInputData.relatedProductIds.filter(id => id !== value)
+                                                        : [...blogInputData.relatedProductIds, value];
+                                                    setBlogInputData({ ...blogInputData, relatedProductIds: updated });
+                                                }}
+                                            />
+                                            <img
+                                                src={thumbnail}
+                                                alt={product.productName}
+                                                className="w-16 h-16 object-cover rounded"
+                                            />
+                                            <span className="text-sm font-medium">{product.productName}</span>
+                                        </label>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Tags (ngăn cách bởi dấu phẩy)</label>
                         <input
                             type="text"
-                            value={blogInputData.relatedProductIds.join(',')}
-                            onChange={handleRelatedProductsChange}
-                            placeholder="Nhập ID sản phẩm cách nhau bằng dấu phẩy"
+                            value={blogInputData.blogTags.join(', ')}
+                            onChange={handleTagsChange}
+                            placeholder="Ví dụ: tech, news, ai"
                             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
                     </div>

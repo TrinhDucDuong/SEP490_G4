@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaComments } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import {useFetchChatBoxAPI} from "../../../hooks/Customer/useFetchChatBoxAPI.js";
+import parse from 'html-react-parser';
 
 function ChatBoxAI() {
     const [isOpen, setIsOpen] = useState(false);
@@ -23,7 +24,7 @@ function ChatBoxAI() {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50">
+        <div className="">
             {!isOpen ? (
                 <button
                     onClick={() => setIsOpen(true)}
@@ -52,7 +53,7 @@ function ChatBoxAI() {
                                         : "bg-gray-200 mr-auto text-left"
                                 }`}
                             >
-                                {msg.text}
+                                {parse(msg.text)}
                             </div>
                         ))}
                         {loading && (

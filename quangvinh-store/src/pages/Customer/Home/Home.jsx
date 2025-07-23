@@ -14,6 +14,7 @@ import BrandSlider from "../../../components/ui/home/BrandSlider.jsx";
 import ProductScrollSlider from "../../../components/ui/product/Common/ProductScrollSlider.jsx";
 import NewsHome from "../../../components/ui/home/NewsHome.jsx";
 import ChatBoxAI from "../Common/chatBoxAI.jsx";
+import MessengerChatBubble from "../Common/MessengerChatBubble.jsx";
 
 function Home() {
     const { products = [], loading: loadingProducts, error: errorProducts } = useFetchProducts({ limit: 10 });
@@ -49,7 +50,7 @@ function Home() {
                 <header className="flex justify-between items-center py-10">
                     <h1 className="text-4xl font-bold">ĐÓN ĐẦU XU HƯỚNG</h1>
                     <Link
-                        to="/products/all"
+                        to="/products"
                         className="text-black hover:text-yellow-400 transition flex items-center"
                         aria-label="Xem tất cả sản phẩm xu hướng"
                     >
@@ -90,7 +91,7 @@ function Home() {
                 <header className="flex justify-between items-center py-10">
                     <h2 className="text-4xl font-bold">ĐIỂM MẶT MÓN HOT</h2>
                     <Link
-                        to="/products/all"
+                        to="/products"
                         className="text-black hover:text-yellow-400 transition flex items-center"
                         aria-label="Xem tất cả sản phẩm hot"
                     >
@@ -108,8 +109,9 @@ function Home() {
             <section className="py-10 w-full px-28" aria-label="Tin tức nổi bật">
                 <NewsHome />
             </section>
-            <div className="fixed bottom-6 right-6 z-50">
+            <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
                 <ChatBoxAI />
+                <MessengerChatBubble />
             </div>
         </main>
     );
