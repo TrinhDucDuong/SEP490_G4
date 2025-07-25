@@ -2,13 +2,14 @@ import { useState, useContext, useEffect, useRef } from 'react';
 import { Menu } from 'lucide-react';
 import logo from '../../../assets/images/logo_black.png';
 import Sidebar from './Sidebar.jsx';
-import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping, faHeart, faMagnifyingGlass, faUser } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../../../context/AuthContext.jsx';
 import Cart from '../../../pages/Customer/Cart/Cart.jsx';
 import useSearchProducts from "../../../hooks/Customer/SearchProduct/useSearchProducts.js";
 import ProductCard from "../../ui/product/Common/ProductCard.jsx";
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+
 
 function Header() {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -18,6 +19,8 @@ function Header() {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
     const searchBoxRef = useRef(null);
+    const location = useLocation();
+
 
     const { results: searchResults } = useSearchProducts(searchText);
     const navigate = useNavigate();
@@ -60,22 +63,80 @@ function Header() {
                     </div>
 
                     <nav className='hidden xl:flex flex-1 justify-center max-w-[720px] mx-auto'>
-                        <ul className='flex flex-wrap justify-center gap-2 font-sans text-sm font-semibold text-gray-700'>
-                            <li><Link to='/' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'>Trang chủ</Link></li>
-                            <li><Link to='/products' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'>Sản phẩm</Link></li>
-                            <li><Link to='/feedbacks' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'>Feedback</Link></li>
-                            <li><Link to='/blogs' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'>Bài Viết</Link></li>
-                            <li><Link to='/contacts' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200'>Liên hệ</Link></li>
+                        <ul className="flex flex-wrap justify-center gap-2 font-sans text-sm font-semibold text-gray-700">
                             <li>
-                                <Link to='/sale' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200 relative'>
-                                    <span className='absolute -top-1 -right-2 text-[10px] bg-red-600 text-white px-1 rounded'>HOT</span>
+                                <Link
+                                    to="/"
+                                    className={`py-2 px-3 border-b transition-all duration-200 ${
+                                        location.pathname === '/' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
+                                    }`}
+                                >
+                                    Trang chủ
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/products"
+                                    className={`py-2 px-3 border-b transition-all duration-200 ${
+                                        location.pathname === '/products' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
+                                    }`}
+                                >
+                                    Sản phẩm
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/feedbacks"
+                                    className={`py-2 px-3 border-b transition-all duration-200 ${
+                                        location.pathname === '/feedbacks' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
+                                    }`}
+                                >
+                                    Feedback
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/blogs"
+                                    className={`py-2 px-3 border-b transition-all duration-200 ${
+                                        location.pathname === '/blogs' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
+                                    }`}
+                                >
+                                    Bài Viết
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/contacts"
+                                    className={`py-2 px-3 border-b transition-all duration-200 ${
+                                        location.pathname === '/contacts' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
+                                    }`}
+                                >
+                                    Liên hệ
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/sale"
+                                    className={`py-2 px-3 border-b transition-all duration-200 relative ${
+                                        location.pathname === '/sale' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
+                                    }`}
+                                >
+                                    <span className="absolute -top-1 -right-2 text-[10px] bg-red-600 text-white px-1 rounded">HOT</span>
                                     Sale
                                 </Link>
                             </li>
                             <li>
-                                <Link to='/blog' className='py-2 px-3 rounded-md hover:bg-black hover:text-yellow-400 transition duration-200 text-center'>Hàng Auth chuẩn có gì?</Link>
+                                <Link
+                                    to="/blog"
+                                    className={`py-2 px-3 border-b transition-all duration-200 text-center ${
+                                        location.pathname === '/blog' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
+                                    }`}
+                                >
+                                    Hàng Auth chuẩn có gì?
+                                </Link>
                             </li>
                         </ul>
+
                     </nav>
 
                     <div className='flex items-center gap-3 lg:gap-6' ref={searchBoxRef}>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaComments } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import {useFetchChatBoxAPI} from "../../../hooks/Customer/useFetchChatBoxAPI.js";
+import { motion } from "framer-motion";
 import parse from 'html-react-parser';
 
 function ChatBoxAI() {
@@ -26,12 +27,12 @@ function ChatBoxAI() {
     return (
         <div className="">
             {!isOpen ? (
-                <button
+                <motion.button
                     onClick={() => setIsOpen(true)}
-                    className="bg-blue-600 text-white p-4 rounded-full shadow-xl hover:bg-gray-800 transition"
+                    className="bg-blue-600 text-white p-4 rounded-full shadow-xl transition"
                 >
                     <FaComments size={22} />
-                </button>
+                </motion.button>
             ) : (
                 <div className="w-[400px] h-[600px] bg-white text-black border border-gray-300 rounded-xl shadow-2xl flex flex-col">
                     <div className="bg-black text-white p-4 flex justify-between items-center rounded-t-xl">
@@ -47,7 +48,7 @@ function ChatBoxAI() {
                         {messages.map((msg, i) => (
                             <div
                                 key={i}
-                                className={`px-4 py-2 rounded-lg max-w-[75%] leading-relaxed ${
+                                className={`px-4 py-2 rounded-sm max-w-[75%] leading-relaxed ${
                                     msg.from === "user"
                                         ? "bg-gray-100 ml-auto text-right"
                                         : "bg-gray-200 mr-auto text-left"
@@ -63,7 +64,6 @@ function ChatBoxAI() {
                         )}
                     </div>
 
-                    {/* Input */}
                     <div className="p-4 border-t border-gray-200">
                         <div className="flex gap-2">
                             <input
