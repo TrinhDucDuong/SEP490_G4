@@ -21,12 +21,12 @@ function BlogDetail() {
     useEffect(() => {
         const fetchBlog = async () => {
             try {
-                const res = await fetch(`http://localhost:9999/blog/${blogId}`);
+                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/blog/${blogId}`);
                 if (!res.ok) throw new Error("Không thể tải bài viết");
                 const data = await res.json();
                 setBlog(data.blog);
                 const related = data.blog.relatedProductIds || [];
-                const fetchAll = related.map(id => fetch(`http://localhost:9999/product/${id}`).then(r => r.json()));
+                const fetchAll = related.map(id => fetch(`${import.meta.env.VITE_API_BASE_URL}/product/${id}`).then(r => r.json()));
                 const relatedData = await Promise.all(fetchAll);
                 const products = relatedData.map(res => res.product).filter(Boolean);
                 setRelatedProducts(products);

@@ -1,5 +1,5 @@
 export const fetchProducts = async () => {
-    const response = await fetch('http://localhost:9999/product?sortDirection=desc&sortBy=createdAt&pageNumber=0&pageSize=20');
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/product?sortDirection=desc&sortBy=createdAt&pageNumber=0&pageSize=20`);
     if (!response.ok) {
         throw new Error('Failed to fetch products');
     }
@@ -8,7 +8,7 @@ export const fetchProducts = async () => {
 };
 
 export const fetchProductById = async (id) => {
-    const response = await fetch(`http://localhost:9999/product/${id}`);
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/product/${id}`);
     if (!response.ok) {
         throw new Error('Failed to fetch product');
     }

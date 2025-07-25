@@ -42,10 +42,11 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    //tạo beiens môi trường
     const logout = async () => {
         try {
             if (token) {
-                await fetch('http://localhost:9999/recommendation/cache', {
+                await fetch(`${import.meta.env.VITE_API_BASE_URL}/recommendation/cache`, {
                     method: 'POST',
                     headers: {
                         Authorization: `Bearer ${token}`,

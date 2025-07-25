@@ -7,7 +7,7 @@ export const fetchCartAPI = async (accountId, token = null) => {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`http://localhost:9999/cart?accountId=${accountId}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/cart?accountId=${accountId}`, {
         headers,
     });
 
@@ -27,7 +27,7 @@ export const addToCartAPI = async ({accountId, productId, colorHexCode, sizeCode
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch('http://localhost:9999/cart', {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/cart`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -63,7 +63,7 @@ export const updateCartQuantityAPI = async ({
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`http://localhost:9999/cart`, {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/cart`, {
         method: 'PUT',
         headers,
         body: JSON.stringify({
@@ -92,7 +92,7 @@ export const deleteCartItemAPI = async (cartDetailsId, token = null) => {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`http://localhost:9999/cart/${cartDetailsId}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/cart/${cartDetailsId}`, {
         method: 'DELETE',
         headers,
     });

@@ -8,7 +8,7 @@ export function useFetchColors() {
     useEffect(() => {
         const fetchColors = async () => {
             try {
-                const res = await fetch("http://localhost:9999/color");
+                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/color`);
                 if (!res.ok) throw new Error("Failed to fetch colors");
                 const data = await res.json();
                 setColors(data.colorHex || []);

@@ -10,7 +10,7 @@ export const useFetchProducts = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:9999/product?sortDirection=desc&sortBy=createdAt&pageNumber=0&pageSize=20`);
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/product?sortDirection=desc&sortBy=createdAt&pageNumber=0&pageSize=20`);
                 setProducts(response.data.products || []);
             } catch (err) {
                 setError('Lỗi khi tải sản phẩm.');

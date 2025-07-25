@@ -8,7 +8,7 @@ export default function useFetchRecommendation() {
     useEffect(() => {
         const fetchRecommendations = async () => {
             try {
-                const res = await axios.get('http://localhost:9999/recommendation', {
+                const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/recommendation`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`
                     }
