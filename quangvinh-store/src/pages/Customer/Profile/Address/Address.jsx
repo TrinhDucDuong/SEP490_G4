@@ -132,7 +132,7 @@ function Address() {
             <div className="flex flex-col border-b border-b-black pb-2 sm:flex-row justify-between items-start sm:items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 m-4 sm:mb-0">Địa chỉ của tôi</h2>
                 <button
-                    className="bg-black text-white px-4 py-2.5 rounded-sm text-sm font-medium flex items-center m-4 gap-2 hover:bg-gray-800 transition-colors duration-200"
+                    className="bg-black text-white px-4 py-2.5 rounded-sm border border-black text-sm font-medium flex items-center m-4 gap-2 hover:bg-white hover:text-black transition-colors duration-200"
                     onClick={() => setIsAdd(true)}
                 >
                     <FontAwesomeIcon icon={faPlus} />

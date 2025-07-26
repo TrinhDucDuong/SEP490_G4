@@ -1,3 +1,7 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+
+
 function AddressCard({ item, onEdit, onSetMain, onDelete, readonly = false }) {
     const typeDisplayMap = {
         HOME: "Nhà riêng",
@@ -46,16 +50,18 @@ function AddressCard({ item, onEdit, onSetMain, onDelete, readonly = false }) {
             {!readonly && (
                 <div className="flex gap-2 sm:flex-col sm:items-end w-full sm:w-auto">
                     <button
-                        className="inline-flex items-center justify-center text-sm font-medium px-4 py-1 rounded-full border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors"
+                        className="p-2 text-blue-400 hover:text-blue-600 transition-colors"
                         onClick={onEdit}
+                        title="Chỉnh sửa"
                     >
-                        Chỉnh sửa
+                        <FontAwesomeIcon icon={faPen} />
                     </button>
                     <button
-                        className="inline-flex items-center justify-center text-sm font-medium px-4 py-1 rounded-full border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors"
+                        className="p-2 text-red-400 hover:text-red-600 transition-colors"
                         onClick={onDelete}
+                        title="Xóa"
                     >
-                        Xóa
+                        <FontAwesomeIcon icon={faTrash} />
                     </button>
                 </div>
             )}
