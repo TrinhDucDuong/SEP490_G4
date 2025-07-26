@@ -12,6 +12,9 @@ const OrderItem = ({ order }) => {
         navigate(`/payment-method`, { state: { order } });
     };
 
+    const handleReviewClick = () => {
+        navigate(`/review`, { state: { order } });
+    };
 
     return (
         <div className="border border-gray-200 p-4 bg-white shadow-sm hover:bg-gray-100 transition-all duration-500">
@@ -36,10 +39,10 @@ const OrderItem = ({ order }) => {
                 </div>
             </div>
 
-            <div className="mt-4 flex justify-end gap-4">
+            <div className="mt-4 flex justify-end gap-4 flex-wrap">
                 <button
                     onClick={handleDetailClick}
-                    className="text-sm text-blue-600 hover:underline"
+                    className="text-sm text-black bg-white border border-black px-4 py-1 transition hover:bg-black hover:text-white"
                 >
                     Xem chi tiết
                 </button>
@@ -47,9 +50,18 @@ const OrderItem = ({ order }) => {
                 {!isCompleted && (
                     <button
                         onClick={handlePaymentClick}
-                        className="text-sm text-white bg-orange-400 hover:bg-orange-800 px-4 py-1 rounded-full transition"
+                        className="text-sm text-black bg-white border border-black px-4 py-1 transition hover:bg-black hover:text-white"
                     >
                         Tiến hành thanh toán
+                    </button>
+                )}
+
+                {isCompleted && (
+                    <button
+                        onClick={handleReviewClick}
+                        className="text-sm text-black bg-white border border-black px-4 py-1 transition hover:bg-black hover:text-white"
+                    >
+                        Đánh giá sản phẩm
                     </button>
                 )}
             </div>

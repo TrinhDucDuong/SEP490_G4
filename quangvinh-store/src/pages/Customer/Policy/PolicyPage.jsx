@@ -51,8 +51,8 @@ const PolicyPage = () => {
                                         onClick={() => handleSelect(policy.policyId)}
                                         className={`w-full text-left py-2.5 px-4 rounded-md transition-colors duration-200 ${
                                             selectedId === policy.policyId
-                                                ? 'bg-blue-50 text-blue-700 font-medium'
-                                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800'
+                                                ? 'bg-gray-50 text-gray-600 font-medium'
+                                                : 'text-black hover:bg-gray-50 hover:text-gray-800'
                                         }`}
                                     >
                                         {policy.policyName}

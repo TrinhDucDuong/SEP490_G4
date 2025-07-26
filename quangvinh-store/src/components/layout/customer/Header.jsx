@@ -106,9 +106,9 @@ function Header() {
                             </li>
                             <li>
                                 <Link
-                                    to="/contacts"
+                                    to="/policies/3"
                                     className={`py-2 px-3 border-b transition-all duration-200 ${
-                                        location.pathname === '/contacts' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
+                                        location.pathname === '/policies/3' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
                                     }`}
                                 >
                                     Liên hệ

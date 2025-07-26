@@ -13,6 +13,8 @@ import { useFetchStarRate } from "../../../hooks/Customer/useFetchStarRate";
 import { useCart } from "../../../context/CartContext.jsx";
 import { useActionLogger } from "../../../utils/api/Customer/Log/useActionLogger.js";
 import parse from 'html-react-parser';
+import {useFetchRelatedProducts} from "../../../hooks/Customer/useFetchRelatedProducts.js";
+import ProductScrollSlider from "../../../components/ui/product/Common/ProductScrollSlider.jsx";
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -37,9 +39,16 @@ const ProductDetail = () => {
                 const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/product/${id}`);
                 if (!res.ok) throw new Error('Lỗi tải sản phẩm');
                 const data = await res.json();
+                const uniqueSizes = Array.from(new Set(data.productSizes));
+                const seenColors = new Set();
+                const uniqueColors = data.productColors.filter(color => {
+                    if (seenColors.has(color.colorHex)) return false;
+                    seenColors.add(color.colorHex);
+                    return true;
+                });
                 setProduct(data.product);
-                setProductSizes(data.productSizes || []);
-                setProductColors(data.productColors || []);
+                setProductSizes(uniqueSizes);
+                setProductColors(uniqueColors);
                 setSelectedImage(data.product?.images?.[0]?.imageUrl || null);
             } catch (err) {
                 toast.error(err.message || 'Lỗi tải sản phẩm');
@@ -58,7 +67,12 @@ const ProductDetail = () => {
             return;
         }
 
-        if (currentVariant && quantity > currentVariant.quantity) {
+        if (!currentVariant) {
+            toast.error("Sản phẩm với màu và kích thước này hiện không có trong kho");
+            return;
+        }
+
+        if (quantity > currentVariant.quantity) {
             toast.error("Số lượng vượt quá số lượng tồn kho!");
             return;
         }
@@ -80,14 +94,20 @@ const ProductDetail = () => {
         }
     };
 
-    if (!product) return <div className="text-center py-20">Đang tải sản phẩm...</div>;
-
-    const images = (product.images || []).map(img => img.imageUrl);
+    const images = (product?.images || []).map(img => img.imageUrl);
     const breadcrumbItems = [
         { label: 'Trang chủ', to: '/' },
         { label: 'Sản phẩm', to: '/products' },
-        { label: product.productName || 'Chi tiết sản phẩm' },
+        { label: product?.productName || 'Chi tiết sản phẩm' },
     ];
+
+    const { relatedProducts, loading: relatedLoading } = useFetchRelatedProducts({
+        categoryId: product?.category?.categoryId,
+        brandId: product?.brand?.brandId,
+        excludeProductId: product?.productId
+    });
+
+    if (!product) return <div className="text-center py-20">Đang tải sản phẩm...</div>;
 
     return (
         <motion.div
@@ -99,7 +119,6 @@ const ProductDetail = () => {
             <Breadcrumb items={breadcrumbItems} />
 
             <div className="flex flex-col lg:flex-row gap-12 mt-6">
-                {/* Image Section */}
                 <div className="w-full lg:w-1/2">
                     <div className="rounded-xl overflow-hidden border aspect-square">
                         <Zoom>
@@ -122,7 +141,6 @@ const ProductDetail = () => {
                     </div>
                 </div>
 
-                {/* Info Section */}
                 <div className="w-full lg:w-1/2 space-y-6">
                     <div className="space-y-2 flex justify-between">
                         <div>
@@ -143,7 +161,6 @@ const ProductDetail = () => {
                         </div>
                     </div>
 
-                    {/* Color + Size */}
                     <div>
                         <div className="text-sm font-medium text-gray-700 mb-1">Màu sắc:</div>
                         <div className="flex gap-2">
@@ -157,6 +174,7 @@ const ProductDetail = () => {
                             ))}
                         </div>
                     </div>
+
                     <div>
                         <div className="text-sm font-medium text-gray-700 mb-1">Kích thước:</div>
                         <div className="flex gap-2 flex-wrap">
@@ -172,7 +190,6 @@ const ProductDetail = () => {
                         </div>
                     </div>
 
-                    {/* Quantity */}
                     <div className="flex items-center gap-4">
                         <div className="text-sm font-medium text-gray-700">Số lượng:</div>
                         <div className="flex border rounded-md overflow-hidden w-fit">
@@ -196,12 +213,11 @@ const ProductDetail = () => {
                         </div>
                         {selectedColor && selectedSize && (
                             <div className="text-sm text-gray-500">
-                                {currentVariant ? `Còn lại: ${currentVariant.quantity} sản phẩm` : 'Không có thông tin tồn kho'}
+                                {currentVariant ? `Còn lại: ${currentVariant.quantity} sản phẩm` : 'Không có sản phẩm tồn kho'}
                             </div>
                         )}
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="flex gap-4">
                         <button
                             onClick={handleAddToCart}
@@ -212,7 +228,6 @@ const ProductDetail = () => {
                         </button>
                     </div>
 
-                    {/* Guarantees */}
                     <div className="text-sm text-gray-600 border-t pt-4 space-y-3">
                         <div className="flex items-start gap-2"><FontAwesomeIcon icon={faTruck} className="text-teal-500 mt-1" /><p>Miễn phí vận chuyển toàn quốc với đơn từ 500.000₫.</p></div>
                         <div className="flex items-start gap-2"><FontAwesomeIcon icon={faBoxesPacking} className="text-teal-500 mt-1" /><p>Đổi trả dễ dàng trong vòng 7 ngày nếu sản phẩm lỗi.</p></div>
@@ -222,21 +237,17 @@ const ProductDetail = () => {
                 </div>
             </div>
 
-            {/* Info Sections */}
             <div className="mt-12 space-y-10 text-sm text-gray-700">
-                {/* Description */}
                 <section>
                     <h2 className="text-lg font-semibold mb-2">Mô tả sản phẩm</h2>
                     <div className="leading-relaxed">{parse(product.productDescription)}</div>
                 </section>
 
-                {/* Story */}
                 <section>
                     <h2 className="text-lg font-semibold mb-2">Câu chuyện</h2>
                     <p>{product.story || 'Không có câu chuyện sản phẩm.'}</p>
                 </section>
 
-                {/* Detail */}
                 <section>
                     <h2 className="text-lg font-semibold mb-2">Chi tiết sản phẩm</h2>
                     <ul className="list-disc list-inside">
@@ -246,7 +257,6 @@ const ProductDetail = () => {
                     </ul>
                 </section>
 
-                {/* Reviews */}
                 <section>
                     <h2 className="text-lg font-semibold mb-2">Đánh giá</h2>
                     <div className="flex items-center justify-between mb-6">
@@ -314,6 +324,13 @@ const ProductDetail = () => {
                     </div>
                 </section>
             </div>
+
+            {relatedProducts.length > 0 && (
+                <section className="mt-16">
+                    <h2 className="text-xl font-semibold text-gray-800 mb-4">Sản phẩm liên quan</h2>
+                    <ProductScrollSlider products={relatedProducts} />
+                </section>
+            )}
         </motion.div>
     );
 };
