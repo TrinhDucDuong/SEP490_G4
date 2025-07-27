@@ -4,6 +4,7 @@ import com.fourfingers.quangvinhstore.adapter.exception.StoreNotFoundException;
 import com.fourfingers.quangvinhstore.domain.model.staff.Store;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.StoreStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.StoreRepository;
+import com.fourfingers.quangvinhstore.infrastructure.schema.AccountEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.StoreEntity;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.StoreManagementInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.staff.StoreManagementOutputBoundary;
@@ -12,8 +13,10 @@ import com.fourfingers.quangvinhstore.usecase.data.staff.StoreInputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.StoreOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -50,7 +53,7 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
     }
 
     @Override
-    public StoreOutputData save(String storeId, StoreInputData manageStoreInputData) {
+    public StoreOutputData save(String storeId, StoreInputData manageStoreInputData, UserDetails userDetails) {
         if(storeId != null) {
             try {
                 Long storeUuid = Long.parseLong(storeId);
@@ -58,6 +61,15 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
                         .orElseThrow(() -> new StoreNotFoundException("Store not found"));
                 storeEntity.setStoreName(manageStoreInputData.getStoreName());
                 storeEntity.setStoreAddress(manageStoreInputData.getStoreAddress());
+                storeEntity.setStorePhone(manageStoreInputData.getStorePhone());
+                storeEntity.setCity(manageStoreInputData.getCity());
+                storeEntity.setDistrict(manageStoreInputData.getDistrict());
+                storeEntity.setStartWorkingAt(manageStoreInputData.getStartWorkingAt());
+                storeEntity.setEndWorkingAt(manageStoreInputData.getEndWorkingAt());
+                storeEntity.setLocationLat(manageStoreInputData.getLocationLat());
+                storeEntity.setLocationLng(manageStoreInputData.getLocationLng());
+                storeEntity.setUpdatedBy((AccountEntity) userDetails);
+                storeEntity.setUpdatedAt(LocalDateTime.now());
                 Store savedStore = storeStaffMapper.toModel(storeRepository.save(storeEntity));
                 return storeManagementOutputBoundary.convertToStoreOutputData(savedStore);
             } catch (IllegalArgumentException e) {
@@ -67,7 +79,17 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
             StoreEntity storeEntity = StoreEntity.builder()
                     .storeName(manageStoreInputData.getStoreName())
                     .storeAddress(manageStoreInputData.getStoreAddress())
+                    .storeAddress(manageStoreInputData.getStoreAddress())
+                    .storePhone(manageStoreInputData.getStorePhone())
+                    .city(manageStoreInputData.getCity())
+                    .district(manageStoreInputData.getDistrict())
+                    .startWorkingAt(manageStoreInputData.getStartWorkingAt())
+                    .endWorkingAt(manageStoreInputData.getEndWorkingAt())
+                    .locationLat(manageStoreInputData.getLocationLat())
+                    .locationLng(manageStoreInputData.getLocationLng())
                     .isActive(true)
+                    .createdBy((AccountEntity) userDetails)
+                    .createdAt(LocalDateTime.now())
                     .build();
             Store savedStore = storeStaffMapper.toModel(storeRepository.save(storeEntity));
             return storeManagementOutputBoundary.convertToStoreOutputData(savedStore);
@@ -75,12 +97,14 @@ public class ManageStoreUseCaseInteraction implements StoreManagementInputBounda
     }
 
     @Override
-    public StoreOutputData delete(String storeId) {
+    public StoreOutputData delete(String storeId, UserDetails userDetails) {
         try {
             Long storeUuid = Long.parseLong(storeId);
             StoreEntity storeEntity = storeRepository.findById(storeUuid).orElse(null);
             if(storeEntity != null) {
                 storeEntity.setIsActive(false);
+                storeEntity.setUpdatedBy((AccountEntity) userDetails);
+                storeEntity.setUpdatedAt(LocalDateTime.now());
                 Store deletedStore = storeStaffMapper.toModel(storeRepository.save(storeEntity));
                 return storeManagementOutputBoundary.convertToStoreOutputData(deletedStore);
             } else {
