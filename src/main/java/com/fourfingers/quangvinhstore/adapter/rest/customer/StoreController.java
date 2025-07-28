@@ -1,6 +1,5 @@
 package com.fourfingers.quangvinhstore.adapter.rest.customer;
 
-import com.fourfingers.quangvinhstore.usecase.boundary.customer.InstructionInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.StoreInputBoundary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +10,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/instruction")
+@RequestMapping("/store")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
-public class InstructionController {
-    private final InstructionInputBoundary instructionInputBoundary;
-
+public class StoreController {
+    private final StoreInputBoundary storeInputBoundary;
     @GetMapping
-    public ResponseEntity<?> getAllInstructions() {
-        return ResponseEntity.ok(instructionInputBoundary.getListInstruction());
+    public ResponseEntity<?> findAll() {
+        return ResponseEntity.ok(storeInputBoundary.findAll());
+    }
+
+    @GetMapping("/{storeId}")
+    public ResponseEntity<?> getStoreById(@PathVariable String storeId) {
+        return ResponseEntity.ok(storeInputBoundary.findById(storeId));
     }
 }
