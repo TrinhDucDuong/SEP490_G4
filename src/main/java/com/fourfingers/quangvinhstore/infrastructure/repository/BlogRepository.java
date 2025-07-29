@@ -10,4 +10,7 @@ import java.util.UUID;
 public interface BlogRepository extends JpaRepository<BlogEntity, Long> {
     List<BlogEntity> findAllByIsActiveTrue();
     Optional<BlogEntity> findByBlogIdAndIsActiveTrue(Long id);
+    List<BlogEntity> findByBlogTags_tagName(String tagName);
+    List<BlogEntity> findByBlogTags_tagNameAndIsActiveTrue(String tagName);
+
 }

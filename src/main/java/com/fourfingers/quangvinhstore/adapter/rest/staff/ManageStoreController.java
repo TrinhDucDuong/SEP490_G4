@@ -5,6 +5,8 @@ import com.fourfingers.quangvinhstore.usecase.data.staff.StoreInputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,17 +26,20 @@ public class ManageStoreController {
     }
 
     @PostMapping("/store")
-    public ResponseEntity<?> updateStore(@RequestBody StoreInputData manageStoreInputData) {
-        return ResponseEntity.ok(storeManagementInputBoundary.save(null, manageStoreInputData));
+    public ResponseEntity<?> updateStore(@RequestBody StoreInputData manageStoreInputData,
+                                         @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(storeManagementInputBoundary.save(null, manageStoreInputData, userDetails));
     }
 
     @DeleteMapping("/store/{id}")
-    public ResponseEntity<?> deleteStore(@PathVariable String id) {
-        return ResponseEntity.ok(storeManagementInputBoundary.delete(id));
+    public ResponseEntity<?> deleteStore(@PathVariable String id,
+                                         @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(storeManagementInputBoundary.delete(id, userDetails));
     }
 
     @PutMapping("/store/{id}")
-    public ResponseEntity<?> updateStore(@PathVariable String id, @RequestBody StoreInputData manageStoreInputData) {
-        return ResponseEntity.ok(storeManagementInputBoundary.save(id, manageStoreInputData));
+    public ResponseEntity<?> updateStore(@PathVariable String id, @RequestBody StoreInputData manageStoreInputData,
+                                         @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(storeManagementInputBoundary.save(id, manageStoreInputData, userDetails));
     }
 }

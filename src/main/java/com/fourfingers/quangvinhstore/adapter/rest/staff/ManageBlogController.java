@@ -20,8 +20,8 @@ public class ManageBlogController {
     private final BlogManagementInputBoundary blogManagementInputBoundary;
 
     @GetMapping
-    public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok().body(blogManagementInputBoundary.getAll());
+    public ResponseEntity<?> getAll(@RequestParam(name = "blogTag", required = false) String blogTag) {
+        return ResponseEntity.ok().body(blogManagementInputBoundary.getAll(blogTag));
     }
 
     @GetMapping("/{id}")

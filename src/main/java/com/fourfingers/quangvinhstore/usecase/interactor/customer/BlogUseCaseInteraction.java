@@ -2,12 +2,12 @@ package com.fourfingers.quangvinhstore.usecase.interactor.customer;
 
 import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.domain.model.customer.Blog;
-import com.fourfingers.quangvinhstore.domain.model.customer.Product;
-import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.BlogMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.BlogMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.BlogRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.BlogEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.BlogTagEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.ProductEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.BlogInputBoundary;
@@ -29,21 +29,26 @@ public class BlogUseCaseInteraction implements BlogInputBoundary {
     private final BlogOutputBoundary blogOutputBoundary;
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
+
     @Override
-    public ListBlogOutputData getAll() {
+    public ListBlogOutputData getAll(String blogTag) {
+        List<BlogEntity> blogEntities;
+        if (blogTag != null && !blogTag.isEmpty()) {
+            blogEntities = blogRepository.findByBlogTags_tagNameAndIsActiveTrue(blogTag);
+        } else {
+            blogEntities = blogRepository.findAllByIsActiveTrue();
+        }
         return blogOutputBoundary.convertToListBlogOutputData(
-            blogRepository.findAllByIsActiveTrue()
-                    .stream()
-                    .map(blogEntity -> {
-                        return Blog.builder()
+                blogEntities.stream()
+                        .map(blogEntity -> Blog.builder()
                                 .blogId(blogEntity.getBlogId())
                                 .blogTitle(blogEntity.getBlogTitle())
-                                .images(getBlogImages(blogEntity))
+                                .images(BlogUseCaseInteraction.this.getBlogImages(blogEntity))
                                 .content(blogEntity.getContent())
                                 .createdAt(blogEntity.getCreatedAt())
-                                .build();
-                    })
-                    .toList()
+                                .tags(blogEntity.getBlogTags().stream().map(BlogTagEntity::getTagName).toList())
+                                .build())
+                        .toList()
         );
     }
 
@@ -56,6 +61,7 @@ public class BlogUseCaseInteraction implements BlogInputBoundary {
         Blog blog = blogMapper.toModel(blogEntity);
         blog.setImages(getBlogImages(blogEntity));
         blog.setRelatedProductIds(getRelatedProductIds(blogEntity));
+        blog.setTags(blogEntity.getBlogTags().stream().map(BlogTagEntity::getTagName).toList());
         return blogOutputBoundary.convertToBlogOutputData(blog);
     }
 

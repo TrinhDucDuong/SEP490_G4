@@ -1,5 +1,6 @@
 package com.fourfingers.quangvinhstore.usecase.data.staff;
 
+import com.fourfingers.quangvinhstore.domain.model.staff.Order;
 import lombok.*;
 
 import java.util.List;
@@ -9,9 +10,6 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class BlogInputData {
-    private String blogTitle;
-    private String content;
-    private List<Long> relatedProductIds;
-    private List<String> blogTags;
+public class ListOrderOutputData {
+    private List<Order> orders;
 }
