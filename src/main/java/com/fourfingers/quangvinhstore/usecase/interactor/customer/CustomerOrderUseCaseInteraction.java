@@ -73,8 +73,8 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         orderEntity.setOrderDate(LocalDateTime.now());
         orderEntity.setOwner(accountEntity);
         orderEntity.setShippingAddress(shippingAddressEntity.get());
-        orderEntity.setOrderStatus(OrderStatus.PROCESSING);
-        orderEntity.setPaymentStatus(false);
+//        orderEntity.setOrderStatus(OrderStatus.PROCESSING);
+//        orderEntity.setPaymentStatus(false);
 
         List<OrderDetailsEntity> orderDetailsEntities = mapCartDetailsEntityToOrderDetailsEntity(cartDetailsEntities, orderEntity);
         orderEntity.setOrderDetails(orderDetailsEntities);
@@ -99,7 +99,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         Optional<OrderEntity> orderEntity = orderRepository.findByOrderIdAndOwnerAccountId(purchaseInputData.getOrderId(),
                 accountEntity.getAccountId());
         if (orderEntity.isPresent()) {
-//            orderEntity.get().setOrderStatus(OrderStatus.PROCESSING);
+            orderEntity.get().setOrderStatus(OrderStatus.PROCESSING);
             orderEntity.get().setPaymentStatus(false);
             orderEntity.get().setOrderDate(LocalDateTime.now());
             orderEntity.get().setTotalPrice(calculateTotalOrderPrice(orderEntity.get().getOrderId()));
@@ -109,23 +109,6 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
             throw new RuntimeException("Order not found");
         }
     }
-
-//    @Override
-//    public OrderOutputData placeOrderPayInAdvance(UserDetails userDetails, PurchaseInputData purchaseInputData) {
-//        AccountEntity accountEntity = (AccountEntity) userDetails;
-//        Optional<OrderEntity> orderEntity = orderRepository.findByOrderIdAndOwnerAccountId(purchaseInputData.getOrderId(),
-//                                                                                            accountEntity.getAccountId());
-//        if (orderEntity.isPresent()) {
-//            orderEntity.get().setOrderStatus(OrderStatus.PROCESSING);
-//            orderEntity.get().setPaymentStatus(true);
-//            orderEntity.get().setOrderDate(LocalDateTime.now());
-//            orderEntity.get().setTotalPrice(calculateTotalOrderPrice(orderEntity.get().getOrderId()));
-//            OrderEntity placedOrder = orderRepository.save(orderEntity.get());
-//            return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(placedOrder));
-//        } else {
-//            throw new RuntimeException("Order not found");
-//        }
-//    }
 
     @Override
     public OrderOutputData getOrder(Long orderId, UserDetails userDetails) throws RuntimeException {
@@ -141,24 +124,25 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
     @Override
     public OrderOutputData verifyAndPlaceOrderPayInAdvance(Map<String, String> map) {
         String vnp_SecureHash = map.get("vnp_SecureHash");
+        String vnp_TxnRef = map.get("vnp_TxnRef");
         String vnp_ResponseCode = map.get("vnp_ResponseCode");
         String vnp_TransactionStatus = map.get("vnp_TransactionStatus");
         OrderEntity orderResponse = null;
         if ("00".equals(vnp_ResponseCode) && "00".equals(vnp_TransactionStatus)) {
-            Optional<OrderEntity> orderEntity = orderRepository.findBySecureHash(vnp_SecureHash);
+            Optional<OrderEntity> orderEntity = orderRepository.findBySecureHash(vnp_TxnRef);
             if(orderEntity.isPresent()) {
-                OrderEntity order = orderEntity.get();
-//                order.setOrderStatus(OrderStatus.PROCESSING);
-                order.setPaymentStatus(true);
+//                OrderEntity order = orderEntity.get();
+                orderEntity.get().setOrderStatus(OrderStatus.PROCESSING);
+                orderEntity.get().setPaymentStatus(true);
                 orderEntity.get().setOrderDate(LocalDateTime.now());
                 orderEntity.get().setTotalPrice(calculateTotalOrderPrice(orderEntity.get().getOrderId()));
-                StringBuilder allTransactionInfo = new StringBuilder();
-                for (Map.Entry<String, String> entry : map.entrySet()) {
-                    allTransactionInfo.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
-                }
-                allTransactionInfo.deleteCharAt(allTransactionInfo.length() - 1);
-                order.setSecureHash(allTransactionInfo.toString());
-                orderResponse = orderRepository.save(order);
+//                StringBuilder allTransactionInfo = new StringBuilder();
+//                for (Map.Entry<String, String> entry : map.entrySet()) {
+//                    allTransactionInfo.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+//                }
+//                allTransactionInfo.deleteCharAt(allTransactionInfo.length() - 1);
+                orderEntity.get().setSecureHash(null);
+                orderResponse = orderRepository.save(orderEntity.get());
             }
             if(orderResponse != null) {
                 return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(orderResponse));
@@ -170,7 +154,10 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
     @Override
     public void setSecureHash(Long orderId, String secureHash) {
         Optional<OrderEntity> orderEntity = orderRepository.findById(orderId);
-        orderEntity.ifPresent(order -> order.setSecureHash(secureHash));
+        orderEntity.ifPresent(order -> {
+            order.setSecureHash(secureHash);
+            orderRepository.save(order);
+        });
     }
 
 
@@ -188,26 +175,38 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
     private BigDecimal calculateTotalOrderPrice(Long orderId) {
         List<OrderDetailsEntity> orderDetailsList = orderDetailsRepository
                 .findByOrder_OrderId(orderId);
+
         if (orderDetailsList.isEmpty()) {
             throw new RuntimeException("Order not found");
         }
+
         BigDecimal totalPrice = BigDecimal.ZERO;
-        orderDetailsList.forEach(orderDetail -> {
-            totalPrice.add(orderDetail.getProductVariant().getProduct().getDiscountedPrice().
-                    multiply(BigDecimal.valueOf(orderDetail.getQuantity())));
-        });
+
+        for (OrderDetailsEntity orderDetail : orderDetailsList) {
+            BigDecimal price = orderDetail.getProductVariant()
+                    .getProduct()
+                    .getDiscountedPrice();
+            BigDecimal quantity = BigDecimal.valueOf(orderDetail.getQuantity());
+
+            totalPrice = totalPrice.add(price.multiply(quantity));
+        }
+
         return totalPrice;
     }
+
 
     private BigDecimal calculateTotalOrderPrice(List<OrderDetailsEntity> orderDetailsList) {
         if (orderDetailsList == null || orderDetailsList.isEmpty()) {
             throw new RuntimeException("Order not found");
         }
+
         BigDecimal totalPrice = BigDecimal.ZERO;
-        orderDetailsList.forEach(orderDetail -> {
-            totalPrice.add(orderDetail.getProductVariant().getProduct().getDiscountedPrice().
-                    multiply(BigDecimal.valueOf(orderDetail.getQuantity())));
-        });
+        for (OrderDetailsEntity orderDetail : orderDetailsList) {
+            BigDecimal price = orderDetail.getProductVariant().getProduct().getDiscountedPrice();
+            BigDecimal quantity = BigDecimal.valueOf(orderDetail.getQuantity());
+            totalPrice = totalPrice.add(price.multiply(quantity));
+        }
+
         return totalPrice;
     }
 
