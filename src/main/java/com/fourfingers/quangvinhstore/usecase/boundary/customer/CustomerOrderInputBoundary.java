@@ -15,11 +15,9 @@ public interface CustomerOrderInputBoundary {
 
     OrderOutputData placeOrderPayLater(UserDetails userDetails, PurchaseInputData purchaseInputData);
 
-//    OrderOutputData placeOrderPayInAdvance(UserDetails userDetails, PurchaseInputData purchaseInputData);
-
     OrderOutputData getOrder(Long orderId, UserDetails userDetails);
 
-    Object verifyAndPlaceOrderPayInAdvance(Map<String, String> map);
+    OrderOutputData verifyAndPlaceOrderPayInAdvance(Map<String, String> map);
 
     void setSecureHash(Long orderId, String secureHash);
 }

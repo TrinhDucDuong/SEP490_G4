@@ -3,6 +3,7 @@ package com.fourfingers.quangvinhstore.adapter.rest.customer;
 import com.fourfingers.quangvinhstore.adapter.rest.MomoController;
 import com.fourfingers.quangvinhstore.adapter.rest.VNPayController;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderInputBoundary;
+import com.fourfingers.quangvinhstore.usecase.data.customer.PaymentOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.PurchaseInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressIdInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressInputData;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -52,30 +52,37 @@ public class OrderController {
                                         @RequestBody PurchaseInputData purchaseInputData,
                                         HttpServletRequest request){
         String paymentMethod = purchaseInputData.getPaymentMethod();
+        PaymentOutputData paymentOutputData = new PaymentOutputData();
         if(paymentMethod.equalsIgnoreCase("COD")){
-            return ResponseEntity.ok(customerOrderInputBoundary.placeOrderPayLater(userDetails, purchaseInputData));
+            paymentOutputData.setOrderOutputData(customerOrderInputBoundary.placeOrderPayLater(userDetails, purchaseInputData));
+//            return ResponseEntity.ok(paymentOutputData);
         } else {
             OrderOutputData orderOutputData = customerOrderInputBoundary
                     .getOrder(purchaseInputData.getOrderId(), userDetails);
             if (paymentMethod.equalsIgnoreCase("VNPay")) {
                 try {
-                    vnpayController.showQRPage(orderOutputData, customerOrderInputBoundary, request);
+//                    vnpayController.showQRPage(orderOutputData, customerOrderInputBoundary, request);
+                    String vnpUrl = vnpayController.showQRPage(orderOutputData, customerOrderInputBoundary, request);
+//                    return ResponseEntity.ok(vnpUrl);
+                    paymentOutputData.setPaymentUrl(vnpUrl);
                 } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
-                }
-            } else if (paymentMethod.equalsIgnoreCase("MOMO")) {
-                try {
-                    momoController.createMomoPayment(orderOutputData.getOrder().getTotalPrice());
-                } catch (Exception e) {
+
                     throw new RuntimeException(e);
                 }
             }
-            return ResponseEntity.ok("Đã chuyển hướng đến cổng thanh toán");
+//            else if (paymentMethod.equalsIgnoreCase("MOMO")) {
+//                try {
+//                    momoController.createMomoPayment(orderOutputData.getOrder().getTotalPrice());
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
         }
+        return ResponseEntity.ok(paymentOutputData);
     }
 
     @GetMapping("payment/return")
-    public ResponseEntity<?> verifyPaymentReturn(Map<String, String> map){
+    public ResponseEntity<?> verifyPaymentReturn(@RequestParam Map<String, String> map){
         return ResponseEntity.ok(customerOrderInputBoundary.verifyAndPlaceOrderPayInAdvance(map));
     }
 }
