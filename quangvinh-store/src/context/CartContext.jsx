@@ -102,7 +102,7 @@ export const CartProvider = ({ accountId, token, children }) => {
             }
         } catch (err) {
             console.error('Lỗi tải giỏ hàng:', err);
-            toast.error(err.message || 'Lỗi tải giỏ hàng');
+            // toast.error(err.message || 'Lỗi tải giỏ hàng');
         } finally {
             setLoading(false);
         }

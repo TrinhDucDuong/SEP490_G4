@@ -90,7 +90,6 @@ const Login = () => {
                         </button>
                     </div>
 
-                    {/* Đăng nhập truyền thống */}
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <input
                             className="rounded-full border border-gray-300 px-4 py-2 w-full"
@@ -135,14 +134,13 @@ const Login = () => {
 
                     <div className="mt-4 text-xs text-gray-600 leading-snug">
                         <p>
-                            Bằng cách nhấn 'Đăng nhập', bạn đồng ý với <span className="underline cursor-pointer">Chính sách Bảo mật</span> của WebName,
+                            Bằng cách nhấn 'Đăng nhập', bạn đồng ý với <span className="underline cursor-pointer">Chính sách Bảo mật</span> của QuangVinhStore,
                             <span className="underline cursor-pointer"> Điều khoản thành viên</span> và
                             <span className="underline cursor-pointer"> Điều khoản trang Web</span>.
                         </p>
                     </div>
                 </div>
 
-                {/* Phần giới thiệu bên phải */}
                 <div className="md:w-1/2 ml-24 bg-gray-200 shadow-md p-6 rounded-xl mt-10 md:mt-0 md:ml-10 max-w-md w-full h-full">
                     <h2 className="text-3xl font-bold mb-6">Tham gia thành viên ngay hôm nay!</h2>
                     <p className="mb-6 text-lg font-semibold text-black">Làm điều bạn thích, nhận thứ bạn mê!</p>
