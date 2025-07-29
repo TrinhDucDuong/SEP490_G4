@@ -2,7 +2,7 @@ package com.fourfingers.quangvinhstore.usecase.data.staff;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,8 +15,8 @@ public class StoreInputData {
     private String storePhone;
     private String city;
     private String district;
-    private LocalDateTime startWorkingAt;
-    private LocalDateTime endWorkingAt;
+    private LocalTime startWorkingAt;
+    private LocalTime endWorkingAt;
     private String locationLat;
     private String locationLng;
 }

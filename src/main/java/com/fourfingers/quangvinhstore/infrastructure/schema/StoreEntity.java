@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,10 +37,10 @@ public class StoreEntity {
     private String district;
 
     @Column(name = "start_working_at", nullable = false)
-    private LocalDateTime startWorkingAt;
+    private LocalTime startWorkingAt;
 
     @Column(name = "end_working_at", nullable = false)
-    private LocalDateTime endWorkingAt;
+    private LocalTime endWorkingAt;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
