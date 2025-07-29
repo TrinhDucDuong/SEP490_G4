@@ -38,17 +38,17 @@ public class OrderEntity {
     private AccountEntity owner;
 
     @ManyToOne
-    @JoinColumn(name = "shipping_address", referencedColumnName = "account_id")
-    private AccountEntity processBy;
+    @JoinColumn(name = "shipping_address", referencedColumnName = "address_id")
+    private ShippingAddressEntity shippingAddress;
 
     @ManyToOne
-    @JoinColumn(name = "process_by", referencedColumnName = "address_id")
-    private ShippingAddressEntity shippingAddress;
+    @JoinColumn(name = "process_by", referencedColumnName = "account_id")
+    private AccountEntity processBy;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status")
     private OrderStatus orderStatus;
 
-    @Column(name = "payment_status", columnDefinition = "BIT DEFAULT 0", nullable = false)
+    @Column(name = "payment_status") // , columnDefinition = "BIT DEFAULT 0", nullable = false)
     private Boolean paymentStatus;
 }

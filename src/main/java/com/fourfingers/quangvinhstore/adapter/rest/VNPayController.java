@@ -46,10 +46,13 @@ public class VNPayController {
                                 CustomerOrderInputBoundary customerOrderInputBoundary,
                                 HttpServletRequest request
                             ) throws UnsupportedEncodingException {
-        String vnp_TxnRef = String.valueOf(System.currentTimeMillis());
+        String vnp_TxnRef = String.valueOf("#ORD" + System.currentTimeMillis());
         String vnp_OrderInfo = "Thanh toán đơn hàng Quang Vinh Authentic #DH" + orderOutputData.getOrder().getOrderId();
         String orderType = "other";
-        String vnp_Amount = String.valueOf(orderOutputData.getOrder().getTotalPrice().multiply(BigDecimal.valueOf(100)));
+
+        BigDecimal total = orderOutputData.getOrder().getTotalPrice();
+        String vnp_Amount = String.valueOf(total.multiply(BigDecimal.valueOf(100)).longValue());
+
         String vnp_Locale = "vn";
         String vnp_BankCode = "";
         String vnp_IpAddr = request.getRemoteAddr();
@@ -77,8 +80,8 @@ public class VNPayController {
         for (String fieldName : fieldNames) {
             String value = vnp_Params.get(fieldName);
             if ((value != null) && (!value.isEmpty())) {
-                hashData.append(fieldName).append('=').append(URLEncoder.encode(value, StandardCharsets.US_ASCII)).append('&');
-                query.append(fieldName).append('=').append(URLEncoder.encode(value, StandardCharsets.US_ASCII)).append('&');
+                hashData.append(fieldName).append('=').append(URLEncoder.encode(value, StandardCharsets.UTF_8)).append('&');
+                query.append(fieldName).append('=').append(URLEncoder.encode(value, StandardCharsets.UTF_8)).append('&');
             }
         }
 
@@ -89,11 +92,12 @@ public class VNPayController {
         query.append("&vnp_SecureHash=").append(secureHash);
 
         // set secureHash to order
-        customerOrderInputBoundary.setSecureHash(orderOutputData.getOrder().getOrderId(), secureHash);
+        customerOrderInputBoundary.setSecureHash(orderOutputData.getOrder().getOrderId(), vnp_TxnRef);
 
         String paymentUrl = vnp_PayUrl + "?" + query.toString();
 
-        return "redirect:" + paymentUrl;
+//        return "redirect:" + paymentUrl;
+        return paymentUrl;
     }
 
     private String hmacSHA512(String key, String data) {
