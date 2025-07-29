@@ -1,6 +1,7 @@
 const API_BASE_URL = 'http://localhost:9999/staff/store';
 
 const getAuthToken = () => localStorage.getItem('token');
+
 const getAuthHeaders = () => {
     const token = getAuthToken();
     return {
@@ -16,7 +17,9 @@ export const getAllStores = async () => {
             method: 'GET',
             headers: getAuthHeaders()
         });
+
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
         const data = await response.json();
         return { success: true, data: data.stores };
     } catch (error) {
@@ -30,7 +33,9 @@ export const getStoreById = async (storeId) => {
             method: 'GET',
             headers: getAuthHeaders()
         });
+
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
         const data = await response.json();
         return { success: true, data: data.store };
     } catch (error) {
@@ -45,10 +50,19 @@ export const createStore = async (storeData) => {
             headers: getAuthHeaders(),
             body: JSON.stringify({
                 storeName: storeData.storeName,
-                storeAddress: storeData.storeAddress
+                storeAddress: storeData.storeAddress,
+                storePhone: storeData.storePhone,
+                city: storeData.city,
+                district: storeData.district,
+                startWorkingAt: storeData.startWorkingAt,
+                endWorkingAt: storeData.endWorkingAt,
+                locationLat: storeData.locationLat,
+                locationLng: storeData.locationLng
             })
         });
+
         if (!response.ok) throw new Error(await response.text());
+
         const data = await response.json();
         return { success: true, data: data.store };
     } catch (error) {
@@ -63,10 +77,19 @@ export const updateStore = async (storeId, storeData) => {
             headers: getAuthHeaders(),
             body: JSON.stringify({
                 storeName: storeData.storeName,
-                storeAddress: storeData.storeAddress
+                storeAddress: storeData.storeAddress,
+                storePhone: storeData.storePhone,
+                city: storeData.city,
+                district: storeData.district,
+                startWorkingAt: storeData.startWorkingAt,
+                endWorkingAt: storeData.endWorkingAt,
+                locationLat: storeData.locationLat,
+                locationLng: storeData.locationLng
             })
         });
+
         if (!response.ok) throw new Error(await response.text());
+
         const data = await response.json();
         return { success: true, data: data.store };
     } catch (error) {
@@ -80,7 +103,9 @@ export const deleteStore = async (storeId) => {
             method: 'DELETE',
             headers: getAuthHeaders()
         });
+
         if (!response.ok) throw new Error(await response.text());
+
         const data = await response.json();
         return { success: true, data: data.store };
     } catch (error) {
