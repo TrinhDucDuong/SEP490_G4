@@ -50,9 +50,18 @@ const PaymentMethod = () => {
             });
 
             if (res.ok) {
+                const result = await res.json();
+                console.log(result);
+                const paymentUrl = result.paymentUrl;
+
                 toast.success("Chọn phương thức thanh toán thành công!");
+
                 localStorage.removeItem("currentOrder");
-                // window.location.href = '';
+
+                if (selectedMethod === "VNPAY" && paymentUrl) {
+                    window.location.href = paymentUrl;
+                    return;
+                }
                 setIsSuccess(true);
             } else {
                 const errorText = await res.text();
@@ -64,6 +73,7 @@ const PaymentMethod = () => {
             toast.error("Lỗi kết nối đến máy chủ.");
         }
     };
+
 
     if (loading) return <div className="text-center mt-10">Đang tải đơn hàng...</div>;
     if (!order) return <div className="text-center text-red-500 mt-10">Không tìm thấy đơn hàng.</div>;
