@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useFetchPolicy } from "../../../hooks/Customer/useFetchPolicy.js";
 import Breadcrumb from "../../../components/common/Customer/Breadcrumb.jsx";
 
+
 const PolicyPage = () => {
     const { policies, loading, error } = useFetchPolicy();
     const { id } = useParams();
@@ -29,7 +30,7 @@ const PolicyPage = () => {
     if (error) return <div className="text-center py-12 text-red-500 text-lg">{error}</div>;
 
     return (
-        <div className="bg-[#F2F2EE] min-h-screen py-8 text-gray-900">
+        <div className="bg-gray-50 min-h-screen py-10 text-gray-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <Breadcrumb
                     items={[
@@ -37,21 +38,21 @@ const PolicyPage = () => {
                         { label: 'Policies', to: '/policies' },
                         selectedPolicy && { label: selectedPolicy.policyName }
                     ].filter(Boolean)}
-                    className="mb-6 text-gray-600"
+                    className="mb-8 text-gray-500"
                 />
 
-                <div className="grid grid-cols-1 mt-4 mx-4 md:grid-cols-4 gap-8">
-                    <aside className="md:col-span-1">
-                        <h2 className="text-xl font-bold mb-6 text-gray-900 tracking-tight">Policy List</h2>
-                        <ul className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-4 bg-white shadow-sm rounded-lg overflow-hidden">
+                    <aside className="md:col-span-1 p-6 border-r border-gray-100">
+                        <h2 className="text-2xl font-semibold mb-6 text-gray-900">Policy List</h2>
+                        <ul className="space-y-2">
                             {policies.map((policy) => (
                                 <li key={policy.policyId}>
                                     <button
                                         onClick={() => handleSelect(policy.policyId)}
-                                        className={`w-full text-left py-2 px-4 rounded-lg transition-all duration-200 ${
+                                        className={`w-full text-left py-2.5 px-4 rounded-md transition-colors duration-200 ${
                                             selectedId === policy.policyId
-                                                ? 'bg-gray-200 text-gray-900 font-medium shadow-md'
-                                                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                                                ? 'bg-gray-50 text-gray-600 font-medium'
+                                                : 'text-black hover:bg-gray-50 hover:text-gray-800'
                                         }`}
                                     >
                                         {policy.policyName}
@@ -61,18 +62,19 @@ const PolicyPage = () => {
                         </ul>
                     </aside>
 
-                    <section className="md:col-span-3 bg-gray-50 rounded-xl p-8 shadow-lg min-h-[400px]">
+                    <section className="md:col-span-3 p-8 bg-white min-h-[400px]">
                         {selectedPolicy ? (
                             <>
-                                <h1 className="text-3xl font-bold mb-6 text-gray-900 tracking-tight">
+                                <h1 className="text-3xl font-extrabold mb-5 text-gray-900 leading-tight">
                                     {selectedPolicy.policyName}
                                 </h1>
-                                <p className="whitespace-pre-line leading-relaxed text-gray-800 text-lg">
-                                    {selectedPolicy.policyDescription}
-                                </p>
+                                <div
+                                    className="leading-relaxed text-gray-700 text-lg ck-content"
+                                    dangerouslySetInnerHTML={{ __html: selectedPolicy.policyDescription }}
+                                />
                             </>
                         ) : (
-                            <p className="text-gray-600 text-lg">Please select a policy from the list.</p>
+                            <p className="text-gray-500 text-lg py-12 text-center">Select a policy to view its details.</p>
                         )}
                     </section>
                 </div>

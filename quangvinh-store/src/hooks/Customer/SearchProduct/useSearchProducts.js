@@ -10,7 +10,7 @@ export default function useSearchProducts(query) {
             if (query.trim()) {
                 setLoading(true);
                 axios
-                    .get(`http://localhost:9999/product`, {
+                    .get(`${import.meta.env.VITE_API_BASE_URL}/product`, {
                         params: {
                             minPrice: 0,
                             sortDirection: 'desc',

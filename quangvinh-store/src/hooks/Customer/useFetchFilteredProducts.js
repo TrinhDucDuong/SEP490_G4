@@ -16,7 +16,7 @@ export const useFetchFilteredProducts = () => {
             setLoading(true);
             setError(null);
             try {
-                const response = await axios.get(`http://localhost:9999/product?${queryString}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/product?${queryString}`);
                 setProducts(response.data.products || []);
                 setTotalItems(response.data.totalItems || 0);
             } catch (err) {

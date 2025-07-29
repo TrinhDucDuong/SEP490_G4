@@ -9,7 +9,7 @@ export const useFetchLandingProducts = () => {
     useEffect(() => {
         const fetchLandingData = async () => {
             try {
-                const response = await fetch('http://localhost:9999/home');
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/home`);
                 const data = await response.json();
                 setProducts(data.products);
                 setTopSellingProducts(data.topSellingProducts);

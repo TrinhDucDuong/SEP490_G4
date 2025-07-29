@@ -6,7 +6,7 @@ function SidebarProfile() {
     const location = useLocation();
 
     return (
-        <aside className="lg:w-80 border bg-white shadow-sm p-6">
+        <aside className="lg:w-80 p-6">
             <div className="flex items-center gap-3 mb-6">
                 <div className="h-12 w-12 rounded-full bg-gray-900 text-white flex items-center justify-center">
                     <FontAwesomeIcon icon={faUser} className="text-xl" />
@@ -24,6 +24,12 @@ function SidebarProfile() {
                     icon={faMapMarkerAlt}
                     label="Địa chỉ"
                     to="/profile/address"
+                    currentPath={location.pathname}
+                />
+                <SidebarItem
+                    icon={faMapMarkerAlt}
+                    label="Đơn hàng"
+                    to="/profile/order-history"
                     currentPath={location.pathname}
                 />
                 <SidebarItem

@@ -20,12 +20,14 @@ function OrderHistory() {
     return (
         <div className="">
             <div className="bg-white">
+                <h2 className="text-2xl font-bold text-gray-900 m-4 sm:mb-0">Đơn hàng</h2>
                 <div className="flex mb-2 p-2 border-b border-b-black">
+
                     <button
                         className={`px-5 py-2 font-medium transition ${
                             activeTab === "PROCESSING"
-                                ? "bg-yellow-500 text-white"
-                                : "bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all duration-600"
+                                ? "text-black border-b-2 border-black"
+                                : "text-gray-700 hover:bg-gray-300 transition-all duration-600"
                         }`}
                         onClick={() => setActiveTab("PROCESSING")}
                     >
@@ -34,8 +36,8 @@ function OrderHistory() {
                     <button
                         className={`px-5 py-2 font-medium transition ${
                             activeTab === "DELIVERED"
-                                ? "bg-green-600 text-white"
-                                : "bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all duration-600"
+                                ? "text-black border-b-2 border-black"
+                                : "text-gray-700 hover:bg-gray-300 transition-all duration-600"
                         }`}
                         onClick={() => setActiveTab("DELIVERED")}
                     >
@@ -52,7 +54,7 @@ function OrderHistory() {
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-gray-500 italic text-center py-6 bg-green-300 rounded-lg shadow-sm">
+                            <p className="text-gray-500 italic text-center py-6">
                                 Không có đơn hàng nào đang xử lý.
                             </p>
                         )}
@@ -68,7 +70,7 @@ function OrderHistory() {
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-gray-500 italic text-center py-6 bg-green-300 rounded-lg shadow-sm">
+                            <p className="text-gray-500 italic text-center py-6">
                                 Chưa có đơn hàng hoàn thành.
                             </p>
                         )}

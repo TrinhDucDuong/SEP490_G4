@@ -20,7 +20,7 @@ function MessengerChatBubble() {
             className="bg-[#0084FF] p-4 rounded-full shadow-lg text-white flex items-center justify-center"
             aria-label="Chat với chúng tôi trên Messenger"
         >
-            <FaFacebookMessenger size={28} />
+            <FaFacebookMessenger size={22} />
         </motion.button>
     );
 }

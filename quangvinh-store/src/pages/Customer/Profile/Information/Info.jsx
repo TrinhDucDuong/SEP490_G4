@@ -89,7 +89,7 @@ function Info() {
         }
 
         try {
-            const res = await fetch("http://localhost:9999/profile", {
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/profile`, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -157,7 +157,7 @@ function Info() {
                             </div>
                         </div>
 
-                        <button type="submit" className="mt-6 w-full md:w-36 bg-gray-900 text-white py-2.5 rounded-full font-semibold hover:bg-gray-800 transition">
+                        <button type="submit" className="mt-6 w-full border border-black md:w-24 bg-black text-white py-2 rounded-sm font-semibold hover:bg-white hover:text-black transition">
                             Lưu
                         </button>
                     </div>
@@ -171,7 +171,7 @@ function Info() {
                             )}
                         </div>
                         <input type="file" id="avatar" onChange={handleAvatarChange} className="hidden" accept="image/*" />
-                        <button type="button" onClick={() => document.getElementById("avatar").click()} className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm">
+                        <button type="button" onClick={() => document.getElementById("avatar").click()} className="border border-black bg-black text-white px-4 py-2 text-sm hover:text-black hover:bg-white transition">
                             Chọn ảnh
                         </button>
                         <p className="text-xs text-gray-400 text-center max-w-[160px]">Dung lượng tối đa 2MB. JPG, PNG.</p>

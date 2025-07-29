@@ -11,7 +11,7 @@ export default function useFetchSearchResults(searchText) {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`http://localhost:9999/product?searchText=${encodeURIComponent(searchText)}&pageNumber=0&pageSize=20&sortDirection=desc&sortBy=createdAt`);
+                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/product?searchText=${encodeURIComponent(searchText)}&pageNumber=0&pageSize=20&sortDirection=desc&sortBy=createdAt`);
                 if (!res.ok) throw new Error('Lỗi khi tìm kiếm sản phẩm');
                 const data = await res.json();
                 setResults(data.content || []);

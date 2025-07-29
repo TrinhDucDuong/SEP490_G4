@@ -71,7 +71,7 @@ const ProductList = () => {
                         <select
                             value={currentSort}
                             onChange={handleSortChange}
-                            className="w-full sm:w-auto border border-gray-300 rounded-full py-2 px-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
+                            className="w-full sm:w-auto border border-gray-300 rounded-full py-2 px-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
                         >
                             {sortOptions.map(opt => (
                                 <option key={opt.value} value={opt.value}>{opt.label}</option>

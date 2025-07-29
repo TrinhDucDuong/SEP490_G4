@@ -109,9 +109,11 @@ function Home() {
             <section className="py-10 w-full px-28" aria-label="Tin tức nổi bật">
                 <NewsHome />
             </section>
-            <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
-                <ChatBoxAI />
+            <div className="fixed bottom-24 right-6 z-50 flex flex-row items-end gap-4">
                 <MessengerChatBubble />
+            </div>
+            <div className="fixed bottom-6 right-6 z-50 flex flex-row items-end gap-4">
+                <ChatBoxAI />
             </div>
         </main>
     );

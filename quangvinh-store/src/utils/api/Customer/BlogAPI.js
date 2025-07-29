@@ -1,5 +1,5 @@
 export const fetchBlog = async () => {
-    const response = await fetch('http://localhost:9999/blog');
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/blog`);
     if (!response.ok) {
         throw new Error('Failed to fetch Blog');
     }
@@ -7,7 +7,7 @@ export const fetchBlog = async () => {
 };
 
 export const fetchBlogById = async (id) => {
-    const response = await fetch(`http://localhost:9999/blog/${id}`);
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/blog/${id}`);
     if (!response.ok) {
         throw new Error('Failed to fetch Blog');
     }

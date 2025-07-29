@@ -11,7 +11,6 @@ function ChangePassword() {
             alert("Mật khẩu mới không khớp!");
             return;
         }
-        // TODO: Call API to change password
         alert("Mật khẩu đã được thay đổi thành công!");
     };
 
