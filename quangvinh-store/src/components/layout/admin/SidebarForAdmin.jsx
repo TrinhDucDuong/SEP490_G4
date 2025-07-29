@@ -89,7 +89,7 @@ const SidebarForAdmin = () => {
                         Hóa đơn
                     </NavLink>
 
-                    <NavLink to="/admin/feedbacks-management" className={navClass}>
+                    <NavLink to="/admin/star-rate-management" className={navClass}>
                         <MessageSquare className="h-5 w-5 mr-3" />
                         Quản lý đánh giá
                     </NavLink>
@@ -99,15 +99,15 @@ const SidebarForAdmin = () => {
                         Chính sách
                     </NavLink>
 
-                    <NavLink to="/admin/instruction-management" className={navClass}>
-                        <FileText className="h-5 w-5 mr-3" />
-                        Hướng dẫn
-                    </NavLink>
+                    {/*<NavLink to="/admin/instruction-management" className={navClass}>*/}
+                    {/*    <FileText className="h-5 w-5 mr-3" />*/}
+                    {/*    Hướng dẫn*/}
+                    {/*</NavLink>*/}
 
-                    <NavLink to="/admin/story-management" className={navClass}>
-                        <FileText className="h-5 w-5 mr-3" />
-                        Câu chuyện
-                    </NavLink>
+                    {/*<NavLink to="/admin/story-management" className={navClass}>*/}
+                    {/*    <FileText className="h-5 w-5 mr-3" />*/}
+                    {/*    Câu chuyện*/}
+                    {/*</NavLink>*/}
 
                     <NavLink to="/admin/store-management" className={navClass}>
                         <Store className="h-5 w-5 mr-3" />
