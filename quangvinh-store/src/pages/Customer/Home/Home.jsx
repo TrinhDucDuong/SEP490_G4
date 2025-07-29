@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, {useEffect, useMemo} from "react";
 import { Link } from "react-router-dom";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,6 +25,10 @@ function Home() {
     const topBrands = useMemo(() => brands.slice(0, 10), [brands]);
     const trendingProducts = useMemo(() => products.slice(0, 10), [products]);
     const hotProducts = useMemo(() => totalSoldoutProducts.slice(0, 10), [totalSoldoutProducts]);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location.pathname]);
 
     return (
         <main className="bg-[#F2F2EE] text-black">
@@ -70,7 +74,7 @@ function Home() {
                     {categories.slice(0, 4).map((category) => (
                         <Link
                             key={category.categoryId}
-                            to={`/products/${category.categoryId}`}
+                            to={`/products?brandIds=${category.categoryId}`}
                             className="w-full h-[500px] overflow-hidden shadow-md rounded-lg group relative"
                             aria-label={`Xem sản phẩm trong danh mục ${category.categoryName}`}
                         >

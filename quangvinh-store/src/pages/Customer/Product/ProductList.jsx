@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useFetchCategories } from '../../../hooks/Customer/useFetchCategories.js';
 import { useFetchFilteredProducts } from '../../../hooks/Customer/useFetchFilteredProducts.js';
@@ -19,6 +19,10 @@ const ProductList = () => {
     const { products, totalItems, loading, error } = useFetchFilteredProducts();
     const { categories } = useFetchCategories();
     const [searchParams, setSearchParams] = useSearchParams();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location.pathname]);
 
     const pageNumber = Number(searchParams.get("pageNumber") || 0);
     const pageSize = Number(searchParams.get("pageSize") || 20);

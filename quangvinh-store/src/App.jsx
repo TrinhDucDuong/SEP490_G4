@@ -57,6 +57,8 @@ import OrderDetail from "./pages/Customer/Profile/Order/OrderDetails.jsx";
 import PoliciesManagement from "./pages/Staff/Policy/PoliciesManagement.jsx";
 import ProtectedRoute from "./components/common/Customer/Protecter/ProtectedRoute.jsx";
 import Feedback from "./pages/Customer/Feedback/Feedback.jsx";
+import StoreAdress from "./pages/Customer/Store/StoreAdress.jsx";
+import ProductReviewPage from "./pages/Customer/ProductReview/ProductReviewPage.jsx";
 
 
 function App() {
@@ -77,6 +79,7 @@ function App() {
                             <Route path="register" element={<Register />} />
                             <Route path="forgot-password" element={<ForgotPassword />} />
                             <Route path="feedbacks" element={<Feedback/>} />
+                            <Route path="stores" element={<StoreAdress/>} />
                             <Route path="policies" element={<PolicyPage />} />
                             <Route path="policies/:id" element={<PolicyPage />} />
                             <Route path="instructions" element={<InstructionPage />} />
@@ -91,6 +94,13 @@ function App() {
                             } />
                             <Route path="payment" element={<Payment />} />
                             <Route path="payment-method" element={<PaymentMethod />} />
+
+                            <Route path="review" element={
+                                <ProtectedRoute>
+                                    <ProductReviewPage />
+                                </ProtectedRoute>
+                            } />
+
 
                             <Route path="profile" element={
                                 <ProtectedRoute>
