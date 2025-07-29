@@ -7,11 +7,11 @@ function OrderHistory() {
     const [activeTab, setActiveTab] = useState("PROCESSING");
 
     const completedOrders = orders
-        .filter(order => order.orderStatus === "COMPLETED")
+        .filter(order => order.orderStatus === "DELIVERED")
         .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
 
     const processingOrders = orders
-        .filter(order => order.orderStatus !== "COMPLETED")
+        .filter(order => order.orderStatus !== "DELIVERED")
         .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
 
     if (loading) return <p className="text-center text-gray-600 text-lg">Đang tải đơn hàng...</p>;
@@ -33,11 +33,11 @@ function OrderHistory() {
                     </button>
                     <button
                         className={`px-5 py-2 font-medium transition ${
-                            activeTab === "COMPLETED"
+                            activeTab === "DELIVERED"
                                 ? "bg-green-600 text-white"
                                 : "bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all duration-600"
                         }`}
-                        onClick={() => setActiveTab("COMPLETED")}
+                        onClick={() => setActiveTab("DELIVERED")}
                     >
                         Đơn đã hoàn thành
                     </button>
@@ -46,7 +46,7 @@ function OrderHistory() {
                 {activeTab === "PROCESSING" && (
                     <>
                         {processingOrders.length > 0 ? (
-                            <div className="space-y-2">
+                            <div className="">
                                 {processingOrders.map(order => (
                                     <OrderItem key={order.orderId} order={order} />
                                 ))}
@@ -59,10 +59,10 @@ function OrderHistory() {
                     </>
                 )}
 
-                {activeTab === "COMPLETED" && (
+                {activeTab === "DELIVERED" && (
                     <>
                         {completedOrders.length > 0 ? (
-                            <div className="space-y-6">
+                            <div className="">
                                 {completedOrders.map(order => (
                                     <OrderItem key={order.orderId} order={order} />
                                 ))}
