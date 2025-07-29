@@ -4,6 +4,7 @@ import com.fourfingers.quangvinhstore.domain.model.Account;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,8 +18,8 @@ public class Store {
     private String storePhone;
     private String city;
     private String district;
-    private LocalDateTime startWorkingAt;
-    private LocalDateTime endWorkingAt;
+    private LocalTime startWorkingAt;
+    private LocalTime endWorkingAt;
     private String locationLat;
     private String locationLng;
     private Boolean isActive;
