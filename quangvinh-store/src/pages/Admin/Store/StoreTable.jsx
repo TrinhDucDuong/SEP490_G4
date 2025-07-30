@@ -1,25 +1,10 @@
 // src/pages/Admin/Store/StoreTable.jsx
 import React, { useState } from 'react';
 import { Edit, Plus, Eye } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
 import DataTable from '../../../components/common/Admin/DataTable';
-import Modals from '../../../components/common/Admin/Modals';
 import Paginations from '../../../components/common/Admin/Paginations';
+import MapSelector from '../../../pages/Admin/Store/MapSelector';
 import { STORE_HELPERS, STORE_DEFAULTS } from '../../../utils/constants/StoreConstants';
-
-// Fix Leaflet default icon issue
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: markerIcon2x,
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow,
-});
 
 const StoreTable = ({
                         storeList,
@@ -45,24 +30,17 @@ const StoreTable = ({
     const [updateStoreData, setUpdateStoreData] = useState(null);
     const [selectedPosition, setSelectedPosition] = useState(null);
 
-    // Map click handler component
-    const MapClickHandler = ({ onMapClick }) => {
-        useMapEvents({
-            click(e) {
-                onMapClick(e.latlng);
-            },
-        });
-        return null;
-    };
-
     // Modal handlers
     const openCreateModal = () => {
+        console.log('Opening create modal');
         setNewStore(STORE_DEFAULTS.NEW_STORE);
         setSelectedPosition(null);
         setShowCreateModal(true);
+        console.log('showCreateModal set to:', true);
     };
 
     const openUpdateModal = async (store) => {
+        console.log('Opening update modal for store:', store.storeId);
         const details = await onGetStoreDetails(store.storeId);
         if (details.success) {
             const data = details.data;
@@ -88,21 +66,24 @@ const StoreTable = ({
 
             setSelectedStore(store);
             setShowUpdateModal(true);
+            console.log('showUpdateModal set to:', true);
+        }
+    };
+
+    const openDetailModal = async (store) => {
+        console.log('Opening detail modal for store:', store.storeId);
+        const details = await onGetStoreDetails(store.storeId);
+        if (details.success) {
+            setStoreDetails(details.data);
+            setSelectedStore(store);
+            setShowDetailModal(true);
+            console.log('showDetailModal set to:', true);
         }
     };
 
     const openStatusModal = (store) => {
         setSelectedStore(store);
         setShowStatusModal(true);
-    };
-
-    const openDetailModal = async (store) => {
-        const details = await onGetStoreDetails(store.storeId);
-        if (details.success) {
-            setStoreDetails(details.data);
-            setSelectedStore(store);
-            setShowDetailModal(true);
-        }
     };
 
     // CRUD operations
@@ -155,7 +136,7 @@ const StoreTable = ({
         }
     };
 
-    const handleMapClick = (latlng, isUpdate = false) => {
+    const handlePositionChange = (latlng, isUpdate = false) => {
         setSelectedPosition(latlng);
         if (isUpdate) {
             setUpdateStoreData(prev => ({
@@ -182,9 +163,6 @@ const StoreTable = ({
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
     );
-
-    // Default map center (Hanoi)
-    const DEFAULT_MAP_CENTER = [21.028511, 105.804817];
 
     // Create store form
     const createStoreForm = (
@@ -266,29 +244,11 @@ const StoreTable = ({
 
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Chọn vị trí trên bản đồ</label>
-                <div className="h-64 border border-gray-300 rounded-md">
-                    <MapContainer
-                        center={DEFAULT_MAP_CENTER}
-                        zoom={13}
-                        className="w-full h-full"
-                    >
-                        <TileLayer
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                        />
-                        <MapClickHandler onMapClick={(latlng) => handleMapClick(latlng, false)} />
-                        {selectedPosition && (
-                            <Marker position={[selectedPosition.lat, selectedPosition.lng]}>
-                                <Popup>Vị trí đã chọn</Popup>
-                            </Marker>
-                        )}
-                    </MapContainer>
-                </div>
-                {selectedPosition && (
-                    <p className="text-sm text-gray-600 mt-2">
-                        Vị trí: {selectedPosition.lat.toFixed(6)}, {selectedPosition.lng.toFixed(6)}
-                    </p>
-                )}
+                <MapSelector
+                    selectedPosition={selectedPosition}
+                    onPositionChange={(latlng) => handlePositionChange(latlng, false)}
+                    height="400px"
+                />
             </div>
         </div>
     );
@@ -373,29 +333,11 @@ const StoreTable = ({
 
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Chọn vị trí trên bản đồ</label>
-                <div className="h-64 border border-gray-300 rounded-md">
-                    <MapContainer
-                        center={selectedPosition ? [selectedPosition.lat, selectedPosition.lng] : DEFAULT_MAP_CENTER}
-                        zoom={13}
-                        className="w-full h-full"
-                    >
-                        <TileLayer
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                        />
-                        <MapClickHandler onMapClick={(latlng) => handleMapClick(latlng, true)} />
-                        {selectedPosition && (
-                            <Marker position={[selectedPosition.lat, selectedPosition.lng]}>
-                                <Popup>Vị trí đã chọn</Popup>
-                            </Marker>
-                        )}
-                    </MapContainer>
-                </div>
-                {selectedPosition && (
-                    <p className="text-sm text-gray-600 mt-2">
-                        Vị trí: {selectedPosition.lat.toFixed(6)}, {selectedPosition.lng.toFixed(6)}
-                    </p>
-                )}
+                <MapSelector
+                    selectedPosition={selectedPosition}
+                    onPositionChange={(latlng) => handlePositionChange(latlng, true)}
+                    height="400px"
+                />
             </div>
         </div>
     );
@@ -439,30 +381,27 @@ const StoreTable = ({
             {storeDetails.locationLat && storeDetails.locationLng && (
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Vị trí cửa hàng:</label>
-                    <div className="h-64 border border-gray-300 rounded-md">
-                        <MapContainer
-                            center={[parseFloat(storeDetails.locationLat), parseFloat(storeDetails.locationLng)]}
-                            zoom={15}
-                            className="w-full h-full"
+                    <div className="border border-gray-300 rounded-md p-4 bg-gray-50">
+                        <p className="text-sm text-gray-600 mb-2">
+                            <strong>Tọa độ:</strong><br />
+                            Vĩ độ: {parseFloat(storeDetails.locationLat).toFixed(6)}<br />
+                            Kinh độ: {parseFloat(storeDetails.locationLng).toFixed(6)}
+                        </p>
+                        <a
+                            href={`https://www.google.com/maps?q=${storeDetails.locationLat},${storeDetails.locationLng}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
                         >
-                            <TileLayer
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                            />
-                            <Marker position={[parseFloat(storeDetails.locationLat), parseFloat(storeDetails.locationLng)]}>
-                                <Popup>{storeDetails.storeName}</Popup>
-                            </Marker>
-                        </MapContainer>
+                            Xem trên Google Maps
+                        </a>
                     </div>
-                    <p className="text-sm text-gray-600 mt-2">
-                        Tọa độ: {parseFloat(storeDetails.locationLat).toFixed(6)}, {parseFloat(storeDetails.locationLng).toFixed(6)}
-                    </p>
                 </div>
             )}
         </div>
     );
 
-    // Table columns configuration
+    // Table columns configuration - CẬP NHẬT BUTTON TRẠNG THÁI
     const columns = [
         {
             key: 'stt',
@@ -525,9 +464,13 @@ const StoreTable = ({
             headerAlign: 'text-center',
             cellAlign: 'text-center',
             render: (store) => (
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${STORE_HELPERS.getStatusColorClass(store.isActive)}`}>
-          {STORE_HELPERS.getStatusText(store.isActive)}
-        </span>
+                <button
+                    onClick={() => openStatusModal(store)}
+                    className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full cursor-pointer transition-colors hover:opacity-80 ${STORE_HELPERS.getStatusColorClass(store.isActive)}`}
+                    title={store.isActive ? "Click để ngừng hoạt động" : "Click để kích hoạt"}
+                >
+                    {STORE_HELPERS.getStatusText(store.isActive)}
+                </button>
             )
         },
         {
@@ -550,16 +493,6 @@ const StoreTable = ({
                         title="Chỉnh sửa"
                     >
                         <Edit size={16} />
-                    </button>
-                    <button
-                        onClick={() => openStatusModal(store)}
-                        className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
-                            store.isActive
-                                ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                                : 'bg-green-100 text-green-700 hover:bg-green-200'
-                        }`}
-                    >
-                        {store.isActive ? 'Ngừng HĐ' : 'Kích hoạt'}
                     </button>
                 </div>
             )
@@ -599,58 +532,180 @@ const StoreTable = ({
                 />
             </div>
 
-            {/* Modals */}
-            <Modals
-                show={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                onConfirm={handleCreateStore}
-                title="Thêm cửa hàng mới"
-                confirmText="Tạo"
-                cancelText="Hủy"
-                size="large"
-            >
-                {createStoreForm}
-            </Modals>
+            {/* Create Modal */}
+            {showCreateModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        maxWidth: '900px',
+                        width: '95%',
+                        maxHeight: '95%',
+                        overflow: 'auto'
+                    }}>
+                        <h2 className="text-xl font-bold mb-4">Thêm cửa hàng mới</h2>
+                        {createStoreForm}
+                        <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+                            <button
+                                onClick={handleCreateStore}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                            >
+                                Tạo
+                            </button>
+                            <button
+                                onClick={() => setShowCreateModal(false)}
+                                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                            >
+                                Hủy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
-            <Modals
-                show={showUpdateModal}
-                onClose={() => setShowUpdateModal(false)}
-                onConfirm={handleUpdateStore}
-                title="Cập nhật thông tin cửa hàng"
-                confirmText="Cập nhật"
-                cancelText="Hủy"
-                size="large"
-            >
-                {updateStoreForm}
-            </Modals>
+            {/* Update Modal */}
+            {showUpdateModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        maxWidth: '900px',
+                        width: '95%',
+                        maxHeight: '95%',
+                        overflow: 'auto'
+                    }}>
+                        <h2 className="text-xl font-bold mb-4">Cập nhật thông tin cửa hàng</h2>
+                        {updateStoreForm}
+                        <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+                            <button
+                                onClick={handleUpdateStore}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                            >
+                                Cập nhật
+                            </button>
+                            <button
+                                onClick={() => setShowUpdateModal(false)}
+                                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                            >
+                                Hủy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
-            <Modals
-                show={showDetailModal}
-                onClose={() => setShowDetailModal(false)}
-                title={`Thông tin chi tiết cửa hàng ${selectedStore?.storeName || ''}`}
-                confirmText="Đóng"
-                showCancel={false}
-                size="large"
-            >
-                {storeDetailContent}
-            </Modals>
+            {/* Detail Modal */}
+            {showDetailModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        maxWidth: '800px',
+                        width: '90%',
+                        maxHeight: '90%',
+                        overflow: 'auto'
+                    }}>
+                        <h2 className="text-xl font-bold mb-4">
+                            Thông tin chi tiết cửa hàng {selectedStore?.storeName || ''}
+                        </h2>
+                        {storeDetailContent}
+                        <div style={{ marginTop: '20px' }}>
+                            <button
+                                onClick={() => setShowDetailModal(false)}
+                                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                            >
+                                Đóng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
-            <Modals
-                show={showStatusModal}
-                onClose={() => setShowStatusModal(false)}
-                onConfirm={handleStatusChange}
-                title="Xác nhận thay đổi trạng thái"
-                confirmText="Xác nhận"
-                cancelText="Hủy"
-                type="warning"
-            >
-                <p className="text-sm text-gray-600">
-                    {selectedStore?.isActive
-                        ? `Bạn muốn ngừng hoạt động cửa hàng "${selectedStore?.storeName}" không?`
-                        : `Bạn muốn kích hoạt lại cửa hàng "${selectedStore?.storeName}" không?`
-                    }
-                </p>
-            </Modals>
+            {/* Status Modal - CẬP NHẬT NỘI DUNG */}
+            {showStatusModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        maxWidth: '500px',
+                        width: '90%'
+                    }}>
+                        <h2 className="text-xl font-bold mb-4">Xác nhận thay đổi trạng thái</h2>
+                        <p className="text-sm text-gray-600 mb-6">
+                            {selectedStore?.isActive
+                                ? `Bạn muốn ngừng hoạt động cửa hàng "${selectedStore?.storeName}" không?`
+                                : `Bạn muốn kích hoạt lại cửa hàng "${selectedStore?.storeName}" không?`
+                            }
+                        </p>
+                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                            <button
+                                onClick={() => setShowStatusModal(false)}
+                                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                            >
+                                Hủy
+                            </button>
+                            <button
+                                onClick={handleStatusChange}
+                                className={`px-4 py-2 text-white rounded-md hover:opacity-90 ${
+                                    selectedStore?.isActive
+                                        ? 'bg-red-600 hover:bg-red-700'
+                                        : 'bg-green-600 hover:bg-green-700'
+                                }`}
+                            >
+                                {selectedStore?.isActive ? 'Ngừng hoạt động' : 'Kích hoạt'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -56,10 +56,10 @@ const StoreManagement = () => {
     }
 
     return (
-        <div className="space-y-6">
+        <div>
             {/* Header */}
-            <div className="bg-white rounded-lg shadow p-6">
-                <div className="flex justify-between items-center mb-6">
+            <div>
+                <div className="mb-6">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Quản lý cửa hàng</h1>
                         <p className="text-gray-600 mt-1">
