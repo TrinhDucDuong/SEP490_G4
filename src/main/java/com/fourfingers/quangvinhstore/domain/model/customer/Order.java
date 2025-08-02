@@ -1,6 +1,7 @@
 package com.fourfingers.quangvinhstore.domain.model.customer;
 
 import com.fourfingers.quangvinhstore.domain.model.Account;
+import com.fourfingers.quangvinhstore.domain.model.ShippingAddress;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -19,4 +20,5 @@ public class Order {
     private List<OrderDetails> orderDetails;
     private String orderStatus;
     private BigDecimal totalPrice;
+    private ShippingAddress shippingAddress;
 }
