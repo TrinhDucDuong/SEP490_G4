@@ -66,6 +66,7 @@ function Payment() {
                 },
                 body: JSON.stringify(formData),
             });
+            console.log(token);
             console.log(formData);
             if (res.ok) {
                 const data = await res.json();
@@ -98,7 +99,7 @@ function Payment() {
     };
 
     return (
-        <div className='max-w-full md:max-w-[900px] lg:max-w-[1400px] mx-auto bg-[#F2F2EE]'>
+        <div className='max-w-full md:max-w-[900px] lg:max-w-[1400px] mx-auto'>
             <div className='breadcrumb mt-4'>
                 <Breadcrumb
                     items={[
@@ -122,7 +123,7 @@ function Payment() {
                             />
                             <div>
                                 <div className='font-semibold text-black'>
-                                   {profile.firstName} {profile.lastName}
+                                    {profile.firstName} {profile.lastName}
                                 </div>
                                 <div className='text-sm text-gray-600'>{profile.email}</div>
                             </div>
