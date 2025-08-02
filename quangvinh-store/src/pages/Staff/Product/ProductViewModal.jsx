@@ -1,8 +1,8 @@
 // src/pages/Staff/Product/ProductViewModal.jsx
 
 import React from 'react';
-import { X, Package, Calendar, User } from 'lucide-react';
-import { PRODUCT_HELPERS } from '../../../utils/constants/ProductConstants';
+import {X, Package, Calendar, User} from 'lucide-react';
+import {PRODUCT_HELPERS} from '../../../utils/constants/ProductConstants';
 
 const ProductViewModal = ({
                               isOpen,
@@ -17,7 +17,7 @@ const ProductViewModal = ({
     // SỬ DỤNG colors parameter để mapping màu sắc từ API
     const getColorInfo = (colorValue) => {
         if (!colorValue || !colors || !Array.isArray(colors)) {
-            return { hex: colorValue || '#000000', name: colorValue || 'Unknown' };
+            return {hex: colorValue || '#000000', name: colorValue || 'Unknown'};
         }
 
         // Tìm màu từ API colors dựa trên hex hoặc name
@@ -28,15 +28,15 @@ const ProductViewModal = ({
         );
 
         if (colorFromAPI) {
-            return { hex: colorFromAPI.colorHex, name: colorFromAPI.colorName };
+            return {hex: colorFromAPI.colorHex, name: colorFromAPI.colorName};
         }
 
         // Fallback nếu không tìm thấy trong API
         if (typeof colorValue === 'object' && colorValue.colorHex) {
-            return { hex: colorValue.colorHex, name: colorValue.colorHex };
+            return {hex: colorValue.colorHex, name: colorValue.colorHex};
         }
 
-        return { hex: colorValue || '#000000', name: colorValue || 'Unknown' };
+        return {hex: colorValue || '#000000', name: colorValue || 'Unknown'};
     };
 
     return (
@@ -51,7 +51,7 @@ const ProductViewModal = ({
                         onClick={onClose}
                         className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-5 h-5"/>
                     </button>
                 </div>
 
@@ -65,7 +65,7 @@ const ProductViewModal = ({
                                 <h3 className="text-lg font-medium text-gray-900 mb-4">Thông tin cơ bản</h3>
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-3">
-                                        <Package className="w-5 h-5 text-gray-400" />
+                                        <Package className="w-5 h-5 text-gray-400"/>
                                         <div>
                                             <span className="text-sm text-gray-600">Tên sản phẩm:</span>
                                             <p className="font-medium text-lg">{product.productName}</p>
@@ -84,7 +84,8 @@ const ProductViewModal = ({
 
                                     <div>
                                         <span className="text-sm text-gray-600">Trạng thái:</span>
-                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ml-2 ${PRODUCT_HELPERS.getStatusColorClass(product.isActive)}`}>
+                                        <span
+                                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ml-2 ${PRODUCT_HELPERS.getStatusColorClass(product.isActive)}`}>
                       {PRODUCT_HELPERS.getStatusText(product.isActive)}
                     </span>
                                     </div>
@@ -99,7 +100,7 @@ const ProductViewModal = ({
                                 <h3 className="text-lg font-medium text-gray-900 mb-4">Thông tin tạo & cập nhật</h3>
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-3">
-                                        <Calendar className="w-5 h-5 text-gray-400" />
+                                        <Calendar className="w-5 h-5 text-gray-400"/>
                                         <div>
                                             <span className="text-sm text-gray-600">Ngày tạo:</span>
                                             <p className="font-medium">{PRODUCT_HELPERS.formatDate(product.createdAt)}</p>
@@ -107,7 +108,7 @@ const ProductViewModal = ({
                                     </div>
 
                                     <div className="flex items-center gap-3">
-                                        <User className="w-5 h-5 text-gray-400" />
+                                        <User className="w-5 h-5 text-gray-400"/>
                                         <div>
                                             <span className="text-sm text-gray-600">Người tạo:</span>
                                             <p className="font-medium">{PRODUCT_HELPERS.getUsername(product.createdBy)}</p>
@@ -120,7 +121,7 @@ const ProductViewModal = ({
                                     {product.updatedAt && product.updatedAt !== product.createdAt && (
                                         <>
                                             <div className="flex items-center gap-3 border-t pt-4">
-                                                <Calendar className="w-5 h-5 text-gray-400" />
+                                                <Calendar className="w-5 h-5 text-gray-400"/>
                                                 <div>
                                                     <span className="text-sm text-gray-600">Cập nhật lần cuối:</span>
                                                     <p className="font-medium">{PRODUCT_HELPERS.formatDate(product.updatedAt)}</p>
@@ -129,7 +130,7 @@ const ProductViewModal = ({
 
                                             {product.updatedBy && (
                                                 <div className="flex items-center gap-3">
-                                                    <User className="w-5 h-5 text-gray-400" />
+                                                    <User className="w-5 h-5 text-gray-400"/>
                                                     <div>
                                                         <span className="text-sm text-gray-600">Người cập nhật:</span>
                                                         <p className="font-medium">{PRODUCT_HELPERS.getUsername(product.updatedBy)}</p>
@@ -178,7 +179,7 @@ const ProductViewModal = ({
                                                         <div className="flex items-center space-x-3">
                                                             <div
                                                                 className="w-6 h-6 rounded-full border-2 border-gray-300 shadow-sm"
-                                                                style={{ backgroundColor: colorInfo.hex }}
+                                                                style={{backgroundColor: colorInfo.hex}}
                                                                 title={`${colorInfo.name} (${colorInfo.hex})`}
                                                             />
                                                             <div className="flex flex-col">
@@ -200,7 +201,8 @@ const ProductViewModal = ({
                             </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-center">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                            <span
+                                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                               {variant.quantity || 0}
                             </span>
                                                 </td>
@@ -214,7 +216,8 @@ const ProductViewModal = ({
                                             Tổng số lượng:
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-green-100 text-green-800">
+                        <span
+                            className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-green-100 text-green-800">
                           {PRODUCT_HELPERS.getTotalQuantity(product.productVariants)}
                         </span>
                                         </td>
@@ -224,7 +227,7 @@ const ProductViewModal = ({
                             </div>
                         ) : (
                             <div className="border border-gray-200 rounded-lg p-8 text-center bg-gray-50">
-                                <Package className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                                <Package className="w-12 h-12 text-gray-400 mx-auto mb-2"/>
                                 <p className="text-gray-500">Không có biến thể nào</p>
                             </div>
                         )}

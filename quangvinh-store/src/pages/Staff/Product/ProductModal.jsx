@@ -525,25 +525,12 @@ const ProductModal = ({
                                                             type="color"
                                                             value={variant.color || '#000000'}
                                                             onChange={(e) => updateVariant(index, 'color', e.target.value)}
-                                                            className="w-10 h-8 border border-gray-300 rounded cursor-pointer"
+                                                            className="w-6 h-8 border border-gray-300 rounded cursor-pointer"
                                                             title="Chọn màu từ bảng màu"
                                                         />
-
-                                                        <select
-                                                            value={variant.color}
-                                                            onChange={(e) => updateVariant(index, 'color', e.target.value)}
-                                                            className={`flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 ${
-                                                                errors[`variant_color_${index}`] ? 'border-red-500' : 'border-gray-300'
-                                                            }`}
-                                                        >
-                                                            <option value="">Chọn màu sắc</option>
-                                                            {colors && colors.map(color => (
-                                                                <option key={color.colorId} value={color.colorHex}>
-                                                                    {color.colorName}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-
+                                                        <span className="text-gray-700">
+                                                            Màu sắc đã chọn:
+                                                        </span>
                                                         {variant.color && (
                                                             <div
                                                                 className="w-4 h-8 border border-gray-300 rounded flex-shrink-0"
