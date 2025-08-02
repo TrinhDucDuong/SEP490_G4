@@ -9,6 +9,7 @@ import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressIdInp
 import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -82,7 +84,8 @@ public class OrderController {
     }
 
     @GetMapping("payment/return")
-    public ResponseEntity<?> verifyPaymentReturn(@RequestParam Map<String, String> map){
-        return ResponseEntity.ok(customerOrderInputBoundary.verifyAndPlaceOrderPayInAdvance(map));
+    public void verifyPaymentReturn(@RequestParam Map<String, String> map, HttpServletResponse response) throws IOException {
+        OrderOutputData order = customerOrderInputBoundary.verifyAndPlaceOrderPayInAdvance(map);
+        response.sendRedirect("http://localhost:5173/order/payment?orderId=" + order.getOrder().getOrderId());
     }
 }
