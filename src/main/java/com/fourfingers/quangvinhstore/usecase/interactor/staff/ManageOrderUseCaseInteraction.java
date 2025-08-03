@@ -53,7 +53,7 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
 
     protected List<Order> getListOrder(String orderStatus, Sort sort) {
         return (orderStatus == null || orderStatus.isBlank()) ?
-                orderRepository.findAll(sort)
+                orderRepository.findAllByOrderStatusNotNull(sort)
                         .stream()
                         .map(orderMapper::toModel)
                         .toList()
@@ -80,6 +80,12 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
         if (newStatus == OrderStatus.CANCELED) {
             orderEntity.setOrderStatus(newStatus);
             orderEntity.setPaymentStatus(false);
+            return orderRepository.save(orderEntity);
+        }
+
+        if (newStatus == OrderStatus.DELIVERED) {
+            orderEntity.setOrderStatus(newStatus);
+            orderEntity.setPaymentStatus(true);
             return orderRepository.save(orderEntity);
         }
 

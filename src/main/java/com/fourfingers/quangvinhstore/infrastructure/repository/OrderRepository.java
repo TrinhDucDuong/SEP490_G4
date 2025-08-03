@@ -3,6 +3,7 @@ package com.fourfingers.quangvinhstore.infrastructure.repository;
 import com.fourfingers.quangvinhstore.domain.model.admin.DailyRevenue;
 import com.fourfingers.quangvinhstore.infrastructure.schema.OrderEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -56,4 +57,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
                                         @Param("end") LocalDateTime end);
 
     Long countByOrderStatus(OrderStatus orderStatus);
+
+    List<OrderEntity> findAllByOrderStatusNotNull(Sort sort);
 }
