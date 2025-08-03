@@ -2,6 +2,8 @@ package com.fourfingers.quangvinhstore.domain.model.staff;
 
 import lombok.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -13,6 +15,7 @@ public class ProductVariant {
     private Color color;
     private Long quantity;
     private String productName;
+    private List<Store> stores;
 
     public ProductVariant(Long productVariantId, String productSize, Color color, Long quantity) {
         this.productVariantId = productVariantId;

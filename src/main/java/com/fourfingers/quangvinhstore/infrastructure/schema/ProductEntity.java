@@ -54,7 +54,7 @@ public class ProductEntity {
     @JoinColumn(name = "discount_id", referencedColumnName = "discount_id")
     private DiscountEntity discounts;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<ProductVariantEntity> productVariants;
 
     @ManyToOne(fetch = FetchType.LAZY)
