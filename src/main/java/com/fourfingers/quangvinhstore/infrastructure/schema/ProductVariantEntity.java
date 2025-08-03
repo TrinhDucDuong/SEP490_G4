@@ -27,7 +27,7 @@ public class ProductVariantEntity {
     @JoinColumn(name = "color_code", referencedColumnName = "color_code")
     private ColorEntity color;
 
-    @ManyToMany(mappedBy = "productVariants")
+    @ManyToMany(mappedBy = "productVariants", fetch = FetchType.LAZY)
     private List<StoreEntity> stores;
 
     @OneToMany(mappedBy = "productVariant")

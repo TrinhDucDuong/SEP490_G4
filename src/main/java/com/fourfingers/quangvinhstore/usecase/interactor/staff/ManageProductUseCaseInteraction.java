@@ -3,10 +3,12 @@ package com.fourfingers.quangvinhstore.usecase.interactor.staff;
 import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.domain.model.staff.Product;
 import com.fourfingers.quangvinhstore.domain.model.staff.ProductVariant;
+import com.fourfingers.quangvinhstore.domain.model.staff.Store;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.ColorStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.ProductStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.ProductVariantStaffMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.staff.StoreStaffMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
@@ -46,6 +48,7 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
     private final ColorStaffMapper colorStaffMapper;
     private final ColorRepository colorRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final StoreStaffMapper storeStaffMapper;
 
     @Override
     @Transactional
@@ -86,9 +89,8 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                     productRepository.findAll()
                             .stream()
                             .map(productEntity -> {
-                                Product product = productMapper.toModel(productEntity);
+                                Product product = productMapper.toModelExcludeVariants(productEntity);
                                 product.setImages(getProductImages(productEntity));
-                                product.setProductVariants(getProductVariants(productEntity));
                                 return product;
                             })
                             .toList()
@@ -96,7 +98,11 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         }
         return productManagementOutputBoundary.convertToListProductOutputData(
                 productRepository.findByProductNameContainingIgnoreCase(name)
-                        .stream().map(productMapper::toModel)
+                        .stream().map(productEntity -> {
+                            Product product = productMapper.toModelExcludeVariants(productEntity);
+                            product.setImages(getProductImages(productEntity));
+                            return product;
+                        })
                         .toList()
         );
     }
@@ -164,7 +170,7 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         );
         Product product = productMapper.toModel(productEntity);
         product.setImages(getProductImages(productEntity));
-        product.setProductVariants(getProductVariants(productEntity));
+        product.setProductVariants(getProductVariantsStore(productEntity.getProductVariants()));
         return productManagementOutputBoundary.convertToProductOutputData(
                 product
         );
@@ -288,9 +294,16 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
     }
 
 
-    private List<ProductVariant> getProductVariants(ProductEntity productEntity) {
-        return productEntity.getProductVariants().stream()
-                .map(productVariantMapper::toModel)
+    private List<ProductVariant> getProductVariantsStore(List<ProductVariantEntity> productVariantEntities) {
+        return productVariantEntities.stream()
+                .map(productVariantEntity -> {
+                    ProductVariant productVariant = productVariantMapper.toModel(productVariantEntity);
+                    List<Store> stores = productVariantEntity.getStores().stream().map(
+                            storeStaffMapper::toModel
+                    ).toList();
+                    productVariant.setStores(stores);
+                    return productVariant;
+                })
                 .toList();
     }
 
@@ -300,5 +313,11 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         List<String> imageUrls = imageEntities.stream().map(ImageEntity::getImageUrl).toList();
         azureStorageBoundary.deleteFile(imageUrls);
         imageRepository.deleteAll(imageEntities);
+    }
+
+    private List<ProductVariant> getProductVariants(ProductEntity productEntity) {
+        return productEntity.getProductVariants().stream()
+                .map(productVariantMapper::toModel)
+                .toList();
     }
 }

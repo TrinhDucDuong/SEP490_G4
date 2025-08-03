@@ -55,12 +55,12 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
         return (orderStatus == null || orderStatus.isBlank()) ?
                 orderRepository.findAllByOrderStatusNotNull(sort)
                         .stream()
-                        .map(orderMapper::toModel)
+                        .map(this::getOrderInformation)
                         .toList()
                 :
                 orderRepository.findAllByOrderStatus(OrderStatus.valueOf(orderStatus))
                         .stream()
-                        .map(orderMapper::toModel)
+                        .map(this::getOrderInformation)
                         .toList();
     }
 
