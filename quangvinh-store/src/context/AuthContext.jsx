@@ -42,30 +42,36 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    //tạo beiens môi trường
     const logout = async () => {
-        try {
-            if (token) {
-                await fetch(`${import.meta.env.VITE_API_BASE_URL}/recommendation/cache`, {
-                    method: 'POST',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({}),
-                });
-            }
-        } catch (err) {
-            console.error('Lỗi khi gọi recommendation/cache:', err);
-        } finally {
-            localStorage.removeItem('cart');
-            localStorage.removeItem('accountId');
-            localStorage.removeItem('token');
-            localStorage.removeItem('guest_cart');
-            setToken(null);
-            setUser(null);
-            window.location.href = '/';
-        }
+        localStorage.removeItem('cart');
+        localStorage.removeItem('accountId');
+        localStorage.removeItem('token');
+        localStorage.removeItem('guest_cart');
+        setToken(null);
+        setUser(null);
+        window.location.href = '/';
+        // try {
+        //     if (token) {
+        //         await fetch(`${import.meta.env.VITE_API_BASE_URL}/recommendation/cache`, {
+        //             method: 'POST',
+        //             headers: {
+        //                 Authorization: `Bearer ${token}`,
+        //                 'Content-Type': 'application/json',
+        //             },
+        //             body: JSON.stringify({}),
+        //         });
+        //     }
+        // } catch (err) {
+        //     console.error('Lỗi khi gọi recommendation/cache:', err);
+        // } finally {
+        //     localStorage.removeItem('cart');
+        //     localStorage.removeItem('accountId');
+        //     localStorage.removeItem('token');
+        //     localStorage.removeItem('guest_cart');
+        //     setToken(null);
+        //     setUser(null);
+        //     window.location.href = '/';
+        // }
     };
 
 

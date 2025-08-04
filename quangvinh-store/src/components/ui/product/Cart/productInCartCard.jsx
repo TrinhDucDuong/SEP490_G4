@@ -1,10 +1,11 @@
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import {useFetchProductById} from "../../../../hooks/Customer/useFetchProducts.js";
+import { useFetchProductById } from "../../../../hooks/Customer/useFetchProducts.js";
 
 function ProductInCartCard({ item, onRemove, onUpdateQuantity }) {
     const {
-        productImage,
+        productId,
         productName,
         colorHexCode,
         sizeCode,
@@ -12,13 +13,12 @@ function ProductInCartCard({ item, onRemove, onUpdateQuantity }) {
         price,
     } = item;
 
-    const { product, loading, error } = useFetchProductById(item.productId);
+    const { product, loading, error } = useFetchProductById(productId);
 
     const image =
         !loading && !error && product?.images?.length > 0
             ? product.images[0].imageUrl
             : null;
-
 
     const handleDecrease = () => {
         if (quantity > 1) {
@@ -32,16 +32,21 @@ function ProductInCartCard({ item, onRemove, onUpdateQuantity }) {
 
     return (
         <div className="flex items-start gap-4 border p-3 rounded-md shadow-sm">
-            <img
-                src={image}
-                alt={productName}
-                className="w-16 h-16 object-cover rounded"
-            />
+            <Link to={`/products/${productId}`}>
+                <img
+                    src={image}
+                    alt={productName}
+                    className="w-16 h-16 object-cover rounded hover:opacity-90 transition"
+                />
+            </Link>
             <div className="flex-1">
                 <h4 className="font-semibold text-sm text-gray-800">{productName}</h4>
                 <div className="text-xs text-gray-500 mt-1">
-                    Màu: <span className="inline-block w-3 h-3 rounded-full align-middle ml-1"
-                               style={{ backgroundColor: colorHexCode }} />
+                    Màu:
+                    <span
+                        className="inline-block w-3 h-3 rounded-full align-middle ml-1"
+                        style={{ backgroundColor: colorHexCode }}
+                    />
                     <span className="ml-3">Size: {sizeCode}</span>
                 </div>
                 <div className="flex items-center justify-between mt-2">
@@ -49,7 +54,7 @@ function ProductInCartCard({ item, onRemove, onUpdateQuantity }) {
                         <button
                             onClick={handleDecrease}
                             disabled={quantity <= 1}
-                            className={`text-gray-600 hover:text-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed`}
+                            className="text-gray-600 hover:text-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <FontAwesomeIcon icon={faMinus} />
                         </button>

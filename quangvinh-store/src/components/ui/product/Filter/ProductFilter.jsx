@@ -81,7 +81,25 @@ const ProductFilter = ({ categories }) => {
         setSearchParams(resetParams);
     };
 
-    const sizeOptions = ["34", "35", "36", "37", "38", "39", "40", "42"];
+    const sizeOptions = [
+        { label: "XS", value: "XS" },
+        { label: "S", value: "S" },
+        { label: "M", value: "M" },
+        { label: "L", value: "L" },
+        { label: "XL", value: "XL" },
+        { label: "XXL", value: "XXL" },
+        { label: "35", value: "SIZE_35" },
+        { label: "36", value: "SIZE_36" },
+        { label: "37", value: "SIZE_37" },
+        { label: "38", value: "SIZE_38" },
+        { label: "39", value: "SIZE_39" },
+        { label: "40", value: "SIZE_40" },
+        { label: "41", value: "SIZE_41" },
+        { label: "42", value: "SIZE_42" },
+        { label: "43", value: "SIZE_43" },
+        { label: "44", value: "SIZE_44" },
+        { label: "45", value: "SIZE_45" },
+    ];
 
     return (
         <div className="space-y-4">
