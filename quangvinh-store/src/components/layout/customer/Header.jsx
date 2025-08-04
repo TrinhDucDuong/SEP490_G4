@@ -127,12 +127,12 @@ function Header() {
                             </li>
                             <li>
                                 <Link
-                                    to="/blog"
+                                    to="/stores"
                                     className={`py-2 px-3 border-b transition-all duration-200 text-center ${
                                         location.pathname === '/blog' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
                                     }`}
                                 >
-                                    Hàng Auth chuẩn có gì?
+                                    Hệ Thống Cửa Hàng
                                 </Link>
                             </li>
                         </ul>

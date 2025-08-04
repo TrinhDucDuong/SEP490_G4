@@ -15,6 +15,7 @@ import { useActionLogger } from "../../../utils/api/Customer/Log/useActionLogger
 import parse from 'html-react-parser';
 import {useFetchRelatedProducts} from "../../../hooks/Customer/useFetchRelatedProducts.js";
 import ProductScrollSlider from "../../../components/ui/product/Common/ProductScrollSlider.jsx";
+import { useNavigate } from 'react-router-dom';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -28,6 +29,31 @@ const ProductDetail = () => {
     const [filterStar, setFilterStar] = useState('');
     const [pageNumber, setPageNumber] = useState(0);
     const { logAction } = useActionLogger();
+    const navigate = useNavigate();
+
+    const formatProductSize = (size) => {
+        const mapping = {
+            XS: "XS",
+            S: "S",
+            M: "M",
+            L: "L",
+            XL: "XL",
+            XXL: "XXL",
+            SIZE_35: "35",
+            SIZE_36: "36",
+            SIZE_37: "37",
+            SIZE_38: "38",
+            SIZE_39: "39",
+            SIZE_40: "40",
+            SIZE_41: "41",
+            SIZE_42: "42",
+            SIZE_43: "43",
+            SIZE_44: "44",
+            SIZE_45: "45",
+        };
+        return mapping[size] || size;
+    };
+
 
     const { addToCart } = useCart();
     const { starRates, totalCount, loading: starRateLoading } = useFetchStarRate(product?.productId, filterStar, pageNumber, 3);
@@ -56,6 +82,39 @@ const ProductDetail = () => {
         };
         fetchProduct();
     }, [id]);
+
+    const handleBuyNow = async () => {
+        if (!selectedColor || !selectedSize) {
+            toast.error("Vui lòng chọn màu sắc và kích thước");
+            return;
+        }
+
+        if (!currentVariant) {
+            toast.error("Sản phẩm với màu và kích thước này hiện không có trong kho");
+            return;
+        }
+
+        if (quantity > currentVariant.quantity) {
+            toast.error("Số lượng vượt quá số lượng tồn kho!");
+            return;
+        }
+
+        try {
+            await addToCart({
+                productId: product.productId,
+                colorHexCode: selectedColor,
+                sizeCode: selectedSize,
+                quantity,
+                price: product.unitPrice,
+                productName: product.productName,
+                productImage: selectedImage || product.images?.[0]?.imageUrl || '',
+            });
+            await logAction('ADD_TO_CART', currentVariant?.productVariantId);
+            navigate('/payment');
+        } catch (error) {
+            toast.error(error.message || 'Lỗi khi thêm vào giỏ hàng');
+        }
+    };
 
     const currentVariant = product?.productVariants?.find(
         v => v.colorHex === selectedColor && v.productSize === selectedSize
@@ -184,7 +243,7 @@ const ProductDetail = () => {
                                     onClick={() => setSelectedSize(size)}
                                     className={`px-2 py-1 border border-black text-sm font-medium ${selectedSize === size ? 'bg-blue-200 text-black border-blue-200' : 'bg-white border-gray-200 hover:bg-blue-400 hover:text-white'}`}
                                 >
-                                    {size}
+                                    {formatProductSize(size)}
                                 </button>
                             ))}
                         </div>
@@ -223,7 +282,10 @@ const ProductDetail = () => {
                             onClick={handleAddToCart}
                             className="bg-black text-white hover:bg-white hover:text-black border border-black py-2 px-4 rounded font-medium w-1/2"
                         >Thêm vào giỏ hàng</button>
-                        <button className="bg-white text-black border border-gray-600 py-2 px-4 rounded font-medium hover:bg-black hover:text-white w-1/2">
+                        <button
+                            onClick={handleBuyNow}
+                            className="bg-white text-black border border-gray-600 py-2 px-4 rounded font-medium hover:bg-black hover:text-white w-1/2"
+                        >
                             Mua ngay
                         </button>
                     </div>

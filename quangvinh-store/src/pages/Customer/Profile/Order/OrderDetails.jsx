@@ -33,10 +33,13 @@ function OrderDetail() {
                 <p>Dự kiến giao: {order.estimatedDeliveryDate || 'Đang cập nhật'}</p>
             </div>
 
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <h4 className="font-semibold text-gray-800 mb-2">Địa chỉ giao hàng</h4>
-                <p className="text-gray-600">{order.shippingAddress?.name} - {order.shippingAddress?.phoneNumber}</p>
-                <p className="text-gray-600">{order.shippingAddress?.exactAddress}</p>
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h4 className="font-semibold text-gray-800 mb-2">📦 Địa chỉ giao hàng</h4>
+                <p><strong>Người nhận:</strong> {order.shippingAddress?.name}</p>
+                <p><strong>Số điện thoại:</strong> {order.shippingAddress?.phoneNumber}</p>
+                <p><strong>Loại địa chỉ:</strong> {order.shippingAddress?.type === "HOME" ? "Nhà riêng" : order.shippingAddress?.type}</p>
+                <p><strong>Địa chỉ:</strong> {order.shippingAddress?.exactAddress}</p>
+                <p><strong>Khu vực:</strong> {order.shippingAddress?.address}</p>
             </div>
 
             <div className="border-t pt-4">
