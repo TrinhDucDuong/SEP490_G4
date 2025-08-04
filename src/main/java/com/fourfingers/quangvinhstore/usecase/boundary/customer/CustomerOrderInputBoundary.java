@@ -1,8 +1,10 @@
 package com.fourfingers.quangvinhstore.usecase.boundary.customer;
 
+import com.fourfingers.quangvinhstore.usecase.data.customer.ListCartDetailsOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.PurchaseInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressIdInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.ListOrderOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,5 +22,7 @@ public interface CustomerOrderInputBoundary {
     OrderOutputData verifyAndPlaceOrderPayInAdvance(Map<String, String> map);
 
     void setSecureHash(Long orderId, String secureHash);
+
+//    OrderOutputData orderNow(OrderInputData orderInputData, UserDetails userDetails);
 }
 
