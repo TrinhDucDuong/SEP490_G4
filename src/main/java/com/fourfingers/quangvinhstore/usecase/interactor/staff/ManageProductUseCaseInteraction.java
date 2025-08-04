@@ -198,6 +198,7 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                             .build();
                 })
                 .toList();
+        storeEntity.setProductVariants(needToSaveProductVariants);
         List<ProductVariantEntity> savedProductVariants = productVariantRepository.saveAll(needToSaveProductVariants);
         return savedProductVariants.stream().map(productVariantMapper::toModel).toList();
     }

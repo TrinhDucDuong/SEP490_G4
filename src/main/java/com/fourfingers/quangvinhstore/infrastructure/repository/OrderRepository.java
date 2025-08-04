@@ -59,4 +59,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     Long countByOrderStatus(OrderStatus orderStatus);
 
     List<OrderEntity> findAllByOrderStatusNotNull(Sort sort);
+
+    Long countByOrderStatusAndOrderDateBetween(OrderStatus orderStatus, LocalDateTime start, LocalDateTime end);
 }
