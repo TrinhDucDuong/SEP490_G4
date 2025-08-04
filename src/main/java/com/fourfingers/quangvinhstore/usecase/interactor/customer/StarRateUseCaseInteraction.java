@@ -4,15 +4,15 @@ import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.domain.model.customer.StarRate;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.StarRateMapper;
-import com.fourfingers.quangvinhstore.infrastructure.repository.ImageRepository;
-import com.fourfingers.quangvinhstore.infrastructure.repository.StarRateRepository;
-import com.fourfingers.quangvinhstore.infrastructure.schema.ProductEntity;
-import com.fourfingers.quangvinhstore.infrastructure.schema.ProductVariantEntity;
-import com.fourfingers.quangvinhstore.infrastructure.schema.StarRateEntity;
+import com.fourfingers.quangvinhstore.infrastructure.repository.*;
+import com.fourfingers.quangvinhstore.infrastructure.schema.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.StarRateInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.StarRateOutputBoundary;
+import com.fourfingers.quangvinhstore.usecase.data.customer.CustomerStarRateOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ListStarRateOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.StarRateInputData;
+import com.fourfingers.quangvinhstore.usecase.data.staff.StarRateOutputData;
 import jakarta.persistence.criteria.Join;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -32,6 +35,9 @@ public class StarRateUseCaseInteraction implements StarRateInputBoundary {
     private final StarRateOutputBoundary starRateOutputBoundary;
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
+    private final ProductVariantRepository productVariantRepository;
+    private final OrderDetailsRepository orderDetailsRepository;
+
     @Override
     @Transactional
     public ListStarRateOutputData getAllStarRateOfProduct(String id, String pageNumber, String pageSize,
@@ -50,6 +56,35 @@ public class StarRateUseCaseInteraction implements StarRateInputBoundary {
 
         return starRateOutputBoundary.convertToListStarRateOutputData(
             starRates);
+    }
+
+    @Override
+    public CustomerStarRateOutputData reviewProduct(StarRateInputData starRateInputData, UserDetails userDetails) {
+        AccountEntity accountEntity = (AccountEntity) userDetails;
+
+        if(starRateRepository.findByOrderDetailsId(starRateInputData.getOrderDetailsId()).isPresent()){
+            throw new RuntimeException("Bạn đã đánh giá cho sản phẩm này rồi");
+        }
+
+        OrderDetailsEntity orderDetails = orderDetailsRepository.findByOrderDetailsId(starRateInputData.getOrderDetailsId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy chi tiết đơn hàng"));
+
+        ProductVariantEntity productVariant = orderDetails.getProductVariant();
+
+        StarRateEntity starRateEntity = StarRateEntity.builder()
+                .starRate(starRateInputData.getStarRate() > 5 || starRateInputData.getStarRate() < 1 ? 5 : starRateInputData.getStarRate() )
+                .comment(starRateInputData.getComment())
+                .account(accountEntity)
+                .createdAt(LocalDateTime.now())
+                .isActive(true)
+                .productVariant(productVariant)
+                .orderDetailsId(orderDetails.getOrderDetailsId())
+                .build();
+
+        starRateRepository.save(starRateEntity);
+
+        return starRateOutputBoundary.convertToCustomerStarRateOutputData(
+                starRateMapper.toModel(starRateEntity));
     }
 
     private Specification<StarRateEntity> buildFilterByProductId(String productId,String numberOfStarRate) {

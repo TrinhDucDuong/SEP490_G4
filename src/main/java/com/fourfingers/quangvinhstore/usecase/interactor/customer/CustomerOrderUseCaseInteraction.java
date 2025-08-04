@@ -9,6 +9,7 @@ import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderOut
 import com.fourfingers.quangvinhstore.usecase.data.customer.PurchaseInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressIdInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.ListOrderOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -40,10 +40,6 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         return customerOrderOutputBoundary.convertToListCustomerOrderOutputData(
                 orderRepository.findAllByOwnerAccountId(accountEntity.getAccountId())
                         .stream()
-//                        .map(orderEntity -> {
-//                            orderEntity.getOrderDetails().size();
-//                            return orderMapper.toModel(orderEntity);
-//                        })
                         .map(orderMapper::toModel)
                         .toList()
         );
@@ -73,8 +69,6 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         orderEntity.setOrderDate(LocalDateTime.now());
         orderEntity.setOwner(accountEntity);
         orderEntity.setShippingAddress(shippingAddressEntity.get());
-//        orderEntity.setOrderStatus(OrderStatus.PROCESSING);
-//        orderEntity.setPaymentStatus(false);
 
         List<OrderDetailsEntity> orderDetailsEntities = mapCartDetailsEntityToOrderDetailsEntity(cartDetailsEntities, orderEntity);
         orderEntity.setOrderDetails(orderDetailsEntities);
@@ -131,16 +125,10 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         if ("00".equals(vnp_ResponseCode) && "00".equals(vnp_TransactionStatus)) {
             Optional<OrderEntity> orderEntity = orderRepository.findBySecureHash(vnp_TxnRef);
             if(orderEntity.isPresent()) {
-//                OrderEntity order = orderEntity.get();
                 orderEntity.get().setOrderStatus(OrderStatus.PROCESSING);
                 orderEntity.get().setPaymentStatus(true);
                 orderEntity.get().setOrderDate(LocalDateTime.now());
                 orderEntity.get().setTotalPrice(calculateTotalOrderPrice(orderEntity.get().getOrderId()));
-//                StringBuilder allTransactionInfo = new StringBuilder();
-//                for (Map.Entry<String, String> entry : map.entrySet()) {
-//                    allTransactionInfo.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
-//                }
-//                allTransactionInfo.deleteCharAt(allTransactionInfo.length() - 1);
                 orderEntity.get().setSecureHash(null);
                 orderResponse = orderRepository.save(orderEntity.get());
             }
@@ -159,6 +147,12 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
             orderRepository.save(order);
         });
     }
+
+//    @Override
+//    public OrderOutputData orderNow(OrderInputData orderInputData, UserDetails userDetails) {
+//        AccountEntity accountEntity = (AccountEntity) userDetails;
+//
+//    }
 
 
     private List<OrderDetailsEntity> mapCartDetailsEntityToOrderDetailsEntity(List<CartDetailsEntity> cartDetailsList, OrderEntity order) {

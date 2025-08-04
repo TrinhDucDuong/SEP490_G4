@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@Data
 public class StarRateOutputData {
     private StarRate customerStarRate;
     private List<StarRate> staffReplyStarRate;
