@@ -1,8 +1,6 @@
 package com.fourfingers.quangvinhstore.usecase.boundary;
 
-import org.springframework.web.multipart.MultipartFile;
-
 public interface AzureSpeechBoundary {
-    void textToSpeech(String text);
-    String speechToText(MultipartFile file);
+    String textToSpeech(String text);
+    String speechToText(String base64Audio);
 }
