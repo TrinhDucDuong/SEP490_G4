@@ -58,18 +58,7 @@ public class StoreEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "workingAt")
     private List<AccountEntity> staffs;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "stores_product_variants_mapping",
-            joinColumns = @JoinColumn(
-                    name = "store_id",
-                    referencedColumnName = "store_id"
-            ),
-            inverseJoinColumns = @JoinColumn(
-                    name = "product_variant_id",
-                    referencedColumnName = "product_variant_id"
-            )
-    )
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "stores")
     private List<ProductVariantEntity> productVariants;
 
     @ManyToOne
