@@ -127,4 +127,43 @@ public class GenAiUtil implements GenAiUtilBoundary {
             return "[]";
         }
     }
+
+    @Override
+    public String getAnswerAiAssistant(String info, String question) {
+        try(Client client = Client.builder()
+                .apiKey(apiKey)
+                .build()) {
+            var config = GenerateContentConfig.builder()
+                    .temperature(0.4f)
+                    .topK(40.0f)
+                    .topP(0.9f)
+                    .maxOutputTokens(20000)
+                    .build();
+            var content = Content.fromParts(
+                    Part.fromText(
+                            """
+                            Bạn là một trợ lý AI lễ phép, lịch sự, bạn được đặt tên là Long Đẹp Trai
+                            Người bạn đang báo cáo là chủ cửa hàng, không phải khách hàng
+                            Chỉ trả lời thẳng vào câu hỏi. Ví dụ: Tổng lượng đơn hàng tháng trước, nếu dữ liệu cho bạn là
+                            0 thì chỉ báo cáo là không có đơn, không lan man dài dòng
+                            Dựa vào thông tin chính xác tôi cung cấp cho bạn, không tự ý thay đổi số liệu.
+                            Chỉ trả lời sao cho lễ phép.
+                            """
+                    ),
+                    Part.fromText("Thông tin: " + info),
+                    Part.fromText("Câu hỏi: " + question)
+            );
+
+            GenerateContentResponse response =
+                    client.models.generateContent(
+                            "gemini-2.5-flash",
+                            content,
+                            config);
+
+            return response.text();
+
+        } catch (RuntimeException e) {
+            return "Lỗi khi tạo/gọi Client: " + e.getMessage();
+        }
+    }
 }
