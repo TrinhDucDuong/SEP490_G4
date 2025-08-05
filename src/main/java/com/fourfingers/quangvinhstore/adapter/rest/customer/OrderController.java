@@ -3,10 +3,8 @@ package com.fourfingers.quangvinhstore.adapter.rest.customer;
 import com.fourfingers.quangvinhstore.adapter.rest.MomoController;
 import com.fourfingers.quangvinhstore.adapter.rest.VNPayController;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderInputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.customer.PaymentOutputData;
-import com.fourfingers.quangvinhstore.usecase.data.customer.PurchaseInputData;
-import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressIdInputData;
-import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.*;
+import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,7 +21,6 @@ import java.util.Map;
 
 
 @RestController
-//@Controller
 @RequestMapping("/order")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class OrderController {
@@ -57,28 +54,18 @@ public class OrderController {
         PaymentOutputData paymentOutputData = new PaymentOutputData();
         if(paymentMethod.equalsIgnoreCase("COD")){
             paymentOutputData.setOrderOutputData(customerOrderInputBoundary.placeOrderPayLater(userDetails, purchaseInputData));
-//            return ResponseEntity.ok(paymentOutputData);
         } else {
             OrderOutputData orderOutputData = customerOrderInputBoundary
                     .getOrder(purchaseInputData.getOrderId(), userDetails);
             if (paymentMethod.equalsIgnoreCase("VNPay")) {
                 try {
-//                    vnpayController.showQRPage(orderOutputData, customerOrderInputBoundary, request);
                     String vnpUrl = vnpayController.showQRPage(orderOutputData, customerOrderInputBoundary, request);
-//                    return ResponseEntity.ok(vnpUrl);
                     paymentOutputData.setPaymentUrl(vnpUrl);
                 } catch (UnsupportedEncodingException e) {
 
                     throw new RuntimeException(e);
                 }
             }
-//            else if (paymentMethod.equalsIgnoreCase("MOMO")) {
-//                try {
-//                    momoController.createMomoPayment(orderOutputData.getOrder().getTotalPrice());
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
         }
         return ResponseEntity.ok(paymentOutputData);
     }
@@ -88,4 +75,11 @@ public class OrderController {
         OrderOutputData order = customerOrderInputBoundary.verifyAndPlaceOrderPayInAdvance(map);
         response.sendRedirect("http://localhost:5173/order/payment?orderId=" + order.getOrder().getOrderId());
     }
+
+//    @PostMapping
+//    public ResponseEntity<ListCartDetailsOutputData> orderNow(@RequestBody OrderInputData orderInputData,
+//                                                              @AuthenticationPrincipal UserDetails userDetails) {
+//        ListCartDetailsOutputData updatedCart = customerOrderInputBoundary.orderNow(orderInputData, userDetails);
+//        return ResponseEntity.ok(updatedCart);
+//    }
 }

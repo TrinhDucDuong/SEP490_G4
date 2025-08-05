@@ -52,4 +52,7 @@ public class StarRateEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "order_details_id", nullable = false)
+    private Long orderDetailsId;
 }
