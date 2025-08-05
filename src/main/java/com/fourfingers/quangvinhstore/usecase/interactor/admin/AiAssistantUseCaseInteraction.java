@@ -1,6 +1,7 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.admin;
 
 import com.fourfingers.quangvinhstore.domain.model.admin.DailyRevenue;
+import com.fourfingers.quangvinhstore.infrastructure.config.websocket.ClientManager;
 import com.fourfingers.quangvinhstore.infrastructure.repository.OrderRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
 import com.fourfingers.quangvinhstore.usecase.boundary.AzureSpeechBoundary;
@@ -9,6 +10,7 @@ import com.fourfingers.quangvinhstore.usecase.boundary.admin.AiAssistantInputBou
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
@@ -25,27 +27,40 @@ public class AiAssistantUseCaseInteraction implements AiAssistantInputBoundary {
     private final AzureSpeechBoundary azureSpeechBoundary;
     private final GenAiUtilBoundary genAiUtilBoundary;
     private final OrderRepository orderRepository;
-    @Override
-    public void getAnswer(String question) {
+    private final ClientManager clientManager;
+
+    private String getAnswer(String question) {
         LocalDateTime[] range = extractDateKeywordAndRange(question.toLowerCase());
         if (range == null) {
-            azureSpeechBoundary.textToSpeech("Tôi đang không thể hiểu được khoảng thời gian, " +
-                                             "bạn có thể cung cấp rõ hơn không ạ");
-            return;
+            return "Tôi đang không thể hiểu được khoảng thời gian, " +
+                   "bạn có thể cung cấp rõ hơn không ạ";
         }
         if (isOrderRelated(question)) {
             String orderInfo = getOrderInfo(range);
-            String answer = genAiUtilBoundary.getAnswerAiAssistant(orderInfo, question);
-            azureSpeechBoundary.textToSpeech(answer);
-            return;
+            return genAiUtilBoundary.getAnswerAiAssistant(orderInfo, question);
         }
         if(isRevenueRelated(question)) {
             String revenueInfo = getRevenueInfo(range);
-            String answer = genAiUtilBoundary.getAnswerAiAssistant(revenueInfo, question);
-            azureSpeechBoundary.textToSpeech(answer);
-            return;
+            return genAiUtilBoundary.getAnswerAiAssistant(revenueInfo, question);
         }
-        azureSpeechBoundary.textToSpeech("Xin lỗi tôi chưa hiểu câu hỏi của bạn");
+        return "Xin lỗi tôi chưa hiểu câu hỏi của bạn";
+    }
+
+    @Override
+    public void registerClient(WebSocketSession session) {
+        clientManager.setSession(session);
+    }
+
+    @Override
+    public void removeClient(String id) {
+        clientManager.clearSession();
+    }
+
+    @Override
+    public void handleVoice(String id, String payload) {
+        String question = azureSpeechBoundary.speechToText(payload);
+        String answer = getAnswer(question);
+        clientManager.send(azureSpeechBoundary.textToSpeech(answer));
     }
 
     private boolean isOrderRelated(String question) {

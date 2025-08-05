@@ -14,10 +14,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class AIAssistantController {
     private final AiAssistantInputBoundary aiAssistantInputBoundary;
-
-    @GetMapping
-    public ResponseEntity<?> ask(@RequestParam String question) {
-        aiAssistantInputBoundary.getAnswer(question);
-        return ResponseEntity.noContent().build();
-    }
 }
