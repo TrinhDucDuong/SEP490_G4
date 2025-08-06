@@ -63,6 +63,7 @@ import Feedback from "./pages/Customer/Feedback/Feedback.jsx";
 import StoreAdress from "./pages/Customer/Store/StoreAdress.jsx";
 import ProductReviewPage from "./pages/Customer/ProductReview/ProductReviewPage.jsx";
 import PaymentResult from "./pages/Customer/Payment/PaymentResult.jsx";
+import BannerManagement from "./pages/Staff/Banner/BannerManagement.jsx";
 
 
 function App() {
@@ -153,6 +154,7 @@ function App() {
                             <Route path="store-management" element={< StoreManagement/>} />
                             <Route path="settings-management" element={<div className="p-6 bg-white rounded-lg shadow">Settings Management Page</div>} />
                             <Route path="sns-management" element={< SNSManagement/>} />
+                            <Route path="banner-management" element={< BannerManagement/>} />
                         </Route>
                     </Routes>
                 </CartProviderWrapper>
