@@ -70,7 +70,7 @@ function Sidebar({ isOpen, onClose }) {
                         <div className="flex flex-col gap-4 pt-4 border-t border-gray-700">
                             <span className="text-teal-400 px-3">Xin chào, {user.username || user.email}</span>
                             <Link
-                                to="/order-history"
+                                to="profile/order-history"
                                 onClick={onClose}
                                 className="py-2 px-3 rounded-lg hover:bg-gray-800 hover:text-teal-400 transition-colors duration-200"
                             >
