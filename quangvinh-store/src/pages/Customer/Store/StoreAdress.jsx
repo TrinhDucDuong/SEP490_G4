@@ -10,7 +10,6 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { Card } from "../../../components/ui/position/Card";
 import { useFetchStores } from "../../../hooks/Customer/useFetchStores";
 
-// Fix icon Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: markerIcon2x,
@@ -18,7 +17,6 @@ L.Icon.Default.mergeOptions({
     shadowUrl: markerShadow,
 });
 
-// Component điều khiển map
 function FlyToStore({ store }) {
     const map = useMap();
 
@@ -37,7 +35,6 @@ const StoreAddress = () => {
     const { stores, loading, error } = useFetchStores();
     const [selectedStore, setSelectedStore] = useState(null);
 
-    // Khi load dữ liệu xong, set mặc định cửa hàng đầu tiên
     useEffect(() => {
         if (!loading && stores.length > 0) {
             setSelectedStore(stores[0]);
@@ -46,7 +43,7 @@ const StoreAddress = () => {
 
     return (
         <div className="flex flex-col lg:flex-row gap-6 p-6">
-            {/* Danh sách cửa hàng */}
+
             <div className="w-full lg:w-1/3 mt-2">
                 <h2 className="text-2xl font-bold">Danh sách cửa hàng</h2>
                 {loading && <p>Đang tải cửa hàng...</p>}
@@ -72,20 +69,17 @@ const StoreAddress = () => {
                 ))}
             </div>
 
-            {/* Bản đồ */}
             <div className="w-full lg:w-2/3 h-[600px]">
                 <MapContainer
-                    center={[10.762622, 106.660172]} // Vị trí mặc định (TP.HCM)
+                    center={[10.762622, 106.660172]}
                     zoom={6}
                     className="w-full h-full rounded-lg shadow z-0"
                 >
-                    {/* Tile map Google */}
                     <TileLayer
                         url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
                         attribution="&copy; Google"
                     />
 
-                    {/* Marker các cửa hàng */}
                     {stores.map(store => (
                         <Marker
                             key={store.id}
@@ -98,8 +92,6 @@ const StoreAddress = () => {
                             </Popup>
                         </Marker>
                     ))}
-
-                    {/* Điều khiển camera */}
                     <FlyToStore store={selectedStore} />
                 </MapContainer>
             </div>
