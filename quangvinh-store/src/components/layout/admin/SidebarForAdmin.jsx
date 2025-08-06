@@ -109,6 +109,11 @@ const SidebarForAdmin = () => {
                     {/*    Câu chuyện*/}
                     {/*</NavLink>*/}
 
+                    <NavLink to="/admin/banner-management" className={navClass}>
+                        <Tag className="h-5 w-5 mr-3" />
+                        Quản Lý Banner
+                    </NavLink>
+
                     <NavLink to="/admin/store-management" className={navClass}>
                         <Store className="h-5 w-5 mr-3" />
                         Quản lý cửa hàng
