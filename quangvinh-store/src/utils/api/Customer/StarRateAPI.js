@@ -1,20 +1,20 @@
-export const fetchStarRate = async ({ productId, pageNumber = 0, pageSize = 3, numberOfStarRate }) => {
-    const params = new URLSearchParams({
-        productId,
-        pageNumber,
-        pageSize,
-    });
+import axios from "axios";
 
-    if (numberOfStarRate !== null && numberOfStarRate !== undefined && numberOfStarRate !== "") {
-        params.append('numberOfStarRate', numberOfStarRate);
+export const createProductFeedback = async (data) => {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await axios.post(
+            `${import.meta.env.VITE_API_BASE_URL}/star-rate`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: "Đã có lỗi xảy ra" };
     }
-
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/star-rate?${params.toString()}`);
-
-    if (!response.ok) {
-        throw new Error('Failed to fetch Star Rate');
-    }
-
-    const data = await response.json();
-    return data.starRate || [];
 };

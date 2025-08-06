@@ -6,6 +6,8 @@ const ProductReviewPage = () => {
     const location = useLocation();
     const order = location.state?.order;
 
+    console.log(order);
+
     if (!order) {
         return <div>Không tìm thấy đơn hàng để đánh giá.</div>;
     }
@@ -17,7 +19,7 @@ const ProductReviewPage = () => {
 
             <div className="space-y-8">
                 {order.items.map((item, index) => (
-                    <ProductReviewItem key={item.productId} product={item} index={index + 1} />
+                    <ProductReviewItem key={item.productId} product={item} index={index + 1} orderId={order.orderId} />
                 ))}
             </div>
         </div>
