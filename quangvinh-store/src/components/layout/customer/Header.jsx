@@ -106,16 +106,6 @@ function Header() {
                             </li>
                             <li>
                                 <Link
-                                    to="/policies/3"
-                                    className={`py-2 px-3 border-b transition-all duration-200 ${
-                                        location.pathname === '/policies/3' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
-                                    }`}
-                                >
-                                    Liên hệ
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
                                     to="/sale"
                                     className={`py-2 px-3 border-b transition-all duration-200 relative ${
                                         location.pathname === '/sale' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
@@ -127,14 +117,25 @@ function Header() {
                             </li>
                             <li>
                                 <Link
+                                    to="/track-order"
+                                    className={`py-2 px-3 border-b transition-all duration-200 text-center ${
+                                        location.pathname === '/track-order' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
+                                    }`}
+                                >
+                                    Tra cứu đơn hàng
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
                                     to="/stores"
                                     className={`py-2 px-3 border-b transition-all duration-200 text-center ${
-                                        location.pathname === '/blog' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
+                                        location.pathname === '/stores' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
                                     }`}
                                 >
                                     Hệ Thống Cửa Hàng
                                 </Link>
                             </li>
+
                         </ul>
 
                     </nav>

@@ -348,7 +348,7 @@ const ProductTable = ({
                                                 onClick={() => handleViewDescription(product)}
                                                 className="inline-flex items-center px-3 py-2 bg-blue-500 text-white text-xs font-medium rounded-lg hover:bg-blue-600"
                                             >
-                                                Mô tả chi tiết
+                                                Chi tiết
                                             </button>
                                         </td>
 
@@ -359,7 +359,7 @@ const ProductTable = ({
                                                 className="inline-flex items-center px-3 py-2 bg-green-500 text-white text-xs font-medium rounded-lg hover:bg-green-600"
                                             >
                                                 <Eye className="h-3 w-3 mr-1"/>
-                                                Thông tin chi tiết
+                                                Chi tiết
                                             </button>
                                         </td>
 
