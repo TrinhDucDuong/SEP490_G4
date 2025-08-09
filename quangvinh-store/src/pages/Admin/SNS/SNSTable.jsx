@@ -1,100 +1,416 @@
-// src/pages/Admin/SNS/SNSTable.jsx
+// src/pages/Admin/Store/StoreTable.jsx
 import React, { useState } from 'react';
-import { Edit, Plus, ExternalLink } from 'lucide-react';
-import DataTable from '../../../components/common/Admin/DataTable.jsx';
-import Modals from '../../../components/common/Admin/Modals.jsx';
-import Paginations from '../../../components/common/Admin/Paginations.jsx';
-import { SNS_HELPERS, SNS_DEFAULTS } from '../../../utils/constants/SNSConstants.js';
+import { Edit, Plus, Eye } from 'lucide-react';
+import DataTable from '../../../components/common/Admin/DataTable';
+import Modals from '../../../components/common/Admin/Modals';
+import Paginations from '../../../components/common/Admin/Paginations';
+import MapSelector from '../../../pages/Admin/Store/MapSelector';
+import { STORE_HELPERS, STORE_DEFAULTS } from '../../../utils/constants/StoreConstants';
 
-const SNSTable = ({
-                      snsList,
-                      currentPage,
-                      setCurrentPage,
-                      itemsPerPage,
-                      onCreateSNS,
-                      onUpdateSNS,
-                      onDeleteSNS,
-                      loading
-                  }) => {
+const StoreTable = ({
+                        storeList,
+                        currentPage,
+                        setCurrentPage,
+                        itemsPerPage,
+                        onCreateStore,
+                        onUpdateStore,
+                        onDeleteStore,
+                        onGetStoreDetails,
+                        loading
+                    }) => {
     // Modal states
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showStatusModal, setShowStatusModal] = useState(false);
-    const [selectedSNS, setSelectedSNS] = useState(null);
+    const [showDetailModal, setShowDetailModal] = useState(false);
+    const [selectedStore, setSelectedStore] = useState(null);
+    const [storeDetails, setStoreDetails] = useState(null);
 
     // Form states
-    const [newSNS, setNewSNS] = useState(SNS_DEFAULTS.NEW_SNS);
-    const [updateSNSData, setUpdateSNSData] = useState(null);
+    const [newStore, setNewStore] = useState(STORE_DEFAULTS.NEW_STORE);
+    const [updateStoreData, setUpdateStoreData] = useState(null);
+    const [selectedPosition, setSelectedPosition] = useState(null);
 
     // Modal handlers
     const openCreateModal = () => {
-        setNewSNS(SNS_DEFAULTS.NEW_SNS);
+        console.log('Opening create modal');
+        setNewStore(STORE_DEFAULTS.NEW_STORE);
+        setSelectedPosition(null);
         setShowCreateModal(true);
+        console.log('showCreateModal set to:', true);
     };
 
-    const openUpdateModal = (sns) => {
-        setUpdateSNSData({
-            snsId: sns.snsId,
-            snsName: sns.snsName,
-            snsUrl: sns.snsUrl,
-            snsChatUrl: sns.snsChatUrl
-        });
-        setSelectedSNS(sns);
-        setShowUpdateModal(true);
+    const openUpdateModal = async (store) => {
+        console.log('Opening update modal for store:', store.storeId);
+        const details = await onGetStoreDetails(store.storeId);
+        if (details.success) {
+            const data = details.data;
+            setUpdateStoreData({
+                storeId: data.storeId,
+                storeName: data.storeName,
+                storeAddress: data.storeAddress,
+                storePhone: data.storePhone,
+                city: data.city,
+                district: data.district,
+                startWorkingAt: STORE_HELPERS.formatTime(data.startWorkingAt),
+                endWorkingAt: STORE_HELPERS.formatTime(data.endWorkingAt),
+                locationLat: data.locationLat,
+                locationLng: data.locationLng
+            });
+
+            if (data.locationLat && data.locationLng) {
+                setSelectedPosition({
+                    lat: parseFloat(data.locationLat),
+                    lng: parseFloat(data.locationLng)
+                });
+            }
+
+            setSelectedStore(store);
+            setShowUpdateModal(true);
+            console.log('showUpdateModal set to:', true);
+        }
     };
 
-    const openStatusModal = (sns) => {
-        setSelectedSNS(sns);
+    const openDetailModal = async (store) => {
+        console.log('Opening detail modal for store:', store.storeId);
+        const details = await onGetStoreDetails(store.storeId);
+        if (details.success) {
+            setStoreDetails(details.data);
+            setSelectedStore(store);
+            setShowDetailModal(true);
+            console.log('showDetailModal set to:', true);
+        }
+    };
+
+    const openStatusModal = (store) => {
+        setSelectedStore(store);
         setShowStatusModal(true);
     };
 
     // CRUD operations
-    const handleCreateSNS = async () => {
-        const validation = SNS_HELPERS.validateSNSData(newSNS);
+    const handleCreateStore = async () => {
+        const validation = STORE_HELPERS.validateStoreData(newStore);
         if (!validation.isValid) {
             alert(validation.errors.join('\n'));
             return;
         }
 
-        const result = await onCreateSNS(newSNS);
+        const result = await onCreateStore(newStore);
         if (result.success) {
             setShowCreateModal(false);
-            setNewSNS(SNS_DEFAULTS.NEW_SNS);
-            alert('Tạo mạng xã hội thành công!');
+            setNewStore(STORE_DEFAULTS.NEW_STORE);
+            setSelectedPosition(null);
+            alert('Tạo cửa hàng thành công!');
         } else {
             alert(`Lỗi: ${result.error}`);
         }
     };
 
-    const handleUpdateSNS = async () => {
-        const validation = SNS_HELPERS.validateSNSData(updateSNSData);
+    const handleUpdateStore = async () => {
+        const validation = STORE_HELPERS.validateStoreData(updateStoreData);
         if (!validation.isValid) {
             alert(validation.errors.join('\n'));
             return;
         }
 
-        const result = await onUpdateSNS(updateSNSData.snsId, updateSNSData);
+        const result = await onUpdateStore(updateStoreData.storeId, updateStoreData);
         if (result.success) {
             setShowUpdateModal(false);
-            setUpdateSNSData(null);
-            alert('Cập nhật mạng xã hội thành công!');
+            setUpdateStoreData(null);
+            setSelectedPosition(null);
+            alert('Cập nhật cửa hàng thành công!');
         } else {
             alert(`Lỗi: ${result.error}`);
         }
     };
 
     const handleStatusChange = async () => {
-        if (!selectedSNS) return;
+        if (!selectedStore) return;
 
-        const result = await onDeleteSNS(selectedSNS.snsId);
+        const result = await onDeleteStore(selectedStore.storeId);
         if (result.success) {
             setShowStatusModal(false);
-            setSelectedSNS(null);
+            setSelectedStore(null);
             alert('Thay đổi trạng thái thành công!');
         } else {
             alert(`Lỗi: ${result.error}`);
         }
     };
+
+    const handlePositionChange = (latlng, isUpdate = false) => {
+        setSelectedPosition(latlng);
+        if (isUpdate) {
+            setUpdateStoreData(prev => ({
+                ...prev,
+                locationLat: latlng.lat.toString(),
+                locationLng: latlng.lng.toString()
+            }));
+        } else {
+            setNewStore(prev => ({
+                ...prev,
+                locationLat: latlng.lat.toString(),
+                locationLng: latlng.lng.toString()
+            }));
+        }
+    };
+
+    // Time input component
+    const TimeInput = ({ value, onChange, placeholder }) => (
+        <input
+            type="time"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+    );
+
+    // Create store form
+    const createStoreForm = (
+        <div className="space-y-4">
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tên cửa hàng</label>
+                <input
+                    type="text"
+                    value={newStore.storeName}
+                    onChange={(e) => setNewStore(prev => ({ ...prev, storeName: e.target.value }))}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Nhập tên cửa hàng"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
+                <input
+                    type="text"
+                    value={newStore.storePhone}
+                    onChange={(e) => setNewStore(prev => ({ ...prev, storePhone: e.target.value }))}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Nhập số điện thoại"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ cửa hàng</label>
+                <input
+                    type="text"
+                    value={newStore.storeAddress}
+                    onChange={(e) => setNewStore(prev => ({ ...prev, storeAddress: e.target.value }))}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Nhập địa chỉ cửa hàng"
+                />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Thành phố</label>
+                    <input
+                        type="text"
+                        value={newStore.city}
+                        onChange={(e) => setNewStore(prev => ({ ...prev, city: e.target.value }))}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Nhập thành phố"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Phường/Quận</label>
+                    <input
+                        type="text"
+                        value={newStore.district}
+                        onChange={(e) => setNewStore(prev => ({ ...prev, district: e.target.value }))}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Nhập phường/quận"
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Giờ mở cửa</label>
+                    <TimeInput
+                        value={newStore.startWorkingAt}
+                        onChange={(value) => setNewStore(prev => ({ ...prev, startWorkingAt: value }))}
+                        placeholder="07:00"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Giờ đóng cửa</label>
+                    <TimeInput
+                        value={newStore.endWorkingAt}
+                        onChange={(value) => setNewStore(prev => ({ ...prev, endWorkingAt: value }))}
+                        placeholder="22:00"
+                    />
+                </div>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Chọn vị trí trên bản đồ</label>
+                <MapSelector
+                    selectedPosition={selectedPosition}
+                    onPositionChange={(latlng) => handlePositionChange(latlng, false)}
+                    height="300px"
+                />
+                {selectedPosition && (
+                    <p className="text-sm text-gray-600 mt-2">
+                        Vị trí: {selectedPosition.lat.toFixed(6)}, {selectedPosition.lng.toFixed(6)}
+                    </p>
+                )}
+            </div>
+        </div>
+    );
+
+    // Update store form
+    const updateStoreForm = updateStoreData && (
+        <div className="space-y-4">
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tên cửa hàng</label>
+                <input
+                    type="text"
+                    value={updateStoreData.storeName}
+                    onChange={(e) => setUpdateStoreData(prev => ({ ...prev, storeName: e.target.value }))}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Nhập tên cửa hàng"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
+                <input
+                    type="text"
+                    value={updateStoreData.storePhone}
+                    onChange={(e) => setUpdateStoreData(prev => ({ ...prev, storePhone: e.target.value }))}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Nhập số điện thoại"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ cửa hàng</label>
+                <input
+                    type="text"
+                    value={updateStoreData.storeAddress}
+                    onChange={(e) => setUpdateStoreData(prev => ({ ...prev, storeAddress: e.target.value }))}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Nhập địa chỉ cửa hàng"
+                />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Thành phố</label>
+                    <input
+                        type="text"
+                        value={updateStoreData.city}
+                        onChange={(e) => setUpdateStoreData(prev => ({ ...prev, city: e.target.value }))}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Nhập thành phố"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Phường/Quận</label>
+                    <input
+                        type="text"
+                        value={updateStoreData.district}
+                        onChange={(e) => setUpdateStoreData(prev => ({ ...prev, district: e.target.value }))}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Nhập phường/quận"
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Giờ mở cửa</label>
+                    <TimeInput
+                        value={updateStoreData.startWorkingAt}
+                        onChange={(value) => setUpdateStoreData(prev => ({ ...prev, startWorkingAt: value }))}
+                        placeholder="07:00"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Giờ đóng cửa</label>
+                    <TimeInput
+                        value={updateStoreData.endWorkingAt}
+                        onChange={(value) => setUpdateStoreData(prev => ({ ...prev, endWorkingAt: value }))}
+                        placeholder="22:00"
+                    />
+                </div>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Chọn vị trí trên bản đồ</label>
+                <MapSelector
+                    selectedPosition={selectedPosition}
+                    onPositionChange={(latlng) => handlePositionChange(latlng, true)}
+                    height="300px"
+                />
+                {selectedPosition && (
+                    <p className="text-sm text-gray-600 mt-2">
+                        Vị trí: {selectedPosition.lat.toFixed(6)}, {selectedPosition.lng.toFixed(6)}
+                    </p>
+                )}
+            </div>
+        </div>
+    );
+
+    // Store detail modal content
+    const storeDetailContent = storeDetails && (
+        <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Số điện thoại:</label>
+                    <p className="text-gray-900">{storeDetails.storePhone || 'Chưa cập nhật'}</p>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Địa chỉ:</label>
+                    <p className="text-gray-900">{storeDetails.storeAddress || 'Chưa cập nhật'}</p>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Thành phố:</label>
+                    <p className="text-gray-900">{storeDetails.city || 'Chưa cập nhật'}</p>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Phường/Quận:</label>
+                    <p className="text-gray-900">{storeDetails.district || 'Chưa cập nhật'}</p>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Giờ mở cửa:</label>
+                    <p className="text-gray-900">{STORE_HELPERS.formatTime(storeDetails.startWorkingAt) || 'Chưa cập nhật'}</p>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Giờ đóng cửa:</label>
+                    <p className="text-gray-900">{STORE_HELPERS.formatTime(storeDetails.endWorkingAt) || 'Chưa cập nhật'}</p>
+                </div>
+            </div>
+
+            {storeDetails.locationLat && storeDetails.locationLng && (
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Vị trí cửa hàng:</label>
+                    <div className="border border-gray-300 rounded-md p-4 bg-gray-50">
+                        <p className="text-sm text-gray-600 mb-2">
+                            <strong>Tọa độ:</strong><br />
+                            Vĩ độ: {parseFloat(storeDetails.locationLat).toFixed(6)}<br />
+                            Kinh độ: {parseFloat(storeDetails.locationLng).toFixed(6)}
+                        </p>
+                        <a
+                            href={`https://www.google.com/maps?q=${storeDetails.locationLat},${storeDetails.locationLng}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
+                        >
+                            Xem trên Google Maps
+                        </a>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 
     // Table columns configuration
     const columns = [
@@ -103,72 +419,54 @@ const SNSTable = ({
             header: 'STT',
             headerAlign: 'text-center',
             cellAlign: 'text-center',
-            render: (sns, index) => (
-                <span className="text-sm font-medium text-gray-900">
-                    {(currentPage - 1) * itemsPerPage + index + 1}
-                </span>
+            render: (store, index) => (
+                <span className="text-sm text-gray-900">
+          {(Number(currentPage) - 1) * Number(itemsPerPage) + index + 1}
+        </span>
             )
         },
         {
-            key: 'snsId',
+            key: 'storeId',
             header: 'ID',
             headerAlign: 'text-center',
             cellAlign: 'text-center',
-            render: (sns) => (
+            render: (store) => (
                 <span className="text-sm font-medium text-gray-900">
-                    {sns.snsId}
-                </span>
+          {store.storeId}
+        </span>
             )
         },
         {
-            key: 'snsName',
-            header: 'Tên mạng xã hội',
+            key: 'storeName',
+            header: 'Tên cửa hàng',
             headerAlign: 'text-left',
             cellAlign: 'text-left',
-            render: (sns) => (
-                <div className="flex items-center">
-                    <span className="text-sm font-medium text-gray-900">
-                        {sns.snsName}
-                    </span>
-                </div>
+            render: (store) => (
+                <span className="text-sm font-medium text-gray-900">
+          {store.storeName}
+        </span>
             )
         },
         {
-            key: 'snsUrl',
-            header: 'Đường dẫn đến trang',
-            headerAlign: 'text-left',
-            cellAlign: 'text-left',
-            render: (sns) => (
-                <div className="flex items-center">
-                    <a
-                        href={sns.snsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
-                    >
-                        <span className="truncate max-w-xs">{sns.snsUrl}</span>
-                        <ExternalLink className="w-3 h-3 ml-1 flex-shrink-0" />
-                    </a>
-                </div>
+            key: 'storePhone',
+            header: 'Số điện thoại',
+            headerAlign: 'text-center',
+            cellAlign: 'text-center',
+            render: (store) => (
+                <span className="text-sm text-gray-900">
+          {store.storePhone || 'Chưa cập nhật'}
+        </span>
             )
         },
         {
-            key: 'snsChatUrl',
-            header: 'Đường dẫn đến hộp thư',
+            key: 'storeAddress',
+            header: 'Địa chỉ cửa hàng',
             headerAlign: 'text-left',
             cellAlign: 'text-left',
-            render: (sns) => (
-                <div className="flex items-center">
-                    <a
-                        href={sns.snsChatUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
-                    >
-                        <span className="truncate max-w-xs">{sns.snsChatUrl}</span>
-                        <ExternalLink className="w-3 h-3 ml-1 flex-shrink-0" />
-                    </a>
-                </div>
+            render: (store) => (
+                <span className="text-sm text-gray-900">
+          {store.storeAddress}
+        </span>
             )
         },
         {
@@ -176,10 +474,10 @@ const SNSTable = ({
             header: 'Trạng thái',
             headerAlign: 'text-center',
             cellAlign: 'text-center',
-            render: (sns) => (
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${SNS_HELPERS.getStatusColorClass(sns.isActive)}`}>
-                    {SNS_HELPERS.getStatusText(sns.isActive)}
-                </span>
+            render: (store) => (
+                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${STORE_HELPERS.getStatusColorClass(store.isActive)}`}>
+          {STORE_HELPERS.getStatusText(store.isActive)}
+        </span>
             )
         },
         {
@@ -187,244 +485,214 @@ const SNSTable = ({
             header: 'Hành động',
             headerAlign: 'text-center',
             cellAlign: 'text-center',
-            render: (sns) => (
-                <div className="flex items-center justify-center space-x-2">
+            render: (store) => (
+                <div className="flex justify-center space-x-2">
                     <button
-                        onClick={() => openUpdateModal(sns)}
-                        className="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-100 transition-colors"
+                        onClick={() => openDetailModal(store)}
+                        className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-full transition-colors"
+                        title="Xem chi tiết"
+                    >
+                        <Eye size={16} />
+                    </button>
+                    <button
+                        onClick={() => openUpdateModal(store)}
+                        className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-full transition-colors"
                         title="Chỉnh sửa"
                     >
-                        <Edit className="w-4 h-4" />
+                        <Edit size={16} />
+                    </button>
+                    <button
+                        onClick={() => openStatusModal(store)}
+                        className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                            store.isActive
+                                ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                : 'bg-green-100 text-green-700 hover:bg-green-200'
+                        }`}
+                    >
+                        {store.isActive ? 'Ngừng HĐ' : 'Kích hoạt'}
                     </button>
                 </div>
             )
         }
     ];
 
-    // Pagination
-    const totalPages = Math.ceil(snsList.length / itemsPerPage);
-    const paginatedData = snsList.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
     return (
-        <div className="space-y-6">
-            {/* Header with Create Button */}
-            <div className="flex justify-between items-center p-6 border-b border-gray-200">
-                <h2 className="text-lg font-medium text-gray-900">
-                    Tìm thấy {snsList.length} mạng xã hội
-                </h2>
+        <div className="bg-white rounded-lg shadow">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 className="text-lg font-medium text-gray-900">Danh sách cửa hàng</h3>
                 <button
                     onClick={openCreateModal}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Tạo mạng xã hội
+                    <Plus size={16} className="mr-2" />
+                    Thêm cửa hàng
                 </button>
             </div>
 
-            {/* Data Table */}
-            <div className="px-6">
-                <DataTable
-                    data={paginatedData}
-                    columns={columns}
-                    loading={loading}
-                    emptyMessage="Không có mạng xã hội nào"
+            {/* Table */}
+            <DataTable
+                columns={columns}
+                data={storeList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
+                loading={loading}
+                emptyMessage="Không có cửa hàng nào"
+            />
+
+            {/* Pagination */}
+            <div className="px-6 py-4 border-t border-gray-200">
+                <Paginations
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(storeList.length / itemsPerPage)}
+                    onPageChange={setCurrentPage}
+                    totalItems={storeList.length}
+                    itemsPerPage={itemsPerPage}
                 />
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="px-6 pb-6">
-                    <Paginations
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={setCurrentPage}
-                    />
-                </div>
-            )}
-
-            {/* Create Modal */}
-            <Modals
-                isOpen={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                title="Tạo mạng xã hội mới"
-                size="md"
-            >
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Tên mạng xã hội *
-                        </label>
-                        <input
-                            type="text"
-                            value={newSNS.snsName}
-                            onChange={(e) => setNewSNS(prev => ({ ...prev, snsName: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Nhập tên mạng xã hội"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Đường dẫn đến trang *
-                        </label>
-                        <input
-                            type="url"
-                            value={newSNS.snsUrl}
-                            onChange={(e) => setNewSNS(prev => ({ ...prev, snsUrl: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="https://example.com/username"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Đường dẫn đến hộp thư *
-                        </label>
-                        <input
-                            type="url"
-                            value={newSNS.snsChatUrl}
-                            onChange={(e) => setNewSNS(prev => ({ ...prev, snsChatUrl: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="https://example.com/username/chat"
-                        />
-                    </div>
-                </div>
-                <div className="flex justify-end space-x-3 mt-6">
-                    <button
-                        onClick={() => setShowCreateModal(false)}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
-                    >
-                        Hủy
-                    </button>
-                    <button
-                        onClick={handleCreateSNS}
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                    >
-                        Tạo
-                    </button>
-                </div>
-            </Modals>
-
-            {/* Update Modal */}
-            <Modals
-                isOpen={showUpdateModal}
-                onClose={() => setShowUpdateModal(false)}
-                title="Cập nhật mạng xã hội"
-                size="md"
-            >
-                {updateSNSData && (
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Tên mạng xã hội *
-                            </label>
-                            <input
-                                type="text"
-                                value={updateSNSData.snsName}
-                                onChange={(e) => setUpdateSNSData(prev => ({ ...prev, snsName: e.target.value }))}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Nhập tên mạng xã hội"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Đường dẫn đến trang *
-                            </label>
-                            <input
-                                type="url"
-                                value={updateSNSData.snsUrl}
-                                onChange={(e) => setUpdateSNSData(prev => ({ ...prev, snsUrl: e.target.value }))}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="https://example.com/username"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Đường dẫn đến hộp thư *
-                            </label>
-                            <input
-                                type="url"
-                                value={updateSNSData.snsChatUrl}
-                                onChange={(e) => setUpdateSNSData(prev => ({ ...prev, snsChatUrl: e.target.value }))}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="https://example.com/username/chat"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Trạng thái
-                            </label>
-                            <div className="flex items-center space-x-4">
-                                <button
-                                    onClick={() => openStatusModal(selectedSNS)}
-                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                                        selectedSNS?.isActive
-                                            ? 'bg-green-100 text-green-800 border border-green-200 hover:bg-green-200'
-                                            : 'bg-red-100 text-red-800 border border-red-200 hover:bg-red-200'
-                                    }`}
-                                >
-                                    {selectedSNS?.isActive ? 'Đang hoạt động' : 'Ngừng hoạt động'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-                <div className="flex justify-end space-x-3 mt-6">
-                    <button
-                        onClick={() => setShowUpdateModal(false)}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
-                    >
-                        Hủy
-                    </button>
-                    <button
-                        onClick={handleUpdateSNS}
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                    >
-                        Cập nhật
-                    </button>
-                </div>
-            </Modals>
-
-            {/* Status Change Confirmation Modal */}
-            <Modals
-                isOpen={showStatusModal}
-                onClose={() => setShowStatusModal(false)}
-                title="Xác nhận thay đổi trạng thái"
-                size="sm"
-            >
-                {selectedSNS && (
-                    <div className="text-center">
-                        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
-                            <svg className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L4.316 15.5c-.77.833.192 2.5 1.732 2.5z" />
-                            </svg>
-                        </div>
-                        <p className="text-sm text-gray-500 mb-4">
-                            {selectedSNS.isActive
-                                ? `Bạn muốn ngừng hoạt động mạng xã hội "${selectedSNS.snsName}" không?`
-                                : `Bạn muốn kích hoạt lại mạng xã hội "${selectedSNS.snsName}" không?`
-                            }
-                        </p>
-                        <div className="flex justify-center space-x-3">
+            {/* Create Modal - Sử dụng modal đơn giản để test */}
+            {showCreateModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        maxWidth: '800px',
+                        width: '90%',
+                        maxHeight: '90%',
+                        overflow: 'auto'
+                    }}>
+                        <h2 className="text-xl font-bold mb-4">Thêm cửa hàng mới</h2>
+                        {createStoreForm}
+                        <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
                             <button
-                                onClick={() => setShowStatusModal(false)}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+                                onClick={handleCreateStore}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                            >
+                                Tạo
+                            </button>
+                            <button
+                                onClick={() => setShowCreateModal(false)}
+                                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
                             >
                                 Hủy
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Update Modal */}
+            {showUpdateModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        maxWidth: '800px',
+                        width: '90%',
+                        maxHeight: '90%',
+                        overflow: 'auto'
+                    }}>
+                        <h2 className="text-xl font-bold mb-4">Cập nhật thông tin cửa hàng</h2>
+                        {updateStoreForm}
+                        <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
                             <button
-                                onClick={handleStatusChange}
-                                className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                                onClick={handleUpdateStore}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                             >
-                                Xác nhận
+                                Cập nhật
+                            </button>
+                            <button
+                                onClick={() => setShowUpdateModal(false)}
+                                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                            >
+                                Hủy
                             </button>
                         </div>
                     </div>
-                )}
+                </div>
+            )}
+
+            {/* Detail Modal */}
+            {showDetailModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        maxWidth: '800px',
+                        width: '90%',
+                        maxHeight: '90%',
+                        overflow: 'auto'
+                    }}>
+                        <h2 className="text-xl font-bold mb-4">
+                            Thông tin chi tiết cửa hàng {selectedStore?.storeName || ''}
+                        </h2>
+                        {storeDetailContent}
+                        <div style={{ marginTop: '20px' }}>
+                            <button
+                                onClick={() => setShowDetailModal(false)}
+                                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                            >
+                                Đóng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Status Modal */}
+            <Modals
+                show={showStatusModal}
+                onClose={() => setShowStatusModal(false)}
+                onConfirm={handleStatusChange}
+                title="Xác nhận thay đổi trạng thái"
+                confirmText="Xác nhận"
+                cancelText="Hủy"
+                type="warning"
+            >
+                <p className="text-sm text-gray-600">
+                    {selectedStore?.isActive
+                        ? `Bạn muốn ngừng hoạt động cửa hàng "${selectedStore?.storeName}" không?`
+                        : `Bạn muốn kích hoạt lại cửa hàng "${selectedStore?.storeName}" không?`
+                    }
+                </p>
             </Modals>
         </div>
     );
 };
 
-export default SNSTable;
+export default StoreTable;

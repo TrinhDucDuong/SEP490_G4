@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllStores, createStore, updateStore, deleteStore } from '../../utils/api/Admin/StoreManagementAPI';
+import { getAllStores, getStoreById, createStore, updateStore, deleteStore } from '../../utils/api/Admin/StoreManagementAPI';
 import { STORE_HELPERS } from '../../utils/constants/StoreConstants';
 
 export const useStoreManagement = () => {
@@ -25,6 +25,21 @@ export const useStoreManagement = () => {
             }
         } catch {
             setError('Có lỗi xảy ra khi tải dữ liệu');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getStoreDetails = async (storeId) => {
+        setLoading(true);
+        try {
+            const result = await getStoreById(storeId);
+            if (result.success) {
+                return { success: true, data: result.data };
+            }
+            return { success: false, error: result.error };
+        } catch {
+            return { success: false, error: 'Có lỗi xảy ra khi tải thông tin cửa hàng' };
         } finally {
             setLoading(false);
         }
@@ -78,7 +93,6 @@ export const useStoreManagement = () => {
         }
     };
 
-    // LOGIC FILTER ĐÃ ĐƯỢC SỬA
     useEffect(() => {
         let result = [...storeList];
 
@@ -88,12 +102,16 @@ export const useStoreManagement = () => {
                 s =>
                     s.storeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     s.storeAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    s.storePhone.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    s.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    s.district.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     s.storeId.toString().includes(searchTerm)
             );
         }
 
+        // Status filter
         if (filters.status !== '') {
-            const isActive = filters.status === 'true'; // Chuyển string thành boolean
+            const isActive = filters.status === 'true';
             result = result.filter(s => s.isActive === isActive);
         }
 
@@ -101,7 +119,7 @@ export const useStoreManagement = () => {
         if (sortConfig.key) {
             result.sort((a, b) => {
                 let aValue = a[sortConfig.key], bValue = b[sortConfig.key];
-                if (sortConfig.key === 'storeName') {
+                if (typeof aValue === 'string') {
                     aValue = aValue.toLowerCase();
                     bValue = bValue.toLowerCase();
                 }
@@ -146,6 +164,7 @@ export const useStoreManagement = () => {
         sortConfig,
         setSortConfig,
         fetchStores,
+        getStoreDetails,
         createStore: createStoreHandler,
         updateStore: updateStoreHandler,
         deleteStore: deleteStoreHandler,
