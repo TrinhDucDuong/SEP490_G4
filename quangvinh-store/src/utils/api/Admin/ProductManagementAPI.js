@@ -18,7 +18,6 @@ const getAuthToken = () => {
     if (token) {
         console.log('🔑 Token preview:', token.substring(0, 20) + '...');
     }
-
     return token;
 };
 
@@ -54,7 +53,6 @@ const handleAuthError = (response) => {
         sessionStorage.removeItem('token');
         localStorage.removeItem('adminUserInfo');
         sessionStorage.removeItem('adminUserInfo');
-
         throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
     }
 };
@@ -63,7 +61,6 @@ const handleAuthError = (response) => {
 export const getAllProducts = async () => {
     try {
         console.log('📦 Fetching all products from:', API_BASE_URL);
-
         const headers = createAuthHeaders({
             'Content-Type': 'application/json'
         });
@@ -96,11 +93,38 @@ export const getAllProducts = async () => {
     }
 };
 
+// GET - Lấy chi tiết sản phẩm theo ID với Bearer Token
+export const getProductById = async (productId) => {
+    try {
+        console.log('🔍 Fetching product by ID:', productId);
+        const headers = createAuthHeaders({
+            'Content-Type': 'application/json'
+        });
+
+        const response = await fetch(`${API_BASE_URL}/${productId}`, {
+            method: 'GET',
+            headers: headers
+        });
+
+        if (!response.ok) {
+            handleAuthError(response);
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Product detail response:', data);
+        return { success: true, data: data.product || data };
+    } catch (error) {
+        console.error('💥 Error fetching product by ID:', error);
+        return { success: false, error: error.message };
+    }
+};
+
 // GET - Lấy tất cả colors với Bearer Token
 export const getAllColors = async () => {
     try {
         console.log('🎨 Fetching all colors from:', COLOR_API_URL);
-
         const headers = createAuthHeaders({
             'Content-Type': 'application/json'
         });
@@ -167,7 +191,6 @@ export const createProduct = async (productData, productImages) => {
         }
 
         const formData = new FormData();
-
         const productInput = {
             productName: productData.productName?.trim(),
             productDescription: productData.productDescription?.trim() || '',
@@ -208,8 +231,8 @@ export const createProduct = async (productData, productImages) => {
         }
 
         const headers = createAuthHeaders();
-
         console.log('📤 Sending CREATE request with Bearer Token');
+
         const response = await fetch(API_BASE_URL, {
             method: 'POST',
             headers: headers,
@@ -267,7 +290,6 @@ export const updateProduct = async (productId, productData, productImages, exist
         }
 
         const formData = new FormData();
-
         const productInput = {
             productName: productData.productName?.trim(),
             productDescription: productData.productDescription?.trim() || '',
@@ -294,8 +316,8 @@ export const updateProduct = async (productId, productData, productImages, exist
                 }
             });
         }
-        // KHÔNG append file rỗng hoặc bất kỳ thứ gì nếu không có ảnh mới
 
+        // KHÔNG append file rỗng hoặc bất kỳ thứ gì nếu không có ảnh mới
         const headers = {
             'accept': '*/*',
             'Authorization': `Bearer ${getAuthToken()}`
@@ -320,6 +342,7 @@ export const updateProduct = async (productId, productData, productImages, exist
                 sessionStorage.removeItem('token');
                 throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
             }
+
             const errorText = await response.text();
             console.error('❌ Update product error response:', errorText);
             throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
@@ -338,7 +361,6 @@ export const updateProduct = async (productId, productData, productImages, exist
 export const deleteProduct = async (productId) => {
     try {
         console.log('🗑️ Deleting product:', productId);
-
         const headers = createAuthHeaders({
             'Content-Type': 'application/json'
         });
@@ -359,36 +381,6 @@ export const deleteProduct = async (productId) => {
         return { success: true, data: data.product || data };
     } catch (error) {
         console.error('💥 Error deleting product:', error);
-        return { success: false, error: error.message };
-    }
-};
-
-// GET - Lấy chi tiết sản phẩm theo ID với Bearer Token
-export const getProductById = async (productId) => {
-    try {
-        console.log('🔍 Fetching product by ID:', productId);
-
-        const headers = createAuthHeaders({
-            'Content-Type': 'application/json'
-        });
-
-        const response = await fetch(`${API_BASE_URL}/${productId}`, {
-            method: 'GET',
-            headers: headers
-        });
-
-        if (!response.ok) {
-            handleAuthError(response);
-            const errorText = await response.text();
-            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
-        }
-
-        const data = await response.json();
-        console.log('✅ Product detail response:', data);
-
-        return { success: true, data: data.product || data };
-    } catch (error) {
-        console.error('💥 Error fetching product by ID:', error);
         return { success: false, error: error.message };
     }
 };
