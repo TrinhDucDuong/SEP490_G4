@@ -63,6 +63,7 @@ import Feedback from "./pages/Customer/Feedback/Feedback.jsx";
 import StoreAdress from "./pages/Customer/Store/StoreAdress.jsx";
 import ProductReviewPage from "./pages/Customer/ProductReview/ProductReviewPage.jsx";
 import PaymentResult from "./pages/Customer/Payment/PaymentResult.jsx";
+import TrackOrderPage from "./pages/Customer/TrackingOrder/TrackOrderPage.jsx";
 
 
 function App() {
@@ -84,7 +85,7 @@ function App() {
                             <Route path="forgot-password" element={<ForgotPassword />} />
                             <Route path="feedbacks" element={<Feedback/>} />
                             <Route path="stores" element={<StoreAdress/>} />
-
+                            <Route path="/track-order" element={<TrackOrderPage />} />
                             <Route path="policies" element={<PolicyPage />} />
                             <Route path="policies/:id" element={<PolicyPage />} />
                             <Route path="instructions" element={<InstructionPage />} />
