@@ -5,12 +5,12 @@ import SummarySection from './components/SummarySection';
 import RevenueChart from './components/RevenueChart';
 import CategorySalesChart from './components/CategorySalesChart';
 import DateRangeSection from './components/DateRangeSection';
+import AIVoiceAssistant from './components/AIVoiceAssistant';
 import { LogOut } from 'lucide-react';
 
 const DashboardManagement = () => {
     const [currentDateRange, setCurrentDateRange] = useState(null);
     const { user, logout } = useAuthForManager();
-
     const {
         summaryData,
         revenueGraphData,
@@ -39,59 +39,77 @@ const DashboardManagement = () => {
     return (
         <div>
             <div>
-                {/* Header với thông tin user và logout */}
+                {/* Header with AI Assistant */}
                 <div className="mb-8">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Dashboard Thống kê</h1>
-                        <p className="text-gray-600 mt-2">
-                            Tổng quan về hoạt động kinh doanh
-                            {user && (
-                                <span className="ml-2 text-blue-600 font-medium">
-                </span>
-                            )}
-                        </p>
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-900">Dashboard Thống kê</h1>
+                            <p className="text-gray-600 mt-2">
+                                Tổng quan về hoạt động kinh doanh
+                            </p>
+                        </div>
+
+                        {/* AI Voice Assistant - Positioned on the right */}
+                        <div className="flex items-center space-x-4">
+                            <div className="relative">
+                                <AIVoiceAssistant />
+                            </div>
+
+                        </div>
                     </div>
                 </div>
 
-                {/* Error Display */}
+                {/* Error Messages */}
                 {(error.summary || error.revenueGraph || error.categoriesSales) && (
-                    <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
-                        <div className="flex">
-                            <div className="ml-3">
-                                <h3 className="text-sm font-medium text-red-800">
-                                    Có lỗi xảy ra khi tải dữ liệu
-                                </h3>
-                                <div className="mt-2 text-sm text-red-700">
-                                    {error.summary && <p>• Lỗi tải thống kê tổng quan: {error.summary}</p>}
-                                    {error.revenueGraph && <p>• Lỗi tải biểu đồ doanh thu: {error.revenueGraph}</p>}
-                                    {error.categoriesSales && <p>• Lỗi tải thống kê danh mục: {error.categoriesSales}</p>}
-                                </div>
-                            </div>
-                        </div>
+                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <h3 className="text-red-800 font-medium mb-2">Có lỗi xảy ra:</h3>
+                        <ul className="text-red-600 text-sm space-y-1">
+                            {error.summary && <li>• Lỗi tải thống kê tổng quan: {error.summary}</li>}
+                            {error.revenueGraph && <li>• Lỗi tải biểu đồ doanh thu: {error.revenueGraph}</li>}
+                            {error.categoriesSales && <li>• Lỗi tải thống kê danh mục: {error.categoriesSales}</li>}
+                        </ul>
                     </div>
                 )}
 
-                {/* Summary Cards */}
-                <SummarySection
-                    data={summaryData}
-                    loading={loading.summary}
-                    onFilterChange={handleSummaryFilterChange}
-                />
-
-                {/* Charts Section */}
                 <DateRangeSection onDateRangeChange={handleDateRangeChange}>
-                    {/* Revenue Chart */}
-                    <RevenueChart
-                        data={revenueGraphData}
-                        loading={loading.revenueGraph}
-                        dateRange={currentDateRange}
-                    />
+                    {/* Summary Section */}
+                    <div className="mb-8">
+                        <SummarySection
+                            data={summaryData}
+                            loading={loading.summary}
+                            onFilterChange={handleSummaryFilterChange}
+                        />
+                    </div>
 
-                    {/* Category Sales Chart */}
-                    <CategorySalesChart
-                        data={categoriesSalesData}
-                        loading={loading.categoriesSales}
-                    />
+                    {/* Charts Section */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        {/* Revenue Chart */}
+                        <div className="bg-white rounded-lg shadow p-6">
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                                Biểu đồ doanh thu theo thời gian
+                            </h2>
+                            <div className="h-80">
+                                <RevenueChart
+                                    data={revenueGraphData}
+                                    loading={loading.revenueGraph}
+                                    dateRange={currentDateRange}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Category Sales Chart */}
+                        <div className="bg-white rounded-lg shadow p-6">
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                                Doanh số theo danh mục
+                            </h2>
+                            <div className="h-80">
+                                <CategorySalesChart
+                                    data={categoriesSalesData}
+                                    loading={loading.categoriesSales}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </DateRangeSection>
             </div>
         </div>
