@@ -7,6 +7,7 @@ import BannerPagination from './BannerPagination';
 import Modals from '../../../components/common/Admin/Modals';
 import { useBannerManagement } from '../../../hooks/useBannerManagement';
 import { BANNER_HELPERS, BANNER_SUCCESS_MESSAGES, BANNER_ERROR_MESSAGES, BANNER_DEFAULTS } from '../../../utils/constants/BannerConstants';
+import { toast } from "react-toastify";
 
 const BannerManagement = () => {
     const {
@@ -102,9 +103,9 @@ const BannerManagement = () => {
             setSelectedImages(Array(6).fill(null));
             setImageValidation({ show: false, message: '' });
             // THÔNG BÁO VỀ BANNER MỚI Ở TRANG 1
-            alert(`${BANNER_SUCCESS_MESSAGES.CREATE_SUCCESS}`);
+            toast.success(`Tạo banner thành công`);
         } else {
-            alert(`Lỗi: ${result.error}`);
+            toast.error(`${result.error}`);
         }
     };
 
@@ -114,9 +115,9 @@ const BannerManagement = () => {
 
         if (result.success) {
             setShowConfirmModal(false);
-            alert(BANNER_SUCCESS_MESSAGES.UPDATE_SUCCESS);
+            toast.success(`Chỉnh sửa trạng thái banner thành công`);
         } else {
-            alert(`Lỗi: ${result.error}`);
+            toast.error(`${result.error}`);
         }
     };
 
