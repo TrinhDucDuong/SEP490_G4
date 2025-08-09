@@ -116,17 +116,6 @@ function Header() {
                             </li>
                             <li>
                                 <Link
-                                    to="/sale"
-                                    className={`py-2 px-3 border-b transition-all duration-200 relative ${
-                                        location.pathname === '/sale' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
-                                    }`}
-                                >
-                                    <span className="absolute -top-1 -right-2 text-[10px] bg-red-600 text-white px-1 rounded">HOT</span>
-                                    Sale
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
                                     to="/stores"
                                     className={`py-2 px-3 border-b transition-all duration-200 text-center ${
                                         location.pathname === '/blog' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
@@ -182,9 +171,6 @@ function Header() {
 
                         </div>
 
-                        <button onClick={() => setCartOpen(true)} className='hover:text-yellow-400 transition' aria-label='Yêu thích'>
-                            <FontAwesomeIcon icon={faHeart} size='lg' />
-                        </button>
                         <button onClick={() => setCartOpen(true)} className='hover:text-yellow-400 transition' aria-label='Giỏ hàng'>
                             <FontAwesomeIcon icon={faCartShopping} size='lg' />
                         </button>

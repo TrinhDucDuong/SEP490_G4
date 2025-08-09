@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import { motion } from 'framer-motion';
@@ -13,12 +13,31 @@ import { useFetchStarRate } from "../../../hooks/Customer/useFetchStarRate";
 import { useCart } from "../../../context/CartContext.jsx";
 import { useActionLogger } from "../../../utils/api/Customer/Log/useActionLogger.js";
 import parse from 'html-react-parser';
-import {useFetchRelatedProducts} from "../../../hooks/Customer/useFetchRelatedProducts.js";
+import { useFetchRelatedProducts } from "../../../hooks/Customer/useFetchRelatedProducts.js";
 import ProductScrollSlider from "../../../components/ui/product/Common/ProductScrollSlider.jsx";
-import { useNavigate } from 'react-router-dom';
 
 const ProductDetail = () => {
-    const { id } = useParams();
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Lấy productId từ location.state (khi navigate bằng state) hoặc từ sessionStorage (fallback khi reload)
+    const stateProductId = location.state?.productId;
+    const [productId, setProductId] = useState(() => {
+        if (stateProductId) {
+            try { sessionStorage.setItem('productId', stateProductId); } catch (e) { /* ignore */ }
+            return stateProductId;
+        }
+        return sessionStorage.getItem('productId');
+    });
+
+    // Nếu location.state thay đổi (vd: navigate mới với state), cập nhật sessionStorage và state
+    useEffect(() => {
+        if (stateProductId && stateProductId !== productId) {
+            try { sessionStorage.setItem('productId', stateProductId); } catch (e) { /* ignore */ }
+            setProductId(stateProductId);
+        }
+    }, [stateProductId, productId]);
+
     const [product, setProduct] = useState(null);
     const [productSizes, setProductSizes] = useState([]);
     const [productColors, setProductColors] = useState([]);
@@ -28,8 +47,9 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [filterStar, setFilterStar] = useState('');
     const [pageNumber, setPageNumber] = useState(0);
+
     const { logAction } = useActionLogger();
-    const navigate = useNavigate();
+    const { addToCart } = useCart();
 
     const formatProductSize = (size) => {
         const mapping = {
@@ -54,24 +74,33 @@ const ProductDetail = () => {
         return mapping[size] || size;
     };
 
-
-    const { addToCart } = useCart();
     const { starRates, totalCount, loading: starRateLoading } = useFetchStarRate(product?.productId, filterStar, pageNumber, 3);
 
     useEffect(() => {
+        // scroll top khi vào trang
         window.scrollTo(0, 0);
+
+        // nếu không có productId (cả state lẫn sessionStorage), chuyển về trang danh sách
+        if (!productId) {
+            navigate("/products");
+            return;
+        }
+
         const fetchProduct = async () => {
             try {
-                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/product/${id}`);
+                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/product/${productId}`);
                 if (!res.ok) throw new Error('Lỗi tải sản phẩm');
                 const data = await res.json();
-                const uniqueSizes = Array.from(new Set(data.productSizes));
+
+                // data structure: data.product, data.productSizes, data.productColors (theo code cũ của bạn)
+                const uniqueSizes = Array.from(new Set(data.productSizes || []));
                 const seenColors = new Set();
-                const uniqueColors = data.productColors.filter(color => {
+                const uniqueColors = (data.productColors || []).filter(color => {
                     if (seenColors.has(color.colorHex)) return false;
                     seenColors.add(color.colorHex);
                     return true;
                 });
+
                 setProduct(data.product);
                 setProductSizes(uniqueSizes);
                 setProductColors(uniqueColors);
@@ -80,8 +109,13 @@ const ProductDetail = () => {
                 toast.error(err.message || 'Lỗi tải sản phẩm');
             }
         };
+
         fetchProduct();
-    }, [id]);
+    }, [productId, navigate]);
+
+    const currentVariant = product?.productVariants?.find(
+        v => v.colorHex === selectedColor && v.productSize === selectedSize
+    );
 
     const handleBuyNow = async () => {
         if (!selectedColor || !selectedSize) {
@@ -115,10 +149,6 @@ const ProductDetail = () => {
             toast.error(error.message || 'Lỗi khi thêm vào giỏ hàng');
         }
     };
-
-    const currentVariant = product?.productVariants?.find(
-        v => v.colorHex === selectedColor && v.productSize === selectedSize
-    );
 
     const handleAddToCart = async () => {
         if (!selectedColor || !selectedSize) {
