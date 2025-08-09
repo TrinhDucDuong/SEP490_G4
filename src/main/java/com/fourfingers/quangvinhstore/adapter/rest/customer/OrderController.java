@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Map;
 
 
@@ -62,7 +63,6 @@ public class OrderController {
                     String vnpUrl = vnpayController.showQRPage(orderOutputData, customerOrderInputBoundary, request);
                     paymentOutputData.setPaymentUrl(vnpUrl);
                 } catch (UnsupportedEncodingException e) {
-
                     throw new RuntimeException(e);
                 }
             }
@@ -76,10 +76,46 @@ public class OrderController {
         response.sendRedirect("http://localhost:5173/order/payment?orderId=" + order.getOrder().getOrderId());
     }
 
-//    @PostMapping
-//    public ResponseEntity<ListCartDetailsOutputData> orderNow(@RequestBody OrderInputData orderInputData,
-//                                                              @AuthenticationPrincipal UserDetails userDetails) {
-//        ListCartDetailsOutputData updatedCart = customerOrderInputBoundary.orderNow(orderInputData, userDetails);
-//        return ResponseEntity.ok(updatedCart);
-//    }
+    @PostMapping("/now")
+    public ResponseEntity<?> orderNow(@RequestBody OrderInputData orderInputData,
+                                                              @AuthenticationPrincipal UserDetails userDetails) {
+        OrderOutputData orderNow = customerOrderInputBoundary.orderNow(orderInputData, userDetails);
+        return ResponseEntity.ok(orderNow);
+    }
+
+    @PatchMapping ("/now/{id}")
+    public ResponseEntity<?> chooseShippingAddress(@AuthenticationPrincipal UserDetails userDetails,
+                                                    @RequestBody ShippingAddressIdInputData shippingAddressIdInputData,
+                                                    @PathVariable Long orderId
+                                                    ) {
+        return ResponseEntity.ok(customerOrderInputBoundary.chooseShippingAddress(userDetails, shippingAddressIdInputData, orderId));
+    }
+
+    @PostMapping("/guest")
+    public ResponseEntity<?> orderByGuest(@RequestBody ShippingAddressInputData shippingAddressInputData,
+                                          @RequestBody List<ProductVariantInputData> listProductVariantInputData,
+                                          @RequestBody PurchaseInputData purchaseInputData,
+                                          HttpServletRequest request) {
+        OrderOutputData orderOutputData = customerOrderInputBoundary.orderByGuest(
+                                                                                    shippingAddressInputData,
+                                                                                    listProductVariantInputData,
+                                                                                    purchaseInputData.getPaymentMethod()
+                                                                                    );
+        PaymentOutputData paymentOutputData = new PaymentOutputData();
+        if(purchaseInputData.getPaymentMethod().equalsIgnoreCase("VNPay")) {
+            try {
+                String vnpUrl = vnpayController.showQRPage(orderOutputData, customerOrderInputBoundary, request);
+                paymentOutputData.setOrderOutputData(orderOutputData);
+                paymentOutputData.setPaymentUrl(vnpUrl);
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return ResponseEntity.ok(paymentOutputData);
+    }
+
+    @GetMapping(value = "/tracking/{id}", produces = "application/json")
+    public ResponseEntity<?> trackingOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(customerOrderInputBoundary.trackingOrder(id));
+    }
 }

@@ -21,4 +21,5 @@ public class Order {
     private String orderStatus;
     private BigDecimal totalPrice;
     private ShippingAddress shippingAddress;
+    private Boolean paymentStatus;
 }
