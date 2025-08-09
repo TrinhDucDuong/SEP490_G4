@@ -1,9 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useFetchProductById } from "../../../../hooks/Customer/useFetchProducts.js";
 
 function ProductInCartCard({ item, onRemove, onUpdateQuantity }) {
+    const navigate = useNavigate();
+
     const {
         productId,
         productName,
@@ -30,15 +32,22 @@ function ProductInCartCard({ item, onRemove, onUpdateQuantity }) {
         onUpdateQuantity(1);
     };
 
+    const handleImageClick = () => {
+        if (product) {
+            navigate("/products/detail", {
+                state: { productId: product.productId },
+            });
+        }
+    };
+
     return (
         <div className="flex items-start gap-4 border p-3 rounded-md shadow-sm">
-            <Link to={`/products/${productId}`}>
-                <img
-                    src={image}
-                    alt={productName}
-                    className="w-16 h-16 object-cover rounded hover:opacity-90 transition"
-                />
-            </Link>
+            <img
+                src={image}
+                alt={productName}
+                onClick={handleImageClick}
+                className="w-16 h-16 object-cover rounded hover:opacity-90 transition cursor-pointer"
+            />
             <div className="flex-1">
                 <h4 className="font-semibold text-sm text-gray-800">{productName}</h4>
                 <div className="text-xs text-gray-500 mt-1">

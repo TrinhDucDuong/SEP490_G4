@@ -183,9 +183,6 @@ function Header() {
 
                         </div>
 
-                        <button onClick={() => setCartOpen(true)} className='hover:text-yellow-400 transition' aria-label='Yêu thích'>
-                            <FontAwesomeIcon icon={faHeart} size='lg' />
-                        </button>
                         <button onClick={() => setCartOpen(true)} className='hover:text-yellow-400 transition' aria-label='Giỏ hàng'>
                             <FontAwesomeIcon icon={faCartShopping} size='lg' />
                         </button>

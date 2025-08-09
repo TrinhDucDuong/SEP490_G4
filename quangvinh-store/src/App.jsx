@@ -79,7 +79,7 @@ function App() {
 
                             <Route index element={<Home />} />
                             <Route path="products" element={<ProductList />} />
-                            <Route path="products/:id" element={<ProductDetail />} />
+                            <Route path="products/detail" element={<ProductDetail />} />
                             <Route path="login" element={<Login />} />
                             <Route path="register" element={<Register />} />
                             <Route path="forgot-password" element={<ForgotPassword />} />

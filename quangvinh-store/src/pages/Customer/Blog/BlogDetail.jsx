@@ -108,7 +108,11 @@ function BlogDetail() {
                                             <div
                                                 key={product.productId}
                                                 className="border rounded-lg p-4 shadow-md space-y-3 cursor-pointer hover:shadow-lg transition"
-                                                onClick={() => navigate(`/products/${product.productId}`)}
+                                                onClick={() =>
+                                                    navigate("/products/detail", {
+                                                        state: { productId: product.productId },
+                                                    })
+                                                }
                                             >
                                                 <img
                                                     src={product.images?.[0]?.imageUrl || defaultImage}
@@ -117,7 +121,9 @@ function BlogDetail() {
                                                 />
 
                                                 <h4 className="font-semibold text-gray-800">{product.productName}</h4>
-                                                <p className="text-red-600 font-bold">{product.unitPrice?.toLocaleString()}₫</p>
+                                                <p className="text-red-600 font-bold">
+                                                    {product.unitPrice?.toLocaleString()}₫
+                                                </p>
 
                                                 <div className="flex items-center gap-2 flex-wrap">
                                                     <span className="text-sm text-gray-600">Màu sắc:</span>
@@ -138,6 +144,7 @@ function BlogDetail() {
                                         ))}
                                     </div>
                                 )}
+
 
                             </div>
                         </div>
