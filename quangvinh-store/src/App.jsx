@@ -63,6 +63,10 @@ import Feedback from "./pages/Customer/Feedback/Feedback.jsx";
 import StoreAdress from "./pages/Customer/Store/StoreAdress.jsx";
 import ProductReviewPage from "./pages/Customer/ProductReview/ProductReviewPage.jsx";
 import PaymentResult from "./pages/Customer/Payment/PaymentResult.jsx";
+import CheckoutPage from "./pages/Customer/Payment/CheckoutPage.jsx";
+import TrackOrderPage from "./pages/Customer/TrackingOrder/TrackOrderPage.jsx";
+import OrderTrackingDetail from "./pages/Customer/TrackingOrder/OrderTrackingDetail.jsx";
+import BuyNow from "./pages/Customer/Payment/BuyNow.jsx";
 
 
 function App() {
@@ -84,13 +88,15 @@ function App() {
                             <Route path="forgot-password" element={<ForgotPassword />} />
                             <Route path="feedbacks" element={<Feedback/>} />
                             <Route path="stores" element={<StoreAdress/>} />
-
+                            <Route path="/track-order" element={<TrackOrderPage />} />
+                            <Route path="/track-order/:orderId" element={<OrderTrackingDetail />} />
                             <Route path="policies" element={<PolicyPage />} />
                             <Route path="policies/:id" element={<PolicyPage />} />
                             <Route path="instructions" element={<InstructionPage />} />
                             <Route path="instructions/:id" element={<InstructionPage />} />
                             <Route path="/social-callback" element={<SocialCallback />} />
                             <Route path="/blogs" element={<BlogList />} />
+                            <Route path="/buy-now" element={<BuyNow />} />
 
                             <Route path="/blog/:blogId" element={<BlogDetail />} />
                             <Route path="cart" element={
@@ -100,6 +106,7 @@ function App() {
                             } />
                             <Route path="payment" element={<Payment />} />
                             <Route path="payment-method" element={<PaymentMethod />} />
+                            <Route path="checkout" element={<CheckoutPage/>} />
                             <Route path="/order/payment" element={<PaymentResult />} />
                             <Route path="review" element={
                                 <ProtectedRoute>

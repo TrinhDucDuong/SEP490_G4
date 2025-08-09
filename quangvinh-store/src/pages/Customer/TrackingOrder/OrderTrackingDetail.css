@@ -1,0 +1,68 @@
+/* OrderTrackingDetail.css */
+.order-tracking {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    font-family: sans-serif;
+}
+
+.order-status {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+}
+.status-badge.delivered { background-color: green; }
+.status-badge.pending { background-color: orange; }
+.status-badge.cancelled { background-color: red; }
+
+.payment-status {
+    font-weight: bold;
+}
+
+.order-items {
+    border-top: 1px solid #ddd;
+    margin-top: 15px;
+    padding-top: 15px;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.item-image img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+}
+
+.item-info {
+    flex: 1;
+    margin-left: 15px;
+}
+
+.item-price {
+    font-weight: bold;
+    color: #d33;
+}
+
+.order-total {
+    margin-top: 20px;
+    font-size: 18px;
+    text-align: right;
+}
+
+.shipping-info {
+    margin-top: 20px;
+}

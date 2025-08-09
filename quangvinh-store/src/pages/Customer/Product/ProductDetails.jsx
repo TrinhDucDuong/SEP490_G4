@@ -144,7 +144,7 @@ const ProductDetail = () => {
                 productImage: selectedImage || product.images?.[0]?.imageUrl || '',
             });
             await logAction('ADD_TO_CART', currentVariant?.productVariantId);
-            navigate('/payment');
+            navigate('/checkout');
         } catch (error) {
             toast.error(error.message || 'Lỗi khi thêm vào giỏ hàng');
         }

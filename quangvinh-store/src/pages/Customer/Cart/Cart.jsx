@@ -73,7 +73,7 @@ function Cart({ isOpen, onClose }) {
                             </span>
                         </div>
                         <Link
-                            to="/payment"
+                            to="/checkout"
                             onClick={onClose}
                             className="block w-full text-center bg-yellow-400 text-black py-3 rounded-lg font-semibold text-sm hover:bg-yellow-500 transition"
                         >
