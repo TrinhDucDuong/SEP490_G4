@@ -59,8 +59,10 @@ public class AiAssistantUseCaseInteraction implements AiAssistantInputBoundary {
     @Override
     public void handleVoice(String id, String payload) {
         String question = azureSpeechBoundary.speechToText(payload);
+        int a = 5;
         String answer = getAnswer(question);
-        clientManager.send(azureSpeechBoundary.textToSpeech(answer));
+        String base64 = azureSpeechBoundary.textToSpeech(answer);
+        clientManager.send(base64);
     }
 
     private boolean isOrderRelated(String question) {
