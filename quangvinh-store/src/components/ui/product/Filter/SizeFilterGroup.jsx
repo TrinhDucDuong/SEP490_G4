@@ -11,15 +11,15 @@ const SizeFilterGroup = ({ options = [], selectedOptions = [], onChange }) => {
 
     return (
         <div className="grid grid-cols-4 gap-2">
-            {options.map(size => (
+            {options.map(({ label, value }) => (
                 <button
-                    key={size}
-                    onClick={() => handleToggle(size)}
+                    key={value}
+                    onClick={() => handleToggle(value)}
                     className={`px-2 py-1 rounded border text-sm 
-                        ${selectedOptions.includes(size) ? 'bg-black text-white' : 'bg-white text-black'}`}
+                        ${selectedOptions.includes(value) ? 'bg-black text-white' : 'bg-white text-black'}`}
                     type="button"
                 >
-                    {size}
+                    {label}
                 </button>
             ))}
         </div>

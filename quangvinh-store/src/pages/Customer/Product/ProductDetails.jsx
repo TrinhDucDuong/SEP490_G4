@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import { motion } from 'framer-motion';
@@ -13,11 +13,31 @@ import { useFetchStarRate } from "../../../hooks/Customer/useFetchStarRate";
 import { useCart } from "../../../context/CartContext.jsx";
 import { useActionLogger } from "../../../utils/api/Customer/Log/useActionLogger.js";
 import parse from 'html-react-parser';
-import {useFetchRelatedProducts} from "../../../hooks/Customer/useFetchRelatedProducts.js";
+import { useFetchRelatedProducts } from "../../../hooks/Customer/useFetchRelatedProducts.js";
 import ProductScrollSlider from "../../../components/ui/product/Common/ProductScrollSlider.jsx";
 
 const ProductDetail = () => {
-    const { id } = useParams();
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Lấy productId từ location.state (khi navigate bằng state) hoặc từ sessionStorage (fallback khi reload)
+    const stateProductId = location.state?.productId;
+    const [productId, setProductId] = useState(() => {
+        if (stateProductId) {
+            try { sessionStorage.setItem('productId', stateProductId); } catch (e) { /* ignore */ }
+            return stateProductId;
+        }
+        return sessionStorage.getItem('productId');
+    });
+
+    // Nếu location.state thay đổi (vd: navigate mới với state), cập nhật sessionStorage và state
+    useEffect(() => {
+        if (stateProductId && stateProductId !== productId) {
+            try { sessionStorage.setItem('productId', stateProductId); } catch (e) { /* ignore */ }
+            setProductId(stateProductId);
+        }
+    }, [stateProductId, productId]);
+
     const [product, setProduct] = useState(null);
     const [productSizes, setProductSizes] = useState([]);
     const [productColors, setProductColors] = useState([]);
@@ -27,25 +47,60 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [filterStar, setFilterStar] = useState('');
     const [pageNumber, setPageNumber] = useState(0);
-    const { logAction } = useActionLogger();
 
+    const { logAction } = useActionLogger();
     const { addToCart } = useCart();
+
+    const formatProductSize = (size) => {
+        const mapping = {
+            XS: "XS",
+            S: "S",
+            M: "M",
+            L: "L",
+            XL: "XL",
+            XXL: "XXL",
+            SIZE_35: "35",
+            SIZE_36: "36",
+            SIZE_37: "37",
+            SIZE_38: "38",
+            SIZE_39: "39",
+            SIZE_40: "40",
+            SIZE_41: "41",
+            SIZE_42: "42",
+            SIZE_43: "43",
+            SIZE_44: "44",
+            SIZE_45: "45",
+        };
+        return mapping[size] || size;
+    };
+
     const { starRates, totalCount, loading: starRateLoading } = useFetchStarRate(product?.productId, filterStar, pageNumber, 3);
 
     useEffect(() => {
+        // scroll top khi vào trang
         window.scrollTo(0, 0);
+
+        // nếu không có productId (cả state lẫn sessionStorage), chuyển về trang danh sách
+        if (!productId) {
+            navigate("/products");
+            return;
+        }
+
         const fetchProduct = async () => {
             try {
-                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/product/${id}`);
+                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/product/${productId}`);
                 if (!res.ok) throw new Error('Lỗi tải sản phẩm');
                 const data = await res.json();
-                const uniqueSizes = Array.from(new Set(data.productSizes));
+
+                // data structure: data.product, data.productSizes, data.productColors (theo code cũ của bạn)
+                const uniqueSizes = Array.from(new Set(data.productSizes || []));
                 const seenColors = new Set();
-                const uniqueColors = data.productColors.filter(color => {
+                const uniqueColors = (data.productColors || []).filter(color => {
                     if (seenColors.has(color.colorHex)) return false;
                     seenColors.add(color.colorHex);
                     return true;
                 });
+
                 setProduct(data.product);
                 setProductSizes(uniqueSizes);
                 setProductColors(uniqueColors);
@@ -54,12 +109,46 @@ const ProductDetail = () => {
                 toast.error(err.message || 'Lỗi tải sản phẩm');
             }
         };
+
         fetchProduct();
-    }, [id]);
+    }, [productId, navigate]);
 
     const currentVariant = product?.productVariants?.find(
         v => v.colorHex === selectedColor && v.productSize === selectedSize
     );
+
+    const handleBuyNow = async () => {
+        if (!selectedColor || !selectedSize) {
+            toast.error("Vui lòng chọn màu sắc và kích thước");
+            return;
+        }
+
+        if (!currentVariant) {
+            toast.error("Sản phẩm với màu và kích thước này hiện không có trong kho");
+            return;
+        }
+
+        if (quantity > currentVariant.quantity) {
+            toast.error("Số lượng vượt quá số lượng tồn kho!");
+            return;
+        }
+
+        try {
+            await addToCart({
+                productId: product.productId,
+                colorHexCode: selectedColor,
+                sizeCode: selectedSize,
+                quantity,
+                price: product.unitPrice,
+                productName: product.productName,
+                productImage: selectedImage || product.images?.[0]?.imageUrl || '',
+            });
+            await logAction('ADD_TO_CART', currentVariant?.productVariantId);
+            navigate('/checkout');
+        } catch (error) {
+            toast.error(error.message || 'Lỗi khi thêm vào giỏ hàng');
+        }
+    };
 
     const handleAddToCart = async () => {
         if (!selectedColor || !selectedSize) {
@@ -184,7 +273,7 @@ const ProductDetail = () => {
                                     onClick={() => setSelectedSize(size)}
                                     className={`px-2 py-1 border border-black text-sm font-medium ${selectedSize === size ? 'bg-blue-200 text-black border-blue-200' : 'bg-white border-gray-200 hover:bg-blue-400 hover:text-white'}`}
                                 >
-                                    {size}
+                                    {formatProductSize(size)}
                                 </button>
                             ))}
                         </div>
@@ -223,7 +312,10 @@ const ProductDetail = () => {
                             onClick={handleAddToCart}
                             className="bg-black text-white hover:bg-white hover:text-black border border-black py-2 px-4 rounded font-medium w-1/2"
                         >Thêm vào giỏ hàng</button>
-                        <button className="bg-white text-black border border-gray-600 py-2 px-4 rounded font-medium hover:bg-black hover:text-white w-1/2">
+                        <button
+                            onClick={handleBuyNow}
+                            className="bg-white text-black border border-gray-600 py-2 px-4 rounded font-medium hover:bg-black hover:text-white w-1/2"
+                        >
                             Mua ngay
                         </button>
                     </div>

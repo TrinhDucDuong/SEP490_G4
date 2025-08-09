@@ -106,35 +106,25 @@ function Header() {
                             </li>
                             <li>
                                 <Link
-                                    to="/policies/3"
-                                    className={`py-2 px-3 border-b transition-all duration-200 ${
-                                        location.pathname === '/policies/3' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
-                                    }`}
-                                >
-                                    Liên hệ
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    to="/sale"
-                                    className={`py-2 px-3 border-b transition-all duration-200 relative ${
-                                        location.pathname === '/sale' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
-                                    }`}
-                                >
-                                    <span className="absolute -top-1 -right-2 text-[10px] bg-red-600 text-white px-1 rounded">HOT</span>
-                                    Sale
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    to="/blog"
+                                    to="/track-order"
                                     className={`py-2 px-3 border-b transition-all duration-200 text-center ${
-                                        location.pathname === '/blog' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
+                                        location.pathname === '/track-order' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
                                     }`}
                                 >
-                                    Hàng Auth chuẩn có gì?
+                                    Tra cứu đơn hàng
                                 </Link>
                             </li>
+                            <li>
+                                <Link
+                                    to="/stores"
+                                    className={`py-2 px-3 border-b transition-all duration-200 text-center ${
+                                        location.pathname === '/stores' ? 'border-b-black text-black font-bold tracking-wide' : 'border-b-transparent text-gray-700 hover:border-b-black hover:tracking-wide'
+                                    }`}
+                                >
+                                    Hệ Thống Cửa Hàng
+                                </Link>
+                            </li>
+
                         </ul>
 
                     </nav>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -17,67 +17,33 @@ L.Icon.Default.mergeOptions({
     shadowUrl: markerShadow,
 });
 
+function FlyToStore({ store }) {
+    const map = useMap();
+
+    useEffect(() => {
+        if (store) {
+            map.flyTo([store.location.lat, store.location.lng], 16, {
+                duration: 1.5
+            });
+        }
+    }, [store, map]);
+
+    return null;
+}
+
 const StoreAddress = () => {
-     const { stores, loading, error } = useFetchStores();
-    //
-    // const mockStores = [
-    //     {
-    //         id: 1,
-    //         name: "Cửa hàng Hồ Chí Minh",
-    //         address: "123 Lê Lợi, Quận 1, TP.HCM",
-    //         phone: "0909123456",
-    //         city: "Hồ Chí Minh",
-    //         district: "Quận 1",
-    //         openingHours: "08:00 - 21:00",
-    //         location: {
-    //             lat: 10.7769,
-    //             lng: 106.7009
-    //         },
-    //         hasValidLocation: true
-    //     },
-    //     {
-    //         id: 2,
-    //         name: "Cửa hàng Hà Nội",
-    //         address: "456 Hoàng Quốc Việt, Cầu Giấy, Hà Nội",
-    //         phone: "0912345678",
-    //         city: "Hà Nội",
-    //         district: "Cầu Giấy",
-    //         openingHours: "09:00 - 22:00",
-    //         location: {
-    //             lat: 21.0381,
-    //             lng: 105.7829
-    //         },
-    //         hasValidLocation: true
-    //     },
-    //     {
-    //         id: 3,
-    //         name: "Cửa hàng Đà Nẵng",
-    //         address: "789 Bạch Đằng, Hải Châu, Đà Nẵng",
-    //         phone: "0933456789",
-    //         city: "Đà Nẵng",
-    //         district: "Hải Châu",
-    //         openingHours: "07:30 - 20:30",
-    //         location: {
-    //             lat: 16.0678,
-    //             lng: 108.2208
-    //         },
-    //         hasValidLocation: true
-    //     }
-    // ];
-
-    // const stores = mockStores;
-    // const loading = false;
-    // const error = null;
-
-
-    console.log(stores);
+    const { stores, loading, error } = useFetchStores();
     const [selectedStore, setSelectedStore] = useState(null);
 
-
-
+    useEffect(() => {
+        if (!loading && stores.length > 0) {
+            setSelectedStore(stores[0]);
+        }
+    }, [loading, stores]);
 
     return (
         <div className="flex flex-col lg:flex-row gap-6 p-6">
+
             <div className="w-full lg:w-1/3 mt-2">
                 <h2 className="text-2xl font-bold">Danh sách cửa hàng</h2>
                 {loading && <p>Đang tải cửa hàng...</p>}
@@ -86,13 +52,15 @@ const StoreAddress = () => {
                 {stores.map(store => (
                     <Card
                         key={store.id}
-                        className="p-4 hover:shadow-lg cursor-pointer border border-gray-200"
+                        className={`p-4 hover:shadow-lg cursor-pointer border ${
+                            selectedStore?.id === store.id ? "border-blue-500" : "border-gray-200"
+                        }`}
                         onClick={() => setSelectedStore(store)}
                     >
                         <h3 className="font-semibold text-lg">{store.name}</h3>
                         <p className="text-sm">{store.address}</p>
                         <div className="flex flex-row">
-                            <p className="m-r-2">{store.city}</p>,
+                            <p className="mr-2">{store.city}</p>,
                             <p> {store.district}</p>
                         </div>
                         <p className="text-sm text-gray-500">{store.phone}</p>
@@ -108,9 +76,10 @@ const StoreAddress = () => {
                     className="w-full h-full rounded-lg shadow z-0"
                 >
                     <TileLayer
-                        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+                        attribution="&copy; Google"
                     />
+
                     {stores.map(store => (
                         <Marker
                             key={store.id}
@@ -123,6 +92,7 @@ const StoreAddress = () => {
                             </Popup>
                         </Marker>
                     ))}
+                    <FlyToStore store={selectedStore} />
                 </MapContainer>
             </div>
         </div>

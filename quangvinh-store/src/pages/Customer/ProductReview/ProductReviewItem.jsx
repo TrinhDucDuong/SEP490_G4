@@ -1,25 +1,35 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import useCreateProductFeedback from "../../../hooks/Customer/useCreateProductFeedback.js";
 
-const ProductReviewItem = ({ product, index }) => {
+const ProductReviewItem = ({ product, index, orderId }) => {
     const [rating, setRating] = useState(0);
     const [recommend, setRecommend] = useState(null);
     const [summary, setSummary] = useState("");
-    const [image, setImage] = useState(null);
 
-    const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
-    };
+    const navigate = useNavigate();
+    const { submitFeedback, loading, error } = useCreateProductFeedback();
 
-    const handleSubmit = () => {
-        const formData = new FormData();
-        formData.append("productId", product.productId);
-        formData.append("rating", rating);
-        formData.append("recommend", recommend);
-        formData.append("summary", summary);
-        if (image) formData.append("image", image);
+    const handleSubmit = async () => {
+        const payload = {
+            orderDetailsId: orderId,
+            comment: summary,
+            starRate: rating,
+        };
 
+        console.log(payload);
 
-        console.log("Đã submit:", { rating, recommend, summary, image });
+        try {
+            await submitFeedback(payload);
+            toast.success("Đánh giá đã được gửi!");
+            setTimeout(() => {
+                navigate("/profile/order-history");
+            }, 1500);
+        } catch (err) {
+            toast.error(`Lỗi: ${err.message}`);
+        }
     };
 
     return (
@@ -72,16 +82,14 @@ const ProductReviewItem = ({ product, index }) => {
                     />
                 </div>
 
-                <div>
-                    <p className="text-sm font-medium">Hình ảnh (tuỳ chọn):</p>
-                    <input type="file" onChange={handleImageChange} className="mt-1" />
-                </div>
+                {error && <p className="text-red-500 text-sm">{error}</p>}
 
                 <button
                     onClick={handleSubmit}
                     className="mt-4 bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
+                    disabled={loading}
                 >
-                    Gửi đánh giá
+                    {loading ? "Đang gửi..." : "Gửi đánh giá"}
                 </button>
             </div>
         </div>
