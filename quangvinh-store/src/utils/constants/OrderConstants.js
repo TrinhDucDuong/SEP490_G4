@@ -8,6 +8,12 @@ export const ORDER_STATUS_OPTIONS = [
     { value: 'CANCELED', label: 'Đã hủy', color: 'red' }
 ];
 
+// Payment Status Options (MỚI THÊM)
+export const PAYMENT_STATUS_OPTIONS = [
+    { value: false, label: 'Chưa thanh toán', color: 'red' },
+    { value: true, label: 'Đã thanh toán', color: 'green' }
+];
+
 // Helper Functions
 export const ORDER_HELPERS = {
     getStatusText: (status) => {
@@ -28,6 +34,17 @@ export const ORDER_HELPERS = {
             'CANCELED': 'bg-red-100 text-red-800 border border-red-200'
         };
         return colorMap[status] || 'bg-gray-100 text-gray-800 border border-gray-200';
+    },
+
+    // MỚI THÊM: Helper cho payment status
+    getPaymentStatusText: (paymentStatus) => {
+        return paymentStatus === true ? 'Đã thanh toán' : 'Chưa thanh toán';
+    },
+
+    getPaymentStatusColorClass: (paymentStatus) => {
+        return paymentStatus === true
+            ? 'bg-green-100 text-green-800 border border-green-200'
+            : 'bg-red-100 text-red-800 border border-red-200';
     },
 
     formatDate: (dateString) => {
@@ -68,15 +85,16 @@ export const ORDER_HELPERS = {
     }
 };
 
-// Sort Options
+// Sort Options - CẬP NHẬT
 export const ORDER_SORT_OPTIONS = [
     { key: 'orderId', label: 'Mã đơn hàng', type: 'number' },
     { key: 'orderDate', label: 'Ngày tạo đơn', type: 'date' },
     { key: 'totalPrice', label: 'Tổng giá tiền', type: 'number' },
-    { key: 'orderStatus', label: 'Trạng thái', type: 'string' }
+    { key: 'orderStatus', label: 'Trạng thái đơn hàng', type: 'string' },
+    { key: 'paymentStatus', label: 'Trạng thái thanh toán', type: 'boolean' } // MỚI THÊM
 ];
 
-// Default values
+// Default values - CẬP NHẬT
 export const ORDER_DEFAULTS = {
     DEFAULT_ORDER: {
         orderId: null,
@@ -84,9 +102,9 @@ export const ORDER_DEFAULTS = {
         orderDate: null,
         orderDetails: [],
         orderStatus: 'PROCESSING',
+        paymentStatus: false, // MỚI THÊM
         totalPrice: null
     },
-
     DEFAULT_OWNER: {
         accountId: null,
         username: 'Unknown',
@@ -100,7 +118,8 @@ export const ORDER_ACTION_TYPES = {
     CREATE: 'CREATE',
     UPDATE: 'UPDATE',
     DELETE: 'DELETE',
-    UPDATE_STATUS: 'UPDATE_STATUS'
+    UPDATE_STATUS: 'UPDATE_STATUS',
+    UPDATE_PAYMENT_STATUS: 'UPDATE_PAYMENT_STATUS' // MỚI THÊM
 };
 
 // Error Messages
@@ -108,12 +127,14 @@ export const ORDER_ERROR_MESSAGES = {
     NETWORK_ERROR: 'Có lỗi xảy ra khi kết nối với server',
     UNKNOWN_ERROR: 'Có lỗi không xác định xảy ra',
     ORDER_NOT_FOUND: 'Không tìm thấy đơn hàng',
-    INVALID_STATUS: 'Trạng thái đơn hàng không hợp lệ'
+    INVALID_STATUS: 'Trạng thái đơn hàng không hợp lệ',
+    INVALID_PAYMENT_STATUS: 'Trạng thái thanh toán không hợp lệ' // MỚI THÊM
 };
 
-// Filter Options
+// Filter Options - CẬP NHẬT
 export const ORDER_FILTER_OPTIONS = {
     STATUS: ORDER_STATUS_OPTIONS,
+    PAYMENT_STATUS: PAYMENT_STATUS_OPTIONS, // MỚI THÊM
     DATE_PRESETS: [
         { value: 'today', label: 'Hôm nay' },
         { value: 'yesterday', label: 'Hôm qua' },

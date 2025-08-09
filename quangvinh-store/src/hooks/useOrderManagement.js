@@ -1,4 +1,5 @@
 // src/hooks/useOrderManagement.js
+
 import { useState, useEffect } from 'react';
 import { getAllOrders, updateOrderStatus, deleteOrder } from '../utils/api/Admin/OrderManagementAPI.js';
 import { ORDER_HELPERS } from '../utils/constants/OrderConstants';
@@ -9,6 +10,7 @@ export const useOrderManagement = () => {
     const [filteredOrders, setFilteredOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [authError, setAuthError] = useState(false);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -18,6 +20,7 @@ export const useOrderManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState({
         status: '',
+        paymentStatus: '', // MỚI THÊM
         startDate: '',
         endDate: '',
         datePreset: ''
@@ -30,11 +33,18 @@ export const useOrderManagement = () => {
     const fetchOrders = async () => {
         setLoading(true);
         setError(null);
+        setAuthError(false);
+
         try {
             const params = {};
 
             if (filters.status) {
                 params.orderStatus = filters.status;
+            }
+
+            // MỚI THÊM: Thêm filter cho payment status
+            if (filters.paymentStatus !== '') {
+                params.paymentStatus = filters.paymentStatus;
             }
 
             if (sortConfig.key) {
@@ -47,24 +57,31 @@ export const useOrderManagement = () => {
                 // Tính toán totalPrice cho mỗi order
                 const ordersWithTotalPrice = result.data.map(order => ({
                     ...order,
-                    totalPrice: order.totalPrice || ORDER_HELPERS.calculateTotalPrice(order.orderDetails)
+                    totalPrice: order.totalPrice || ORDER_HELPERS.calculateTotalPrice(order.orderDetails),
+                    paymentStatus: order.paymentStatus !== undefined ? order.paymentStatus : false // MỚI THÊM: Default false nếu không có
                 }));
                 setOrders(ordersWithTotalPrice);
             } else {
+                if (result.error.includes('đăng nhập')) {
+                    setAuthError(true);
+                }
                 setError(result.error);
             }
         } catch (err) {
+            if (err.message.includes('đăng nhập')) {
+                setAuthError(true);
+            }
             setError('Có lỗi xảy ra khi tải dữ liệu');
         } finally {
             setLoading(false);
         }
     };
 
-    // Update order status
-    const updateOrderStatusHandler = async (orderId, newStatus) => {
+    // Update order status - CẬP NHẬT để hỗ trợ cả orderStatus và paymentStatus
+    const updateOrderStatusHandler = async (orderId, updateData) => {
         setLoading(true);
         try {
-            const result = await updateOrderStatus(orderId, newStatus);
+            const result = await updateOrderStatus(orderId, updateData);
             if (result.success) {
                 await fetchOrders(); // Refresh data
                 return { success: true };
@@ -96,7 +113,7 @@ export const useOrderManagement = () => {
         }
     };
 
-    // Filter and search logic
+    // Filter and search logic - CẬP NHẬT
     useEffect(() => {
         let result = [...orders];
 
@@ -137,6 +154,10 @@ export const useOrderManagement = () => {
                         aValue = ORDER_HELPERS.getStatusText(a.orderStatus).toLowerCase();
                         bValue = ORDER_HELPERS.getStatusText(b.orderStatus).toLowerCase();
                         break;
+                    case 'paymentStatus': // MỚI THÊM
+                        aValue = a.paymentStatus ? 1 : 0;
+                        bValue = b.paymentStatus ? 1 : 0;
+                        break;
                     case 'customerName':
                         aValue = ORDER_HELPERS.getCustomerName(a.owner).toLowerCase();
                         bValue = ORDER_HELPERS.getCustomerName(b.owner).toLowerCase();
@@ -158,11 +179,12 @@ export const useOrderManagement = () => {
         setCurrentPage(1);
     }, [orders, searchTerm, filters, sortConfig]);
 
-    // Clear filters
+    // Clear filters - CẬP NHẬT
     const clearFilters = () => {
         setSearchTerm('');
         setFilters({
             status: '',
+            paymentStatus: '', // MỚI THÊM
             startDate: '',
             endDate: '',
             datePreset: ''
@@ -182,29 +204,37 @@ export const useOrderManagement = () => {
                 endDate = startDate;
                 break;
             case 'yesterday':
-            { const yesterday = new Date(now);
+            {
+                const yesterday = new Date(now);
                 yesterday.setDate(yesterday.getDate() - 1);
                 startDate = yesterday.toISOString().split('T')[0];
                 endDate = startDate;
-                break; }
+                break;
+            }
             case 'last7days':
-            { const last7Days = new Date(now);
+            {
+                const last7Days = new Date(now);
                 last7Days.setDate(last7Days.getDate() - 7);
                 startDate = last7Days.toISOString().split('T')[0];
                 endDate = now.toISOString().split('T')[0];
-                break; }
+                break;
+            }
             case 'last30days':
-            { const last30Days = new Date(now);
+            {
+                const last30Days = new Date(now);
                 last30Days.setDate(last30Days.getDate() - 30);
                 startDate = last30Days.toISOString().split('T')[0];
                 endDate = now.toISOString().split('T')[0];
-                break; }
+                break;
+            }
             case 'last3months':
-            { const last3Months = new Date(now);
+            {
+                const last3Months = new Date(now);
                 last3Months.setMonth(last3Months.getMonth() - 3);
                 startDate = last3Months.toISOString().split('T')[0];
                 endDate = now.toISOString().split('T')[0];
-                break; }
+                break;
+            }
             default:
                 startDate = '';
                 endDate = '';
@@ -218,13 +248,15 @@ export const useOrderManagement = () => {
         }));
     };
 
-    // Get statistics
+    // Get statistics - CẬP NHẬT
     const getStatistics = () => {
         const totalOrders = orders.length;
         const processingOrders = orders.filter(order => order.orderStatus === 'PROCESSING').length;
         const shippingOrders = orders.filter(order => order.orderStatus === 'SHIPPING').length;
         const deliveredOrders = orders.filter(order => order.orderStatus === 'DELIVERED').length;
         const canceledOrders = orders.filter(order => order.orderStatus === 'CANCELED').length;
+        const paidOrders = orders.filter(order => order.paymentStatus === true).length; // MỚI THÊM
+        const unpaidOrders = orders.filter(order => order.paymentStatus === false).length; // MỚI THÊM
         const filteredCount = filteredOrders.length;
 
         return {
@@ -233,14 +265,16 @@ export const useOrderManagement = () => {
             shippingOrders,
             deliveredOrders,
             canceledOrders,
+            paidOrders, // MỚI THÊM
+            unpaidOrders, // MỚI THÊM
             filteredCount
         };
     };
 
-    // Load data on mount
+    // Load data on mount - CẬP NHẬT
     useEffect(() => {
         fetchOrders();
-    }, [filters.status, sortConfig]);
+    }, [filters.status, filters.paymentStatus, sortConfig]);
 
     return {
         // Data
@@ -248,6 +282,7 @@ export const useOrderManagement = () => {
         filteredOrders,
         loading,
         error,
+        authError,
 
         // Pagination
         currentPage,
