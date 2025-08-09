@@ -2,10 +2,15 @@ import { useNavigate } from "react-router-dom";
 
 const OrderItem = ({ order }) => {
     const navigate = useNavigate();
+    const isLoggedIn = Boolean(localStorage.getItem("token"));
 
-    console.log(order.paymentStatus);
+    const handlePublicDetailClick = () => {
+        // Xem đơn hàng công khai (tracking)
+        navigate(`/track-order/${order.orderId}`);
+    };
 
-    const handleDetailClick = () => {
+    const handlePrivateDetailClick = () => {
+        // Xem đơn hàng của user đã đăng nhập
         navigate(`/profile/orders/${order.orderId}`);
     };
 
@@ -37,6 +42,15 @@ const OrderItem = ({ order }) => {
         }
     };
 
+    // Lấy tên sản phẩm an toàn, hỗ trợ cả items và orderDetails
+    const firstProductName =
+        order.items?.[0]?.name ||
+        order.orderDetails?.[0]?.productVariant?.product?.productName ||
+        "";
+
+    const productCount =
+        order.items?.length || order.orderDetails?.length || 0;
+
     return (
         <div className="border border-gray-200 p-4 bg-white shadow-sm hover:bg-gray-100 transition-all duration-500">
             <div className="flex justify-between items-center">
@@ -48,7 +62,8 @@ const OrderItem = ({ order }) => {
                         Ngày đặt: {new Date(order.orderDate).toLocaleDateString('vi-VN')}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                        {order.items[0]?.name} {order.items.length > 1 && `và ${order.items.length - 1} sản phẩm khác`}
+                        {firstProductName}{" "}
+                        {productCount > 1 && `và ${productCount - 1} sản phẩm khác`}
                     </p>
                     <p className={`text-xs mt-1 ${order.paymentStatus ? "text-green-600" : "text-red-600"}`}>
                         {order.paymentStatus ? "Đã thanh toán" : "Chưa thanh toán"}
@@ -59,20 +74,31 @@ const OrderItem = ({ order }) => {
                         {getStatusLabel(order.orderStatus)}
                     </div>
                     <p className="text-sm font-semibold text-gray-800">
-                        {order.total.toLocaleString()}₫
+                        {(order.total || order.totalPrice)?.toLocaleString()}₫
                     </p>
                 </div>
             </div>
 
             <div className="mt-4 flex justify-end gap-4 flex-wrap">
-                <button
-                    onClick={handleDetailClick}
-                    className="text-sm text-black bg-white border border-black px-4 py-1 transition hover:bg-black hover:text-white"
-                >
-                    Xem chi tiết
-                </button>
+                {!isLoggedIn && (
+                    <button
+                        onClick={handlePublicDetailClick}
+                        className="text-sm text-black bg-white border border-black px-4 py-1 transition hover:bg-black hover:text-white"
+                    >
+                        Xem chi tiết
+                    </button>
+                )}
 
-                {order &&
+                {isLoggedIn && (
+                    <button
+                        onClick={handlePrivateDetailClick}
+                        className="text-sm text-black bg-white border border-black px-4 py-1 transition hover:bg-black hover:text-white"
+                    >
+                        Xem chi tiết
+                    </button>
+                )}
+
+                {isLoggedIn && order &&
                     (order.orderStatus === "PROCESSING" || order.orderStatus == null) &&
                     !order.paymentStatus && (
                         <button
@@ -83,8 +109,7 @@ const OrderItem = ({ order }) => {
                         </button>
                     )}
 
-
-                {order.orderStatus === "DELIVERED" && (
+                {isLoggedIn && order.orderStatus === "DELIVERED" && (
                     <button
                         onClick={handleReviewClick}
                         className="text-sm text-black bg-white border border-black px-4 py-1 transition hover:bg-black hover:text-white"

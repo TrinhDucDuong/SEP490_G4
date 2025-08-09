@@ -5,21 +5,19 @@ function AddAddressForm({ onAdd, onCancel }) {
     const [form, setForm] = useState({
         name: '',
         phoneNumber: '',
-        address: '',
         exactAddress: '',
         type: 'Nhà riêng',
         main: false,
         province: '',
-        district: '',
         ward: '',
     });
 
     const [provinces, setProvinces] = useState([]);
-    const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
 
+    // Lấy danh sách tỉnh
     useEffect(() => {
-        fetch('https://provinces.open-api.vn/api/?depth=1')
+        fetch('https://provinces.open-api.vn/api/v2/p/')
             .then(res => res.json())
             .then(setProvinces)
             .catch(error => {
@@ -28,27 +26,12 @@ function AddAddressForm({ onAdd, onCancel }) {
             });
     }, []);
 
+    // Lấy danh sách xã khi chọn tỉnh
     useEffect(() => {
         if (form.province) {
-            fetch(`https://provinces.open-api.vn/api/p/${form.province}?depth=2`)
+            fetch(`https://provinces.open-api.vn/api/v2/w/?province_code=${form.province}`)
                 .then(res => res.json())
-                .then(data => setDistricts(data.districts || []))
-                .catch(error => {
-                    console.error('Lỗi khi tải danh sách huyện:', error);
-                    toast.error('Không thể tải danh sách huyện');
-                });
-            setWards([]);
-        } else {
-            setDistricts([]);
-            setWards([]);
-        }
-    }, [form.province]);
-
-    useEffect(() => {
-        if (form.district) {
-            fetch(`https://provinces.open-api.vn/api/d/${form.district}?depth=2`)
-                .then(res => res.json())
-                .then(data => setWards(data.wards || []))
+                .then(setWards)
                 .catch(error => {
                     console.error('Lỗi khi tải danh sách xã:', error);
                     toast.error('Không thể tải danh sách xã');
@@ -56,7 +39,7 @@ function AddAddressForm({ onAdd, onCancel }) {
         } else {
             setWards([]);
         }
-    }, [form.district]);
+    }, [form.province]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -70,15 +53,14 @@ function AddAddressForm({ onAdd, onCancel }) {
         e.preventDefault();
 
         const selectedProvince = provinces.find(p => p.code === Number(form.province))?.name || '';
-        const selectedDistrict = districts.find(d => d.code === Number(form.district))?.name || '';
         const selectedWard = wards.find(w => w.code === Number(form.ward))?.name || '';
 
-        if (!selectedWard || !selectedDistrict || !selectedProvince) {
-            toast.error('Vui lòng chọn đầy đủ tỉnh, huyện, xã!');
+        if (!selectedProvince || !selectedWard) {
+            toast.error('Vui lòng chọn đầy đủ tỉnh và xã!');
             return;
         }
 
-        const combinedAddress = `${selectedWard}, ${selectedDistrict}, ${selectedProvince}`;
+        const combinedAddress = `${selectedWard}, ${selectedProvince}`;
 
         const typeMap = {
             "Nhà riêng": "HOME",
@@ -92,17 +74,19 @@ function AddAddressForm({ onAdd, onCancel }) {
             address: combinedAddress,
             exactAddress: form.exactAddress,
             main: form.main,
-            type: typeMap[form.type], // CHUẨN DỮ LIỆU
+            type: typeMap[form.type],
+            provinceCode: form.province,
+            wardCode: form.ward,
         };
 
         onAdd(newAddress);
     };
 
-
     return (
         <form onSubmit={handleSubmit} className="space-y-5 bg-white p-6 rounded-xl shadow-sm w-full max-w-3xl mx-auto">
             <h3 className="text-lg font-semibold text-gray-900">Thêm địa chỉ mới</h3>
 
+            {/* Họ tên */}
             <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700 mb-1">Họ tên</label>
                 <input
@@ -115,6 +99,7 @@ function AddAddressForm({ onAdd, onCancel }) {
                 />
             </div>
 
+            {/* Số điện thoại */}
             <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
                 <input
@@ -127,7 +112,8 @@ function AddAddressForm({ onAdd, onCancel }) {
                 />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {/* Chọn tỉnh và xã */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="flex flex-col">
                     <label className="text-sm font-medium text-gray-700 mb-1">Tỉnh / Thành phố</label>
                     <select
@@ -140,22 +126,6 @@ function AddAddressForm({ onAdd, onCancel }) {
                         <option value="">Chọn tỉnh</option>
                         {provinces.map(p => (
                             <option key={p.code} value={p.code}>{p.name}</option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700 mb-1">Quận / Huyện</label>
-                    <select
-                        name="district"
-                        value={form.district}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-full py-2 px-3 text-sm"
-                        required
-                    >
-                        <option value="">Chọn huyện</option>
-                        {districts.map(d => (
-                            <option key={d.code} value={d.code}>{d.name}</option>
                         ))}
                     </select>
                 </div>
@@ -177,6 +147,7 @@ function AddAddressForm({ onAdd, onCancel }) {
                 </div>
             </div>
 
+            {/* Địa chỉ chi tiết */}
             <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700 mb-1">Địa chỉ chi tiết</label>
                 <input
@@ -189,6 +160,7 @@ function AddAddressForm({ onAdd, onCancel }) {
                 />
             </div>
 
+            {/* Loại địa chỉ */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Loại địa chỉ</label>
                 <div className="flex gap-6">
@@ -208,6 +180,7 @@ function AddAddressForm({ onAdd, onCancel }) {
                 </div>
             </div>
 
+            {/* Đặt làm địa chỉ chính */}
             <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                     type="checkbox"
@@ -219,6 +192,7 @@ function AddAddressForm({ onAdd, onCancel }) {
                 Đặt làm địa chỉ chính
             </label>
 
+            {/* Nút */}
             <div className="flex gap-3">
                 <button
                     type="submit"

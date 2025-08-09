@@ -4,18 +4,16 @@ import { toast } from 'react-toastify';
 function ManualAddressForm() {
     const [form, setForm] = useState({
         province: '',
-        district: '',
         ward: '',
         street: '',
     });
 
     const [provinces, setProvinces] = useState([]);
-    const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
 
     // Lấy danh sách tỉnh
     useEffect(() => {
-        fetch('https://provinces.open-api.vn/api/?depth=1')
+        fetch('https://provinces.open-api.vn/api/v2/p/')
             .then(res => res.json())
             .then(setProvinces)
             .catch(error => {
@@ -24,37 +22,21 @@ function ManualAddressForm() {
             });
     }, []);
 
-    // Lấy danh sách huyện theo tỉnh
+    // Lấy danh sách phường khi chọn tỉnh
     useEffect(() => {
         if (form.province) {
-            fetch(`https://provinces.open-api.vn/api/p/${form.province}?depth=2`)
+            fetch(`https://provinces.open-api.vn/api/v2/w?province_code=${form.province}`)
                 .then(res => res.json())
-                .then(data => setDistricts(data.districts || []))
+                .then(setWards)
                 .catch(error => {
-                    console.error('Lỗi khi tải danh sách huyện:', error);
-                    toast.error('Không thể tải danh sách huyện');
-                });
-            setWards([]);
-            setForm(prev => ({ ...prev, district: '', ward: '' }));
-        } else {
-            setDistricts([]);
-            setWards([]);
-        }
-    }, [form.province]);
-    useEffect(() => {
-        if (form.district) {
-            fetch(`https://provinces.open-api.vn/api/d/${form.district}?depth=2`)
-                .then(res => res.json())
-                .then(data => setWards(data.wards || []))
-                .catch(error => {
-                    console.error('Lỗi khi tải danh sách xã:', error);
-                    toast.error('Không thể tải danh sách xã');
+                    console.error('Lỗi khi tải danh sách phường:', error);
+                    toast.error('Không thể tải danh sách phường');
                 });
             setForm(prev => ({ ...prev, ward: '' }));
         } else {
             setWards([]);
         }
-    }, [form.district]);
+    }, [form.province]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -63,7 +45,9 @@ function ManualAddressForm() {
 
     return (
         <div className="space-y-4">
-            <div className="text-black text-lg font-semibold mb-2">Nhập địa chỉ giao hàng:</div>
+            <div className="text-black text-lg font-semibold mb-2">
+                Nhập địa chỉ giao hàng:
+            </div>
 
             <div className="flex flex-col md:flex-row gap-3 md:gap-6">
                 <select
@@ -82,28 +66,12 @@ function ManualAddressForm() {
                 </select>
 
                 <select
-                    name="district"
-                    required
-                    value={form.district}
-                    onChange={handleChange}
-                    className="w-full border rounded-xl px-3 py-2 text-black"
-                    disabled={!form.province}
-                >
-                    <option value="">Chọn quận / huyện*</option>
-                    {districts.map((dist) => (
-                        <option key={dist.code} value={dist.code}>
-                            {dist.name}
-                        </option>
-                    ))}
-                </select>
-
-                <select
                     name="ward"
                     required
                     value={form.ward}
                     onChange={handleChange}
                     className="w-full border rounded-xl px-3 py-2 text-black"
-                    disabled={!form.district}
+                    disabled={!form.province}
                 >
                     <option value="">Chọn phường / xã*</option>
                     {wards.map((ward) => (
