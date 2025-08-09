@@ -30,29 +30,23 @@ public class AzureSpeechUtil implements AzureSpeechBoundary {
             SpeechConfig config = SpeechConfig.fromSubscription(azureKey, azureRegion);
             config.setSpeechSynthesisVoiceName("vi-VN-HoaiMyNeural");
 
-            // 2. Create PullAudioOutputStream to read from
-            PullAudioOutputStream pullStream = AudioOutputStream.createPullStream();
-            AudioConfig audioConfig = AudioConfig.fromStreamOutput(pullStream);
-            SpeechSynthesizer synthesizer = new SpeechSynthesizer(config, audioConfig);
+            // 2. Create synthesizer (no need PullAudioOutputStream if not streaming)
+            try (SpeechSynthesizer synthesizer = new SpeechSynthesizer(config)) {
 
-            // 3. Synthesize
-            SpeechSynthesisResult result = synthesizer.SpeakText(text);
+                // 3. Synthesize to memory
+                SpeechSynthesisResult result = synthesizer.SpeakText(text);
 
-            // 4. Read audio bytes
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = (int) pullStream.read(buffer)) > 0) {
-                output.write(buffer, 0, bytesRead);
+                // 4. Check for errors
+                if (result.getReason() != ResultReason.SynthesizingAudioCompleted) {
+                    throw new RuntimeException("TTS failed: " + result.getReason());
+                }
+
+                // 5. Get raw audio bytes from result
+                byte[] audioData = result.getAudioData();
+
+                // 6. Return Base64 string
+                return Base64.getEncoder().encodeToString(audioData);
             }
-
-            // 5. Clean up
-            result.close();
-            synthesizer.close();
-            pullStream.close();
-
-            // 6. Return base64 string
-            return Base64.getEncoder().encodeToString(output.toByteArray());
 
         } catch (Exception e) {
             throw new RuntimeException("TTS error: " + e.getMessage(), e);
@@ -62,33 +56,28 @@ public class AzureSpeechUtil implements AzureSpeechBoundary {
     @Override
     public String speechToText(String base64Audio) {
         try {
-            // Decode base64 string → bytes
-            byte[] audioBytes = Base64.getDecoder().decode(base64Audio);
+            // Decode base64 string → bytes full WAV file (đã có header)
+            byte[] wavBytes = Base64.getDecoder().decode(base64Audio);
 
-            // Write to temp .wav file
+            // Ghi thẳng file WAV từ bytes đã decode
             File tempAudio = File.createTempFile("speech-", ".wav");
             try (FileOutputStream fos = new FileOutputStream(tempAudio)) {
-                fos.write(audioBytes);
+                fos.write(wavBytes);
             }
 
-            // Azure Speech Config
             SpeechConfig config = SpeechConfig.fromSubscription(azureKey, azureRegion);
             config.setSpeechRecognitionLanguage("vi-VN");
 
-            // Audio input config
             AudioConfig audioConfig = AudioConfig.fromWavFileInput(tempAudio.getAbsolutePath());
-
-            // Recognizer
+            int a = 10;
             SpeechRecognizer recognizer = new SpeechRecognizer(config, audioConfig);
-            Future<SpeechRecognitionResult> task = recognizer.recognizeOnceAsync();
-            SpeechRecognitionResult result = task.get();
+            SpeechRecognitionResult result = recognizer.recognizeOnceAsync().get();
 
-            // Clean up
             recognizer.close();
             audioConfig.close();
             tempAudio.delete();
 
-            return result.getText(); // Trả kết quả
+            return result.getText();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Speech recognition failed: " + e.getMessage());

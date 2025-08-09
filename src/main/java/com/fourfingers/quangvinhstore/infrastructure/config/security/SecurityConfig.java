@@ -143,7 +143,7 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.POST, "/staff/banner").permitAll();
                     auth.requestMatchers(HttpMethod.PUT, "/staff/banner").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/admin/staff/{id}/reset-password").permitAll();
-                    auth.requestMatchers("/admin/ai-assistant").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/admin/ai-assistant").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/feedback/**").permitAll();
                     auth.anyRequest().authenticated();
