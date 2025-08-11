@@ -14,9 +14,9 @@ const getAuthToken = () => {
         sessionStorage.getItem('accessToken') ||
         sessionStorage.getItem('token');
 
-    console.log('🔑 Getting Bearer Token:', token ? 'Token found' : 'No token found');
+    console.log('Getting Bearer Token:', token ? 'Token found' : 'No token found');
     if (token) {
-        console.log('🔑 Token preview:', token.substring(0, 20) + '...');
+        console.log('Token preview:', token.substring(0, 20) + '...');
     }
     return token;
 };
@@ -31,9 +31,9 @@ const createAuthHeaders = (additionalHeaders = {}) => {
 
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
-        console.log('✅ Bearer Token added to headers');
+        console.log('Bearer Token added to headers');
     } else {
-        console.warn('⚠️ No Bearer Token found');
+        console.warn('No Bearer Token found');
     }
 
     return headers;
@@ -42,7 +42,7 @@ const createAuthHeaders = (additionalHeaders = {}) => {
 // Function xử lý lỗi authentication
 const handleAuthError = (response) => {
     if (response.status === 401) {
-        console.error('🚫 Bearer Token expired or invalid');
+        console.error('Bearer Token expired or invalid');
         localStorage.removeItem('adminAuthToken');
         sessionStorage.removeItem('adminAuthToken');
         localStorage.removeItem('authToken');
@@ -60,7 +60,7 @@ const handleAuthError = (response) => {
 // GET - Lấy tất cả products với Bearer Token
 export const getAllProducts = async () => {
     try {
-        console.log('📦 Fetching all products from:', API_BASE_URL);
+        console.log('Fetching all products from:', API_BASE_URL);
         const headers = createAuthHeaders({
             'Content-Type': 'application/json'
         });
@@ -77,18 +77,18 @@ export const getAllProducts = async () => {
         }
 
         const data = await response.json();
-        console.log('✅ Products API response:', data);
+        console.log('Products API response:', data);
 
         if (data && Array.isArray(data.products)) {
             return { success: true, data: data.products };
         } else if (Array.isArray(data)) {
             return { success: true, data: data };
         } else {
-            console.error('❌ Invalid products response structure:', data);
+            console.error('Invalid products response structure:', data);
             return { success: false, error: 'Invalid response structure' };
         }
     } catch (error) {
-        console.error('💥 Error fetching products:', error);
+        console.error('Error fetching products:', error);
         return { success: false, error: error.message };
     }
 };
@@ -96,7 +96,7 @@ export const getAllProducts = async () => {
 // GET - Lấy chi tiết sản phẩm theo ID với Bearer Token
 export const getProductById = async (productId) => {
     try {
-        console.log('🔍 Fetching product by ID:', productId);
+        console.log('Fetching product by ID:', productId);
         const headers = createAuthHeaders({
             'Content-Type': 'application/json'
         });
@@ -113,7 +113,7 @@ export const getProductById = async (productId) => {
         }
 
         const data = await response.json();
-        console.log('✅ Product detail response:', data);
+        console.log('Product detail response:', data);
         return { success: true, data: data.product || data };
     } catch (error) {
         console.error('💥 Error fetching product by ID:', error);
@@ -124,7 +124,7 @@ export const getProductById = async (productId) => {
 // GET - Lấy tất cả colors với Bearer Token
 export const getAllColors = async () => {
     try {
-        console.log('🎨 Fetching all colors from:', COLOR_API_URL);
+        console.log('Fetching all colors from:', COLOR_API_URL);
         const headers = createAuthHeaders({
             'Content-Type': 'application/json'
         });
@@ -141,7 +141,7 @@ export const getAllColors = async () => {
         }
 
         const data = await response.json();
-        console.log('✅ Colors API response:', data);
+        console.log('Colors API response:', data);
 
         if (data && data.color && Array.isArray(data.color)) {
             const formattedColors = data.color.map((colorItem, colorIndex) => ({
@@ -150,11 +150,11 @@ export const getAllColors = async () => {
             }));
             return { success: true, data: formattedColors };
         } else {
-            console.error('❌ Invalid colors response structure:', data);
+            console.error('Invalid colors response structure:', data);
             return { success: false, error: 'Invalid response structure' };
         }
     } catch (error) {
-        console.error('💥 Error fetching colors:', error);
+        console.error('Error fetching colors:', error);
         return { success: false, error: error.message };
     }
 };
@@ -162,8 +162,8 @@ export const getAllColors = async () => {
 // POST - Tạo sản phẩm mới với Bearer Token
 export const createProduct = async (productData, productImages) => {
     try {
-        console.log('📝 Creating product with data:', productData);
-        console.log('📷 Number of images:', productImages?.length || 0);
+        console.log('Creating product with data:', productData);
+        console.log('Number of images:', productImages?.length || 0);
 
         // Validation trước khi gửi
         if (!productData.brandId || !productData.categoryId) {
@@ -182,7 +182,7 @@ export const createProduct = async (productData, productImages) => {
 
         const token = getAuthToken();
         if (!token) {
-            console.error('🚫 No Bearer Token found for create request');
+            console.error('No Bearer Token found for create request');
             return {
                 success: false,
                 error: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
@@ -206,7 +206,7 @@ export const createProduct = async (productData, productImages) => {
             }))
         };
 
-        console.log('📋 Processed product input:', productInput);
+        console.log('Processed product input:', productInput);
 
         const productInputBlob = new Blob([JSON.stringify(productInput)], {
             type: 'application/json'
@@ -220,18 +220,18 @@ export const createProduct = async (productData, productImages) => {
                     formData.append('productImages', image);
                 }
             });
-            console.log('📷 Added', productImages.length, 'images to form data');
+            console.log('Added', productImages.length, 'images to form data');
         } else {
             const emptyFile = new File([''], 'no_image.txt', {
                 type: 'text/plain',
                 lastModified: Date.now()
             });
             formData.append('productImages', emptyFile);
-            console.log('📷 Added empty file (no images)');
+            console.log('Added empty file (no images)');
         }
 
         const headers = createAuthHeaders();
-        console.log('📤 Sending CREATE request with Bearer Token');
+        console.log('Sending CREATE request with Bearer Token');
 
         const response = await fetch(API_BASE_URL, {
             method: 'POST',
@@ -242,15 +242,15 @@ export const createProduct = async (productData, productImages) => {
         if (!response.ok) {
             handleAuthError(response);
             const errorText = await response.text();
-            console.error('❌ Create product error response:', errorText);
+            console.error('Create product error response:', errorText);
             throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
-        console.log('✅ Create product success:', data);
+        console.log('Create product success:', data);
         return { success: true, data: data.product || data };
     } catch (error) {
-        console.error('💥 Error creating product:', error);
+        console.error('Error creating product:', error);
         return { success: false, error: error.message };
     }
 };
@@ -258,9 +258,9 @@ export const createProduct = async (productData, productImages) => {
 // FIXED: PUT - Cập nhật sản phẩm với xử lý ảnh cũ thành File
 export const updateProduct = async (productId, productData, productImages, existingImages) => {
     try {
-        console.log('🔄 Updating product:', productId, 'with data:', productData);
-        console.log('📷 Number of new images:', productImages?.length || 0);
-        console.log('🖼 Existing images:', existingImages);
+        console.log('Updating product:', productId, 'with data:', productData);
+        console.log('Number of new images:', productImages?.length || 0);
+        console.log('Existing images:', existingImages);
 
         // Validation trước khi gửi
         if (!productData.brandId || !productData.categoryId) {
@@ -281,7 +281,7 @@ export const updateProduct = async (productId, productData, productImages, exist
             sessionStorage.getItem('token');
 
         if (!token) {
-            console.error('🚫 No Bearer Token found for update request');
+            console.error('No Bearer Token found for update request');
             return {
                 success: false,
                 error: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
@@ -344,15 +344,15 @@ export const updateProduct = async (productId, productData, productImages, exist
             }
 
             const errorText = await response.text();
-            console.error('❌ Update product error response:', errorText);
+            console.error('Update product error response:', errorText);
             throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
-        console.log('✅ Update product success:', data);
+        console.log('Update product success:', data);
         return { success: true, data: data.product || data };
     } catch (error) {
-        console.error('💥 Error updating product:', error);
+        console.error('Error updating product:', error);
         return { success: false, error: error.message };
     }
 };
@@ -360,7 +360,7 @@ export const updateProduct = async (productId, productData, productImages, exist
 // DELETE - Xóa sản phẩm với Bearer Token
 export const deleteProduct = async (productId) => {
     try {
-        console.log('🗑️ Deleting product:', productId);
+        console.log('Deleting product:', productId);
         const headers = createAuthHeaders({
             'Content-Type': 'application/json'
         });
@@ -377,10 +377,10 @@ export const deleteProduct = async (productId) => {
         }
 
         const data = await response.json();
-        console.log('✅ Delete product success:', data);
+        console.log('Delete product success:', data);
         return { success: true, data: data.product || data };
     } catch (error) {
-        console.error('💥 Error deleting product:', error);
+        console.error('Error deleting product:', error);
         return { success: false, error: error.message };
     }
 };

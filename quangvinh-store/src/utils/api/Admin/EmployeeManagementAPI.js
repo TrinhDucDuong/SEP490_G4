@@ -11,9 +11,9 @@ const getAuthToken = () => {
         sessionStorage.getItem('accessToken') ||
         sessionStorage.getItem('token');
 
-    console.log('🔑 Getting Bearer Token:', token ? 'Token found' : 'No token found');
+    console.log('Getting Bearer Token:', token ? 'Token found' : 'No token found');
     if (token) {
-        console.log('🔑 Token preview:', token.substring(0, 20) + '...');
+        console.log('Token preview:', token.substring(0, 20) + '...');
     }
 
     return token;
@@ -30,9 +30,9 @@ const createAuthHeaders = (additionalHeaders = {}) => {
 
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
-        console.log('✅ Bearer Token added to headers');
+        console.log('Bearer Token added to headers');
     } else {
-        console.warn('⚠️ No Bearer Token found');
+        console.warn('No Bearer Token found');
     }
 
     return headers;
@@ -41,7 +41,7 @@ const createAuthHeaders = (additionalHeaders = {}) => {
 // Function xử lý lỗi authentication
 const handleAuthError = (response) => {
     if (response.status === 401 || response.status === 403) {
-        console.error('🚫 Bearer Token expired or invalid');
+        console.error('Bearer Token expired or invalid');
         // Clear all possible token keys
         localStorage.removeItem('adminAuthToken');
         sessionStorage.removeItem('adminAuthToken');

@@ -164,7 +164,7 @@ export const useProductManagement = () => {
     // THÊM: Handler cho view product detail
     const viewProductHandler = async (productId) => {
         try {
-            console.log('👁️ Viewing product details for ID:', productId);
+            console.log('Viewing product details for ID:', productId);
             const result = await getProductById(productId);
             if (result.success) {
                 return { success: true, data: result.data };
@@ -172,7 +172,7 @@ export const useProductManagement = () => {
                 return { success: false, error: result.error };
             }
         } catch (err) {
-            console.error('💥 Error in viewProductHandler:', err);
+            console.error('Error in viewProductHandler:', err);
             return { success: false, error: 'Có lỗi xảy ra khi lấy thông tin sản phẩm' };
         }
     };
