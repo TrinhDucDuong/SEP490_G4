@@ -7,40 +7,38 @@ const OrderSort = ({ sortConfig, onSort }) => {
         { key: 'orderId', label: 'Mã đơn hàng' },
         { key: 'orderDate', label: 'Ngày tạo đơn' },
         { key: 'totalPrice', label: 'Tổng giá tiền' },
-        { key: 'orderStatus', label: 'Trạng thái' }
+        { key: 'orderStatus', label: 'Trạng thái đơn hàng' }, // CẬP NHẬT label
+        { key: 'paymentStatus', label: 'Trạng thái thanh toán' } // MỚI THÊM
     ];
 
     const SortButton = ({ sortKey, label }) => (
         <button
             onClick={() => onSort(sortKey)}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors ${
+            className={`flex items-center space-x-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                 sortConfig.key === sortKey
-                    ? 'bg-blue-50 border-blue-200 text-blue-700'
-                    : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
             }`}
         >
-            <ArrowUpDown size={16} />
             <span>{label}</span>
-            {sortConfig.key === sortKey && (
-                <span className="text-xs">
-                    {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                </span>
-            )}
+            <ArrowUpDown size={14} className={`${
+                sortConfig.key === sortKey
+                    ? (sortConfig.direction === 'asc' ? 'rotate-180' : '')
+                    : 'opacity-50'
+            }`} />
         </button>
     );
 
     return (
-        <div className="space-y-3">
-            <h3 className="text-sm font-medium text-gray-700">Sắp xếp theo</h3>
-            <div className="flex flex-wrap gap-2">
-                {sortOptions.map(option => (
-                    <SortButton
-                        key={option.key}
-                        sortKey={option.key}
-                        label={option.label}
-                    />
-                ))}
-            </div>
+        <div className="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-lg">
+            <span className="text-sm font-medium text-gray-700 self-center">Sắp xếp theo:</span>
+            {sortOptions.map((option) => (
+                <SortButton
+                    key={option.key}
+                    sortKey={option.key}
+                    label={option.label}
+                />
+            ))}
         </div>
     );
 };

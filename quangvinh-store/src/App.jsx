@@ -67,6 +67,7 @@ import CheckoutPage from "./pages/Customer/Payment/CheckoutPage.jsx";
 import TrackOrderPage from "./pages/Customer/TrackingOrder/TrackOrderPage.jsx";
 import OrderTrackingDetail from "./pages/Customer/TrackingOrder/OrderTrackingDetail.jsx";
 import BuyNow from "./pages/Customer/Payment/BuyNow.jsx";
+import BannerManagement from "./pages/Staff/Banner/BannerManagement.jsx";
 
 
 function App() {
@@ -156,7 +157,7 @@ function App() {
                             <Route path="about-us-management" element={<AboutUsManagement />} />
                             <Route path="star-rate-management" element={<StarRateManagement/>} />
                             <Route path="dashboard" element={<DashboardManagement/>} />
-                            <Route path="campaign-management" element={<div className="p-6 bg-white rounded-lg shadow">Campaign Management Page</div>} />
+                            <Route path="banner-management" element={<BannerManagement/>} />
                             <Route path="store-management" element={< StoreManagement/>} />
                             <Route path="settings-management" element={<div className="p-6 bg-white rounded-lg shadow">Settings Management Page</div>} />
                             <Route path="sns-management" element={< SNSManagement/>} />

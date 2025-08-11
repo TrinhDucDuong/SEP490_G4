@@ -12,6 +12,7 @@ export * from './PoliciesConstants.js';
 export * from './OrderConstants.js';
 export * from './CustomerConstants.js';
 export * from './EmployeeConstants.js';
+export * from './BannerConstants.js';
 
 // Grouped exports cho organization
 import * as ProductConstants from './ProductConstants';
@@ -25,6 +26,8 @@ import * as PoliciesConstants from './PoliciesConstants';
 import * as OrderConstants from './OrderConstants';
 import * as CustomerConstants from './CustomerConstants';
 import * as EmployeeConstants from './EmployeeConstants';
+import * as BannerConstants from './BannerConstants';
+
 
 export const CONSTANTS = {
     PRODUCT: ProductConstants,
@@ -38,4 +41,5 @@ export const CONSTANTS = {
     Order: OrderConstants,
     Customer: CustomerConstants,
     Employee: EmployeeConstants,
+    Banner: BannerConstants,
 };

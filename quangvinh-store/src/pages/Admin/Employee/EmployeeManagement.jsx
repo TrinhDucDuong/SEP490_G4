@@ -68,7 +68,7 @@ const EmployeeManagement = () => {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
-                    <div className="text-red-500 text-xl mb-4">❌ Có lỗi xảy ra</div>
+                    <div className="text-red-500 text-xl mb-4">Có lỗi xảy ra</div>
                     <p className="text-gray-600 mb-4">{error}</p>
                     <button
                         onClick={fetchEmployees}

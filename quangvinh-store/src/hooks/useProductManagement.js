@@ -1,11 +1,13 @@
 // src/hooks/useProductManagement.js
+
 import { useState, useEffect, useCallback } from 'react';
 import {
     getAllProducts,
     getAllColors,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getProductById // Thêm import này
 } from '../utils/api/Admin/ProductManagementAPI';
 import { getAllBrands } from '../utils/api/Admin/BrandManagementAPI';
 import { getAllCategories } from '../utils/api/Admin/CategoryManagementAPI';
@@ -54,6 +56,7 @@ export const useProductManagement = () => {
             } else {
                 setError(productsResult.error);
             }
+
             if (colorsResult.success) setColors(colorsResult.data);
             if (brandsResult.success) setBrands(brandsResult.data);
             if (categoriesResult.success) setCategories(categoriesResult.data);
@@ -86,12 +89,14 @@ export const useProductManagement = () => {
                     error: 'Thiếu thông tin thương hiệu hoặc danh mục'
                 };
             }
+
             if (!productData.productVariants || productData.productVariants.length === 0) {
                 return {
                     success: false,
                     error: 'Sản phẩm phải có ít nhất một biến thể'
                 };
             }
+
             const result = await createProduct(productData, productImages);
             if (result.success) {
                 await fetchAllData();
@@ -116,12 +121,14 @@ export const useProductManagement = () => {
                     error: 'Thiếu thông tin thương hiệu hoặc danh mục'
                 };
             }
+
             if (!productData.productVariants || productData.productVariants.length === 0) {
                 return {
                     success: false,
                     error: 'Sản phẩm phải có ít nhất một biến thể'
                 };
             }
+
             // Truyền existingImages vào updateProduct
             const result = await updateProduct(productId, productData, productImages, existingImages);
             if (result.success) {
@@ -154,8 +161,25 @@ export const useProductManagement = () => {
         }
     };
 
+    // THÊM: Handler cho view product detail
+    const viewProductHandler = async (productId) => {
+        try {
+            console.log('Viewing product details for ID:', productId);
+            const result = await getProductById(productId);
+            if (result.success) {
+                return { success: true, data: result.data };
+            } else {
+                return { success: false, error: result.error };
+            }
+        } catch (err) {
+            console.error('Error in viewProductHandler:', err);
+            return { success: false, error: 'Có lỗi xảy ra khi lấy thông tin sản phẩm' };
+        }
+    };
+
     useEffect(() => {
         let result = [...products];
+
         if (searchTerm) {
             result = result.filter(product => {
                 const productName = (product.productName || '').toLowerCase();
@@ -164,6 +188,7 @@ export const useProductManagement = () => {
                 return productName.includes(searchLower) || productId.includes(searchLower);
             });
         }
+
         if (filters.brand) {
             const filterBrandId = parseInt(filters.brand);
             result = result.filter(product => {
@@ -176,6 +201,7 @@ export const useProductManagement = () => {
                 return false;
             });
         }
+
         if (filters.category) {
             const filterCategoryId = parseInt(filters.category);
             result = result.filter(product => {
@@ -188,22 +214,27 @@ export const useProductManagement = () => {
                 return false;
             });
         }
+
         if (filters.status !== '') {
             const isActive = filters.status === 'true';
             result = result.filter(product => product.isActive === isActive);
         }
+
         if (filters.startDate && filters.endDate) {
             const startDate = new Date(filters.startDate);
             const endDate = new Date(filters.endDate);
             endDate.setHours(23, 59, 59, 999);
+
             result = result.filter(product => {
                 const createdDate = new Date(product.createdAt);
                 return createdDate >= startDate && createdDate <= endDate;
             });
         }
+
         if (sortConfig.key) {
             result.sort((a, b) => {
                 let aValue, bValue;
+
                 switch (sortConfig.key) {
                     case 'productName':
                         aValue = (a.productName || '').toLowerCase();
@@ -225,6 +256,7 @@ export const useProductManagement = () => {
                         aValue = a[sortConfig.key] || '';
                         bValue = b[sortConfig.key] || '';
                 }
+
                 if (sortConfig.direction === 'asc') {
                     return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
                 } else {
@@ -234,6 +266,7 @@ export const useProductManagement = () => {
         } else {
             result.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
         }
+
         setFilteredProducts(result);
         setCurrentPage(1);
     }, [products, searchTerm, filters, sortConfig]);
@@ -279,28 +312,36 @@ export const useProductManagement = () => {
                 endDate = today.toISOString().split('T')[0];
                 break;
             case 'yesterday':
-            { const yesterday = new Date(today);
+            {
+                const yesterday = new Date(today);
                 yesterday.setDate(yesterday.getDate() - 1);
                 startDate = yesterday.toISOString().split('T')[0];
                 endDate = yesterday.toISOString().split('T')[0];
-                break; }
+                break;
+            }
             case 'thisWeek':
-            { const weekStart = new Date(today);
+            {
+                const weekStart = new Date(today);
                 weekStart.setDate(today.getDate() - today.getDay());
                 startDate = weekStart.toISOString().split('T')[0];
                 endDate = today.toISOString().split('T')[0];
-                break; }
+                break;
+            }
             case 'thisMonth':
-            { const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            {
+                const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
                 startDate = monthStart.toISOString().split('T')[0];
                 endDate = today.toISOString().split('T')[0];
-                break; }
+                break;
+            }
             case 'lastMonth':
-            { const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            {
+                const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
                 const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
                 startDate = lastMonthStart.toISOString().split('T')[0];
                 endDate = lastMonthEnd.toISOString().split('T')[0];
-                break; }
+                break;
+            }
             default:
                 startDate = '';
                 endDate = '';
@@ -348,8 +389,9 @@ export const useProductManagement = () => {
         startIndex: startIndex + 1,
         endIndex,
         createProduct: createProductHandler,
-        updateProduct: updateProductHandler, // <-- truyền đúng handler
+        updateProduct: updateProductHandler,
         deleteProduct: deleteProductHandler,
+        viewProduct: viewProductHandler, // THÊM handler này
         refreshData: fetchAllData,
         getStatistics
     };

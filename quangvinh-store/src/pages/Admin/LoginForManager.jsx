@@ -190,13 +190,13 @@ const LoginForManager = () => {
 
                             {/* Debug Info - Remove in production */}
                             {/* eslint-disable-next-line no-undef */}
-                            {process.env.NODE_ENV === 'development' && (
-                                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                                    <p className="text-xs text-blue-700">
-                                        Debug: isAuthenticated={String(isAuthenticated)}, authLoading={String(authLoading)}
-                                    </p>
-                                </div>
-                            )}
+                            {/*{process.env.NODE_ENV === 'development' && (*/}
+                            {/*    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">*/}
+                            {/*        <p className="text-xs text-blue-700">*/}
+                            {/*            Debug: isAuthenticated={String(isAuthenticated)}, authLoading={String(authLoading)}*/}
+                            {/*        </p>*/}
+                            {/*    </div>*/}
+                            {/*)}*/}
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 {/* Username Field */}
@@ -298,7 +298,7 @@ const LoginForManager = () => {
                             {/* Footer */}
                             <div className="mt-6 text-center">
                                 <p className="text-xs text-gray-500">
-                                    © 2024 Quang Vinh Authentic. Tất cả quyền được bảo lưu.
+                                    © 2025 Quang Vinh Authentic. Tất cả quyền được bảo lưu.
                                 </p>
                             </div>
                         </div>

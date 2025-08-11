@@ -11,9 +11,9 @@ const getAuthToken = () => {
         sessionStorage.getItem('accessToken') ||
         sessionStorage.getItem('token');
 
-    console.log('🔑 Getting Bearer Token:', token ? 'Token found' : 'No token found');
+    console.log('Getting Bearer Token:', token ? 'Token found' : 'No token found');
     if (token) {
-        console.log('🔑 Token preview:', token.substring(0, 20) + '...');
+        console.log('Token preview:', token.substring(0, 20) + '...');
     }
 
     return token;
@@ -30,9 +30,9 @@ const createAuthHeaders = (additionalHeaders = {}) => {
 
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
-        console.log('✅ Bearer Token added to headers');
+        console.log('Bearer Token added to headers');
     } else {
-        console.warn('⚠️ No Bearer Token found');
+        console.warn('No Bearer Token found');
     }
 
     return headers;
@@ -73,23 +73,23 @@ export const getAllCustomers = async () => {
         if (!response.ok) {
             handleAuthError(response);
             const errorText = await response.text();
-            console.error('❌ API Error Response:', errorText);
+            console.error('API Error Response:', errorText);
             throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
-        console.log('✅ Customers API response:', data);
+        console.log('Customers API response:', data);
 
         if (data && Array.isArray(data.accounts)) {
             return { success: true, data: data.accounts };
         } else if (Array.isArray(data)) {
             return { success: true, data: data };
         } else {
-            console.error('❌ Invalid customers response structure:', data);
+            console.error('Invalid customers response structure:', data);
             return { success: false, error: 'Invalid response structure' };
         }
     } catch (error) {
-        console.error('💥 Error fetching customers:', error);
+        console.error('Error fetching customers:', error);
         return { success: false, error: error.message };
     }
 };
@@ -109,15 +109,15 @@ export const getCustomerById = async (customerId) => {
         if (!response.ok) {
             handleAuthError(response);
             const errorText = await response.text();
-            console.error('❌ API Error Response:', errorText);
+            console.error('API Error Response:', errorText);
             throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
-        console.log('✅ Customer detail response:', data);
+        console.log('Customer detail response:', data);
         return { success: true, data: data.account || data };
     } catch (error) {
-        console.error('💥 Error fetching customer by ID:', error);
+        console.error('Error fetching customer by ID:', error);
         return { success: false, error: error.message };
     }
 };

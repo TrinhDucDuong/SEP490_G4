@@ -1,4 +1,5 @@
-// src/utils/api/OrderManagementAPI.js
+// src/utils/api/Admin/OrderManagementAPI.js
+
 const API_BASE_URL = 'http://localhost:9999/staff/order';
 
 // Function để lấy Bearer Token với key đúng từ AuthContext
@@ -12,11 +13,10 @@ const getAuthToken = () => {
         sessionStorage.getItem('accessToken') ||
         sessionStorage.getItem('token');
 
-    console.log('🔑 Getting Bearer Token:', token ? 'Token found' : 'No token found');
+    console.log('Getting Bearer Token:', token ? 'Token found' : 'No token found');
     if (token) {
-        console.log('🔑 Token preview:', token.substring(0, 20) + '...');
+        console.log('Token preview:', token.substring(0, 20) + '...');
     }
-
     return token;
 };
 
@@ -30,9 +30,9 @@ const createAuthHeaders = (additionalHeaders = {}) => {
 
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
-        console.log('✅ Bearer Token added to headers');
+        console.log('Bearer Token added to headers');
     } else {
-        console.warn('⚠️ No Bearer Token found');
+        console.warn('No Bearer Token found');
     }
 
     return headers;
@@ -41,7 +41,7 @@ const createAuthHeaders = (additionalHeaders = {}) => {
 // Function xử lý lỗi authentication
 const handleAuthError = (response) => {
     if (response.status === 401) {
-        console.error('🚫 Bearer Token expired or invalid');
+        console.error('Bearer Token expired or invalid');
         // Clear all possible token keys
         localStorage.removeItem('adminAuthToken');
         sessionStorage.removeItem('adminAuthToken');
@@ -60,8 +60,7 @@ const handleAuthError = (response) => {
 // GET - Lấy tất cả orders với Bearer Token
 export const getAllOrders = async (params = {}) => {
     try {
-        console.log('📦 Fetching all orders from:', API_BASE_URL);
-
+        console.log('Fetching all orders from:', API_BASE_URL);
         const queryParams = new URLSearchParams();
 
         // Kiểm tra và validate tham số trước khi thêm vào queryParams
@@ -69,8 +68,13 @@ export const getAllOrders = async (params = {}) => {
             queryParams.append('orderStatus', params.orderStatus);
         }
 
+        // MỚI THÊM: Thêm filter cho payment status
+        if (params.paymentStatus !== undefined && params.paymentStatus !== '') {
+            queryParams.append('paymentStatus', params.paymentStatus);
+        }
+
         // Đảm bảo sortBy có giá trị hợp lệ
-        const validSortFields = ['orderDate', 'orderId', 'totalPrice', 'orderStatus'];
+        const validSortFields = ['orderDate', 'orderId', 'totalPrice', 'orderStatus', 'paymentStatus'];
         if (params.sortBy && validSortFields.includes(params.sortBy)) {
             queryParams.append('sortBy', params.sortBy);
         }
@@ -82,7 +86,7 @@ export const getAllOrders = async (params = {}) => {
         }
 
         const url = queryParams.toString() ? `${API_BASE_URL}?${queryParams}` : API_BASE_URL;
-        console.log('🌐 Request URL:', url);
+        console.log('Request URL:', url);
 
         // Tạo headers với Bearer Token
         const headers = createAuthHeaders({
@@ -97,23 +101,23 @@ export const getAllOrders = async (params = {}) => {
         if (!response.ok) {
             handleAuthError(response);
             const errorText = await response.text();
-            console.error('❌ API Error Response:', errorText);
+            console.error('API Error Response:', errorText);
             throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
-        console.log('✅ Orders API response:', data);
+        console.log('Orders API response:', data);
 
         if (data && Array.isArray(data.orders)) {
             return { success: true, data: data.orders };
         } else if (Array.isArray(data)) {
             return { success: true, data: data };
         } else {
-            console.error('❌ Invalid orders response structure:', data);
+            console.error('Invalid orders response structure:', data);
             return { success: false, error: 'Invalid response structure' };
         }
     } catch (error) {
-        console.error('💥 Error fetching orders:', error);
+        console.error('Error fetching orders:', error);
         return { success: false, error: error.message };
     }
 };
@@ -121,8 +125,7 @@ export const getAllOrders = async (params = {}) => {
 // GET - Lấy order theo ID với Bearer Token
 export const getOrderById = async (orderId) => {
     try {
-        console.log('🔍 Fetching order by ID:', orderId);
-
+        console.log('Fetching order by ID:', orderId);
         const headers = createAuthHeaders({
             'Content-Type': 'application/json'
         });
@@ -139,41 +142,49 @@ export const getOrderById = async (orderId) => {
         }
 
         const data = await response.json();
-        console.log('✅ Order detail response:', data);
+        console.log('Order detail response:', data);
         return { success: true, data: data.order || data };
     } catch (error) {
-        console.error('💥 Error fetching order by ID:', error);
+        console.error('Error fetching order by ID:', error);
         return { success: false, error: error.message };
     }
 };
 
-// PUT - Cập nhật trạng thái order với Bearer Token
-export const updateOrderStatus = async (orderId, orderStatus) => {
+// PUT - Cập nhật order status và payment status với Bearer Token (CẬP NHẬT)
+export const updateOrderStatus = async (orderId, updateData) => {
     try {
-        console.log('🔄 Updating order status:', orderId, 'to:', orderStatus);
-
+        console.log('Updating order:', orderId, 'with data:', updateData);
         const headers = createAuthHeaders({
             'Content-Type': 'application/json'
         });
 
+        // Tạo request body với cả orderStatus và paymentStatus
+        const requestBody = {};
+        if (updateData.orderStatus !== undefined) {
+            requestBody.orderStatus = updateData.orderStatus;
+        }
+        if (updateData.paymentStatus !== undefined) {
+            requestBody.paymentStatus = updateData.paymentStatus;
+        }
+
         const response = await fetch(`${API_BASE_URL}/${orderId}`, {
             method: 'PUT',
             headers: headers,
-            body: JSON.stringify({ orderStatus })
+            body: JSON.stringify(requestBody)
         });
 
         if (!response.ok) {
             handleAuthError(response);
             const errorText = await response.text();
-            console.error('❌ Update order status error response:', errorText);
+            console.error('Update order error response:', errorText);
             throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
-        console.log('✅ Update order status success:', data);
+        console.log('Update order success:', data);
         return { success: true, data: data.order || data };
     } catch (error) {
-        console.error('💥 Error updating order status:', error);
+        console.error('Error updating order:', error);
         return { success: false, error: error.message };
     }
 };
@@ -181,8 +192,7 @@ export const updateOrderStatus = async (orderId, orderStatus) => {
 // DELETE - Xóa order với Bearer Token
 export const deleteOrder = async (orderId) => {
     try {
-        console.log('🗑️ Deleting order:', orderId);
-
+        console.log('Deleting order:', orderId);
         const headers = createAuthHeaders({
             'Content-Type': 'application/json'
         });
@@ -199,10 +209,10 @@ export const deleteOrder = async (orderId) => {
         }
 
         const data = await response.json();
-        console.log('✅ Delete order success:', data);
+        console.log('Delete order success:', data);
         return { success: true, data: data.order || data };
     } catch (error) {
-        console.error('💥 Error deleting order:', error);
+        console.error('Error deleting order:', error);
         return { success: false, error: error.message };
     }
 };

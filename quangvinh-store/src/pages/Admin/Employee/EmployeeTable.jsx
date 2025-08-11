@@ -440,7 +440,7 @@ const EmployeeTable = ({
                 <div className="space-y-4">
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                         <p className="text-yellow-800 text-sm">
-                            ⚠️ Chức năng cập nhật đang được phát triển. Backend chưa hỗ trợ API PUT.
+                            Chức năng cập nhật đang được phát triển. Backend chưa hỗ trợ API PUT.
                         </p>
                     </div>
                     {updateEmployee && (

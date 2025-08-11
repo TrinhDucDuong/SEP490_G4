@@ -8,12 +8,12 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { POLICY_HELPERS, POLICY_DEFAULTS } from '../../../utils/constants/PoliciesConstants';
 
 const PoliciesTable = ({
-                           policies,                    // ← Đây là paginatedPolicies (10 items)
+                           policies,
                            currentPage,
                            setCurrentPage,
                            itemsPerPage,
-                           totalItems,                  // ← Thêm prop này (tổng số items)
-                           totalPages,                  // ← Thêm prop này (tổng số trang)
+                           totalItems,
+                           totalPages,
                            onCreatePolicy,
                            onUpdatePolicy,
                            onDeletePolicy,
@@ -128,8 +128,8 @@ const PoliciesTable = ({
         {
             key: 'policyName',
             header: 'Tên chính sách',
-            headerAlign: 'text-center',  // ← Thay đổi từ text-left thành text-center
-            cellAlign: 'text-center',    // ← Thay đổi từ text-left thành text-center
+            headerAlign: 'text-center',
+            cellAlign: 'text-center',
             render: (policy) => (
                 <div className="flex flex-col items-center">  {/* ← Thêm flex và items-center */}
                     <div className="font-medium text-gray-900 text-center max-w-xs">
