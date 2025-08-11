@@ -653,7 +653,7 @@ const BrandTable = ({
                                 <div className="mb-4 p-4 border border-red-200 rounded-lg bg-red-50">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-red-600">⚠️</span>
+                                            <span className="text-red-600"></span>
                                             <span className="text-red-700 text-sm">Ảnh sẽ bị xóa khi cập nhật</span>
                                         </div>
                                         <button

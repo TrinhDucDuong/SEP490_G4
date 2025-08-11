@@ -60,18 +60,17 @@ const DashboardManagement = () => {
                 </div>
 
                 {/* Error Messages */}
-                {(error.summary || error.revenueGraph || error.categoriesSales) && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                        <h3 className="text-red-800 font-medium mb-2">Có lỗi xảy ra:</h3>
-                        <ul className="text-red-600 text-sm space-y-1">
-                            {error.summary && <li>• Lỗi tải thống kê tổng quan: {error.summary}</li>}
-                            {error.revenueGraph && <li>• Lỗi tải biểu đồ doanh thu: {error.revenueGraph}</li>}
-                            {error.categoriesSales && <li>• Lỗi tải thống kê danh mục: {error.categoriesSales}</li>}
-                        </ul>
-                    </div>
-                )}
+                {/*{(error.summary || error.revenueGraph || error.categoriesSales) && (*/}
+                {/*    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">*/}
+                {/*        <h3 className="text-red-800 font-medium mb-2">Có lỗi xảy ra:</h3>*/}
+                {/*        <ul className="text-red-600 text-sm space-y-1">*/}
+                {/*            {error.summary && <li>• Lỗi tải thống kê tổng quan: {error.summary}</li>}*/}
+                {/*            {error.revenueGraph && <li>• Lỗi tải biểu đồ doanh thu: {error.revenueGraph}</li>}*/}
+                {/*            {error.categoriesSales && <li>• Lỗi tải thống kê danh mục: {error.categoriesSales}</li>}*/}
+                {/*        </ul>*/}
+                {/*    </div>*/}
+                {/*)}*/}
 
-                <DateRangeSection onDateRangeChange={handleDateRangeChange}>
                     {/* Summary Section */}
                     <div className="mb-8">
                         <SummarySection
@@ -81,6 +80,7 @@ const DashboardManagement = () => {
                         />
                     </div>
 
+                <DateRangeSection onDateRangeChange={handleDateRangeChange}>
                     {/* Charts Section */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                         {/* Revenue Chart */}

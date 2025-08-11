@@ -91,8 +91,8 @@ const AIVoiceAssistant = () => {
     // Custom WebM to WAV conversion
     const convertWebMToWavBase64 = async (webmBlob) => {
         try {
-            console.log('🔄 Converting WebM to WAV...');
-            console.log('📦 Original WebM size:', (webmBlob.size / 1024).toFixed(2) + ' KB');
+            console.log('Converting WebM to WAV...');
+            console.log('Original WebM size:', (webmBlob.size / 1024).toFixed(2) + ' KB');
 
             // Validate input
             if (!webmBlob || webmBlob.size === 0) {
@@ -116,13 +116,13 @@ const AIVoiceAssistant = () => {
                 );
 
                 audioBuffer = await Promise.race([decodePromise, timeoutPromise]);
-                console.log('✅ WebM decoded successfully');
-                console.log('📊 Sample Rate:', audioBuffer.sampleRate);
-                console.log('📊 Channels:', audioBuffer.numberOfChannels);
-                console.log('📊 Duration:', audioBuffer.duration.toFixed(2) + 's');
+                console.log('WebM decoded successfully');
+                console.log('Sample Rate:', audioBuffer.sampleRate);
+                console.log('Channels:', audioBuffer.numberOfChannels);
+                console.log('Duration:', audioBuffer.duration.toFixed(2) + 's');
 
             } catch (decodeError) {
-                console.error('❌ AudioContext decode failed:', decodeError);
+                console.error('AudioContext decode failed:', decodeError);
                 throw new Error('Cannot decode WebM audio: ' + decodeError.message);
             }
 
@@ -130,7 +130,7 @@ const AIVoiceAssistant = () => {
             const wavArrayBuffer = audioBufferToWav(audioBuffer);
             const wavBlob = new Blob([wavArrayBuffer], { type: 'audio/wav' });
 
-            console.log('📦 WAV Blob size:', (wavBlob.size / 1024).toFixed(2) + ' KB');
+            console.log('WAV Blob size:', (wavBlob.size / 1024).toFixed(2) + ' KB');
 
             // Validate WAV size
             if (wavBlob.size > RECORDING_CONFIG.MAX_FILE_SIZE) {
@@ -139,13 +139,13 @@ const AIVoiceAssistant = () => {
 
             // Convert to base64
             const wavBase64 = await blobToBase64(wavBlob);
-            console.log('✅ WAV conversion completed');
-            console.log('📤 WAV Base64 length:', wavBase64.length);
+            console.log('WAV conversion completed');
+            console.log('WAV Base64 length:', wavBase64.length);
 
             return wavBase64;
 
         } catch (error) {
-            console.error('❌ Error in WebM to WAV conversion:', error);
+            console.error('Error in WebM to WAV conversion:', error);
             throw error;
         }
     };
@@ -157,7 +157,7 @@ const AIVoiceAssistant = () => {
             }
 
             if (!(blob instanceof Blob)) {
-                console.error('❌ Invalid input type:', typeof blob);
+                console.error('Invalid input type:', typeof blob);
                 return reject(new Error('Parameter is not a Blob. Got: ' + typeof blob));
             }
 
@@ -165,7 +165,7 @@ const AIVoiceAssistant = () => {
                 return reject(new Error('Blob is empty (size = 0)'));
             }
 
-            console.log('✅ blobToBase64 validation passed - Size:', blob.size, 'Type:', blob.type);
+            console.log('blobToBase64 validation passed - Size:', blob.size, 'Type:', blob.type);
 
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -194,7 +194,7 @@ const AIVoiceAssistant = () => {
     // WebSocket connection
     const connectWebSocket = useCallback(() => {
         if (connectionAttemptRef.current || !componentMountedRef.current) {
-            console.log('🛑 Skipping connection attempt');
+            console.log('Skipping connection attempt');
             return;
         }
 
@@ -214,7 +214,7 @@ const AIVoiceAssistant = () => {
         }
 
         try {
-            console.log('🔄 Creating WebSocket connection...');
+            console.log('Creating WebSocket connection...');
             setConnectionStatus('Đang kết nối...');
             setError(null);
 
@@ -232,9 +232,9 @@ const AIVoiceAssistant = () => {
                 console.log('✅ WebSocket connected');
 
                 console.group('🔌 WebSocket Connection Established');
-                console.log('📡 URL:', wsRef.current.url);
-                console.log('📊 Ready State:', wsRef.current.readyState);
-                console.log('📅 Connected At:', new Date().toISOString());
+                console.log('URL:', wsRef.current.url);
+                console.log('Ready State:', wsRef.current.readyState);
+                console.log('Connected At:', new Date().toISOString());
                 console.groupEnd();
 
                 connectionAttemptRef.current = false;
@@ -248,29 +248,29 @@ const AIVoiceAssistant = () => {
 
                 try {
                     const data = event.data;
-                    console.log('📨 Response received, length:', data.length);
+                    console.log('Response received, length:', data.length);
 
                     const base64Pattern = /^[A-Za-z0-9+/]*={0,2}$/;
 
                     if (base64Pattern.test(data) && data.length > 100) {
                         // AI Audio Response
-                        console.log('🎵 Playing AI audio response');
+                        console.log('Playing AI audio response');
                         playAudioFromBase64(data);
                         setError(null);
                     } else {
                         // Text response
-                        console.log('📄 Text message:', data);
+                        console.log('Text message:', data);
                         if (data.toLowerCase().includes('error') ||
                             data.toLowerCase().includes('failed')) {
                             setError(`Backend: ${data}`);
                         } else {
-                            console.log('ℹ️ Server message:', data);
+                            console.log('Server message:', data);
                         }
                     }
 
                     setIsProcessing(false);
                 } catch (err) {
-                    console.error('❌ Error handling message:', err);
+                    console.error('Error handling message:', err);
                     setError('Lỗi xử lý phản hồi từ backend');
                     setIsProcessing(false);
                 }
@@ -280,7 +280,7 @@ const AIVoiceAssistant = () => {
                 if (!componentMountedRef.current) return;
                 clearTimeout(connectionTimeout);
                 connectionAttemptRef.current = false;
-                console.log('🔒 WebSocket closed:', event.code, event.reason);
+                console.log('WebSocket closed:', event.code, event.reason);
                 setIsConnected(false);
                 setIsProcessing(false);
 
@@ -314,7 +314,7 @@ const AIVoiceAssistant = () => {
                 if (!componentMountedRef.current) return;
                 clearTimeout(connectionTimeout);
                 connectionAttemptRef.current = false;
-                console.error('❌ WebSocket error:', error);
+                console.error('WebSocket error:', error);
                 setError('Lỗi kết nối WebSocket');
                 setIsConnected(false);
                 setIsProcessing(false);
@@ -322,7 +322,7 @@ const AIVoiceAssistant = () => {
             };
 
         } catch (err) {
-            console.error('❌ Error creating WebSocket:', err);
+            console.error('Error creating WebSocket:', err);
             connectionAttemptRef.current = false;
             setError('Không thể tạo kết nối WebSocket');
             setConnectionStatus('Lỗi khởi tạo');
@@ -375,7 +375,7 @@ const AIVoiceAssistant = () => {
                 audioBitsPerSecond: RECORDING_CONFIG.AUDIO_BITRATE
             });
 
-            console.log('🎙️ Using MIME type:', mimeType);
+            console.log('Using MIME type:', mimeType);
 
             audioChunksRef.current = [];
             recordingStartTimeRef.current = Date.now();
@@ -383,7 +383,7 @@ const AIVoiceAssistant = () => {
             // Auto-stop after max duration
             const maxDurationTimer = setTimeout(() => {
                 if (isRecording) {
-                    console.log('⏰ Max duration reached, auto-stopping...');
+                    console.log('Max duration reached, auto-stopping...');
                     stopRecording();
                     setError(`Thu âm tự động dừng sau ${RECORDING_CONFIG.MAX_DURATION/1000} giây`);
                 }
@@ -392,27 +392,27 @@ const AIVoiceAssistant = () => {
             mediaRecorderRef.current.ondataavailable = (event) => {
                 if (event.data.size > 0) {
                     audioChunksRef.current.push(event.data);
-                    console.log(`📦 Audio chunk added, size: ${(event.data.size / 1024).toFixed(2)}KB`);
+                    console.log(`Audio chunk added, size: ${(event.data.size / 1024).toFixed(2)}KB`);
                 }
             };
 
             mediaRecorderRef.current.onstop = async () => {
                 clearTimeout(maxDurationTimer);
                 const duration = Date.now() - recordingStartTimeRef.current;
-                console.log(`📊 Recording duration: ${duration}ms`);
+                console.log(`Recording duration: ${duration}ms`);
 
                 if (audioChunksRef.current.length === 0) {
-                    console.log('⚠️ No audio chunks recorded');
+                    console.log('No audio chunks recorded');
                     setIsProcessing(false);
                     return;
                 }
 
                 const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
-                console.log(`📦 Final audio blob size: ${(audioBlob.size / 1024).toFixed(2)} KB`);
+                console.log(`Final audio blob size: ${(audioBlob.size / 1024).toFixed(2)} KB`);
 
                 // Size check
                 if (audioBlob.size > RECORDING_CONFIG.MAX_FILE_SIZE / 2) {
-                    console.error(`❌ Audio blob too large: ${(audioBlob.size / 1024).toFixed(2)}KB`);
+                    console.error(`Audio blob too large: ${(audioBlob.size / 1024).toFixed(2)}KB`);
                     setError(`Recording quá lớn (${(audioBlob.size/1024).toFixed(1)}KB). Thu âm ngắn hơn.`);
                     setIsProcessing(false);
                     return;
@@ -422,7 +422,7 @@ const AIVoiceAssistant = () => {
                 if (audioBlob.size > 2048 && duration > 1000) {
                     await convertAndSendAudio(audioBlob);
                 } else {
-                    console.log('⚠️ Audio too small/short, skipping...');
+                    console.log('Audio too small/short, skipping...');
                     setIsProcessing(false);
                 }
 
@@ -430,7 +430,7 @@ const AIVoiceAssistant = () => {
             };
 
             mediaRecorderRef.current.onerror = (event) => {
-                console.error('❌ MediaRecorder error:', event.error);
+                console.error('MediaRecorder error:', event.error);
                 setError('Lỗi thu âm: ' + event.error.message);
                 setIsRecording(false);
                 setIsProcessing(false);
@@ -438,10 +438,10 @@ const AIVoiceAssistant = () => {
 
             mediaRecorderRef.current.start(500); // Small chunks for better performance
             setIsRecording(true);
-            console.log('🎤 Manual recording started');
+            console.log('Manual recording started');
 
         } catch (err) {
-            console.error('❌ Error starting recording:', err);
+            console.error('Error starting recording:', err);
             setError('Không thể truy cập microphone');
         }
     };
@@ -452,9 +452,9 @@ const AIVoiceAssistant = () => {
                 mediaRecorderRef.current.stop();
                 setIsRecording(false);
                 setIsProcessing(true);
-                console.log('⏹️ Manual recording stopped');
+                console.log('Manual recording stopped');
             } catch (err) {
-                console.error('❌ Error stopping recording:', err);
+                console.error('Error stopping recording:', err);
                 setIsRecording(false);
                 setIsProcessing(false);
             }
@@ -473,7 +473,7 @@ const AIVoiceAssistant = () => {
     const convertAndSendAudio = async (audioBlob) => {
         try {
             console.group('🎵 Audio Conversion Process');
-            console.log('📦 Original audio size:', (audioBlob.size / 1024).toFixed(2) + ' KB');
+            console.log('Original audio size:', (audioBlob.size / 1024).toFixed(2) + ' KB');
 
             // WebSocket state checking
             const wsState = wsRef.current?.readyState;
@@ -487,12 +487,12 @@ const AIVoiceAssistant = () => {
             console.log('🔌 WebSocket state:', wsState, `(${wsStates[wsState] || 'UNKNOWN'})`);
 
             if (!wsRef.current || wsState !== WebSocket.OPEN) {
-                console.error('❌ WebSocket not ready for sending');
+                console.error('WebSocket not ready for sending');
                 setError(`WebSocket ${wsStates[wsState] || 'unavailable'}. Đang kết nối lại...`);
 
                 // Force reconnect if needed
                 if (wsState === WebSocket.CLOSED || wsState === WebSocket.CLOSING) {
-                    console.log('🔄 Initiating WebSocket reconnect...');
+                    console.log('Initiating WebSocket reconnect...');
                     connectWebSocket();
                 }
 
@@ -511,7 +511,7 @@ const AIVoiceAssistant = () => {
             const wavBase64 = await convertWebMToWavBase64(audioBlob);
             const wavBase64Size = (wavBase64.length * 3) / 4;
 
-            console.log(`📤 WAV Base64 size: ${(wavBase64Size / 1024).toFixed(2)} KB`);
+            console.log(`WAV Base64 size: ${(wavBase64Size / 1024).toFixed(2)} KB`);
 
             // Final validation
             if (wavBase64Size > RECORDING_CONFIG.MAX_FILE_SIZE) {
@@ -524,22 +524,22 @@ const AIVoiceAssistant = () => {
 
             // Send to backend
             if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-                console.log(`📤 Sending WAV Base64 - Size: ${(wavBase64.length / 1024).toFixed(2)} KB`);
+                console.log(`Sending WAV Base64 - Size: ${(wavBase64.length / 1024).toFixed(2)} KB`);
 
                 const sendStartTime = performance.now();
                 wsRef.current.send(wavBase64);
                 const sendEndTime = performance.now();
 
-                console.log('📤 WAV Base64 sent successfully');
-                console.log(`⚡ Send duration: ${(sendEndTime - sendStartTime).toFixed(2)}ms`);
+                console.log('WAV Base64 sent successfully');
+                console.log(`Send duration: ${(sendEndTime - sendStartTime).toFixed(2)}ms`);
 
             } else {
-                console.error('❌ WebSocket disconnected during conversion');
+                console.error('WebSocket disconnected during conversion');
                 setError('Kết nối bị ngắt trong quá trình xử lý');
                 setIsProcessing(false);
             }
         } catch (err) {
-            console.error('❌ Error in conversion:', err);
+            console.error('Error in conversion:', err);
             setError('Lỗi xử lý âm thanh: ' + err.message);
             setIsProcessing(false);
         }
@@ -548,7 +548,7 @@ const AIVoiceAssistant = () => {
     const playAudioFromBase64 = async (base64Audio) => {
         try {
             setIsPlaying(true);
-            console.log('🔊 Playing AI response');
+            console.log('Playing AI response');
 
             const binaryString = atob(base64Audio);
             const bytes = new Uint8Array(binaryString.length);
@@ -565,11 +565,11 @@ const AIVoiceAssistant = () => {
             audio.onended = () => {
                 setIsPlaying(false);
                 URL.revokeObjectURL(audioUrl);
-                console.log('✅ AI response playback completed');
+                console.log('AI response playback completed');
             };
 
             audio.onerror = (err) => {
-                console.error('❌ Error playing audio:', err);
+                console.error('Error playing audio:', err);
                 setError('Lỗi phát âm thanh');
                 setIsPlaying(false);
                 URL.revokeObjectURL(audioUrl);
@@ -577,7 +577,7 @@ const AIVoiceAssistant = () => {
 
             await audio.play();
         } catch (err) {
-            console.error('❌ Error playing audio:', err);
+            console.error('Error playing audio:', err);
             setError('Không thể phát âm thanh');
             setIsPlaying(false);
         }
@@ -658,13 +658,13 @@ const AIVoiceAssistant = () => {
 
                 {isRecording && (
                     <span className="text-xs text-red-600 font-medium">
-                        🎤 Đang thu âm...
+                        Đang thu âm...
                     </span>
                 )}
 
                 {isProcessing && (
                     <span className="text-xs text-blue-600">
-                        ⚡ Đang chuyển đổi WAV...
+                        Đang chuyển đổi WAV...
                     </span>
                 )}
 

@@ -194,9 +194,9 @@ const ProductModal = ({
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log('📝 === FORM SUBMISSION START ===');
-        console.log('📝 Mode:', mode);
-        console.log('📝 Raw form data:', formData);
+        console.log('=== FORM SUBMISSION START ===');
+        console.log('Mode:', mode);
+        console.log('Raw form data:', formData);
 
         // Parse và validate dữ liệu đúng cách cho cả CREATE và UPDATE
         const parsedFormData = {
@@ -206,7 +206,7 @@ const ProductModal = ({
             categoryId: formData.categoryId ? formData.categoryId.toString() : ''
         };
 
-        console.log('📝 Parsed form data for', mode, ':', parsedFormData);
+        console.log('Parsed form data for', mode, ':', parsedFormData);
 
         // Validation tốt hơn
         const validationErrors = {};
@@ -246,7 +246,7 @@ const ProductModal = ({
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            console.log('❌ Validation errors:', validationErrors);
+            console.log('Validation errors:', validationErrors);
             return;
         }
 
@@ -274,9 +274,9 @@ const ProductModal = ({
                 }
             }
 
-            console.log('📝 Submitting', mode, 'with data:', parsedFormData);
-            console.log('📝 Should send images:', shouldSendImages);
-            console.log('📝 Images to send:', imagesToSend.length);
+            console.log('Submitting', mode, 'with data:', parsedFormData);
+            console.log('Should send images:', shouldSendImages);
+            console.log('Images to send:', imagesToSend.length);
 
             let result;
             if (mode === 'create') {
@@ -286,10 +286,10 @@ const ProductModal = ({
             }
 
 
-            console.log('📝 Submission result:', result);
+            console.log('Submission result:', result);
 
             if (result.success) {
-                console.log('✅ Form submission successful');
+                console.log('Form submission successful');
                 onClose();
                 // Reset form
                 setFormData(PRODUCT_DEFAULTS.NEW_PRODUCT);
@@ -297,15 +297,15 @@ const ProductModal = ({
                 setPreviewImages([null, null, null, null, null, null]);
                 setErrors({});
             } else {
-                console.log('❌ Form submission failed:', result.error);
+                console.log('Form submission failed:', result.error);
                 setErrors({ submit: result.error || 'Có lỗi xảy ra' });
             }
         } catch (error) {
-            console.error('💥 Error in form submission:', error);
+            console.error('Error in form submission:', error);
             setErrors({ submit: 'Có lỗi xảy ra khi xử lý yêu cầu' });
         } finally {
             setLoading(false);
-            console.log('📝 === FORM SUBMISSION END ===');
+            console.log('=== FORM SUBMISSION END ===');
         }
     };
 

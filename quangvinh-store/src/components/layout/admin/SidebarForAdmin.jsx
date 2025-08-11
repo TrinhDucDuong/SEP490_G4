@@ -104,11 +104,6 @@ const SidebarForAdmin = () => {
                     {/*    Hướng dẫn*/}
                     {/*</NavLink>*/}
 
-                    {/*<NavLink to="/admin/story-management" className={navClass}>*/}
-                    {/*    <FileText className="h-5 w-5 mr-3" />*/}
-                    {/*    Câu chuyện*/}
-                    {/*</NavLink>*/}
-
                     <NavLink to="/admin/banner-management" className={navClass}>
                         <Tag className="h-5 w-5 mr-3" />
                         Quản Lý Banner
@@ -119,10 +114,10 @@ const SidebarForAdmin = () => {
                         Quản lý cửa hàng
                     </NavLink>
 
-                    <NavLink to="/admin/sns-management" className={navClass}>
-                        <Settings className="h-5 w-5 mr-3" />
-                        Quản lý mạng xã hội
-                    </NavLink>
+                    {/*<NavLink to="/admin/sns-management" className={navClass}>*/}
+                    {/*    <Settings className="h-5 w-5 mr-3" />*/}
+                    {/*    Quản lý mạng xã hội*/}
+                    {/*</NavLink>*/}
 
                     <NavLink to="/admin/employee-management" className={navClass}>
                         <UserPlus className="h-5 w-5 mr-3" />

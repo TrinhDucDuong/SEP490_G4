@@ -43,7 +43,7 @@ const ProductViewModal = ({
 
     // Handle store modal
     const handleStoreClick = (store, variant) => {
-        console.log('🏪 Store button clicked:', store);
+        console.log('Store button clicked:', store);
         setSelectedStore({ ...store, variant });
         setIsStoreModalOpen(true);
     };
