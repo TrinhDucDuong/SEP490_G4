@@ -26,7 +26,8 @@ public class ResetPasswordStaffAccountUseCaseInteraction implements ResetPasswor
                 .findById(id)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
         String enCodePassword = passwordEncoder.encode(resetPasswordStaffAccountInputData.getNewPassword());
-        if(needToResetPasswordAccountEntity.getPassword().equals(enCodePassword)) {
+        if(passwordEncoder.matches(resetPasswordStaffAccountInputData.getOldPassword(),
+                needToResetPasswordAccountEntity.getPassword())) {
             needToResetPasswordAccountEntity.setPassword(enCodePassword);
             needToResetPasswordAccountEntity.setUpdatedBy((AccountEntity) userDetails);
             needToResetPasswordAccountEntity.setUpdatedAt(LocalDateTime.now());
