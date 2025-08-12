@@ -69,7 +69,6 @@ public class AzureSpeechUtil implements AzureSpeechBoundary {
             config.setSpeechRecognitionLanguage("vi-VN");
 
             AudioConfig audioConfig = AudioConfig.fromWavFileInput(tempAudio.getAbsolutePath());
-            int a = 10;
             SpeechRecognizer recognizer = new SpeechRecognizer(config, audioConfig);
             SpeechRecognitionResult result = recognizer.recognizeOnceAsync().get();
 
