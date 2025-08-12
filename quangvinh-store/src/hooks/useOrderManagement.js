@@ -16,7 +16,7 @@ export const useOrderManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // Search, Filter, Sort state
+    // Search, filter, Sort state
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState({
         status: '',
@@ -113,7 +113,7 @@ export const useOrderManagement = () => {
         }
     };
 
-    // Filter and search logic - CẬP NHẬT
+    // filter and search logic - CẬP NHẬT
     useEffect(() => {
         let result = [...orders];
 
@@ -126,7 +126,7 @@ export const useOrderManagement = () => {
             );
         }
 
-        // Filter by date range
+        // filter by date range
         if (filters.startDate && filters.endDate) {
             const startDate = new Date(filters.startDate);
             const endDate = new Date(filters.endDate);
@@ -289,7 +289,7 @@ export const useOrderManagement = () => {
         setCurrentPage,
         itemsPerPage,
 
-        // Search, Filter, Sort
+        // Search, filter, Sort
         searchTerm,
         setSearchTerm,
         filters,

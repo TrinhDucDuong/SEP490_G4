@@ -1,15 +1,15 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import InstructionManagement from "../pages/Staff/InstructionManagement.jsx";
-import PoliciesManagement from "../pages/Staff/PoliciesManagement.jsx";
-import AboutUsManagement from "../pages/Staff/AboutUsManagement.jsx";
-import CustomerList from "../pages/Staff/CustomerList.jsx";
-import OrderManagement from "../pages/Staff/OrderManagement.jsx";
+import InstructionManagement from "../pages/staff/InstructionManagement.jsx";
+import PoliciesManagement from "../pages/staff/PoliciesManagement.jsx";
+import AboutUsManagement from "../pages/staff/AboutUsManagement.jsx";
+import CustomerList from "../pages/staff/CustomerList.jsx";
+import OrderManagement from "../pages/staff/OrderManagement.jsx";
 
 const ManagerLayout = () => {
     return (
         <div className="min-h-screen">
-            {/* Layout chung cho cả Staff và Admin - không có Header và Footer của Customer */}
+            {/* Layout chung cho cả staff và admin - không có Header và Footer của customer */}
             <Routes>
                 <Route path="/instruction-management" element={<InstructionManagement />} />
                 <Route path="/policies-management" element={<PoliciesManagement />} />
@@ -25,7 +25,7 @@ const ManagerLayout = () => {
                 <Route path="/settings" element={<div>Settings Page</div>} />
                 <Route path="/logout" element={<div>Logout Page</div>} />
 
-                {/* Routes chỉ dành cho Admin */}
+                {/* Routes chỉ dành cho admin */}
                 <Route path="/dashboard" element={<div>Dashboard Page (Admin Only)</div>} />
                 <Route path="/employee-management" element={<div>Employee Management Page (Admin Only)</div>} />
             </Routes>

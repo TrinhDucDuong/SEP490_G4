@@ -13,7 +13,7 @@ export const useCustomerList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // Search, Filter, Sort state
+    // Search, filter, Sort state
     const [searchTerm, setSearchTerm] = useState('');
     const [sortConfig, setSortConfig] = useState({ key: 'accountId', direction: 'asc' });
 
@@ -35,7 +35,7 @@ export const useCustomerList = () => {
         }
     };
 
-    // Filter and search logic
+    // filter and search logic
     useEffect(() => {
         let result = [...customers];
 
@@ -124,7 +124,7 @@ export const useCustomerList = () => {
         currentPage,
         setCurrentPage,
         itemsPerPage,
-        // Search, Filter, Sort
+        // Search, filter, Sort
         searchTerm,
         setSearchTerm,
         sortConfig,

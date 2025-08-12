@@ -1,6 +1,6 @@
 // src/utils/constants/ProductConstants.js
 
-// Product Status Options
+// product Status Options
 export const PRODUCT_STATUS_OPTIONS = [
     { value: true, label: 'Đang bán', color: 'green' },
     { value: false, label: 'Đã ngừng bán', color: 'red' }

@@ -27,7 +27,7 @@ export const useProductManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // Search, Filter, Sort state
+    // Search, filter, Sort state
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState({
         brand: '',

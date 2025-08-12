@@ -114,7 +114,7 @@ export const getCustomerById = async (customerId) => {
         }
 
         const data = await response.json();
-        console.log('Customer detail response:', data);
+        console.log('customer detail response:', data);
         return { success: true, data: data.account || data };
     } catch (error) {
         console.error('Error fetching customer by ID:', error);

@@ -1,4 +1,4 @@
-// src/utils/api/Admin/OrderManagementAPI.js
+// src/utils/api/admin/OrderManagementAPI.js
 
 const API_BASE_URL = 'http://localhost:9999/staff/order';
 
@@ -142,7 +142,7 @@ export const getOrderById = async (orderId) => {
         }
 
         const data = await response.json();
-        console.log('Order detail response:', data);
+        console.log('order detail response:', data);
         return { success: true, data: data.order || data };
     } catch (error) {
         console.error('Error fetching order by ID:', error);

@@ -14,7 +14,7 @@ export const useBannerManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = BANNER_DEFAULTS.ITEMS_PER_PAGE;
 
-    // Filter state
+    // filter state
     const [filters, setFilters] = useState(BANNER_DEFAULTS.DEFAULT_FILTER);
 
     // Status change tracking - FIXED logic
@@ -149,11 +149,11 @@ export const useBannerManagement = () => {
         return BANNER_HELPERS.hasStatusChanges(statusChanges.activeIds, statusChanges.deActiveIds);
     };
 
-    // Filter banners - FIXED để không reset về trang 1 khi không cần thiết
+    // filter banners - FIXED để không reset về trang 1 khi không cần thiết
     useEffect(() => {
         let result = [...banners];
 
-        // Filter by status
+        // filter by status
         if (filters.status !== '') {
             const isActive = filters.status === 'true';
             result = result.filter(banner => banner.isActive === isActive);
@@ -230,7 +230,7 @@ export const useBannerManagement = () => {
         itemsPerPage,
         totalPages: getTotalPages(),
 
-        // Filter
+        // filter
         filters,
         handleFilterChange,
         clearFilters,

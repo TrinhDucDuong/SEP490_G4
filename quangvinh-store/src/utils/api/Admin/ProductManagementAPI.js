@@ -113,7 +113,7 @@ export const getProductById = async (productId) => {
         }
 
         const data = await response.json();
-        console.log('Product detail response:', data);
+        console.log('product detail response:', data);
         return { success: true, data: data.product || data };
     } catch (error) {
         console.error('💥 Error fetching product by ID:', error);

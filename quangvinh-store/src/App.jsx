@@ -13,61 +13,61 @@ import { AuthProviderForManager } from './context/AuthContextForManager.jsx';
 import CustomerLayout from './layouts/CustomerLayout';
 import AdminLayout from './layouts/AdminLayout';
 
-// Customer Pages
-import Home from './pages/Customer/Home/Home.jsx';
-import ProductList from './pages/Customer/Product/ProductList.jsx';
-import ProductDetail from './pages/Customer/Product/ProductDetails.jsx';
-import Login from './pages/Customer/Login/Login.jsx';
-import Register from './pages/Customer/Login/Register.jsx';
-import ForgotPassword from './pages/Customer/Login/ForgotPassword.jsx';
-import Cart from './pages/Customer/Cart/Cart.jsx';
-import Payment from './pages/Customer/Payment/Payment.jsx';
-import NotFound from './pages/Customer/Common/NotFound.jsx';
-import ProfileLayout from './pages/Customer/Profile/ProfileLayout';
-import Info from './pages/Customer/Profile/Information/Info';
-import Address from './pages/Customer/Profile/Address/Address';
-import ChangePassword from './pages/Customer/Profile/Information/ChangePassword';
-import Notifications from './pages/Customer/Profile/Setting/Notifications';
-import Privacy from './pages/Customer/Profile/Setting/Privacy';
-import OrderHistory from './pages/Customer/Profile/Order/OrderHistory';
-import PolicyPage from "./pages/Customer/Policy/PolicyPage.jsx";
-import InstructionPage from "./pages/Customer/Instruction/InstructionPage.jsx";
-import SocialCallback from "./pages/Customer/Login/SocialCallback.jsx";
-import OAuth2RedirectHandler from "./components/common/Customer/OAuth2RedirectHandler.jsx";
-import BlogDetail from "./pages/Customer/Blog/BlogDetail.jsx";
-import BlogList from "./pages/Customer/Blog/BlogList.jsx";
+// customer Pages
+import Home from './pages/customer/home/Home.jsx';
+import ProductList from './pages/customer/product/ProductList.jsx';
+import ProductDetail from './pages/customer/product/ProductDetails.jsx';
+import Login from './pages/customer/login/Login.jsx';
+import Register from './pages/customer/login/Register.jsx';
+import ForgotPassword from './pages/customer/login/ForgotPassword.jsx';
+import Cart from './pages/customer/cart/Cart.jsx';
+import Payment from './pages/customer/payment/Payment.jsx';
+import NotFound from './pages/customer/common/NotFound.jsx';
+import ProfileLayout from './pages/customer/profile/ProfileLayout';
+import Info from './pages/customer/profile/Information/Info';
+import Address from './pages/customer/profile/Address/Address';
+import ChangePassword from './pages/customer/profile/Information/ChangePassword';
+import Notifications from './pages/customer/profile/Setting/Notifications';
+import Privacy from './pages/customer/profile/Setting/Privacy';
+import OrderHistory from './pages/customer/profile/Order/OrderHistory';
+import PolicyPage from "./pages/customer/policy/PolicyPage.jsx";
+import InstructionPage from "./pages/customer/instruction/InstructionPage.jsx";
+import SocialCallback from "./pages/customer/login/SocialCallback.jsx";
+import OAuth2RedirectHandler from "./components/common/customer/OAuth2RedirectHandler.jsx";
+import BlogDetail from "./pages/customer/blog/BlogDetail.jsx";
+import BlogList from "./pages/customer/blog/BlogList.jsx";
 
-// Admin Pages
-import InstructionManagement from './pages/Staff/InstructionManagement';
-import AboutUsManagement from './pages/Staff/AboutUsManagement';
-import CustomerList from './pages/Staff/Customer/CustomerList.jsx';
-import OrderManagement from './pages/Staff/Order/OrderManagement';
-import EmployeeManagement from './pages/Admin/Employee/EmployeeManagement.jsx';
-import CategoryManagement from "./pages/Staff/Category/CategoryManagement.jsx";
-import BrandManagement from "./pages/Staff/Brand/BrandManagement.jsx";
-import ProductManagement from "./pages/Staff/Product/ProductManagement.jsx";
-import BlogManagement from "./pages/Admin/Blog/BlogManagement.jsx";
-import BlogDetailManager from "./pages/Admin/Blog/BlogDetailManager.jsx";
-import BlogForm from "./pages/Admin/Blog/BlogForm.jsx";
+// admin Pages
+import InstructionManagement from './pages/staff/InstructionManagement';
+import AboutUsManagement from './pages/staff/AboutUsManagement';
+import CustomerList from './pages/staff/Customer/CustomerList.jsx';
+import OrderManagement from './pages/staff/Order/OrderManagement';
+import EmployeeManagement from './pages/admin/Employee/EmployeeManagement.jsx';
+import CategoryManagement from "./pages/staff/Category/CategoryManagement.jsx";
+import BrandManagement from "./pages/staff/Brand/BrandManagement.jsx";
+import ProductManagement from "./pages/staff/Product/ProductManagement.jsx";
+import BlogManagement from "./pages/admin/Blog/BlogManagement.jsx";
+import BlogDetailManager from "./pages/admin/Blog/BlogDetailManager.jsx";
+import BlogForm from "./pages/admin/Blog/BlogForm.jsx";
 import ProtectedRouteForManager from "./components/auth/ProtectedRouteForManager.jsx";
-import LoginForManager from "./pages/Admin/LoginForManager.jsx";
-import PaymentMethod from "./pages/Customer/Payment/PaymentMethod.jsx";
-import OrderDetail from "./pages/Customer/Profile/Order/OrderDetails.jsx";
-import PoliciesManagement from "./pages/Staff/Policy/PoliciesManagement.jsx";
-import ProtectedRoute from "./components/common/Customer/Protecter/ProtectedRoute.jsx";
-import DashboardManagement from "./pages/Admin/Dashboard/DashboardManagement";
-import StarRateManagement from "./pages/Staff/StarRate/StarRateManagement";
-import StoreManagement from "./pages/Admin/Store/StoreManagement.jsx";
-import SNSManagement from "./pages/Admin/SNS/SNSManagement.jsx";
-import Feedback from "./pages/Customer/Feedback/Feedback.jsx";
-import StoreAdress from "./pages/Customer/Store/StoreAdress.jsx";
-import ProductReviewPage from "./pages/Customer/ProductReview/ProductReviewPage.jsx";
-import PaymentResult from "./pages/Customer/Payment/PaymentResult.jsx";
-import CheckoutPage from "./pages/Customer/Payment/CheckoutPage.jsx";
-import TrackOrderPage from "./pages/Customer/TrackingOrder/TrackOrderPage.jsx";
-import OrderTrackingDetail from "./pages/Customer/TrackingOrder/OrderTrackingDetail.jsx";
-import BuyNow from "./pages/Customer/Payment/BuyNow.jsx";
-import BannerManagement from "./pages/Staff/Banner/BannerManagement.jsx";
+import LoginForManager from "./pages/admin/LoginForManager.jsx";
+import PaymentMethod from "./pages/customer/payment/PaymentMethod.jsx";
+import OrderDetail from "./pages/customer/profile/Order/OrderDetails.jsx";
+import PoliciesManagement from "./pages/staff/Policy/PoliciesManagement.jsx";
+import ProtectedRoute from "./components/common/customer/Protecter/ProtectedRoute.jsx";
+import DashboardManagement from "./pages/admin/Dashboard/DashboardManagement";
+import StarRateManagement from "./pages/staff/StarRate/StarRateManagement";
+import StoreManagement from "./pages/admin/Store/StoreManagement.jsx";
+import SNSManagement from "./pages/admin/SNS/SNSManagement.jsx";
+import Feedback from "./pages/customer/feedback/Feedback.jsx";
+import StoreAdress from "./pages/customer/store/StoreAdress.jsx";
+import ProductReviewPage from "./pages/customer/productReview/ProductReviewPage.jsx";
+import PaymentResult from "./pages/customer/payment/PaymentResult.jsx";
+import CheckoutPage from "./pages/customer/payment/CheckoutPage.jsx";
+import TrackOrderPage from "./pages/customer/trackingOrder/TrackOrderPage.jsx";
+import OrderTrackingDetail from "./pages/customer/trackingOrder/OrderTrackingDetail.jsx";
+import BuyNow from "./pages/customer/payment/BuyNow.jsx";
+import BannerManagement from "./pages/staff/Banner/BannerManagement.jsx";
 
 
 function App() {
@@ -115,7 +115,7 @@ function App() {
                                 </ProtectedRoute>
                             } />
 
-
+    
                             <Route path="profile" element={
                                 <ProtectedRoute>
                                     <ProfileLayout />
@@ -132,7 +132,7 @@ function App() {
                             <Route path="*" element={<NotFound />} />
                         </Route>
 
-                        {/* Admin routes */}
+                        {/* admin routes */}
                         <Route path="/admin/login" element={<LoginForManager />} />
                         <Route path="/admin" element={<Navigate to="/admin/category-management" replace />} />
                         <Route path="/admin" element={

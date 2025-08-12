@@ -107,7 +107,7 @@ export const useStarRateManagement = () => {
         return sorted;
     }, []);
 
-    // Filter function
+    // filter function
     const filterStarRates = useCallback((rates, filterOption) => {
         if (filterOption === STAR_RATE_CONSTANTS.FILTER_OPTIONS.ALL) {
             return rates;
@@ -115,7 +115,7 @@ export const useStarRateManagement = () => {
         return rates.filter(rate => rate.starRate === filterOption);
     }, []);
 
-    // Filter by reply status
+    // filter by reply status
     const filterByReplyStatus = useCallback((rates, repliesData, statusFilter) => {
         if (statusFilter === STAR_RATE_CONSTANTS.REPLY_STATUS_FILTER.ALL) {
             return rates;
@@ -132,7 +132,7 @@ export const useStarRateManagement = () => {
         });
     }, []);
 
-    // Filter by visibility
+    // filter by visibility
     const filterByVisibility = useCallback((rates, visibilityOption) => {
         if (visibilityOption === STAR_RATE_CONSTANTS.VISIBILITY_FILTER.ALL) {
             return rates;
@@ -147,7 +147,7 @@ export const useStarRateManagement = () => {
         });
     }, []);
 
-    // Filter by date range
+    // filter by date range
     const filterByDateRange = useCallback((rates, dateRange) => {
         if (!dateRange.startDate || !dateRange.endDate) {
             return rates;

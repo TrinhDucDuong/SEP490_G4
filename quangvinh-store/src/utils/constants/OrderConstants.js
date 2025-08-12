@@ -1,6 +1,6 @@
 // src/utils/constants/OrderConstants.js
 
-// Order Status Options
+// order Status Options
 export const ORDER_STATUS_OPTIONS = [
     { value: 'PROCESSING', label: 'Đang xử lý', color: 'yellow' },
     { value: 'SHIPPING', label: 'Đang giao hàng', color: 'blue' },
@@ -8,7 +8,7 @@ export const ORDER_STATUS_OPTIONS = [
     { value: 'CANCELED', label: 'Đã hủy', color: 'red' }
 ];
 
-// Payment Status Options (MỚI THÊM)
+// payment Status Options (MỚI THÊM)
 export const PAYMENT_STATUS_OPTIONS = [
     { value: false, label: 'Chưa thanh toán', color: 'red' },
     { value: true, label: 'Đã thanh toán', color: 'green' }
@@ -131,7 +131,7 @@ export const ORDER_ERROR_MESSAGES = {
     INVALID_PAYMENT_STATUS: 'Trạng thái thanh toán không hợp lệ' // MỚI THÊM
 };
 
-// Filter Options - CẬP NHẬT
+// filter Options - CẬP NHẬT
 export const ORDER_FILTER_OPTIONS = {
     STATUS: ORDER_STATUS_OPTIONS,
     PAYMENT_STATUS: PAYMENT_STATUS_OPTIONS, // MỚI THÊM

@@ -5,9 +5,9 @@ import Sidebar from './Sidebar.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping, faHeart, faMagnifyingGlass, faUser } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../../../context/AuthContext.jsx';
-import Cart from '../../../pages/Customer/Cart/Cart.jsx';
-import useSearchProducts from "../../../hooks/Customer/SearchProduct/useSearchProducts.js";
-import ProductCard from "../../ui/product/Common/ProductCard.jsx";
+import Cart from '../../../pages/customer/cart/Cart.jsx';
+import useSearchProducts from "../../../hooks/customer/searchProduct/useSearchProducts.js";
+import ProductCard from "../../ui/product/common/ProductCard.jsx";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 

@@ -1,4 +1,4 @@
-// src/utils/api/Admin/SNSManagementAPI.js
+// src/utils/api/admin/SNSManagementAPI.js
 const API_BASE_URL = 'http://localhost:9999/admin/sns';
 
 // Hàm helper để lấy token từ localStorage

@@ -29,7 +29,7 @@ const HeaderForManager = ({ setSidebarOpen, sidebarOpen }) => {
                             <User className="w-4 h-4 text-white" />
                         </div>
                         <span className="hidden sm:inline-block text-sm font-medium text-gray-700">
-                            {user?.username || 'Admin'}
+                            {user?.username || 'admin'}
                         </span>
                     </div>
                 </div>

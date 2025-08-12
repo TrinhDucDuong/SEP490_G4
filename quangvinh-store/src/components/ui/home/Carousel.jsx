@@ -1,4 +1,4 @@
-import { useFetchBanners } from "../../../hooks/Customer/useFetchBanners.js";
+import { useFetchBanners } from "../../../hooks/customer/useFetchBanners.js";
 import { useRef, useState, useEffect } from "react";
 import bannerDefault from "../../../assets/images/meobanner.png";
 

@@ -16,7 +16,7 @@ export const useCategoryManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // Search, Filter, Sort state - ĐỒNG NHẤT với Brand
+    // Search, filter, Sort state - ĐỒNG NHẤT với Brand
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState({
         status: '',
@@ -131,7 +131,7 @@ export const useCategoryManagement = () => {
         }
     };
 
-    // Filter and search logic - ĐỒNG NHẤT với Brand structure
+    // filter and search logic - ĐỒNG NHẤT với Brand structure
     useEffect(() => {
         console.log('Applying filters and search...'); // Debug log
         let result = [...categories];
