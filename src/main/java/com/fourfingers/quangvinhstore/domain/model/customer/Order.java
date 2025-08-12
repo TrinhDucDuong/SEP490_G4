@@ -15,6 +15,7 @@ import java.util.List;
 @Builder
 public class Order {
     private Long orderId;
+    private String orderCode;
     private Account owner;
     private LocalDateTime orderDate;
     private List<OrderDetails> orderDetails;
@@ -22,4 +23,5 @@ public class Order {
     private BigDecimal totalPrice;
     private ShippingAddress shippingAddress;
     private Boolean paymentStatus;
+
 }
