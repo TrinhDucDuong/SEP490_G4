@@ -17,6 +17,7 @@ public class Order {
     private String customerPhoneNumber;
     private List<OrderDetails> orderDetails;
     private String orderStatus;
+    private boolean paymentStatus;
     private LocalDateTime orderDate;
     private String totalPrice;
     private ShippingAddress shippingAddress;
