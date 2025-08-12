@@ -4,10 +4,13 @@ import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer
 import com.fourfingers.quangvinhstore.infrastructure.repository.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ProductSize;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderOutputBoundary;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ProductVariantInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.PurchaseInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressIdInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.ListOrderOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,6 +37,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
     private final ShippingAddressRepository shippingAddressRepository;
     private final OrderDetailsRepository orderDetailsRepository;
     private final AccountRepository accountRepository;
+    private final ProductVariantRepository productVariantEntityRepository;
 
     @Override
     public ListOrderOutputData getOrders(UserDetails userDetails) {
@@ -93,6 +98,9 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         Optional<OrderEntity> orderEntity = orderRepository.findByOrderIdAndOwnerAccountId(purchaseInputData.getOrderId(),
                 accountEntity.getAccountId());
         if (orderEntity.isPresent()) {
+            if (orderEntity.get().getShippingAddress() == null) {
+                throw new RuntimeException("Shipping address is had not been selected yet");
+            }
             orderEntity.get().setOrderStatus(OrderStatus.PROCESSING);
             orderEntity.get().setPaymentStatus(false);
             orderEntity.get().setOrderDate(LocalDateTime.now());
@@ -125,6 +133,9 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         if ("00".equals(vnp_ResponseCode) && "00".equals(vnp_TransactionStatus)) {
             Optional<OrderEntity> orderEntity = orderRepository.findBySecureHash(vnp_TxnRef);
             if(orderEntity.isPresent()) {
+                if (orderEntity.get().getShippingAddress() == null) {
+                    throw new RuntimeException("Shipping address is had not been selected yet");
+                }
                 orderEntity.get().setOrderStatus(OrderStatus.PROCESSING);
                 orderEntity.get().setPaymentStatus(true);
                 orderEntity.get().setOrderDate(LocalDateTime.now());
@@ -148,11 +159,114 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         });
     }
 
-//    @Override
-//    public OrderOutputData orderNow(OrderInputData orderInputData, UserDetails userDetails) {
-//        AccountEntity accountEntity = (AccountEntity) userDetails;
-//
-//    }
+    @Override
+    public OrderOutputData orderNow(OrderInputData orderInputData, UserDetails userDetails) {
+        AccountEntity accountEntity = (AccountEntity) userDetails;
+        Optional<ProductVariantEntity> productVariantEntity = productVariantEntityRepository.
+                                                                findByProduct_ProductIdAndColor_ColorHexAndProductSize(
+                                                                        orderInputData.getProductId(),
+                                                                        orderInputData.getColorHexCode(),
+                                                                        ProductSize.valueOf(orderInputData.getSizeCode())
+                                                                );
+        if(productVariantEntity.isEmpty()) {
+            throw new RuntimeException("Product not found");
+        }
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setOrderDate(LocalDateTime.now());
+        orderEntity.setOwner(accountEntity);
+        orderEntity.setOrderStatus(null);
+        orderEntity.setPaymentStatus(null);
+        OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity();
+        orderDetailsEntity.setOrder(orderEntity);
+        orderDetailsEntity.setProductVariant(productVariantEntity.get());
+        orderDetailsEntity.setQuantity(Long.valueOf(orderInputData.getQuantity()));
+        orderDetailsEntity.setUnitPrice(productVariantEntity.get().getProduct().getDiscountedPrice());
+        orderEntity.setTotalPrice(orderDetailsEntity.getUnitPrice().multiply(BigDecimal.valueOf(orderDetailsEntity.getQuantity())));
+        orderEntity.setOrderDetails(List.of(orderDetailsEntity));
+        OrderEntity placedOrder = orderRepository.save(orderEntity);
+        return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(placedOrder));
+    }
+
+    @Override
+    public OrderOutputData chooseShippingAddress(UserDetails userDetails, ShippingAddressIdInputData shippingAddressIdInputData, Long orderId) throws RuntimeException {
+        AccountEntity accountEntity = (AccountEntity) userDetails;
+        Optional<OrderEntity> orderEntity = orderRepository.findByOrderIdAndOwnerAccountId(orderId, accountEntity.getAccountId());
+        if (orderEntity.isEmpty()) {
+            throw new RuntimeException("Order not found");
+        }
+        Optional<ShippingAddressEntity> shippingAddressEntity = shippingAddressRepository
+                .findByAccount_AccountIdAndShippingAddressIdAndIsActive(
+                        accountEntity.getAccountId(),
+                        shippingAddressIdInputData.getShippingAddressId(),
+                        true
+                );
+        if (shippingAddressIdInputData.getShippingAddressId() == null || shippingAddressEntity.isEmpty()) {
+            throw new RuntimeException("Shipping address not found");
+        }
+        ShippingAddressEntity shippingAddress = shippingAddressEntity.get();
+        orderEntity.get().setShippingAddress(shippingAddress);
+        orderEntity.get().setTotalPrice(calculateTotalOrderPrice(orderEntity.get().getOrderId()));
+        OrderEntity placedOrder = orderRepository.save(orderEntity.get());
+        return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(placedOrder));
+    }
+
+    @Override
+    public OrderOutputData orderByGuest(ShippingAddressInputData shippingAddressInputData, List<ProductVariantInputData> listOrderInputData, String paymentMethod) {
+        // Shipping address
+        ShippingAddressEntity shippingAddress = new ShippingAddressEntity();
+        shippingAddress.setIsActive(true);
+        shippingAddress.setAccount(null);
+        shippingAddress.setAddress(shippingAddressInputData.getAddress());
+        shippingAddress.setName(shippingAddressInputData.getName());
+        shippingAddress.setPhoneNumber(shippingAddressInputData.getPhoneNumber());
+        shippingAddress.setName(shippingAddressInputData.getName());
+        shippingAddressInputData.setExactAddress(shippingAddressInputData.getExactAddress());
+        shippingAddress = shippingAddressRepository.save(shippingAddress);
+
+        // Order
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setShippingAddress(shippingAddress);
+        orderEntity.setOrderDate(LocalDateTime.now());
+        orderEntity.setOwner(null);
+        orderEntity.setOrderStatus(OrderStatus.PROCESSING);
+        List<OrderDetailsEntity> orderDetailsEntities = new ArrayList<>();
+        for (ProductVariantInputData productVariantInputData : listOrderInputData) {
+            Optional<ProductVariantEntity> productVariantEntity = productVariantEntityRepository.findById(productVariantInputData.getProductVariantId());
+            if (productVariantEntity.isPresent()) {
+                OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity();
+                orderDetailsEntity.setOrder(orderEntity);
+                orderDetailsEntity.setProductVariant(productVariantEntity.get());
+                orderDetailsEntity.setQuantity(Long.valueOf(productVariantInputData.getQuantity()));
+                orderDetailsEntity.setUnitPrice(productVariantEntity.get().getProduct().getDiscountedPrice());
+                orderDetailsEntities.add(orderDetailsEntity);
+            }
+        }
+        orderEntity.setOrderDetails(orderDetailsEntities);
+        orderEntity.setTotalPrice(calculateTotalOrderPrice(orderDetailsEntities));
+
+        // Payment Method
+        if(!paymentMethod.toUpperCase().matches("COD|VNPAY")) {
+            throw new RuntimeException("Payment method not found");
+        } else {
+            if(paymentMethod.equalsIgnoreCase("COD")) {
+                orderEntity.setPaymentStatus(false);
+            }
+        }
+        orderEntity = orderRepository.save(orderEntity);
+        return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(orderEntity));
+    }
+
+    @Override
+    public OrderOutputData trackingOrder(String orderCode) {
+        Optional<OrderEntity> orderEntity = orderRepository.findByOrderCode(orderCode);
+        if (orderEntity.isPresent()) {
+            orderEntity.get().setOwner(null);
+            orderEntity.get().setShippingAddress(null);
+            return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(orderEntity.get()));
+        } else {
+            throw new RuntimeException("Order not found");
+        }
+    }
 
 
     private List<OrderDetailsEntity> mapCartDetailsEntityToOrderDetailsEntity(List<CartDetailsEntity> cartDetailsList, OrderEntity order) {
