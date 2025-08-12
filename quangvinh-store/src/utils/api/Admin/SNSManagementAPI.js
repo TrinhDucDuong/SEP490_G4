@@ -1,34 +1,89 @@
 // src/utils/api/Admin/SNSManagementAPI.js
+
 const API_BASE_URL = 'http://localhost:9999/admin/sns';
 
-// Hàm helper để lấy token từ localStorage
+// Function để lấy token xác thực (cập nhật theo pattern của employee management)
 const getAuthToken = () => {
-    return localStorage.getItem('token');
+    const token = localStorage.getItem('adminAuthToken') ||
+        sessionStorage.getItem('adminAuthToken') ||
+        localStorage.getItem('authToken') ||
+        localStorage.getItem('accessToken') ||
+        localStorage.getItem('token') ||
+        sessionStorage.getItem('authToken') ||
+        sessionStorage.getItem('accessToken') ||
+        sessionStorage.getItem('token');
+
+    console.log('Getting Bearer Token:', token ? 'Token found' : 'No token found');
+    if (token) {
+        console.log('Token preview:', token.substring(0, 20) + '...');
+    }
+
+    return token;
 };
 
-// Hàm helper để tạo headers với Bearer token
-const getAuthHeaders = () => {
+// Function để tạo headers với Bearer Token
+const createAuthHeaders = (additionalHeaders = {}) => {
     const token = getAuthToken();
-    return {
+    const headers = {
         'accept': '*/*',
         'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` })
+        ...additionalHeaders
     };
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+        console.log('Bearer Token added to headers');
+    } else {
+        console.warn('No Bearer Token found');
+    }
+
+    return headers;
+};
+
+// Function xử lý lỗi authentication
+const handleAuthError = (response) => {
+    if (response.status === 401 || response.status === 403) {
+        console.error('Bearer Token expired or invalid');
+        // Clear all possible token keys
+        localStorage.removeItem('adminAuthToken');
+        sessionStorage.removeItem('adminAuthToken');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('authToken');
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('token');
+        localStorage.removeItem('adminUserInfo');
+        sessionStorage.removeItem('adminUserInfo');
+        throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+    }
 };
 
 export const getAllSNS = async () => {
     try {
+        console.log('Fetching all SNS...');
+
         const response = await fetch(API_BASE_URL, {
             method: 'GET',
-            headers: getAuthHeaders()
+            headers: createAuthHeaders()
         });
 
+        // Xử lý lỗi authentication trước khi check response.ok
+        handleAuthError(response);
+
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            console.error('Get All SNS error:', {
+                status: response.status,
+                statusText: response.statusText,
+                body: errorText
+            });
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
-        return { success: true, data: data.snss };
+        console.log('SNS data fetched successfully:', data);
+        return { success: true, data: data.snss || data };
     } catch (error) {
         console.error('Error fetching SNS:', error);
         return { success: false, error: error.message };
@@ -37,17 +92,27 @@ export const getAllSNS = async () => {
 
 export const getSNSById = async (snsId) => {
     try {
+        console.log(`Fetching SNS with ID: ${snsId}`);
+
         const response = await fetch(`${API_BASE_URL}/${snsId}`, {
             method: 'GET',
-            headers: getAuthHeaders()
+            headers: createAuthHeaders()
         });
 
+        handleAuthError(response);
+
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            console.error('Get SNS by ID error:', {
+                status: response.status,
+                statusText: response.statusText,
+                body: errorText
+            });
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
-        return { success: true, data: data.sns };
+        return { success: true, data: data.sns || data };
     } catch (error) {
         console.error('Error fetching SNS:', error);
         return { success: false, error: error.message };
@@ -56,15 +121,19 @@ export const getSNSById = async (snsId) => {
 
 export const createSNS = async (snsData) => {
     try {
+        console.log('Creating SNS:', snsData);
+
         const response = await fetch(API_BASE_URL, {
             method: 'POST',
-            headers: getAuthHeaders(),
+            headers: createAuthHeaders(),
             body: JSON.stringify({
                 snsName: snsData.snsName,
                 snsUrl: snsData.snsUrl,
                 snsChatUrl: snsData.snsChatUrl
             })
         });
+
+        handleAuthError(response);
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -77,7 +146,8 @@ export const createSNS = async (snsData) => {
         }
 
         const data = await response.json();
-        return { success: true, data: data.sns };
+        console.log('SNS created successfully:', data);
+        return { success: true, data: data.sns || data };
     } catch (error) {
         console.error('Error creating SNS:', error);
         return { success: false, error: error.message };
@@ -86,24 +156,34 @@ export const createSNS = async (snsData) => {
 
 export const updateSNS = async (snsId, snsData) => {
     try {
-        const response = await fetch(API_BASE_URL, {  // API_BASE_URL = 'http://localhost:9999/admin/sns'
-            method: 'POST',  // POST chứ không phải PUT
-            headers: getAuthHeaders(),
+        console.log(`Updating SNS ${snsId}:`, snsData);
+
+        // Sử dụng PUT method và thêm snsId vào URL thay vì body
+        const response = await fetch(`${API_BASE_URL}/${snsId}`, {
+            method: 'PUT', // Đổi từ POST thành PUT
+            headers: createAuthHeaders(),
             body: JSON.stringify({
-                snsId: snsId,
                 snsName: snsData.snsName,
                 snsUrl: snsData.snsUrl,
                 snsChatUrl: snsData.snsChatUrl
             })
         });
 
+        handleAuthError(response);
+
         if (!response.ok) {
             const errorText = await response.text();
+            console.error('Update SNS error:', {
+                status: response.status,
+                statusText: response.statusText,
+                body: errorText
+            });
             throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
-        return { success: true, data: data.sns };
+        console.log('SNS updated successfully:', data);
+        return { success: true, data: data.sns || data };
     } catch (error) {
         console.error('Error updating SNS:', error);
         return { success: false, error: error.message };
@@ -112,10 +192,14 @@ export const updateSNS = async (snsId, snsData) => {
 
 export const deleteSNS = async (snsId) => {
     try {
+        console.log(`Deleting SNS with ID: ${snsId}`);
+
         const response = await fetch(`${API_BASE_URL}/${snsId}`, {
             method: 'DELETE',
-            headers: getAuthHeaders()
+            headers: createAuthHeaders()
         });
+
+        handleAuthError(response);
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -128,7 +212,8 @@ export const deleteSNS = async (snsId) => {
         }
 
         const data = await response.json();
-        return { success: true, data: data.sns };
+        console.log('SNS deleted successfully:', data);
+        return { success: true, data: data.sns || data };
     } catch (error) {
         console.error('Error deleting SNS:', error);
         return { success: false, error: error.message };
