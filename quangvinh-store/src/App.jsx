@@ -160,7 +160,7 @@ function App() {
                             <Route path="banner-management" element={<BannerManagement/>} />
                             <Route path="store-management" element={< StoreManagement/>} />
                             <Route path="settings-management" element={<div className="p-6 bg-white rounded-lg shadow">Settings Management Page</div>} />
-                            <Route path="sns-management" element={< SNSManagement/>} />
+                            <Route path="sns-management" element={<SNSManagement/>} />
                         </Route>
                     </Routes>
                 </CartProviderWrapper>

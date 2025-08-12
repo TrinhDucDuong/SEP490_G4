@@ -114,10 +114,10 @@ const SidebarForAdmin = () => {
                         Quản lý cửa hàng
                     </NavLink>
 
-                    {/*<NavLink to="/admin/sns-management" className={navClass}>*/}
-                    {/*    <Settings className="h-5 w-5 mr-3" />*/}
-                    {/*    Quản lý mạng xã hội*/}
-                    {/*</NavLink>*/}
+                    <NavLink to="/admin/sns-management" className={navClass}>
+                        <Megaphone className="h-5 w-5 mr-3" />
+                        Quản lý mạng xã hội
+                    </NavLink>
 
                     <NavLink to="/admin/employee-management" className={navClass}>
                         <UserPlus className="h-5 w-5 mr-3" />
@@ -147,7 +147,7 @@ const SidebarForAdmin = () => {
 
                 {/* Footer */}
                 <div className="p-4 border-t border-gray-200 bg-gray-50 text-center">
-                    <p className="text-xs text-gray-500">© 2024 Quang Vinh Authentic</p>
+                    <p className="text-xs text-gray-500">© 2025 Quang Vinh Authentic</p>
                 </div>
             </div>
 
