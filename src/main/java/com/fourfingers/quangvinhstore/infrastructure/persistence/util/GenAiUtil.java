@@ -10,6 +10,9 @@ import com.google.genai.types.Part;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Component
 public class GenAiUtil implements GenAiUtilBoundary {
     @Value("${genai.api.key}")
@@ -27,7 +30,6 @@ public class GenAiUtil implements GenAiUtilBoundary {
                     .topP(0.9f)
                     .maxOutputTokens(20000)
                     .build();
-
 
             var content = Content.fromParts(
                     Part.fromText(
@@ -152,6 +154,74 @@ public class GenAiUtil implements GenAiUtilBoundary {
                     ),
                     Part.fromText("Thông tin: " + info),
                     Part.fromText("Câu hỏi: " + question)
+            );
+
+            GenerateContentResponse response =
+                    client.models.generateContent(
+                            "gemini-2.5-flash",
+                            content,
+                            config);
+
+            return response.text();
+
+        } catch (RuntimeException e) {
+            return "Lỗi khi tạo/gọi Client: " + e.getMessage();
+        }
+    }
+
+    @Override
+    public String getAnswerAboutReportInformation(String question) {
+        try(Client client = Client.builder()
+                .apiKey(apiKey)
+                .build()) {
+            var config = GenerateContentConfig.builder()
+                    .temperature(0.0f)
+                    .topK(1.0f)
+                    .topP(1.0f)
+                    .maxOutputTokens(20000)
+                    .build();
+
+            String promptTemplate = """
+                    Bạn hãy dựa vào nội dung tôi cung cấp dưới đây để đưa ra các thông tin tôi cần theo format
+                    Không tự thay đổi thông tin được cung cấp, chỉ chỉnh sửa cho đúng với format đầu ra.
+                    Trả về thông tin duy nhất là text ứng với format đầu ra
+                    Format đầu ra: "text1 text2 text3"
+                    Trong đó:
+                        - text1: Là nội dung liên quan: trả về order hoặc revenue dựa vào thông tin được\s
+                        cung cấp trong câu hỏi.
+                        - text2: Là ngày bắt đầu theo format "yyyy-mm-DDThh:mm:ss"
+                        - text3: Là ngày kết thúc theo format "yyyy-mm-DDThh:mm:ss"
+                    Các trường hợp có thể xảy ra liên quan đến text về ngày:\s
+                        - 5 2 0 2 5 tức là năm 2025, tương tự với các năm khác bạn hãy suy luận ra năm
+                        - tháng sáu là tháng 6
+                        - ngày từ 1 tới 10 có trong thông tin đưa vào là Mùng 1, mùng 2 ... nên hãy trả về 01\s
+                        hoặc 02.
+                        - 2 0 2 0 5 tức là năm 2025, tương tự với các năm khác hãy suy luận
+                        - giữa thông tin về ngày tháng năm hoàn toàn có thể bị chèn thêm 1 vài ký tự như ", ? ..."
+                        hãy lọc bỏ và phân tích ngày tháng
+                        - trong trường hợp thông tin đưa vào không có thông tin cụ thể mà chỉ hỏi hôm qua, hôm\s
+                        nay hoặc tháng này, tháng trước:
+                            + **Tháng này**: trả về ngày bắt đầu là ngày đầu tiên của tháng hiện tại và ngày kết thúc là thời gian hiện tại theo giờ Việt Nam. Thời gian hiện tại là {{current_datetime}}.
+                            + **Tháng trước**: trả về ngày bắt đầu là ngày đầu tiên của tháng trước và ngày kết thúc là ngày cuối cùng của tháng trước. Thời gian hiện tại là {{current_datetime}}.
+                            + **Tuần này**: trả về ngày bắt đầu là ngày đầu tiên của tuần hiện tại (Thứ Hai) và ngày kết thúc là thời gian hiện tại theo giờ Việt Nam. Thời gian hiện tại là {{current_datetime}}.
+                            + **Tuần trước**: trả về ngày bắt đầu là ngày đầu tiên của tuần trước (Thứ Hai) và ngày kết thúc là ngày cuối cùng của tuần trước (Chủ Nhật). Thời gian hiện tại là {{current_datetime}}.
+                            + **Hôm nay**: trả về ngày bắt đầu là 00:00:00 và ngày kết thúc là thời gian hiện tại theo giờ Việt Nam. Thời gian hiện tại là {{current_datetime}}.
+                            + **Hôm qua**: trả về ngày bắt đầu là 00:00:00 của ngày hôm trước và ngày kết thúc là 23:59:59 của ngày hôm trước. Thời gian hiện tại là {{current_datetime}}.
+                    Lưu ý:\s
+                        - Luôn dùng giờ Việt Nam
+                        - Chỉ trả về theo format "text1 text2 text3".
+                        - Không thêm bất kỳ từ, ký tự nào khác ngoài 3 thành phần này, cách nhau đúng 1 dấu cách.
+                    """;
+
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+            String formattedDateTime = currentDateTime.format(formatter);
+
+            String finalPrompt = promptTemplate.replace("{{current_datetime}}", formattedDateTime);
+
+            var content = Content.fromParts(
+                    Part.fromText(finalPrompt),
+                    Part.fromText("Nguồn để lấy thông tin ngày và loại report: " + question)
             );
 
             GenerateContentResponse response =

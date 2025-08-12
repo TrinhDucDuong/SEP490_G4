@@ -9,5 +9,4 @@ import lombok.*;
 @Builder
 public class ProcessOrderInputData {
     private String orderStatus;
-    private Boolean paymentStatus;
 }

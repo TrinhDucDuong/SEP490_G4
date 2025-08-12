@@ -4,4 +4,5 @@ public interface GenAiUtilBoundary {
     String callGenAi(String info, String question);
     String getRecommendation(String productInfo, String actionLog);
     String getAnswerAiAssistant(String info, String question);
+    String getAnswerAboutReportInformation(String question);
 }
