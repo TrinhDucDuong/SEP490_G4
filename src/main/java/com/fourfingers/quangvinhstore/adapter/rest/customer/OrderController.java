@@ -4,6 +4,7 @@ import com.fourfingers.quangvinhstore.adapter.rest.MomoController;
 import com.fourfingers.quangvinhstore.adapter.rest.VNPayController;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.customer.*;
+import com.fourfingers.quangvinhstore.usecase.data.customer.order.GuestOrderInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Map;
 
 
@@ -83,7 +83,7 @@ public class OrderController {
         return ResponseEntity.ok(orderNow);
     }
 
-    @PatchMapping ("/now/{id}")
+    @PatchMapping ("/now/{orderId}")
     public ResponseEntity<?> chooseShippingAddress(@AuthenticationPrincipal UserDetails userDetails,
                                                     @RequestBody ShippingAddressIdInputData shippingAddressIdInputData,
                                                     @PathVariable Long orderId
@@ -92,20 +92,18 @@ public class OrderController {
     }
 
     @PostMapping("/guest")
-    public ResponseEntity<?> orderByGuest(@RequestBody ShippingAddressInputData shippingAddressInputData,
-                                          @RequestBody List<ProductVariantInputData> listProductVariantInputData,
-                                          @RequestBody PurchaseInputData purchaseInputData,
+    public ResponseEntity<?> orderByGuest(@RequestBody GuestOrderInputData guestOrderInputData,
                                           HttpServletRequest request) {
         OrderOutputData orderOutputData = customerOrderInputBoundary.orderByGuest(
-                                                                                    shippingAddressInputData,
-                                                                                    listProductVariantInputData,
-                                                                                    purchaseInputData.getPaymentMethod()
+                                                                                    guestOrderInputData.getShippingAddressInputData(),
+                                                                                    guestOrderInputData.getListProductVariantInputData(),
+                                                                                    guestOrderInputData.getPurchaseInputData().getPaymentMethod()
                                                                                     );
         PaymentOutputData paymentOutputData = new PaymentOutputData();
-        if(purchaseInputData.getPaymentMethod().equalsIgnoreCase("VNPay")) {
+        paymentOutputData.setOrderOutputData(orderOutputData);
+        if(guestOrderInputData.getPurchaseInputData().getPaymentMethod().equalsIgnoreCase("VNPay")) {
             try {
                 String vnpUrl = vnpayController.showQRPage(orderOutputData, customerOrderInputBoundary, request);
-                paymentOutputData.setOrderOutputData(orderOutputData);
                 paymentOutputData.setPaymentUrl(vnpUrl);
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);

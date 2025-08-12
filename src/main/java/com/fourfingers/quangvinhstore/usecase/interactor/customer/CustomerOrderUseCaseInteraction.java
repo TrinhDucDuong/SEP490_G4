@@ -245,7 +245,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         orderEntity.setTotalPrice(calculateTotalOrderPrice(orderDetailsEntities));
 
         // Payment Method
-        if(!paymentMethod.equalsIgnoreCase("COD|VNPAY")) {
+        if(!paymentMethod.toUpperCase().matches("COD|VNPAY")) {
             throw new RuntimeException("Payment method not found");
         } else {
             if(paymentMethod.equalsIgnoreCase("COD")) {
