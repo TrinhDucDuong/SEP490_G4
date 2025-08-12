@@ -4,6 +4,7 @@ import com.fourfingers.quangvinhstore.adapter.rest.MomoController;
 import com.fourfingers.quangvinhstore.adapter.rest.VNPayController;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.customer.*;
+import com.fourfingers.quangvinhstore.usecase.data.customer.order.GuestOrderInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,7 +63,6 @@ public class OrderController {
                     String vnpUrl = vnpayController.showQRPage(orderOutputData, customerOrderInputBoundary, request);
                     paymentOutputData.setPaymentUrl(vnpUrl);
                 } catch (UnsupportedEncodingException e) {
-
                     throw new RuntimeException(e);
                 }
             }
@@ -76,10 +76,44 @@ public class OrderController {
         response.sendRedirect("http://localhost:5173/order/payment?orderId=" + order.getOrder().getOrderId());
     }
 
-//    @PostMapping
-//    public ResponseEntity<ListCartDetailsOutputData> orderNow(@RequestBody OrderInputData orderInputData,
-//                                                              @AuthenticationPrincipal UserDetails userDetails) {
-//        ListCartDetailsOutputData updatedCart = customerOrderInputBoundary.orderNow(orderInputData, userDetails);
-//        return ResponseEntity.ok(updatedCart);
-//    }
+    @PostMapping("/now")
+    public ResponseEntity<?> orderNow(@RequestBody OrderInputData orderInputData,
+                                                              @AuthenticationPrincipal UserDetails userDetails) {
+        OrderOutputData orderNow = customerOrderInputBoundary.orderNow(orderInputData, userDetails);
+        return ResponseEntity.ok(orderNow);
+    }
+
+    @PatchMapping ("/now/{orderId}")
+    public ResponseEntity<?> chooseShippingAddress(@AuthenticationPrincipal UserDetails userDetails,
+                                                    @RequestBody ShippingAddressIdInputData shippingAddressIdInputData,
+                                                    @PathVariable Long orderId
+                                                    ) {
+        return ResponseEntity.ok(customerOrderInputBoundary.chooseShippingAddress(userDetails, shippingAddressIdInputData, orderId));
+    }
+
+    @PostMapping("/guest")
+    public ResponseEntity<?> orderByGuest(@RequestBody GuestOrderInputData guestOrderInputData,
+                                          HttpServletRequest request) {
+        OrderOutputData orderOutputData = customerOrderInputBoundary.orderByGuest(
+                                                                                    guestOrderInputData.getShippingAddressInputData(),
+                                                                                    guestOrderInputData.getListProductVariantInputData(),
+                                                                                    guestOrderInputData.getPurchaseInputData().getPaymentMethod()
+                                                                                    );
+        PaymentOutputData paymentOutputData = new PaymentOutputData();
+        paymentOutputData.setOrderOutputData(orderOutputData);
+        if(guestOrderInputData.getPurchaseInputData().getPaymentMethod().equalsIgnoreCase("VNPay")) {
+            try {
+                String vnpUrl = vnpayController.showQRPage(orderOutputData, customerOrderInputBoundary, request);
+                paymentOutputData.setPaymentUrl(vnpUrl);
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return ResponseEntity.ok(paymentOutputData);
+    }
+
+    @GetMapping(value = "/tracking/{id}", produces = "application/json")
+    public ResponseEntity<?> trackingOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(customerOrderInputBoundary.trackingOrder(id));
+    }
 }
