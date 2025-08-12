@@ -112,8 +112,8 @@ public class OrderController {
         return ResponseEntity.ok(paymentOutputData);
     }
 
-    @GetMapping(value = "/tracking/{id}", produces = "application/json")
-    public ResponseEntity<?> trackingOrder(@PathVariable Long id) {
-        return ResponseEntity.ok(customerOrderInputBoundary.trackingOrder(id));
+    @GetMapping(value = "/tracking/{orderCode}", produces = "application/json")
+    public ResponseEntity<?> trackingOrder(@PathVariable String orderCode) {
+        return ResponseEntity.ok(customerOrderInputBoundary.trackingOrder(orderCode));
     }
 }

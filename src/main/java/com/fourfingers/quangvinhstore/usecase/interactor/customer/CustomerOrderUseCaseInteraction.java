@@ -257,8 +257,8 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
     }
 
     @Override
-    public OrderOutputData trackingOrder(Long id) {
-        Optional<OrderEntity> orderEntity = orderRepository.findById(id);
+    public OrderOutputData trackingOrder(String orderCode) {
+        Optional<OrderEntity> orderEntity = orderRepository.findByOrderCode(orderCode);
         if (orderEntity.isPresent()) {
             orderEntity.get().setOwner(null);
             orderEntity.get().setShippingAddress(null);

@@ -6,7 +6,9 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Table(name = "orders")
@@ -20,6 +22,26 @@ public class OrderEntity {
     @Column(name = "order_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
+
+    @Column(name = "order_code", updatable = false, nullable = false, length = 25)
+    private String orderCode;
+
+    private static final AtomicInteger counter = new AtomicInteger(0);
+
+    @PrePersist
+    public void prePersist() {
+        if (this.orderCode == null) {
+            // 1. Lấy thời gian hiện tại dạng yyyyMMddHHmmss
+            String timePart = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+
+            // 2. Sequence 3 chữ số để tránh trùng trong cùng 1 giây
+            int sequence = counter.getAndIncrement() % 1000;
+
+            // 3. Ghép lại: ORD-yyyyMMddHHmmssXXX
+            this.orderCode = String.format("%s%03d", timePart, sequence);
+        }
+    }
 
     @Column(name = "order_date")
     private LocalDateTime orderDate;
