@@ -70,7 +70,7 @@ public class ProductEntity {
     private List<ImageEntity> images;
 
     public List<ImageEntity> getImages() {
-        return images.subList(0, 1);
+        return images != null && !images.isEmpty() ? images.subList(0, 1) : null;
     }
 
     public BigDecimal getDiscountedPrice() {
