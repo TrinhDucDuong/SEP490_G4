@@ -22,7 +22,7 @@ public class RecommendationController {
         return ResponseEntity.ok(recommendationInputBoundary.getRecommendation(userDetails));
     }
 
-    @PostMapping("/cache")
+    @GetMapping("/cache")
     public ResponseEntity<?> saveRecommendationOnLogout(@AuthenticationPrincipal UserDetails userDetails) {
         recommendationInputBoundary.saveRecommendation(userDetails);
         return ResponseEntity.noContent().build();

@@ -33,7 +33,7 @@ public class ManageStarRateUseCaseInteraction implements StarRateManagementInput
     @Transactional
     public ListStarRateOutputData getAll() {
         return starRateManageMentOutputBoundary.convertToListStarRateOutputData(
-                starRateRepository.findAll()
+                starRateRepository.findByStarRateIsNotNull()
                         .stream()
                         .map(starRateEntity -> {
                             StarRate starRate = starRateStaffMapper.toModel(starRateEntity);
@@ -58,6 +58,7 @@ public class ManageStarRateUseCaseInteraction implements StarRateManagementInput
                 .productVariant(variantHavingStarRate)
                 .account(performReplyingAccount)
                 .createdAt(LocalDateTime.now())
+                .orderDetailsId(replyTo.getOrderDetailsId())
                 .replyTo(replyTo)
                 .comment(replyStarRateInputData.getComment())
                 .build();

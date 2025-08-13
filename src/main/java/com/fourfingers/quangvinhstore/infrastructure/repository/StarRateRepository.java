@@ -11,4 +11,5 @@ public interface StarRateRepository extends JpaRepository<StarRateEntity, Long>,
         JpaSpecificationExecutor<StarRateEntity> {
 
     Optional<StarRateEntity> findByOrderDetailsId(Long orderDetailsIdL);
+    List<StarRateEntity> findByStarRateIsNotNull();
 }
