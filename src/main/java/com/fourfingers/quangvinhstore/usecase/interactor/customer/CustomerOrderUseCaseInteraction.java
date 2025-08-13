@@ -97,6 +97,9 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         Optional<OrderEntity> orderEntity = orderRepository.findByOrderIdAndOwnerAccountId(purchaseInputData.getOrderId(),
                 accountEntity.getAccountId());
         if (orderEntity.isPresent()) {
+            if (orderEntity.get().getPaymentStatus() != null) {
+                throw new RuntimeException("Order has been paid already");
+            }
             if (orderEntity.get().getShippingAddress() == null) {
                 throw new RuntimeException("Shipping address is had not been selected yet");
             }
@@ -132,6 +135,9 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         if ("00".equals(vnp_ResponseCode) && "00".equals(vnp_TransactionStatus)) {
             Optional<OrderEntity> orderEntity = orderRepository.findBySecureHash(vnp_TxnRef);
             if(orderEntity.isPresent()) {
+                if (orderEntity.get().getPaymentStatus() != null) {
+                    throw new RuntimeException("Order has been paid already");
+                }
                 if (orderEntity.get().getShippingAddress() == null) {
                     throw new RuntimeException("Shipping address is had not been selected yet");
                 }
