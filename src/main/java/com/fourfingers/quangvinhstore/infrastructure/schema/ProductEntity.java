@@ -2,6 +2,7 @@ package com.fourfingers.quangvinhstore.infrastructure.schema;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -63,6 +64,14 @@ public class ProductEntity {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "relatedProducts")
     private List<BlogEntity> relatedBlogs;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "reference_id", referencedColumnName = "product_id")
+    private List<ImageEntity> images;
+
+    public List<ImageEntity> getImages() {
+        return images.subList(0, 1);
+    }
 
     public BigDecimal getDiscountedPrice() {
         if (this.discounts == null)
