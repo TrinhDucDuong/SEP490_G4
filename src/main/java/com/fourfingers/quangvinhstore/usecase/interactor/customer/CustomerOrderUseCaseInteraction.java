@@ -3,14 +3,12 @@ package com.fourfingers.quangvinhstore.usecase.interactor.customer;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.OrderMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.*;
+import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.OrderStatus;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ProductSize;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.customer.CustomerOrderOutputBoundary;
-import com.fourfingers.quangvinhstore.usecase.data.customer.ProductVariantInputData;
-import com.fourfingers.quangvinhstore.usecase.data.customer.PurchaseInputData;
-import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressIdInputData;
-import com.fourfingers.quangvinhstore.usecase.data.customer.ShippingAddressInputData;
+import com.fourfingers.quangvinhstore.usecase.data.customer.*;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.ListOrderOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
@@ -38,6 +36,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
     private final OrderDetailsRepository orderDetailsRepository;
     private final AccountRepository accountRepository;
     private final ProductVariantRepository productVariantEntityRepository;
+    private final ImageRepository imageRepository;
 
     @Override
     public ListOrderOutputData getOrders(UserDetails userDetails) {
@@ -211,7 +210,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
     }
 
     @Override
-    public OrderOutputData orderByGuest(ShippingAddressInputData shippingAddressInputData, List<ProductVariantInputData> listOrderInputData, String paymentMethod) {
+    public OrderOutputData orderByGuest(ShippingAddressInputData shippingAddressInputData, List<ProductVariantInputData> productVariantInputDataList, String paymentMethod) {
         // Shipping address
         ShippingAddressEntity shippingAddress = new ShippingAddressEntity();
         shippingAddress.setIsActive(true);
@@ -230,8 +229,13 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         orderEntity.setOwner(null);
         orderEntity.setOrderStatus(OrderStatus.PROCESSING);
         List<OrderDetailsEntity> orderDetailsEntities = new ArrayList<>();
-        for (ProductVariantInputData productVariantInputData : listOrderInputData) {
-            Optional<ProductVariantEntity> productVariantEntity = productVariantEntityRepository.findById(productVariantInputData.getProductVariantId());
+        for (ProductVariantInputData productVariantInputData : productVariantInputDataList) {
+            Optional<ProductVariantEntity> productVariantEntity = productVariantEntityRepository
+                                                                    .findByProduct_ProductIdAndColor_ColorHexAndProductSize(
+                                                                            productVariantInputData.getProductId(),
+                                                                            productVariantInputData.getColorHexCode(),
+                                                                            ProductSize.valueOf(productVariantInputData.getSizeCode())
+                                                                    );
             if (productVariantEntity.isPresent()) {
                 OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity();
                 orderDetailsEntity.setOrder(orderEntity);
