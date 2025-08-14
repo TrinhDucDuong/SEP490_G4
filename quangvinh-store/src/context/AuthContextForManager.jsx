@@ -79,7 +79,7 @@ export const AuthProviderForManager = ({ children }) => {
         setUser(null);
         setToken(null);
         clearStorage();
-        window.location.href = '/admin/login';
+        window.location.href = '/manager/login';
     };
 
     // ✅ QUAN TRỌNG: Đây là phần bị thiếu trong code cũ
@@ -89,7 +89,7 @@ export const AuthProviderForManager = ({ children }) => {
         loading,
         isAuthenticated: !!token && !!user,
         login,
-        logout, // ✅ Export logout function
+        logout,
         clearStorage,
         tokenValid
     };

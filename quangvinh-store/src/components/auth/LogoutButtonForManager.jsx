@@ -11,7 +11,7 @@ const LogoutButtonForManager = ({ className = "" }) => {
 
     const handleLogout = () => {
         logout();
-        navigate('/admin/login', { replace: true });
+        navigate('/manager/login', { replace: true });
     };
 
     return (

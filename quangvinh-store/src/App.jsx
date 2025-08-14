@@ -12,6 +12,7 @@ import { AuthProviderForManager } from './context/AuthContextForManager.jsx';
 // Layouts
 import CustomerLayout from './layouts/CustomerLayout';
 import AdminLayout from './layouts/AdminLayout';
+import ManagerLayout from './layouts/ManagerLayout';
 
 // Customer Pages
 import Home from './pages/Customer/Home/Home.jsx';
@@ -133,8 +134,8 @@ function App() {
                         </Route>
 
                         {/* Admin routes */}
-                        <Route path="/admin/login" element={<LoginForManager />} />
-                        <Route path="/admin" element={<Navigate to="/admin/category-management" replace />} />
+                        <Route path="/manager/login" element={<LoginForManager />} />
+                        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
                         <Route path="/admin" element={
                             <ProtectedRouteForManager>
                                 <AdminLayout />
@@ -162,6 +163,32 @@ function App() {
                             <Route path="settings-management" element={<div className="p-6 bg-white rounded-lg shadow">Settings Management Page</div>} />
                             <Route path="sns-management" element={<SNSManagement/>} />
                         </Route>
+
+                        {/* Staff routes */}
+                        <Route path="/manager/login" element={<LoginForManager />} />
+                        <Route path="/staff" element={<Navigate to="/staff/products-management" replace />} />
+                        <Route path="/staff" element={
+                            <ProtectedRouteForManager>
+                                <ManagerLayout />
+                            </ProtectedRouteForManager>
+                        }>
+                            <Route path="blogs" element={<BlogManagement />} />
+                            <Route path="blogs/:id" element={<BlogDetailManager />} />
+                            <Route path="blogs/create" element={<BlogForm />} />
+                            <Route path="blogs/:id/edit" element={<BlogForm isEdit />} />
+                            <Route path="category-management" element={<CategoryManagement />} />
+                            <Route path="products-management" element={<ProductManagement />} />
+                            <Route path="brands-management" element={<BrandManagement />} />
+                            <Route path="customers-management" element={<CustomerList />} />
+                            <Route path="orders-management" element={<OrderManagement />} />
+                            <Route path="customer-list" element={<CustomerList />} />
+                            <Route path="order-management" element={<OrderManagement />} />
+                            <Route path="instruction-management" element={<InstructionManagement />} />
+                            <Route path="policies-management" element={<PoliciesManagement />} />
+                            <Route path="star-rate-management" element={<StarRateManagement/>} />
+                            <Route path="banner-management" element={<BannerManagement/>} />
+                        </Route>
+
                     </Routes>
                 </CartProviderWrapper>
             </AuthProviderForManager>
