@@ -67,6 +67,7 @@ public class ProductEntity {
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "reference_id", referencedColumnName = "product_id")
+    @Where(clause = "image_type = 'PRODUCT'")
     private List<ImageEntity> images;
 
     public List<ImageEntity> getImages() {
