@@ -66,7 +66,7 @@ public class ProductEntity {
     private List<BlogEntity> relatedBlogs;
 
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "reference_id", insertable = false, updatable = false)
+    @JoinColumn(name = "reference_id", insertable = false, updatable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @Where(clause = "image_type = 'PRODUCT'")
     private List<ImageEntity> images;
 
