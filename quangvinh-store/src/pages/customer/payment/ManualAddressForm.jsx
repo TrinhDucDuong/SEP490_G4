@@ -11,7 +11,6 @@ function ManualAddressForm() {
     const [provinces, setProvinces] = useState([]);
     const [wards, setWards] = useState([]);
 
-    // Lấy danh sách tỉnh
     useEffect(() => {
         fetch('https://provinces.open-api.vn/api/v2/p/')
             .then(res => res.json())

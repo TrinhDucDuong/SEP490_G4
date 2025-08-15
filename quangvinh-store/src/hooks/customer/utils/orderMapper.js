@@ -2,15 +2,51 @@ export const mapSingleOrder = (order) => {
     const items = order.orderDetails.map((detail) => {
         const productVariant = detail.productVariant;
         const product = productVariant.product;
+
         return {
             productId: product.productId,
             name: product.productName,
+            description: product.productDescription,
             price: detail.unitPrice,
             quantity: detail.quantity,
             size: productVariant.productSize,
             colorHex: productVariant.color?.colorHex || '#000',
-            brandName: product.brand?.brandName || null,
-            categoryName: product.category?.categoryName || null,
+            brand: product.brand
+                ? {
+                    brandId: product.brand.brandId,
+                    brandName: product.brand.brandName,
+                    brandDescription: product.brand.brandDescription,
+                    images: product.brand.images || [],
+                }
+                : null,
+            category: product.category
+                ? {
+                    categoryId: product.category.categoryId,
+                    categoryName: product.category.categoryName,
+                    images: product.category.images || [],
+                }
+                : null,
+            images: product.images?.map(img => img.imageUrl) || [],
+            starRateAvg: product.starRateAvg ?? null,
+            totalSoldOut: product.totalSoldOut ?? null,
+            totalQuantity: product.totalQuantity ?? null,
+            productVariants: product.productVariants?.map(v => ({
+                size: v.productSize,
+                colorHex: v.colorHex || null,
+                quantity: v.quantity
+            })) || [],
+            stores: productVariant.stores?.map(store => ({
+                storeId: store.storeId,
+                storeName: store.storeName,
+                storeAddress: store.storeAddress,
+                storePhone: store.storePhone,
+                city: store.city,
+                district: store.district,
+                startWorkingAt: store.startWorkingAt,
+                endWorkingAt: store.endWorkingAt,
+                locationLat: store.locationLat,
+                locationLng: store.locationLng
+            })) || []
         };
     });
 
@@ -18,11 +54,13 @@ export const mapSingleOrder = (order) => {
 
     return {
         orderId: order.orderId,
+        orderCode: order.orderCode,
         owner: order.owner
             ? {
                 accountId: order.owner.accountId,
                 username: order.owner.username,
                 email: order.owner.email,
+                isActive: order.owner.isActive
             }
             : null,
         orderStatus: order.orderStatus,
@@ -35,6 +73,7 @@ export const mapSingleOrder = (order) => {
                 phoneNumber: order.shippingAddress.phoneNumber,
                 address: order.shippingAddress.address,
                 exactAddress: order.shippingAddress.exactAddress,
+                isMain: order.shippingAddress.isMain ?? null,
                 type: order.shippingAddress.type,
             }
             : null,

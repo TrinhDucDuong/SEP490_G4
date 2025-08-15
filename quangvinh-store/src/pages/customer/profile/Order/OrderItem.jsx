@@ -56,7 +56,7 @@ const OrderItem = ({ order }) => {
             <div className="flex justify-between items-center">
                 <div>
                     <p className="text-sm text-gray-700">
-                        Mã đơn: <span className="font-semibold">#{order.orderId}</span>
+                        Mã đơn: <span className="font-semibold">#{order.orderCode}</span>
                     </p>
                     <p className="text-xs text-gray-400 mt-1">
                         Ngày đặt: {new Date(order.orderDate).toLocaleDateString('vi-VN')}

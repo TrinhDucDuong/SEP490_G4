@@ -1,16 +1,22 @@
 import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
 
-const PaymentSuccessPopup = ({
-                                 orderId,
-                                 paymentTime,
-                                 reference,
-                                 paymentMethod,
-                                 sender,
-                                 estimatedDelivery,
-                                 total,
-                                 orderDetails = []
-                             }) => {
+const PaymentSuccessPopup = ({ order }) => {
+    if (!order) {
+        return null;
+    }
+
+    console.log(order);
+
+    const {
+        orderId,
+        orderDate,
+        owner,
+        totalPrice,
+        orderDetails,
+        shippingAddress
+    } = order;
+
     return (
         <div className="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-xl text-gray-700">
             <div className="flex justify-center mb-4">
@@ -29,23 +35,30 @@ const PaymentSuccessPopup = ({
             <div className="border-t border-b py-4 text-sm space-y-1 text-left">
                 <div className="flex justify-between">
                     <span>Ngày thanh toán:</span>
-                    <span>{paymentTime}</span>
+                    <span>{new Date(orderDate).toLocaleString("vi-VN")}</span>
                 </div>
                 <div className="flex justify-between">
                     <span>Số tham chiếu:</span>
-                    <span>{reference}</span>
+                    <span>`REF-${orderId.toString().padStart(6, "0")}`</span>
                 </div>
                 <div className="flex justify-between">
                     <span>Phương thức thanh toán:</span>
-                    <span>{paymentMethod}</span>
+                    <span>VNPAY</span>
                 </div>
                 <div className="flex justify-between">
                     <span>Người đặt:</span>
-                    <span>{sender}</span>
+                    <span>{owner?.username || "Không rõ"}</span>
                 </div>
+
+                {shippingAddress && (
+                    <div className="flex justify-between">
+                        <span>Địa chỉ nhận hàng:</span>
+                        <span>{shippingAddress.exactAddress}, {shippingAddress.address}</span>
+                    </div>
+                )}
                 <div className="flex justify-between">
                     <span>Thời gian dự kiến giao hàng:</span>
-                    <span>{estimatedDelivery}</span>
+                    <span>25 Thg08 - 26 Thg08</span>
                 </div>
             </div>
 
@@ -73,7 +86,7 @@ const PaymentSuccessPopup = ({
             </div>
 
             <div className="text-right mt-6 text-lg font-semibold">
-                Tổng đơn hàng: <span className="text-red-500">{total.toLocaleString()}₫</span>
+                Tổng đơn hàng: <span className="text-red-500">{totalPrice.toLocaleString()}₫</span>
             </div>
         </div>
     );

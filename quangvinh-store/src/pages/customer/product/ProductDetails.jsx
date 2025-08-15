@@ -77,10 +77,8 @@ const ProductDetail = () => {
     const { starRates, totalCount, loading: starRateLoading } = useFetchStarRate(product?.productId, filterStar, pageNumber, 3);
 
     useEffect(() => {
-        // scroll top khi vào trang
         window.scrollTo(0, 0);
 
-        // nếu không có productId (cả state lẫn sessionStorage), chuyển về trang danh sách
         if (!productId) {
             navigate("/products");
             return;
@@ -91,8 +89,6 @@ const ProductDetail = () => {
                 const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/product/${productId}`);
                 if (!res.ok) throw new Error('Lỗi tải sản phẩm');
                 const data = await res.json();
-
-                // data structure: data.product, data.productSizes, data.productColors (theo code cũ của bạn)
                 const uniqueSizes = Array.from(new Set(data.productSizes || []));
                 const seenColors = new Set();
                 const uniqueColors = (data.productColors || []).filter(color => {
@@ -144,6 +140,7 @@ const ProductDetail = () => {
                 productImage: selectedImage || product.images?.[0]?.imageUrl || '',
             });
             await logAction('ADD_TO_CART', currentVariant?.productVariantId);
+            console.log('ADD_TO_CART', currentVariant?.productVariantId);
             navigate('/checkout');
         } catch (error) {
             toast.error(error.message || 'Lỗi khi thêm vào giỏ hàng');
