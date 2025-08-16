@@ -5,12 +5,10 @@ const OrderItem = ({ order }) => {
     const isLoggedIn = Boolean(localStorage.getItem("token"));
 
     const handlePublicDetailClick = () => {
-        // Xem đơn hàng công khai (tracking)
         navigate(`/track-order/${order.orderId}`);
     };
 
     const handlePrivateDetailClick = () => {
-        // Xem đơn hàng của user đã đăng nhập
         navigate(`/profile/orders/${order.orderId}`);
     };
 
@@ -42,7 +40,6 @@ const OrderItem = ({ order }) => {
         }
     };
 
-    // Lấy tên sản phẩm an toàn, hỗ trợ cả items và orderDetails
     const firstProductName =
         order.items?.[0]?.name ||
         order.orderDetails?.[0]?.productVariant?.product?.productName ||
@@ -101,12 +98,13 @@ const OrderItem = ({ order }) => {
                 {isLoggedIn && order &&
                     (order.orderStatus === "PROCESSING" || order.orderStatus == null) &&
                     !order.paymentStatus && (
-                        <button
-                            onClick={handlePaymentClick}
-                            className="text-sm text-black bg-white border border-black px-4 py-1 transition hover:bg-black hover:text-white"
-                        >
-                            Tiến hành thanh toán
-                        </button>
+                        // <button
+                        //     onClick={handlePaymentClick}
+                        //     className="text-sm text-black bg-white border border-black px-4 py-1 transition hover:bg-black hover:text-white"
+                        // >
+                        //     Tiến hành thanh toán
+                        // </button>
+                        <></>
                     )}
 
                 {isLoggedIn && order.orderStatus === "DELIVERED" && (
