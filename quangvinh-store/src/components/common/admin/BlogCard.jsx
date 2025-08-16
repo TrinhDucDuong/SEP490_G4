@@ -15,7 +15,7 @@ const BlogCard = ({ blog }) => {
                 )}
                 <h2 className="text-xl font-semibold mb-2">{blog.blogTitle}</h2>
                 <div
-                    className="prose max-w-none text-gray-600 text-sm line-clamp-4"
+                    className="prose max-w-none text-gray-600 text-sm line-clamp-2"
                     dangerouslySetInnerHTML={{ __html: blog.content }}
                 ></div>
                 <div className="mt-4 text-sm text-gray-500">
