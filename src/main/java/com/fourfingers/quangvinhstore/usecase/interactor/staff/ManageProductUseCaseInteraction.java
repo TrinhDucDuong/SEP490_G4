@@ -49,7 +49,6 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
     private final ColorRepository colorRepository;
     private final ProductVariantRepository productVariantRepository;
     private final StoreStaffMapper storeStaffMapper;
-//    private final StoreRepository storeRepository;
 
     @Override
     @Transactional
@@ -200,8 +199,6 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                 })
                 .toList();
         List<ProductVariantEntity> savedProductVariants = productVariantRepository.saveAll(needToSaveProductVariants);
-//        storeEntity.setProductVariants(savedProductVariants);
-//        storeRepository.saveAndFlush(storeEntity);
         return savedProductVariants.stream().map(productVariantMapper::toModel).toList();
     }
 
@@ -263,7 +260,6 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                 existingProductVariants.setColor(colorEntity);
                 existingProductVariants.setProductSize(ProductSize.valueOf(productVariant.getProductSize()));
                 existingProductVariants.setQuantity(productVariant.getQuantity());
-//                existingProductVariants.setStores(List.of(performUpdatingAccount.getWorkingAt()));
 
                 //Save the new product variants information into a list to update
                 updatedList.add(existingProductVariants);
