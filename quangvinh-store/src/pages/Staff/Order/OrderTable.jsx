@@ -1,87 +1,44 @@
 // src/pages/Staff/Order/OrderTable.jsx
-import React, { useState } from 'react';
-import { Eye, Edit, Trash2, FileText } from 'lucide-react';
+import React from 'react';
+import { Eye, Edit } from 'lucide-react';
 import DataTable from '../../../components/common/Admin/DataTable';
-import Modals from '../../../components/common/Admin/Modals';
 import Paginations from '../../../components/common/Admin/Paginations';
-import { ORDER_HELPERS, ORDER_STATUS_OPTIONS } from '../../../utils/constants/OrderConstants';
+import { ORDER_HELPERS } from '../../../utils/constants/OrderConstants';
 
-const OrderTable = ({ orders, currentPage, setCurrentPage, itemsPerPage, onUpdateOrderStatus, loading }) => {
-    // Modal states
-    const [showOrderDetailModal, setShowOrderDetailModal] = useState(false);
-    const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
-    const [selectedOrder, setSelectedOrder] = useState(null);
-    const [selectedOrderStatus, setSelectedOrderStatus] = useState('');
+const OrderTable = ({
+                        orders,
+                        currentPage,
+                        setCurrentPage,
+                        itemsPerPage,
+                        loading,
+                        onViewOrder,
+                        onEditOrder
+                    }) => {
 
-    // Toast state
-    const [toast, setToast] = useState({ show: false, message: '', type: '' });
-
-    // Show toast function
-    const showToast = (message, type = 'success') => {
-        setToast({ show: true, message, type });
-        setTimeout(() => {
-            setToast({ show: false, message: '', type: '' });
-        }, 3000);
-    };
-
-    // Modal handlers
-    const openOrderDetailModal = (order) => {
-        setSelectedOrder(order);
-        setShowOrderDetailModal(true);
-    };
-
-    const openUpdateStatusModal = (order) => {
-        setSelectedOrder(order);
-        setSelectedOrderStatus(order.orderStatus);
-        setShowUpdateStatusModal(true);
-    };
-
-    // CRUD operations - CHỈ CẬP NHẬT TRẠNG THÁI ĐĂN HÀNG
-    const handleUpdateStatus = async () => {
-        if (!selectedOrder) return;
-
-        const updateData = {
-            orderStatus: selectedOrderStatus
-        };
-
-        const result = await onUpdateOrderStatus(selectedOrder.orderId, updateData);
-        if (result.success) {
-            setShowUpdateStatusModal(false);
-            setSelectedOrder(null);
-            setSelectedOrderStatus('');
-            showToast('Cập nhật trạng thái thành công!', 'success');
-        } else {
-            showToast(`Lỗi: ${result.error}`, 'error');
-        }
-    };
-
-    // Table columns configuration - SỬA LẠI THỨ TỰ VÀ THÊM LẠI CỘT PAYMENT STATUS
+    // Table columns configuration
     const columns = [
-        // 1. STT
         {
             key: 'stt',
             header: 'STT',
             headerAlign: 'text-center',
             cellAlign: 'text-center',
             render: (order, index) => (
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-900">
           {(currentPage - 1) * itemsPerPage + index + 1}
         </span>
             )
         },
-        // 2. Mã đơn hàng
         {
             key: 'orderId',
             header: 'Mã đơn hàng',
             headerAlign: 'text-center',
             cellAlign: 'text-center',
             render: (order) => (
-                <span className="text-sm font-semibold text-blue-600">
+                <span className="text-sm font-mono text-blue-600 font-medium">
           #{order.orderId}
         </span>
             )
         },
-        // 3. Tên khách hàng
         {
             key: 'customerName',
             header: 'Tên khách hàng',
@@ -90,29 +47,38 @@ const OrderTable = ({ orders, currentPage, setCurrentPage, itemsPerPage, onUpdat
             render: (order) => (
                 <div className="text-sm">
                     <div className="font-medium text-gray-900">
-                        {order.customerName || 'Không có tên'}
+                        {ORDER_HELPERS.getCustomerName(order)}
                     </div>
                     {order.customerPhoneNumber && (
-                        <div className="text-gray-500">
+                        <div className="text-gray-500 text-xs">
                             {order.customerPhoneNumber}
                         </div>
                     )}
                 </div>
             )
         },
-        // 4. Tổng tiền
         {
-            key: 'totalPrice',
-            header: 'Tổng tiền',
+            key: 'orderDate',
+            header: 'Ngày đặt hàng',
             headerAlign: 'text-center',
             cellAlign: 'text-center',
             render: (order) => (
-                <span className="text-sm font-semibold text-gray-900">
-          {ORDER_HELPERS.formatCurrency(order.totalPrice || ORDER_HELPERS.calculateTotalPrice(order.orderDetails))}
+                <span className="text-sm text-gray-600">
+          {ORDER_HELPERS.formatDate(order.orderDate)}
         </span>
             )
         },
-        // 5. Trạng thái đơn hàng
+        {
+            key: 'totalPrice',
+            header: 'Tổng tiền',
+            headerAlign: 'text-right',
+            cellAlign: 'text-right',
+            render: (order) => (
+                <span className="text-sm font-semibold text-green-600">
+          {ORDER_HELPERS.formatCurrency(order.totalPrice)}
+        </span>
+            )
+        },
         {
             key: 'orderStatus',
             header: 'Trạng thái đơn hàng',
@@ -124,10 +90,9 @@ const OrderTable = ({ orders, currentPage, setCurrentPage, itemsPerPage, onUpdat
         </span>
             )
         },
-        // 6. Trạng thái thanh toán - THÊM LẠI
         {
             key: 'paymentStatus',
-            header: 'Trạng thái thanh toán',
+            header: 'Thanh toán',
             headerAlign: 'text-center',
             cellAlign: 'text-center',
             render: (order) => (
@@ -136,253 +101,70 @@ const OrderTable = ({ orders, currentPage, setCurrentPage, itemsPerPage, onUpdat
         </span>
             )
         },
-        // 7. Ngày tạo đơn
-        {
-            key: 'orderDate',
-            header: 'Ngày tạo đơn',
-            headerAlign: 'text-center',
-            cellAlign: 'text-center',
-            render: (order) => (
-                <span className="text-sm text-gray-700">
-          {ORDER_HELPERS.formatDate(order.orderDate)}
-        </span>
-            )
-        },
-        // 8. Hành động
         {
             key: 'actions',
-            header: 'Hành động',
+            header: 'Thao tác',
             headerAlign: 'text-center',
             cellAlign: 'text-center',
             render: (order) => (
-                <div className="flex justify-center space-x-2">
+                <div className="flex items-center justify-center space-x-2">
                     <button
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            openOrderDetailModal(order);
+                            console.log('View button clicked for order:', order.orderId);
+                            onViewOrder(order);
                         }}
-                        className="text-blue-600 hover:text-blue-800 transition-colors"
+                        className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
                         title="Xem chi tiết"
-                        type="button"
                     >
-                        <Eye size={18} />
+                        <Eye className="w-4 h-4" />
                     </button>
                     <button
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            openUpdateStatusModal(order);
+                            console.log('Edit button clicked for order:', order.orderId);
+                            onEditOrder(order);
                         }}
-                        className="text-green-600 hover:text-green-800 transition-colors"
+                        className="p-1 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50 rounded transition-colors"
                         title="Cập nhật trạng thái"
-                        type="button"
                     >
-                        <Edit size={18} />
+                        <Edit className="w-4 h-4" />
                     </button>
                 </div>
             )
         }
     ];
 
-    return (
-        <div className="space-y-4">
-            {/* Toast Notification */}
-            {toast.show && (
-                <div className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transition-all duration-300 ${
-                    toast.type === 'success'
-                        ? 'bg-green-500 text-white'
-                        : 'bg-red-500 text-white'
-                }`}>
-                    <div className="flex items-center space-x-2">
-                        <span>{toast.message}</span>
-                    </div>
-                </div>
-            )}
+    // Calculate pagination
+    const totalItems = orders.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentOrders = orders.slice(startIndex, endIndex);
 
-            {/* Order Table */}
+    return (
+        <div className="bg-white rounded-lg border shadow-sm">
             <DataTable
-                data={orders}
                 columns={columns}
+                data={currentOrders}
                 loading={loading}
                 emptyMessage="Không có đơn hàng nào"
+                emptyDescription="Chưa có đơn hàng nào trong hệ thống hoặc không khớp với bộ lọc hiện tại."
             />
 
-            {/* Pagination */}
-            <Paginations
-                currentPage={currentPage}
-                totalItems={orders.length}
-                itemsPerPage={itemsPerPage}
-                onPageChange={setCurrentPage}
-            />
-
-            {/* Order Detail Modal */}
-            <Modals
-                show={showOrderDetailModal}
-                onClose={() => {
-                    setShowOrderDetailModal(false);
-                    setSelectedOrder(null);
-                }}
-                title="Chi tiết đơn hàng"
-                size="xl"
-            >
-                {selectedOrder && (
-                    <div className="space-y-6">
-                        <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
-                            <div>
-                                <strong>Mã đơn hàng:</strong> #{selectedOrder.orderId}
-                            </div>
-                            <div>
-                                <strong>Ngày tạo:</strong> {ORDER_HELPERS.formatDate(selectedOrder.orderDate)}
-                            </div>
-                            <div>
-                                <strong>Trạng thái đơn hàng:</strong>
-                                <span className={`ml-2 inline-flex px-2 py-1 text-xs font-medium rounded-full ${ORDER_HELPERS.getStatusColorClass(selectedOrder.orderStatus)}`}>
-                  {ORDER_HELPERS.getStatusText(selectedOrder.orderStatus)}
-                </span>
-                            </div>
-                            <div>
-                                <strong>Trạng thái thanh toán:</strong>
-                                <span className={`ml-2 inline-flex px-2 py-1 text-xs font-medium rounded-full ${ORDER_HELPERS.getPaymentStatusColorClass(selectedOrder.paymentStatus)}`}>
-                  {ORDER_HELPERS.getPaymentStatusText(selectedOrder.paymentStatus)}
-                </span>
-                            </div>
-                            <div>
-                                <strong>Tên khách hàng:</strong> {selectedOrder.customerName || 'Không có tên'}
-                            </div>
-                            {selectedOrder.customerPhoneNumber && (
-                                <div>
-                                    <strong>Số điện thoại:</strong> {selectedOrder.customerPhoneNumber}
-                                </div>
-                            )}
-                            {selectedOrder.shippingAddress && (
-                                <div className="col-span-2">
-                                    <strong>Địa chỉ giao hàng:</strong> {selectedOrder.shippingAddress}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sản phẩm</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thương hiệu</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kích cỡ</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Màu sắc</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Số lượng</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Đơn giá</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thành tiền</th>
-                                </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                {selectedOrder.orderDetails?.map((detail, index) => (
-                                    <tr key={index}>
-                                        <td className="px-4 py-3 text-sm">
-                                            <div>
-                                                <div className="font-medium text-gray-900">
-                                                    {detail.productVariant.product.productName}
-                                                </div>
-                                                <div className="text-gray-500 text-xs">
-                                                    {detail.productVariant.product.productDescription}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-gray-900">
-                                            {detail.productVariant.product.brand.brandName}
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-gray-900">
-                                            {detail.productVariant.productSize}
-                                        </td>
-                                        <td className="px-4 py-3 text-sm">
-                                            <div className="flex items-center space-x-2">
-                                                {detail.productVariant.color?.colorHex && (
-                                                    <div
-                                                        className="w-6 h-6 rounded-full border border-gray-300"
-                                                        style={{ backgroundColor: detail.productVariant.color.colorHex }}
-                                                    ></div>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-gray-900">
-                                            {detail.quantity}
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-gray-900">
-                                            {ORDER_HELPERS.formatCurrency(detail.unitPrice)}
-                                        </td>
-                                        <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                                            {ORDER_HELPERS.formatCurrency(detail.quantity * detail.unitPrice)}
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                                <tfoot className="bg-gray-50">
-                                <tr>
-                                    <td colSpan="6" className="px-4 py-3 text-sm font-medium text-right">
-                                        Tổng cộng:
-                                    </td>
-                                    <td className="px-4 py-3 text-sm font-bold text-gray-900">
-                                        {ORDER_HELPERS.formatCurrency(selectedOrder.totalPrice || ORDER_HELPERS.calculateTotalPrice(selectedOrder.orderDetails))}
-                                    </td>
-                                </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-                )}
-            </Modals>
-
-            {/* Update Status Modal - CHỈ CÓ TRẠNG THÁI ĐĂN HÀNG */}
-            <Modals
-                show={showUpdateStatusModal}
-                onClose={() => {
-                    setShowUpdateStatusModal(false);
-                    setSelectedOrder(null);
-                    setSelectedOrderStatus('');
-                }}
-                title={`Cập nhật trạng thái - Đơn hàng #${selectedOrder?.orderId}`}
-                size="md"
-            >
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Trạng thái đơn hàng
-                        </label>
-                        <select
-                            value={selectedOrderStatus}
-                            onChange={(e) => setSelectedOrderStatus(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        >
-                            {ORDER_STATUS_OPTIONS.map(status => (
-                                <option key={status.value} value={status.value}>
-                                    {status.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="flex justify-end space-x-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setShowUpdateStatusModal(false);
-                                setSelectedOrder(null);
-                                setSelectedOrderStatus('');
-                            }}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
-                        >
-                            Hủy
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleUpdateStatus}
-                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
-                        >
-                            Cập nhật
-                        </button>
-                    </div>
+            {!loading && totalPages > 1 && (
+                <div className="px-6 py-4 border-t border-gray-200">
+                    <Paginations
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        itemsPerPage={itemsPerPage}
+                        totalItems={totalItems}
+                    />
                 </div>
-            </Modals>
+            )}
         </div>
     );
 };
