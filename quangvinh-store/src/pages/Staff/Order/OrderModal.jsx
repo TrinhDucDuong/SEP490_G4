@@ -204,9 +204,6 @@ const OrderModal = ({
                                                                 style={{ backgroundColor: detail.productVariant.color.colorHex }}
                                                             ></div>
                                                         )}
-                                                        <span className="text-sm text-gray-900">
-                                {detail.productVariant.color?.colorName || 'N/A'}
-                              </span>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900">
