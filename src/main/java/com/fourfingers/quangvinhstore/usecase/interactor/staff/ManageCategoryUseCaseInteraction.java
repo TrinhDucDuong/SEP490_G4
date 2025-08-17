@@ -67,6 +67,9 @@ public class ManageCategoryUseCaseInteraction implements CategoryManagementInput
                     () -> new RuntimeException("Parent category not found")
             );
         }
+        if(existCategory(categoryInputData.getCategoryName())) {
+            throw new RuntimeException("Category name already exist");
+        }
         CategoryEntity needToCreateCategory = CategoryEntity.builder()
                 .createdAt(LocalDateTime.now())
                 .createdBy((AccountEntity) userDetails)
@@ -93,6 +96,11 @@ public class ManageCategoryUseCaseInteraction implements CategoryManagementInput
         CategoryEntity categoryEntity = categoryRepository.findById(categoryId).orElseThrow(
                 () -> new RuntimeException("Category not found")
         );
+
+        if(existCategory(categoryInputData.getCategoryName())
+           && !categoryEntity.getCategoryName().equals(categoryInputData.getCategoryName())) {
+            throw new RuntimeException("Category name already exist");
+        }
 
         categoryEntity.setCategoryName(categoryInputData.getCategoryName());
         categoryEntity.setUpdatedAt(LocalDateTime.now());
@@ -176,5 +184,9 @@ public class ManageCategoryUseCaseInteraction implements CategoryManagementInput
         List<String> imageUrls = imageEntities.stream().map(ImageEntity::getImageUrl).toList();
         azureStorageBoundary.deleteFile(imageUrls);
         imageRepository.deleteAll(imageEntities);
+    }
+
+    private boolean existCategory(String categoryName) {
+        return categoryRepository.existsByCategoryName(categoryName);
     }
 }

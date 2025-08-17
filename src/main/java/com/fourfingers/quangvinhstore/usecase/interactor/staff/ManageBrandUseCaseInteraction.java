@@ -62,9 +62,7 @@ public class ManageBrandUseCaseInteraction implements BrandManagementInputBounda
     @Override
     public BrandOutputData create(BrandInputData input, UserDetails userDetails) throws Exception {
         if (checkBrandExist(input.getBrandName())) {
-            return brandManagementOutputBoundary.convertToBrandOutputData(
-                    brandStaffMapper.toModel(brandRepository.findByBrandName(input.getBrandName()).get())
-            );
+            throw new RuntimeException("Brand with name " + input.getBrandName() + " already exist");
         }
         AccountEntity performingCreatingAccountEntity = (AccountEntity) userDetails;
         BrandEntity needToCreateBrand = BrandEntity.builder()
@@ -86,6 +84,9 @@ public class ManageBrandUseCaseInteraction implements BrandManagementInputBounda
         BrandEntity brandEntity = brandRepository.findById(Long.valueOf(brandId)).orElseThrow(
                 () -> new RuntimeException("Brand not found")
         );
+        if (checkBrandExist(input.getBrandName()) && !brandEntity.getBrandName().equals(input.getBrandName())) {
+            throw new RuntimeException("Brand with name " + input.getBrandName() + " already exist");
+        }
         brandEntity.setBrandName(input.getBrandName());
         brandEntity.setBrandDescription(input.getBrandDescription());
         brandEntity.setUpdatedAt(LocalDateTime.now());

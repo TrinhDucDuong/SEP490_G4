@@ -34,4 +34,6 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> 
             @Param("startTime")LocalDateTime startTime,
             @Param("endTime")LocalDateTime endTime
     );
+
+    boolean existsByCategoryName(String categoryName);
 }

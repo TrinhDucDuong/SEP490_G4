@@ -14,6 +14,5 @@ public class Account {
     private String username;
     private String email;
     private Boolean isActive;
-//    private List<Authority> authorities;
-//    private List<CartDetails> carts;
+    List<String> roles;
 }

@@ -21,6 +21,7 @@ import com.fourfingers.quangvinhstore.usecase.data.auth.AuthenticationOutputData
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,8 +54,13 @@ public class AuthenticationUseCaseInteraction implements AuthenticationInputBoun
     @Transactional
     public AuthenticationOutputData performAuthentication(AuthenticationInputData data) {
         AccountEntity accountEntity = (AccountEntity) loadUserByUsername(data.getUsername());
+        List<String> roles = accountEntity.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
         String token = jwtUtil.generateToken(accountEntity);
         Account userAccount = accountMapper.toAccount(accountEntity);
+        userAccount.setRoles(roles);
         return authenticationOutputBoundary.convertToOutputData(userAccount, token);
     }
 
