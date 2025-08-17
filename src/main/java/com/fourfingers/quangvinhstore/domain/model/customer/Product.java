@@ -1,7 +1,6 @@
 package com.fourfingers.quangvinhstore.domain.model.customer;
 
 import com.fourfingers.quangvinhstore.domain.model.Image;
-import com.fourfingers.quangvinhstore.domain.model.ProductVariant;
 import lombok.*;
 
 import java.math.BigDecimal;

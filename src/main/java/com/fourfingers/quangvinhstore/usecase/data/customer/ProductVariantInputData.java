@@ -4,6 +4,8 @@ import lombok.*;
 
 @Data
 public class ProductVariantInputData {
-    private Long productVariantId;
+    private Long productId;
+    private String colorHexCode;
+    private String sizeCode;
     private Short quantity;
 }

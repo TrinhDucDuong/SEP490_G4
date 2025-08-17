@@ -58,6 +58,9 @@ public class OrderController {
         } else {
             OrderOutputData orderOutputData = customerOrderInputBoundary
                     .getOrder(purchaseInputData.getOrderId(), userDetails);
+            if(orderOutputData.getOrder().getPaymentStatus() != null){
+                throw new RuntimeException("Order has been paid already");
+            }
             if (paymentMethod.equalsIgnoreCase("VNPay")) {
                 try {
                     String vnpUrl = vnpayController.showQRPage(orderOutputData, customerOrderInputBoundary, request);
