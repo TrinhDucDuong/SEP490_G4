@@ -20,7 +20,7 @@ export const useOrderManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState({
         status: '',
-        paymentStatus: '', // MỚI THÊM
+        paymentStatus: '', // Giữ lại để tương thích với filter, nhưng không dùng trong update
         startDate: '',
         endDate: '',
         datePreset: ''
@@ -29,7 +29,7 @@ export const useOrderManagement = () => {
     // Mặc định sort theo ngày tạo mới nhất
     const [sortConfig, setSortConfig] = useState({ key: 'orderDate', direction: 'desc' });
 
-    // Fetch orders from API
+    // Fetch orders from API - SỬA ĐỂ SỬ DỤNG customerName TRỰC TIẾP
     const fetchOrders = async () => {
         setLoading(true);
         setError(null);
@@ -37,12 +37,10 @@ export const useOrderManagement = () => {
 
         try {
             const params = {};
-
             if (filters.status) {
                 params.orderStatus = filters.status;
             }
 
-            // MỚI THÊM: Thêm filter cho payment status
             if (filters.paymentStatus !== '') {
                 params.paymentStatus = filters.paymentStatus;
             }
@@ -54,12 +52,13 @@ export const useOrderManagement = () => {
 
             const result = await getAllOrders(params);
             if (result.success) {
-                // Tính toán totalPrice cho mỗi order
+                // SỬA: Sử dụng customerName trực tiếp từ API response
                 const ordersWithTotalPrice = result.data.map(order => ({
                     ...order,
                     totalPrice: order.totalPrice || ORDER_HELPERS.calculateTotalPrice(order.orderDetails),
-                    paymentStatus: order.paymentStatus !== undefined ? order.paymentStatus : false // MỚI THÊM: Default false nếu không có
+                    paymentStatus: order.paymentStatus !== undefined ? order.paymentStatus : false
                 }));
+
                 setOrders(ordersWithTotalPrice);
             } else {
                 if (result.error.includes('đăng nhập')) {
@@ -77,11 +76,16 @@ export const useOrderManagement = () => {
         }
     };
 
-    // Update order status - CẬP NHẬT để hỗ trợ cả orderStatus và paymentStatus
+    // Update order status - CHỈ CẬP NHẬT orderStatus (không có paymentStatus)
     const updateOrderStatusHandler = async (orderId, updateData) => {
         setLoading(true);
         try {
-            const result = await updateOrderStatus(orderId, updateData);
+            // Chỉ gửi orderStatus, không gửi paymentStatus
+            const requestData = {
+                orderStatus: updateData.orderStatus
+            };
+
+            const result = await updateOrderStatus(orderId, requestData);
             if (result.success) {
                 await fetchOrders(); // Refresh data
                 return { success: true };
@@ -113,16 +117,16 @@ export const useOrderManagement = () => {
         }
     };
 
-    // Filter and search logic - CẬP NHẬT
+    // Filter and search logic - SỬA ĐỂ SỬ DỤNG customerName TRỰC TIẾP
     useEffect(() => {
         let result = [...orders];
 
-        // Search
+        // Search - SỬA ĐỂ SỬ DỤNG customerName
         if (searchTerm) {
             result = result.filter(order =>
                 order.orderId.toString().includes(searchTerm) ||
-                ORDER_HELPERS.getCustomerName(order.owner).toLowerCase().includes(searchTerm.toLowerCase()) ||
-                ORDER_HELPERS.getCustomerEmail(order.owner).toLowerCase().includes(searchTerm.toLowerCase())
+                (order.customerName && order.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (order.customerPhoneNumber && order.customerPhoneNumber.includes(searchTerm))
             );
         }
 
@@ -154,13 +158,14 @@ export const useOrderManagement = () => {
                         aValue = ORDER_HELPERS.getStatusText(a.orderStatus).toLowerCase();
                         bValue = ORDER_HELPERS.getStatusText(b.orderStatus).toLowerCase();
                         break;
-                    case 'paymentStatus': // MỚI THÊM
+                    case 'paymentStatus':
                         aValue = a.paymentStatus ? 1 : 0;
                         bValue = b.paymentStatus ? 1 : 0;
                         break;
                     case 'customerName':
-                        aValue = ORDER_HELPERS.getCustomerName(a.owner).toLowerCase();
-                        bValue = ORDER_HELPERS.getCustomerName(b.owner).toLowerCase();
+                        // SỬA: Sử dụng customerName trực tiếp
+                        aValue = (a.customerName || '').toLowerCase();
+                        bValue = (b.customerName || '').toLowerCase();
                         break;
                     default:
                         aValue = a[sortConfig.key];
@@ -179,12 +184,12 @@ export const useOrderManagement = () => {
         setCurrentPage(1);
     }, [orders, searchTerm, filters, sortConfig]);
 
-    // Clear filters - CẬP NHẬT
+    // Clear filters
     const clearFilters = () => {
         setSearchTerm('');
         setFilters({
             status: '',
-            paymentStatus: '', // MỚI THÊM
+            paymentStatus: '',
             startDate: '',
             endDate: '',
             datePreset: ''
@@ -203,38 +208,35 @@ export const useOrderManagement = () => {
                 startDate = now.toISOString().split('T')[0];
                 endDate = startDate;
                 break;
+
             case 'yesterday':
-            {
-                const yesterday = new Date(now);
+                { const yesterday = new Date(now);
                 yesterday.setDate(yesterday.getDate() - 1);
                 startDate = yesterday.toISOString().split('T')[0];
                 endDate = startDate;
-                break;
-            }
+                break; }
+
             case 'last7days':
-            {
-                const last7Days = new Date(now);
+                { const last7Days = new Date(now);
                 last7Days.setDate(last7Days.getDate() - 7);
                 startDate = last7Days.toISOString().split('T')[0];
                 endDate = now.toISOString().split('T')[0];
-                break;
-            }
+                break; }
+
             case 'last30days':
-            {
-                const last30Days = new Date(now);
+                { const last30Days = new Date(now);
                 last30Days.setDate(last30Days.getDate() - 30);
                 startDate = last30Days.toISOString().split('T')[0];
                 endDate = now.toISOString().split('T')[0];
-                break;
-            }
+                break; }
+
             case 'last3months':
-            {
-                const last3Months = new Date(now);
+                { const last3Months = new Date(now);
                 last3Months.setMonth(last3Months.getMonth() - 3);
                 startDate = last3Months.toISOString().split('T')[0];
                 endDate = now.toISOString().split('T')[0];
-                break;
-            }
+                break; }
+
             default:
                 startDate = '';
                 endDate = '';
@@ -248,15 +250,15 @@ export const useOrderManagement = () => {
         }));
     };
 
-    // Get statistics - CẬP NHẬT
+    // Get statistics
     const getStatistics = () => {
         const totalOrders = orders.length;
         const processingOrders = orders.filter(order => order.orderStatus === 'PROCESSING').length;
         const shippingOrders = orders.filter(order => order.orderStatus === 'SHIPPING').length;
         const deliveredOrders = orders.filter(order => order.orderStatus === 'DELIVERED').length;
         const canceledOrders = orders.filter(order => order.orderStatus === 'CANCELED').length;
-        const paidOrders = orders.filter(order => order.paymentStatus === true).length; // MỚI THÊM
-        const unpaidOrders = orders.filter(order => order.paymentStatus === false).length; // MỚI THÊM
+        const paidOrders = orders.filter(order => order.paymentStatus === true).length;
+        const unpaidOrders = orders.filter(order => order.paymentStatus === false).length;
         const filteredCount = filteredOrders.length;
 
         return {
@@ -265,13 +267,13 @@ export const useOrderManagement = () => {
             shippingOrders,
             deliveredOrders,
             canceledOrders,
-            paidOrders, // MỚI THÊM
-            unpaidOrders, // MỚI THÊM
+            paidOrders,
+            unpaidOrders,
             filteredCount
         };
     };
 
-    // Load data on mount - CẬP NHẬT
+    // Load data on mount
     useEffect(() => {
         fetchOrders();
     }, [filters.status, filters.paymentStatus, sortConfig]);
