@@ -98,7 +98,7 @@ export const BANNER_ACTION_LABELS = {
     [BANNER_STATUS_CHANGE_TYPES.DEACTIVATE]: 'Tạm dừng banner'
 };
 
-// Filter Options
+// filter Options
 export const BANNER_FILTER_OPTIONS = {
     STATUS: BANNER_STATUS_OPTIONS
 };

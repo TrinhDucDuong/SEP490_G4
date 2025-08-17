@@ -1,3 +1,5 @@
+// src/hooks/useProductManagement.js
+
 import { useState, useEffect, useCallback } from 'react';
 
 import {

@@ -16,7 +16,7 @@ import {
     Award
 } from 'lucide-react';
 import { useAuthForManager } from '../../../context/AuthContextForManager';
-import Modal from '../../common/Admin/Modals.jsx';
+import Modal from '../../common/admin/Modals.jsx';
 
 const SidebarForAdmin = () => {
     const location = useLocation();
@@ -43,7 +43,7 @@ const SidebarForAdmin = () => {
                         </div>
                         <div>
                             <div className="text-sm font-semibold text-gray-900">
-                                {user?.username || 'Admin'}
+                                {user?.username || 'admin'}
                             </div>
                             <div className="text-xs text-gray-600">
                                 {user?.email || 'admin@example.com'}

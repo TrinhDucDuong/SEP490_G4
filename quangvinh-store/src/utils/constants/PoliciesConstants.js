@@ -1,4 +1,4 @@
-// Policy Sort Options
+// policy Sort Options
 export const POLICY_SORT_OPTIONS = [
     { key: 'policyName', label: 'Tên chính sách', type: 'string' },
     { key: 'policyId', label: 'ID chính sách', type: 'number' },
@@ -70,7 +70,7 @@ export const POLICY_ERROR_MESSAGES = {
     UNKNOWN_ERROR: 'Có lỗi không xác định xảy ra'
 };
 
-// Filter Options
+// filter Options
 export const POLICY_FILTER_OPTIONS = {
     DATE_PRESETS: [
         { value: 'today', label: 'Hôm nay' },

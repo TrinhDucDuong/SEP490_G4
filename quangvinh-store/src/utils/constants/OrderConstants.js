@@ -1,6 +1,6 @@
 // src/utils/constants/OrderConstants.js
 
-// Các options cho dropdown status
+// Order Status Options
 export const ORDER_STATUS_OPTIONS = [
     { value: '', label: 'Tất cả trạng thái' },
     { value: 'PROCESSING', label: 'Đang xử lý' },
@@ -37,6 +37,7 @@ export const ORDER_HELPERS = {
         return colorMap[status] || 'bg-gray-100 text-gray-800 border border-gray-200';
     },
 
+    // MỚI THÊM: Helper cho payment status
     getPaymentStatusText: (paymentStatus) => {
         return paymentStatus === true ? 'Đã thanh toán' : 'Chưa thanh toán';
     },

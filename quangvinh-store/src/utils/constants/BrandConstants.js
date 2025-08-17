@@ -275,7 +275,7 @@ export const BRAND_SORT_OPTIONS = [
     { key: 'updatedAt', label: 'Ngày cập nhật', type: 'date' }
 ];
 
-// Filter Options
+// filter Options
 export const BRAND_FILTER_OPTIONS = {
     STATUS: BRAND_STATUS_OPTIONS,
     DATE_PRESETS: [

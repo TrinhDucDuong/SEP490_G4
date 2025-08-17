@@ -117,7 +117,7 @@ export const useOrderManagement = () => {
         }
     };
 
-    // Filter and search logic - SỬA ĐỂ SỬ DỤNG customerName TRỰC TIẾP
+    // Filter and search logic - CẬP NHẬT
     useEffect(() => {
         let result = [...orders];
 

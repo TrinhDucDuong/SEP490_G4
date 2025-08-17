@@ -89,7 +89,7 @@ export const SNS_SORT_OPTIONS = [
     { key: 'snsId', label: 'ID mạng xã hội', type: 'number' }
 ];
 
-// Filter Options
+// filter Options
 export const SNS_FILTER_OPTIONS = {
     STATUS: SNS_STATUS_OPTIONS
 };

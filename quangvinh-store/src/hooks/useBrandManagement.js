@@ -13,7 +13,7 @@ export const useBrandManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // Search, Filter, Sort state
+    // Search, filter, Sort state
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState({
         status: '',
@@ -97,7 +97,7 @@ export const useBrandManagement = () => {
         }
     };
 
-    // Filter and search logic - UPDATED for new API structure
+    // filter and search logic - UPDATED for new API structure
     useEffect(() => {
         let result = [...brands];
 
@@ -110,13 +110,13 @@ export const useBrandManagement = () => {
             );
         }
 
-        // Filter by status
+        // filter by status
         if (filters.status !== '') {
             const isActive = filters.status === 'true';
             result = result.filter(brand => brand.isActive === isActive);
         }
 
-        // Filter by date range
+        // filter by date range
         if (filters.startDate && filters.endDate) {
             const startDate = new Date(filters.startDate);
             const endDate = new Date(filters.endDate);
@@ -270,7 +270,7 @@ export const useBrandManagement = () => {
         setCurrentPage,
         itemsPerPage,
 
-        // Search, Filter, Sort
+        // Search, filter, Sort
         searchTerm,
         setSearchTerm,
         filters,

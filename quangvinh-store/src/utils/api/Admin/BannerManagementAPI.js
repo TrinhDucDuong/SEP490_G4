@@ -1,4 +1,4 @@
-// src/utils/api/Admin/BannerManagementAPI.js
+// src/utils/api/admin/BannerManagementAPI.js
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/banner`;
 
 // Hàm helper để lấy token từ localStorage hoặc sessionStorage

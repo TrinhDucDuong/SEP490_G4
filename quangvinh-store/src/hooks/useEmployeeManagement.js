@@ -15,7 +15,7 @@ export const useEmployeeManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // Search, Filter, Sort state
+    // Search, filter, Sort state
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState({
         status: '',
@@ -124,7 +124,7 @@ export const useEmployeeManagement = () => {
         }
     };
 
-    // Filter and search logic
+    // filter and search logic
     useEffect(() => {
         let result = [...employees];
 
@@ -136,13 +136,13 @@ export const useEmployeeManagement = () => {
             );
         }
 
-        // Filter by status
+        // filter by status
         if (filters.status !== '') {
             const isActive = filters.status === 'true';
             result = result.filter(employee => employee.isActive === isActive);
         }
 
-        // Filter by date range
+        // filter by date range
         if (filters.startDate && filters.endDate) {
             const startDate = new Date(filters.startDate);
             const endDate = new Date(filters.endDate);
@@ -241,7 +241,7 @@ export const useEmployeeManagement = () => {
         setCurrentPage,
         itemsPerPage,
 
-        // Search, Filter, Sort
+        // Search, filter, Sort
         searchTerm,
         setSearchTerm,
         filters,
