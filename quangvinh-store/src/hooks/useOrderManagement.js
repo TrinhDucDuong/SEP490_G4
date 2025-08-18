@@ -121,22 +121,29 @@ export const useOrderManagement = () => {
     useEffect(() => {
         let result = [...orders];
 
-        // Search - SỬA ĐỂ SỬ DỤNG customerName
         if (searchTerm) {
             result = result.filter(order =>
                 order.orderId.toString().includes(searchTerm) ||
-                (order.customerName && order.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (order.shippingAddress && order.shippingAddress.name && order.shippingAddress.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
                 (order.customerPhoneNumber && order.customerPhoneNumber.includes(searchTerm))
             );
         }
 
-        // Filter by date range
+        // Filter theo trạng thái thanh toán
+        if (filters.paymentStatus !== '') {
+            result = result.filter(order =>
+                order.paymentStatus === (filters.paymentStatus === 'true')
+            );
+        }
+
         if (filters.startDate && filters.endDate) {
-            const startDate = new Date(filters.startDate);
-            const endDate = new Date(filters.endDate);
+            const start = new Date(filters.startDate);
+            const end = new Date(filters.endDate);
+            end.setDate(end.getDate() + 1);
+
             result = result.filter(order => {
                 const orderDate = new Date(order.orderDate);
-                return orderDate >= startDate && orderDate <= endDate;
+                return orderDate >= start && orderDate < end;
             });
         }
 

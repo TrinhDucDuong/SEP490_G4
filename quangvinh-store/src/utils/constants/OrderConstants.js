@@ -67,14 +67,17 @@ export const ORDER_HELPERS = {
         }, 0);
     },
 
-    // SỬA LẠI ĐỂ SỬ DỤNG customerName TRỰC TIẾP
     getCustomerName: (order) => {
-        // Nếu order có customerName trực tiếp, sử dụng nó
-        if (order.customerName) {
+        if (order?.shippingAddress?.name) {
+            return order.shippingAddress.name;
+        }
+        if (order?.name) {
+            return order.name;
+        }
+        if (order?.customerName) {
             return order.customerName;
         }
-        // Fallback cho trường hợp cũ với owner object
-        if (order.owner) {
+        if (order?.owner) {
             return order.owner.username || order.owner.email || 'Unknown';
         }
         return 'Unknown';
