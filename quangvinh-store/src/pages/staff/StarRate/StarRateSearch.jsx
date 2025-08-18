@@ -41,7 +41,7 @@ const StarRateSearch = ({
 
             <button
                 onClick={onClearFilters}
-                className="px-4 py-4 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors flex items-center space-x-2"
+                className="px-4 py-2 text-red-600 hover:text-red-800 transition-colors flex items-center space-x-2"
                 title="Xóa bộ lọc"
             >
                 <X className="w-4 h-4" />
