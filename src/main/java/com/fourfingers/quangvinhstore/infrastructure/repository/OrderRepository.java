@@ -43,15 +43,15 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     @Query("""
                 SELECT new com.fourfingers.quangvinhstore.domain.model.admin.DailyRevenue(
-                    o.orderDate,
+                    MIN(o.orderDate),
                     COALESCE(SUM(d.quantity * d.unitPrice), 0)
                 )
                 FROM OrderDetailsEntity d
                 JOIN d.order o
                 WHERE o.paymentStatus = true
                   AND o.orderDate BETWEEN :start AND :end
-                GROUP BY o.orderDate
-                ORDER BY o.orderDate
+                GROUP BY DATE(o.orderDate)
+                ORDER BY DATE(o.orderDate)
             """)
     List<DailyRevenue> getRevenuePerDay(@Param("start") LocalDateTime start,
                                         @Param("end") LocalDateTime end);
