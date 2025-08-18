@@ -7,17 +7,15 @@ import useFetchAddress from "../../../hooks/customer/useFetchAddress.js";
 import {toast} from "react-toastify";
 import Breadcrumb from "../../../components/common/customer/Breadcrumb.jsx";
 import AddressCard from "../profile/Address/AddressCard.jsx";
-import ManualAddressForm from "./ManualAddressForm.jsx";
 import PaymentProduct from "./PaymentProduct.jsx";
 import Modal from "../../../components/common/customer/Modal.jsx";
 import AddAddressForm from "../profile/Address/AddAddressForm.jsx";
 import UpdateAddressForm from "../profile/Address/UpdateAddressForm.jsx";
 import AddressSelectModal from "./AddressSelectModal.jsx";
 import {createAddress} from "../../../utils/api/Customer/AddressAPI.js";
-import {useCart} from "../../../context/CartContext.jsx";
 import RecommendedProductList from "../common/RecommendedProducts.jsx";
-import PaymentSuccessPopup from "./PaymentSuccessPopup.jsx";
 import PaymentResult from "./PaymentResult.jsx";
+import {useCart} from "../../../context/CartContext.jsx";
 
 function CheckoutPage() {
     const {user} = useContext(AuthContext);
@@ -37,6 +35,10 @@ function CheckoutPage() {
 
     const {cartItems, removeItem, updateQuantity} = useCart();
     const {addresses, refetch} = useFetchAddress();
+    const { clearCart } = useCart();
+
+    const [provinces, setProvinces] = useState([]);
+    const [wards, setWards] = useState([]);
 
     useEffect(() => {
         setPromoList(["GIAM10", "FREESHIP", "THANG7SALE"]);
@@ -47,10 +49,62 @@ function CheckoutPage() {
         lastname: "",
         email: "",
         phoneNumber: "",
-        address: "",
+        province: "",
+        ward: "",
         exactAddress: "",
     });
 
+    const [errors, setErrors] = useState({});
+
+    // Fetch provinces
+    useEffect(() => {
+        fetch('https://provinces.open-api.vn/api/v2/p/')
+            .then(res => res.json())
+            .then(setProvinces)
+            .catch(error => {
+                console.error('Lỗi khi tải danh sách tỉnh:', error);
+                toast.error('Không thể tải danh sách tỉnh');
+            });
+    }, []);
+
+    // Fetch wards when province changes
+    useEffect(() => {
+        if (guestForm.province) {
+            fetch(`https://provinces.open-api.vn/api/v2/w?province_code=${guestForm.province}`)
+                .then(res => res.json())
+                .then(setWards)
+                .catch(error => {
+                    console.error('Lỗi khi tải danh sách phường:', error);
+                    toast.error('Không thể tải danh sách phường');
+                });
+            setGuestForm({ ...guestForm, ward: '' });
+        } else {
+            setWards([]);
+            setGuestForm({ ...guestForm, ward: '' });
+        }
+    }, [guestForm.province]);
+
+    const validateGuestForm = () => {
+        let newErrors = {};
+        if (!guestForm.firstname.trim()) newErrors.firstname = "Tên đệm là bắt buộc";
+        if (!guestForm.lastname.trim()) newErrors.lastname = "Tên là bắt buộc";
+        if (!guestForm.email.trim()) {
+            newErrors.email = "Email là bắt buộc";
+        } else if (!/\S+@\S+\.\S+/.test(guestForm.email)) {
+            newErrors.email = "Email không hợp lệ";
+        }
+        if (!guestForm.phoneNumber.trim()) {
+            newErrors.phoneNumber = "Số điện thoại là bắt buộc";
+        } else if (!/^[0-9]{9,11}$/.test(guestForm.phoneNumber)) {
+            newErrors.phoneNumber = "Số điện thoại không hợp lệ (9–11 số)";
+        }
+        if (!guestForm.province.trim()) newErrors.province = "Tỉnh/Thành phố là bắt buộc";
+        if (!guestForm.ward.trim()) newErrors.ward = "Phường/Xã là bắt buộc";
+        if (!guestForm.exactAddress.trim()) newErrors.exactAddress = "Địa chỉ chi tiết là bắt buộc";
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     useEffect(() => {
         window.scrollTo({top: 0, behavior: "smooth"});
@@ -91,6 +145,7 @@ function CheckoutPage() {
                     setResult(data);
                     const createdOrder = data.order;
                     setOrder(createdOrder);
+                    await clearCart();
                     return createdOrder;
                 } else {
                     toast.error("Có lỗi xảy ra khi đặt hàng");
@@ -101,20 +156,21 @@ function CheckoutPage() {
                 return null;
             }
         } else {
-            if (!guestForm.firstname || !guestForm.lastname || !guestForm.email || !guestForm.phoneNumber || !guestForm.address || !guestForm.exactAddress) {
-                toast.error("Vui lòng điền đầy đủ thông tin bắt buộc");
+            if (!validateGuestForm()) {
+                toast.error("Vui lòng điền đầy đủ thông tin hợp lệ");
                 return null;
             }
             if (!selectedMethod) {
                 toast.error("Vui lòng chọn phương thức thanh toán");
                 return null;
             }
+
             const formData = {
                 shippingAddressInputData: {
                     shippingAddressId: null,
                     name: `${guestForm.firstname} ${guestForm.lastname}`,
                     phoneNumber: guestForm.phoneNumber,
-                    address: guestForm.address,
+                    address: `${guestForm.province}, ${guestForm.ward}`,
                     exactAddress: guestForm.exactAddress,
                     isMain: true,
                     type: "null",
@@ -145,6 +201,7 @@ function CheckoutPage() {
                         window.location.href = paymentUrl;
                         return;
                     }
+                    await clearCart();
                     setIsSuccess(true);
                 } else {
                     toast.error("Có lỗi xảy ra khi đặt hàng (Guest)");
@@ -156,7 +213,6 @@ function CheckoutPage() {
             }
         }
     };
-
 
     const handlePayment = async (orderData) => {
         if (!selectedMethod) {
@@ -188,7 +244,9 @@ function CheckoutPage() {
                     window.location.href = paymentUrl;
                     return;
                 }
+
                 setIsSuccess(true);
+                await clearCart();
             } else {
                 toast.error("Chọn phương thức thanh toán thất bại.");
             }
@@ -208,8 +266,6 @@ function CheckoutPage() {
     };
 
     console.log(result);
-
-
 
     return (
         <div className="max-w-full md:max-w-[1400px] mx-auto">
@@ -279,50 +335,96 @@ function CheckoutPage() {
                         ) : (
                             <>
                                 <div className="space-y-4">
-                                    <div className='flex gap-4'>
-                                        <input type='text' placeholder='Tên đệm*'
-                                               className='w-full border rounded-xl px-3 py-2 text-black'
-                                               value={guestForm.firstname}
-                                               onChange={(e) => setGuestForm({
-                                                   ...guestForm,
-                                                   firstname: e.target.value
-                                               })}/>
-                                        <input type='text' placeholder='Tên*'
-                                               className='w-full border rounded-xl px-3 py-2 text-black'
-                                               value={guestForm.lastname}
-                                               onChange={(e) => setGuestForm({
-                                                   ...guestForm,
-                                                   lastname: e.target.value
-                                               })}/>
+                                    <div className="flex gap-4">
+                                        <div className="w-full">
+                                            <input
+                                                type="text"
+                                                placeholder="Tên đệm*"
+                                                className="w-full border rounded-xl px-3 py-2 text-black"
+                                                value={guestForm.firstname}
+                                                onChange={(e) => setGuestForm({...guestForm, firstname: e.target.value})}
+                                            />
+                                            {errors.firstname && <p className="text-red-500 text-sm">{errors.firstname}</p>}
+                                        </div>
+                                        <div className="w-full">
+                                            <input
+                                                type="text"
+                                                placeholder="Tên*"
+                                                className="w-full border rounded-xl px-3 py-2 text-black"
+                                                value={guestForm.lastname}
+                                                onChange={(e) => setGuestForm({...guestForm, lastname: e.target.value})}
+                                            />
+                                            {errors.lastname && <p className="text-red-500 text-sm">{errors.lastname}</p>}
+                                        </div>
                                     </div>
 
+                                    <div>
+                                        <input
+                                            type="email"
+                                            placeholder="Email*"
+                                            className="w-full border rounded-xl px-3 py-2 text-black"
+                                            value={guestForm.email}
+                                            onChange={(e) => setGuestForm({...guestForm, email: e.target.value})}
+                                        />
+                                        {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                                    </div>
 
-                                    <input type='email' placeholder='Email*'
-                                           className='w-full border rounded-xl px-3 py-2 text-black'
-                                           value={guestForm.email}
-                                           onChange={(e) => setGuestForm({...guestForm, email: e.target.value})}/>
+                                    <div>
+                                        <input
+                                            type="number"
+                                            placeholder="Số điện thoại*"
+                                            className="w-full border rounded-xl px-3 py-2 text-black"
+                                            value={guestForm.phoneNumber}
+                                            onChange={(e) => setGuestForm({...guestForm, phoneNumber: e.target.value})}
+                                        />
+                                        {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
+                                    </div>
 
-                                    <input type='number' placeholder='Số điện thoại*'
-                                           className='w-full border rounded-xl px-3 py-2 text-black'
-                                           value={guestForm.phoneNumber}
-                                           onChange={(e) => setGuestForm({...guestForm, phoneNumber: e.target.value})}/>
+                                    <div>
+                                        <select
+                                            className="w-full border rounded-xl px-3 py-2 text-black"
+                                            value={guestForm.province}
+                                            onChange={(e) => setGuestForm({...guestForm, province: e.target.value})}
+                                        >
+                                            <option value="">Chọn Tỉnh/Thành phố*</option>
+                                            {provinces.map((province) => (
+                                                <option key={province.code} value={province.name}>
+                                                    {province.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errors.province && <p className="text-red-500 text-sm">{errors.province}</p>}
+                                    </div>
 
-                                    <input type='text' placeholder='Địa chỉ (Tỉnh/Thành phố)*'
-                                           className='w-full border rounded-xl px-3 py-2 text-black'
-                                           value={guestForm.address}
-                                           onChange={(e) => setGuestForm({...guestForm, address: e.target.value})}/>
+                                    <div>
+                                        <select
+                                            className="w-full border rounded-xl px-3 py-2 text-black"
+                                            value={guestForm.ward}
+                                            onChange={(e) => setGuestForm({...guestForm, ward: e.target.value})}
+                                            disabled={!guestForm.province}
+                                        >
+                                            <option value="">Chọn Phường/Xã*</option>
+                                            {wards.map((ward) => (
+                                                <option key={ward.code} value={ward.name}>
+                                                    {ward.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errors.ward && <p className="text-red-500 text-sm">{errors.ward}</p>}
+                                    </div>
 
-                                    <input type='text' placeholder='Địa chỉ chi tiết*'
-                                           className='w-full border rounded-xl px-3 py-2 text-black'
-                                           value={guestForm.exactAddress}
-                                           onChange={(e) => setGuestForm({
-                                               ...guestForm,
-                                               exactAddress: e.target.value
-                                           })}/>
-
+                                    <div>
+                                        <input
+                                            type="text"
+                                            placeholder="Địa chỉ chi tiết*"
+                                            className="w-full border rounded-xl px-3 py-2 text-black"
+                                            value={guestForm.exactAddress}
+                                            onChange={(e) => setGuestForm({...guestForm, exactAddress: e.target.value})}
+                                        />
+                                        {errors.exactAddress && <p className="text-red-500 text-sm">{errors.exactAddress}</p>}
+                                    </div>
                                 </div>
                             </>
-
                         )}
 
                         <h2 className="text-2xl font-semibold mt-8 mb-4">Chọn phương thức thanh toán</h2>

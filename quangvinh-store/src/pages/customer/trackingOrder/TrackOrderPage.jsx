@@ -1,17 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export default function TrackOrderPage() {
     const [orderCode, setOrderCode] = useState("");
     const [order, setOrder] = useState(null);
     const [error, setError] = useState(null);
 
-    const handleSearch = async () => {
-        if (!orderCode.trim()) {
+    const location = useLocation();
+
+    const getQueryParam = (key) => {
+        const params = new URLSearchParams(location.search);
+        return params.get(key);
+    };
+
+    const handleSearch = async (code) => {
+        const searchCode = code || orderCode;
+        if (!searchCode.trim()) {
             setError("Vui lòng nhập mã đơn hàng");
             return;
         }
         try {
-            const res = await fetch(`http://localhost:9999/order/tracking/${orderCode}`);
+            const res = await fetch(`http://localhost:9999/order/tracking/${searchCode}`);
             if (!res.ok) throw new Error("order not found");
             const data = await res.json();
             setOrder(data.order);
@@ -26,6 +35,14 @@ export default function TrackOrderPage() {
         setOrderCode(e.target.value);
         setError(null);
     };
+
+    useEffect(() => {
+        const paramCode = getQueryParam("code");
+        if (paramCode) {
+            setOrderCode(paramCode);
+            handleSearch(paramCode);
+        }
+    }, [location.search]);
 
     return (
         <div className="min-h-screen flex justify-center bg-white px-4 py-16">
@@ -44,7 +61,7 @@ export default function TrackOrderPage() {
                         className="flex-1 px-4 py-2 focus:outline-none text-black"
                     />
                     <button
-                        onClick={handleSearch}
+                        onClick={() => handleSearch()}
                         className="bg-black text-white px-6 py-2 hover:bg-white hover:text-black border-l border-black transition-all"
                     >
                         Tìm đơn
@@ -103,7 +120,6 @@ export default function TrackOrderPage() {
                             </div>
                         </div>
 
-                        {/* Tổng tiền */}
                         <div className="flex justify-between font-bold text-lg pt-4 border-t">
                             <span>Tổng cộng</span>
                             <span>{order.totalPrice.toLocaleString()}₫</span>

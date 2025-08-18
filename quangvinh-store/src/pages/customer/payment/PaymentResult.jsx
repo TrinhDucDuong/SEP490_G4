@@ -41,13 +41,11 @@ const PaymentResult = ({ result }) => {
                     <h3 className="text-2xl font-semibold text-gray-800 border-b pb-2">Sản phẩm</h3>
                     {order.orderDetails.map((detail, idx) => (
                         <div key={idx} className="flex gap-4 py-4 border-b last:border-0">
-                            {/* Ảnh sản phẩm */}
                             <img
                                 src={detail.productVariant.product.images[0]?.imageUrl}
                                 alt={detail.productVariant.product.productName}
                                 className="w-28 h-28 object-cover"
                             />
-                            {/* Thông tin sản phẩm */}
                             <div className="flex-1">
                                 <p className="font-medium text-lg">{detail.productVariant.product.productName}</p>
                                 <p>Kích cỡ: {detail.productVariant.productSize}</p>

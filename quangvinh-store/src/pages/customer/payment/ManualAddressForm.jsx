@@ -1,13 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-function ManualAddressForm() {
-    const [form, setForm] = useState({
-        province: '',
-        ward: '',
-        street: '',
-    });
-
+function ManualAddressForm({ value, onChange }) {
     const [provinces, setProvinces] = useState([]);
     const [wards, setWards] = useState([]);
 
@@ -21,38 +15,33 @@ function ManualAddressForm() {
             });
     }, []);
 
-    // Lấy danh sách phường khi chọn tỉnh
     useEffect(() => {
-        if (form.province) {
-            fetch(`https://provinces.open-api.vn/api/v2/w?province_code=${form.province}`)
+        if (value.province) {
+            fetch(`https://provinces.open-api.vn/api/v2/w?province_code=${value.province}`)
                 .then(res => res.json())
                 .then(setWards)
                 .catch(error => {
                     console.error('Lỗi khi tải danh sách phường:', error);
                     toast.error('Không thể tải danh sách phường');
                 });
-            setForm(prev => ({ ...prev, ward: '' }));
+            onChange({ ...value, ward: '' });
         } else {
             setWards([]);
         }
-    }, [form.province]);
+    }, [value.province]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
+        const { name, value: val } = e.target;
+        onChange({ ...value, [name]: val });
     };
 
     return (
         <div className="space-y-4">
-            <div className="text-black text-lg font-semibold mb-2">
-                Nhập địa chỉ giao hàng:
-            </div>
-
             <div className="flex flex-col md:flex-row gap-3 md:gap-6">
                 <select
                     name="province"
                     required
-                    value={form.province}
+                    value={value.province}
                     onChange={handleChange}
                     className="w-full border rounded-xl px-3 py-2 text-black"
                 >
@@ -67,10 +56,10 @@ function ManualAddressForm() {
                 <select
                     name="ward"
                     required
-                    value={form.ward}
+                    value={value.ward}
                     onChange={handleChange}
                     className="w-full border rounded-xl px-3 py-2 text-black"
-                    disabled={!form.province}
+                    disabled={!value.province}
                 >
                     <option value="">Chọn phường / xã*</option>
                     {wards.map((ward) => (
@@ -86,7 +75,7 @@ function ManualAddressForm() {
                 name="street"
                 placeholder="Số nhà, tên đường*"
                 required
-                value={form.street}
+                value={value.street}
                 onChange={handleChange}
                 className="w-full border rounded-xl px-3 py-2 text-black"
             />
