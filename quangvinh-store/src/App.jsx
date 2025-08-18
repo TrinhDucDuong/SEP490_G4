@@ -39,7 +39,7 @@ import BlogDetail from "./pages/customer/blog/BlogDetail.jsx";
 import BlogList from "./pages/customer/blog/BlogList.jsx";
 
 // admin Pages
-import InstructionManagement from './pages/staff/InstructionManagement';
+import InstructionManagement from './pages/staff/Instruction/InstructionManagement.jsx';
 import AboutUsManagement from './pages/staff/AboutUsManagement';
 import CustomerList from './pages/staff/Customer/CustomerList.jsx';
 import OrderManagement from './pages/staff/Order/OrderManagement';
@@ -160,7 +160,6 @@ function App() {
                             <Route path="dashboard" element={<DashboardManagement/>} />
                             <Route path="banner-management" element={<BannerManagement/>} />
                             <Route path="store-management" element={< StoreManagement/>} />
-                            <Route path="settings-management" element={<div className="p-6 bg-white rounded-lg shadow">Settings Management Page</div>} />
                             <Route path="sns-management" element={<SNSManagement/>} />
                         </Route>
 

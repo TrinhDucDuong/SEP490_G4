@@ -99,10 +99,10 @@ const SidebarForAdmin = () => {
                         Chính sách
                     </NavLink>
 
-                    {/*<NavLink to="/admin/instruction-management" className={navClass}>*/}
-                    {/*    <FileText className="h-5 w-5 mr-3" />*/}
-                    {/*    Hướng dẫn*/}
-                    {/*</NavLink>*/}
+                    <NavLink to="/admin/instruction-management" className={navClass}>
+                        <FileText className="h-5 w-5 mr-3" />
+                        Hướng dẫn
+                    </NavLink>
 
                     <NavLink to="/admin/banner-management" className={navClass}>
                         <Tag className="h-5 w-5 mr-3" />
@@ -124,17 +124,7 @@ const SidebarForAdmin = () => {
                         Quản lý nhân viên
                     </NavLink>
 
-                    {/*<NavLink to="/admin/campaign-management" className={navClass}>*/}
-                    {/*    <Megaphone className="h-5 w-5 mr-3" />*/}
-                    {/*    Quản lý chiến dịch*/}
-                    {/*</NavLink>*/}
-
                     <div className="border-t border-gray-200 my-4"></div>
-
-                    <NavLink to="/admin/settings-management" className={navClass}>
-                        <Settings className="h-5 w-5 mr-3" />
-                        Cài đặt
-                    </NavLink>
 
                     <button
                         onClick={() => setShowLogoutModal(true)}
