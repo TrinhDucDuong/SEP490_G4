@@ -190,3 +190,35 @@ export const activateEmployee = async (employeeId) => {
         return { success: false, error: error.message };
     }
 };
+
+// POST - Reset password cho nhân viên
+export const resetEmployeePassword = async (employeeId, passwordData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${employeeId}/reset-password`, {
+            method: 'POST',
+            headers: createAuthHeaders(),
+            body: JSON.stringify({
+                oldPassword: passwordData.oldPassword,
+                newPassword: passwordData.newPassword
+            })
+        });
+
+        handleAuthError(response);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Reset password error:', {
+                status: response.status,
+                statusText: response.statusText,
+                body: errorText
+            });
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        return { success: true, data };
+    } catch (error) {
+        console.error('Error resetting employee password:', error);
+        return { success: false, error: error.message };
+    }
+};

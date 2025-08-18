@@ -32,6 +32,7 @@ const EmployeeManagement = () => {
         createEmployee,
         deleteEmployee,
         activateEmployee,
+        resetEmployeePassword,
 
         // Utilities
         clearFilters,
@@ -153,6 +154,7 @@ const EmployeeManagement = () => {
                 onCreateEmployee={createEmployee}
                 onDeleteEmployee={deleteEmployee}
                 onActivateEmployee={activateEmployee}
+                onResetEmployeePassword={resetEmployeePassword}
                 loading={loading}
             />
         </div>

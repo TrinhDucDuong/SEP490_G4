@@ -14,6 +14,7 @@ const EmployeeTable = ({
                            onCreateEmployee,
                            onDeleteEmployee,
                            onActivateEmployee,
+                           onResetEmployeePassword,
                            loading
                        }) => {
     // Modal states
@@ -22,6 +23,8 @@ const EmployeeTable = ({
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showStatusModal, setShowStatusModal] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
+    const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+    const [resetPasswordData, setResetPasswordData] = useState({ oldPassword: '', newPassword: '' });
 
     // Form states
     const [newEmployee, setNewEmployee] = useState(EMPLOYEE_DEFAULTS.NEW_EMPLOYEE);
@@ -57,6 +60,12 @@ const EmployeeTable = ({
         setShowStatusModal(true);
     };
 
+    const openResetPasswordModal = (employee) => {
+        setSelectedEmployee(employee);
+        setResetPasswordData({ oldPassword: '', newPassword: '' });
+        setShowResetPasswordModal(true);
+    };
+
     // CRUD operations
     const handleCreateEmployee = async () => {
         const validation = EMPLOYEE_HELPERS.validateEmployeeData(newEmployee);
@@ -89,6 +98,23 @@ const EmployeeTable = ({
             setShowStatusModal(false);
             setSelectedEmployee(null);
             alert('Thay đổi trạng thái thành công!');
+        } else {
+            alert(`Lỗi: ${result.error}`);
+        }
+    };
+
+    const handleResetPassword = async () => {
+        if (!selectedEmployee || !resetPasswordData.oldPassword || !resetPasswordData.newPassword) {
+            alert('Vui lòng nhập đầy đủ mật khẩu cũ và mật khẩu mới');
+            return;
+        }
+
+        const result = await onResetEmployeePassword(selectedEmployee.accountId, resetPasswordData);
+        if (result.success) {
+            setShowResetPasswordModal(false);
+            setSelectedEmployee(null);
+            setResetPasswordData({ oldPassword: '', newPassword: '' });
+            alert('Cập nhật mật khẩu thành công!');
         } else {
             alert(`Lỗi: ${result.error}`);
         }
@@ -192,11 +218,11 @@ const EmployeeTable = ({
                         <Eye size={16} />
                     </button>
                     <button
-                        onClick={() => openUpdateModal(employee)}
-                        className="p-1 text-green-600 hover:bg-green-50 rounded transition-colors"
-                        title="Cập nhật"
+                        onClick={() => openResetPasswordModal(employee)}
+                        className="text-blue-600 hover:text-blue-900 transition-colors duration-200"
+                        title="Cập nhật mật khẩu"
                     >
-                        <Edit size={16} />
+                        <Edit className="w-4 h-4" />
                     </button>
                 </div>
             )
@@ -584,6 +610,57 @@ const EmployeeTable = ({
                         </div>
                     </div>
                 )}
+            </Modal>
+
+            {/* Reset Password Modal */}
+            <Modal
+                isOpen={showResetPasswordModal}
+                onClose={() => setShowResetPasswordModal(false)}
+                title={`Cập nhật mật khẩu cho nhân viên ${selectedEmployee?.staffName || ''}`}
+                size="md"
+            >
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Mật khẩu cũ <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="password"
+                            value={resetPasswordData.oldPassword}
+                            onChange={(e) => setResetPasswordData(prev => ({ ...prev, oldPassword: e.target.value }))}
+                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Nhập mật khẩu cũ"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Mật khẩu mới <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="password"
+                            value={resetPasswordData.newPassword}
+                            onChange={(e) => setResetPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Nhập mật khẩu mới"
+                        />
+                    </div>
+
+                    <div className="flex justify-end space-x-3 pt-4">
+                        <button
+                            onClick={() => setShowResetPasswordModal(false)}
+                            className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-200"
+                        >
+                            Hủy
+                        </button>
+                        <button
+                            onClick={handleResetPassword}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+                        >
+                            Cập nhật mật khẩu
+                        </button>
+                    </div>
+                </div>
             </Modal>
         </div>
     );
