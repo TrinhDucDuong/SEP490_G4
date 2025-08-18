@@ -188,16 +188,6 @@ const LoginForManager = () => {
                                 </div>
                             )}
 
-                            {/* Debug Info - Remove in production */}
-                            {/* eslint-disable-next-line no-undef */}
-                            {/*{process.env.NODE_ENV === 'development' && (*/}
-                            {/*    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">*/}
-                            {/*        <p className="text-xs text-blue-700">*/}
-                            {/*            Debug: isAuthenticated={String(isAuthenticated)}, authLoading={String(authLoading)}*/}
-                            {/*        </p>*/}
-                            {/*    </div>*/}
-                            {/*)}*/}
-
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 {/* Username Field */}
                                 <div>

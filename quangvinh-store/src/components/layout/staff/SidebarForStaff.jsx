@@ -16,7 +16,7 @@ import {
     Award
 } from 'lucide-react';
 import { useAuthForManager } from '../../../context/AuthContextForManager';
-import Modal from '../../common/admin/Modals.jsx';
+import Modal from '../../common/Admin/Modals.jsx';
 
 const SidebarForAdmin = () => {
     const location = useLocation();
@@ -43,7 +43,7 @@ const SidebarForAdmin = () => {
                         </div>
                         <div>
                             <div className="text-sm font-semibold text-gray-900">
-                                {user?.username || 'admin'}
+                                {user?.username || 'Admin'}
                             </div>
                             <div className="text-xs text-gray-600">
                                 {user?.email || 'admin@example.com'}
@@ -54,16 +54,6 @@ const SidebarForAdmin = () => {
 
                 {/* Navigation Section */}
                 <div className="flex-1 overflow-y-auto p-3 space-y-1 no-scrollbar">
-                    <NavLink to="/admin/dashboard" className={navClass}>
-                        <BarChart3 className="h-5 w-5 mr-3" />
-                        Trang chủ
-                    </NavLink>
-
-                    <NavLink to="/admin/blogs" className={navClass}>
-                        <Package className="h-5 w-5 mr-3" />
-                        Bài viết
-                    </NavLink>
-
                     <NavLink to="/admin/products-management" className={navClass}>
                         <Package className="h-5 w-5 mr-3" />
                         Quản lý sản phẩm
@@ -77,6 +67,11 @@ const SidebarForAdmin = () => {
                     <NavLink to="/admin/brands-management" className={navClass}>
                         <Award className="h-5 w-5 mr-3" />
                         Quản lý thương hiệu
+                    </NavLink>
+
+                    <NavLink to="/admin/blogs" className={navClass}>
+                        <Package className="h-5 w-5 mr-3" />
+                        Bài viết
                     </NavLink>
 
                     <NavLink to="/admin/customers-management" className={navClass}>
@@ -99,42 +94,12 @@ const SidebarForAdmin = () => {
                         Chính sách
                     </NavLink>
 
-                    {/*<NavLink to="/admin/instruction-management" className={navClass}>*/}
-                    {/*    <FileText className="h-5 w-5 mr-3" />*/}
-                    {/*    Hướng dẫn*/}
-                    {/*</NavLink>*/}
-
                     <NavLink to="/admin/banner-management" className={navClass}>
                         <Tag className="h-5 w-5 mr-3" />
                         Quản Lý Banner
                     </NavLink>
 
-                    <NavLink to="/admin/store-management" className={navClass}>
-                        <Store className="h-5 w-5 mr-3" />
-                        Quản lý cửa hàng
-                    </NavLink>
-
-                    <NavLink to="/admin/sns-management" className={navClass}>
-                        <Megaphone className="h-5 w-5 mr-3" />
-                        Quản lý mạng xã hội
-                    </NavLink>
-
-                    <NavLink to="/admin/employee-management" className={navClass}>
-                        <UserPlus className="h-5 w-5 mr-3" />
-                        Quản lý nhân viên
-                    </NavLink>
-
-                    {/*<NavLink to="/admin/campaign-management" className={navClass}>*/}
-                    {/*    <Megaphone className="h-5 w-5 mr-3" />*/}
-                    {/*    Quản lý chiến dịch*/}
-                    {/*</NavLink>*/}
-
                     <div className="border-t border-gray-200 my-4"></div>
-
-                    <NavLink to="/admin/settings-management" className={navClass}>
-                        <Settings className="h-5 w-5 mr-3" />
-                        Cài đặt
-                    </NavLink>
 
                     <button
                         onClick={() => setShowLogoutModal(true)}

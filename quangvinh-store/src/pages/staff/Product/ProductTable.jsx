@@ -48,9 +48,16 @@ const ProductTable = ({
         setIsCreateModalOpen(true);
     };
 
-    const handleEdit = (product) => {
-        setSelectedProduct(product);
-        setIsEditModalOpen(true);
+    const handleEdit = async (product) => {
+        setViewLoading(true);
+        const result = await onViewProduct(product.productId);
+        setViewLoading(false);
+        if (result.success) {
+            setSelectedProduct(result.data);
+            setIsEditModalOpen(true);
+        } else {
+            alert(result.error || 'Không lấy được thông tin sản phẩm!');
+        }
     };
 
     const handleView = async (product) => {
