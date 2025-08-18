@@ -241,7 +241,7 @@ function CheckoutPage() {
                 toast.success("Chọn phương thức thanh toán thành công!");
 
                 if (selectedMethod === "VNPAY" && paymentUrl) {
-                    window.open(paymentUrl, "_blank", "noopener,noreferrer");
+                    window.location.href = paymentUrl;
                     return;
                 }
 
