@@ -245,17 +245,6 @@ const CategoryTable = ({
             )
         },
         {
-            key: 'status',
-            header: 'Trạng thái',
-            headerAlign: 'text-center',
-            cellAlign: 'text-center',
-            render: (category) => (
-                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${CATEGORY_HELPERS.getStatusColorClass(category.isActive)}`}>
-                    {CATEGORY_HELPERS.getStatusText(category.isActive)}
-                </span>
-            )
-        },
-        {
             key: 'createdBy',
             header: 'Người tạo',
             render: (category) => (
@@ -270,19 +259,23 @@ const CategoryTable = ({
             )
         },
         {
+            key: 'status',
+            header: 'Trạng thái',
+            headerAlign: 'text-center',
+            cellAlign: 'text-center',
+            render: (category) => (
+                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${CATEGORY_HELPERS.getStatusColorClass(category.isActive)}`}>
+                    {CATEGORY_HELPERS.getStatusText(category.isActive)}
+                </span>
+            )
+        },
+        {
             key: 'actions',
             header: 'Thao tác',
             headerAlign: 'text-center',
             cellAlign: 'text-center',
             render: (category) => (
                 <div className="flex justify-center space-x-2">
-                    <button
-                        onClick={() => openImageModal(category)}
-                        className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Xem ảnh"
-                    >
-                        <Eye className="w-4 h-4" />
-                    </button>
                     <button
                         onClick={() => openUpdateModal(category)}
                         className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors"
@@ -297,17 +290,10 @@ const CategoryTable = ({
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
-                    <button
-                        onClick={() => openEditorsModal(category)}
-                        className="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-lg transition-colors"
-                        title="Lịch sử chỉnh sửa"
-                    >
-                        <Users className="w-4 h-4" />
-                    </button>
                 </div>
             )
         }
-    ];
+    ]
 
     // Pagination - ĐỒNG NHẤT với Brand
     const totalPages = Math.ceil(categories.length / itemsPerPage);

@@ -65,20 +65,19 @@ const StarRateSort = ({ sortBy, onSortChange }) => {
                         STAR_RATE_CONSTANTS.SORT_OPTIONS.STAR_RATE_ID_ASC,
                         STAR_RATE_CONSTANTS.SORT_OPTIONS.STAR_RATE_ID_DESC
                     )}
-                    className={`
-                        px-4 py-2 rounded-md border text-sm font-medium transition-colors duration-200
-                        ${idSortInfo.isActive
-                        ? 'bg-gray-700 text-white border-gray-700 hover:bg-gray-800'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                    }
-                        focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
-                    `}
+                    className={`flex items-center space-x-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                        idSortInfo.isActive
+                            ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                    }`}
                 >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between w-full">
                         <span>{idSortInfo.label}</span>
                         <svg
-                            className={`w-4 h-4 ml-2 transform transition-transform ${
-                                sortBy === STAR_RATE_CONSTANTS.SORT_OPTIONS.STAR_RATE_ID_ASC ? 'rotate-180' : ''
+                            className={`w-4 h-4 transition-transform ${
+                                idSortInfo.isActive
+                                    ? (sortBy === STAR_RATE_CONSTANTS.SORT_OPTIONS.STAR_RATE_ID_ASC ? 'rotate-180' : '')
+                                    : 'opacity-50'
                             }`}
                             fill="currentColor"
                             viewBox="0 0 20 20"
@@ -100,20 +99,19 @@ const StarRateSort = ({ sortBy, onSortChange }) => {
                         STAR_RATE_CONSTANTS.SORT_OPTIONS.STAR_RATE_ASC,
                         STAR_RATE_CONSTANTS.SORT_OPTIONS.STAR_RATE_DESC
                     )}
-                    className={`
-                        px-4 py-2 rounded-md border text-sm font-medium transition-colors duration-200
-                        ${starSortInfo.isActive
-                        ? 'bg-gray-700 text-white border-gray-700 hover:bg-gray-800'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                    }
-                        focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
-                    `}
+                    className={`flex items-center space-x-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                        starSortInfo.isActive
+                            ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                    }`}
                 >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between w-full">
                         <span>{starSortInfo.label}</span>
                         <svg
-                            className={`w-4 h-4 ml-2 transform transition-transform ${
-                                sortBy === STAR_RATE_CONSTANTS.SORT_OPTIONS.STAR_RATE_ASC ? 'rotate-180' : ''
+                            className={`w-4 h-4 transition-transform ${
+                                starSortInfo.isActive
+                                    ? (sortBy === STAR_RATE_CONSTANTS.SORT_OPTIONS.STAR_RATE_ASC ? 'rotate-180' : '')
+                                    : 'opacity-50'
                             }`}
                             fill="currentColor"
                             viewBox="0 0 20 20"
@@ -135,20 +133,19 @@ const StarRateSort = ({ sortBy, onSortChange }) => {
                         STAR_RATE_CONSTANTS.SORT_OPTIONS.CREATED_AT_ASC,
                         STAR_RATE_CONSTANTS.SORT_OPTIONS.CREATED_AT_DESC
                     )}
-                    className={`
-                        px-4 py-2 rounded-md border text-sm font-medium transition-colors duration-200
-                        ${dateSortInfo.isActive
-                        ? 'bg-gray-700 text-white border-gray-700 hover:bg-gray-800'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                    }
-                        focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
-                    `}
+                    className={`flex items-center space-x-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                        dateSortInfo.isActive
+                            ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                    }`}
                 >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between w-full">
                         <span>{dateSortInfo.label}</span>
                         <svg
-                            className={`w-4 h-4 ml-2 transform transition-transform ${
-                                sortBy === STAR_RATE_CONSTANTS.SORT_OPTIONS.CREATED_AT_ASC ? 'rotate-180' : ''
+                            className={`w-4 h-4 transition-transform ${
+                                dateSortInfo.isActive
+                                    ? (sortBy === STAR_RATE_CONSTANTS.SORT_OPTIONS.CREATED_AT_ASC ? 'rotate-180' : '')
+                                    : 'opacity-50'
                             }`}
                             fill="currentColor"
                             viewBox="0 0 20 20"
