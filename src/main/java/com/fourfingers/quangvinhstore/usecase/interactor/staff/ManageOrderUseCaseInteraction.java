@@ -95,11 +95,6 @@ public class ManageOrderUseCaseInteraction implements OrderManagementInputBounda
 
     private Order getOrderInformation(OrderEntity orderEntity) {
         Order order = orderMapper.toModel(orderEntity);
-
-        order.setCustomerName(orderEntity.getOwner().getProfile().getFirstName() + " " +
-                              orderEntity.getOwner().getProfile().getLastName());
-
-        order.setCustomerPhoneNumber(orderEntity.getOwner().getProfile().getPhoneNumber());
         order.setShippingAddress(shippingAddressMapper.toModel(orderEntity.getShippingAddress()));
         return order;
     }

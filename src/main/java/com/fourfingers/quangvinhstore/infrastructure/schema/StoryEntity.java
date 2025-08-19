@@ -22,7 +22,7 @@ public class StoryEntity {
     @Column(name = "title", columnDefinition = "NVARCHAR(50)", nullable = false)
     private String title;
 
-    @Column(name = "content", columnDefinition = "NVARCHAR(255)", nullable = false)
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1", nullable = false)

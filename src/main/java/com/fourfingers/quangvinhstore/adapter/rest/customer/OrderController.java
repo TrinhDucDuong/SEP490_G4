@@ -76,7 +76,7 @@ public class OrderController {
     @GetMapping("payment/return")
     public void verifyPaymentReturn(@RequestParam Map<String, String> map, HttpServletResponse response) throws IOException {
         OrderOutputData order = customerOrderInputBoundary.verifyAndPlaceOrderPayInAdvance(map);
-        response.sendRedirect("http://localhost:5173/order/payment?orderId=" + order.getOrder().getOrderId());
+        response.sendRedirect("http://localhost:5173/track-order?code=" + order.getOrder().getOrderCode());
     }
 
     @PostMapping("/now")

@@ -61,6 +61,7 @@ public class ManageStarRateUseCaseInteraction implements StarRateManagementInput
                 .orderDetailsId(replyTo.getOrderDetailsId())
                 .replyTo(replyTo)
                 .comment(replyStarRateInputData.getComment())
+                .starRate(replyTo.getStarRate())
                 .build();
         starRateRepository.save(staffReplyStarRateEntity);
         List<StarRate> staffReplies = getStaffReply(replyTo);
