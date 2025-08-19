@@ -19,7 +19,7 @@ public class BlogEntity {
     @Column(name = "blog_id")
     private Long blogId;
 
-    @Column(name = "blog_title", nullable = false, columnDefinition = "NVARCHAR(50)")
+    @Column(name = "blog_title", nullable = false, columnDefinition = "TEXT")
     private String blogTitle;
 
     @Column(name = "created_at", nullable = false)

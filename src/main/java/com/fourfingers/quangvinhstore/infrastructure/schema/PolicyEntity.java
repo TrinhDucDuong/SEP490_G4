@@ -22,7 +22,7 @@ public class PolicyEntity {
     @Column(name = "policy_name", columnDefinition = "NVARCHAR(50)", nullable = false)
     private String policyName;
 
-    @Column(name = "policy_description", columnDefinition = "NVARCHAR(255)", nullable = false)
+    @Column(name = "policy_description", columnDefinition = "TEXT", nullable = false)
     private String policyDescription;
 
     @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1", nullable = false)
