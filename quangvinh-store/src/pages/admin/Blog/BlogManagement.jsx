@@ -39,7 +39,7 @@ function BlogManagement() {
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold">Quản lý bài viết</h1>
-                <Link to="/manager/blogs/create"
+                <Link to="/staff/blogs/create"
                       className="px-2 py-1 bg-green-200 border border-green-900 text-green-900 rounded-full hover:bg-green-500 hover:text-white transition-all duration-200">
                     + Tạo bài viết
                 </Link>

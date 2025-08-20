@@ -89,7 +89,7 @@ function BlogForm({ isEdit = false }) {
                 await BlogManagementAPI.create(formData);
             }
 
-            navigate("/manager/blogs");
+            navigate("/staff/blogs");
         } catch (error) {
             console.error("Lỗi khi gửi blog:", error);
             alert("Có lỗi xảy ra khi gửi blog");
@@ -99,7 +99,7 @@ function BlogForm({ isEdit = false }) {
     return (
         <div className="p-6 bg-white">
             <div className="flex items-center justify-between mb-6">
-                <Link to="/manager/blogs" className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition">
+                <Link to="/staff/blogs" className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition">
                     <ArrowLeft size={20} /> <span>Quay lại</span>
                 </Link>
             </div>
