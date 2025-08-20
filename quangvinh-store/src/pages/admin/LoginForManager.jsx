@@ -26,7 +26,7 @@ const LoginForManager = () => {
     useEffect(() => {
         if (isAuthenticated && !authLoading) {
             console.log('User is authenticated, redirecting...');
-            const from = location.state?.from?.pathname || '/admin/category-management';
+            const from = location.state?.from?.pathname || '/manager/dashboard';
             navigate(from, { replace: true });
         }
     }, [isAuthenticated, authLoading, navigate, location]);
@@ -59,7 +59,7 @@ const LoginForManager = () => {
             console.log('login result:', result);
 
             // Manual redirect if needed
-            const from = location.state?.from?.pathname || '/admin/category-management';
+            const from = location.state?.from?.pathname || '/manager/dashboard';
             console.log('Redirecting to:', from);
             navigate(from, { replace: true });
 

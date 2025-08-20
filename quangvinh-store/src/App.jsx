@@ -39,6 +39,7 @@ import BlogDetail from "./pages/customer/blog/BlogDetail.jsx";
 import BlogList from "./pages/customer/blog/BlogList.jsx";
 
 // admin Pages
+import RoleBasedRoute from "./components/auth/RoleBasedRoute.jsx";
 import InstructionManagement from './pages/staff/Instruction/InstructionManagement.jsx';
 import AboutUsManagement from './pages/staff/AboutUsManagement';
 import CustomerList from './pages/staff/Customer/CustomerList.jsx';
@@ -133,14 +134,16 @@ function App() {
                             <Route path="*" element={<NotFound />} />
                         </Route>
 
-                        {/* Admin routes */}
+                        {/* Manager Login */}
                         <Route path="/manager/login" element={<LoginForManager />} />
-                        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-                        <Route path="/admin" element={
-                            <ProtectedRouteForManager>
-                                <AdminLayout />
-                            </ProtectedRouteForManager>
+
+                        {/* Manager Routes - Sử dụng AdminLayout hiện có */}
+                        <Route path="/manager" element={
+                            <RoleBasedRoute allowedRoles={['ADMINISTRATOR', 'STAFF']}>
+                                <AdminLayout /> {/* Sử dụng AdminLayout hiện có */}
+                            </RoleBasedRoute>
                         }>
+                            {/* Common Routes - Both Admin & Staff */}
                             <Route path="blogs" element={<BlogManagement />} />
                             <Route path="blogs/:id" element={<BlogDetailManager />} />
                             <Route path="blogs/create" element={<BlogForm />} />
@@ -150,43 +153,50 @@ function App() {
                             <Route path="brands-management" element={<BrandManagement />} />
                             <Route path="customers-management" element={<CustomerList />} />
                             <Route path="orders-management" element={<OrderManagement />} />
-                            <Route path="employee-management" element={<EmployeeManagement />} />
                             <Route path="customer-list" element={<CustomerList />} />
                             <Route path="order-management" element={<OrderManagement />} />
                             <Route path="instruction-management" element={<InstructionManagement />} />
                             <Route path="policies-management" element={<PoliciesManagement />} />
-                            <Route path="about-us-management" element={<AboutUsManagement />} />
-                            <Route path="star-rate-management" element={<StarRateManagement/>} />
-                            <Route path="dashboard" element={<DashboardManagement/>} />
-                            <Route path="banner-management" element={<BannerManagement/>} />
-                            <Route path="store-management" element={< StoreManagement/>} />
-                            <Route path="sns-management" element={<SNSManagement/>} />
+                            <Route path="star-rate-management" element={<StarRateManagement />} />
+                            <Route path="banner-management" element={<BannerManagement />} />
+
+                            {/* Admin Only Routes */}
+                            <Route path="employee-management" element={
+                                <RoleBasedRoute adminOnly={true}>
+                                    <EmployeeManagement />
+                                </RoleBasedRoute>
+                            } />
+                            <Route path="dashboard" element={
+                                <RoleBasedRoute adminOnly={true}>
+                                    <DashboardManagement />
+                                </RoleBasedRoute>
+                            } />
+                            <Route path="about-us-management" element={
+                                <RoleBasedRoute adminOnly={true}>
+                                    <AboutUsManagement />
+                                </RoleBasedRoute>
+                            } />
+                            <Route path="store-management" element={
+                                <RoleBasedRoute adminOnly={true}>
+                                    <StoreManagement />
+                                </RoleBasedRoute>
+                            } />
+                            <Route path="sns-management" element={
+                                <RoleBasedRoute adminOnly={true}>
+                                    <SNSManagement />
+                                </RoleBasedRoute>
+                            } />
+
+                            {/* Default redirect */}
+                            <Route index element={<Navigate to="category-management" replace />} />
                         </Route>
 
-                        {/* Staff routes */}
-                        <Route path="/manager/login" element={<LoginForManager />} />
-                        <Route path="/staff" element={<Navigate to="/staff/products-management" replace />} />
-                        <Route path="/staff" element={
-                            <ProtectedRouteForManager>
-                                <ManagerLayout />
-                            </ProtectedRouteForManager>
-                        }>
-                            <Route path="blogs" element={<BlogManagement />} />
-                            <Route path="blogs/:id" element={<BlogDetailManager />} />
-                            <Route path="blogs/create" element={<BlogForm />} />
-                            <Route path="blogs/:id/edit" element={<BlogForm isEdit />} />
-                            <Route path="category-management" element={<CategoryManagement />} />
-                            <Route path="products-management" element={<ProductManagement />} />
-                            <Route path="brands-management" element={<BrandManagement />} />
-                            <Route path="customers-management" element={<CustomerList />} />
-                            <Route path="orders-management" element={<OrderManagement />} />
-                            <Route path="customer-list" element={<CustomerList />} />
-                            <Route path="order-management" element={<OrderManagement />} />
-                            <Route path="instruction-management" element={<InstructionManagement />} />
-                            <Route path="policies-management" element={<PoliciesManagement />} />
-                            <Route path="star-rate-management" element={<StarRateManagement/>} />
-                            <Route path="banner-management" element={<BannerManagement/>} />
-                        </Route>
+                        {/* Legacy redirects - Redirect old paths to new ones */}
+                        <Route path="/admin/*" element={<Navigate to="/manager" replace />} />
+                        <Route path="/staff/*" element={<Navigate to="/manager" replace />} />
+
+                        {/* 404 Page */}
+                        <Route path="*" element={<NotFound />} />
 
                     </Routes>
                 </CartProviderWrapper>

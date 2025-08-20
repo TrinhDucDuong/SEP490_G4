@@ -43,6 +43,13 @@ export const AuthProviderForManager = ({ children }) => {
         }
     };
 
+    const hasRole = (role) => {
+        return user?.roles?.includes(role) || false;
+    };
+
+    const isAdmin = () => hasRole('ADMINISTRATOR');
+    const isStaff = () => hasRole('STAFF');
+
     useEffect(() => {
         const tk = readCredential();
         const info = localStorage.getItem(KEY_USER) || sessionStorage.getItem(KEY_USER);
@@ -53,6 +60,7 @@ export const AuthProviderForManager = ({ children }) => {
         } else {
             clearStorage();
         }
+
         setLoading(false);
     }, []);
 
@@ -86,7 +94,12 @@ export const AuthProviderForManager = ({ children }) => {
         login,
         logout,
         clearStorage,
-        tokenValid
+        tokenValid,
+        // Role helpers
+        hasRole,
+        isAdmin,
+        isStaff,
+        userRoles: user?.roles || []
     };
 
     return (
