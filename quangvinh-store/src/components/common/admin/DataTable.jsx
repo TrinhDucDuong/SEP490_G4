@@ -25,7 +25,6 @@ const DataTable = ({
         });
     };
 
-    // Khởi tạo lịch sử cập nhật mẫu
     useEffect(() => {
         const sampleHistory = [
             {
@@ -67,7 +66,6 @@ const DataTable = ({
         setUpdateHistory(sampleHistory);
     }, []);
 
-    // Format thời gian cho lịch sử
     const formatHistoryTime = (date) => {
         const now = new Date();
         const diff = now - date;

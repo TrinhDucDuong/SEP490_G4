@@ -1,4 +1,3 @@
-// src/pages/admin/SNS/SNSSort.jsx
 import React from 'react';
 import { ArrowUpDown } from 'lucide-react';
 

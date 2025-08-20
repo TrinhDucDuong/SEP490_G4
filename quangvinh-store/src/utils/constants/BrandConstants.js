@@ -1,4 +1,3 @@
-// Brand Status Options
 export const BRAND_STATUS_OPTIONS = [
     { value: true, label: 'Đang bán', color: 'green' },
     { value: false, label: 'Đã ngừng bán', color: 'red' }
@@ -28,28 +27,23 @@ export const BRAND_HELPERS = {
         });
     },
 
-    // Helper để lấy username an toàn từ nested object - FIXED
     getUsername: (userObject) => {
         if (!userObject) return 'Unknown';
         return userObject.username || userObject.email || 'Unknown';
     },
 
-    // Helper để lấy email an toàn từ nested object
     getUserEmail: (userObject) => {
         return userObject?.email || '';
     },
 
-    // Helper để lấy accountId an toàn từ nested object
     getAccountId: (userObject) => {
         return userObject?.accountId || null;
     },
 
-    // Helper để kiểm tra có hình ảnh không (xử lý trường hợp images = null)
     hasImages: (brand) => {
         return brand.images && Array.isArray(brand.images) && brand.images.length > 0;
     },
 
-    // Helper để lấy URL hình ảnh đầu tiên an toàn
     getFirstImageUrl: (brand) => {
         if (BRAND_HELPERS.hasImages(brand)) {
             return brand.images[0].imageUrl;
@@ -57,25 +51,21 @@ export const BRAND_HELPERS = {
         return null;
     },
 
-    // Helper để so sánh 2 user objects
     isSameUser: (user1, user2) => {
         if (!user1 || !user2) return false;
         return user1.accountId === user2.accountId;
     },
 
-    // Helper để tạo display name từ user object
     getDisplayName: (userObject) => {
         if (!userObject) return 'Unknown';
         return userObject.username || userObject.email || 'Unknown';
     },
 
-    // Helper để kiểm tra brand có được cập nhật không
     hasBeenUpdated: (brand) => {
         return brand.updatedAt && brand.updatedBy &&
             brand.updatedAt !== brand.createdAt;
     },
 
-    // Helper để lấy thông tin người cập nhật cuối cùng
     getLastUpdater: (brand) => {
         if (BRAND_HELPERS.hasBeenUpdated(brand)) {
             return {
@@ -93,12 +83,10 @@ export const BRAND_HELPERS = {
         };
     },
 
-    // Helper để tạo danh sách editors từ brand data - ENHANCED để log UPDATE đúng cách
     getEditorsFromBrand: (brand) => {
         const editors = [];
         let idCounter = 1;
 
-        // Thêm người tạo
         if (brand.createdBy) {
             editors.push({
                 id: idCounter++,
@@ -111,14 +99,11 @@ export const BRAND_HELPERS = {
             });
         }
 
-        // ENHANCED: Xử lý UPDATE actions - luôn log nếu có updatedAt và updatedBy
         if (brand.updatedBy && brand.updatedAt) {
             const updateTime = new Date(brand.updatedAt);
             const createTime = new Date(brand.createdAt);
 
-            // Nếu có thời gian update khác thời gian tạo
             if (updateTime.getTime() !== createTime.getTime()) {
-                // Luôn thêm UPDATE action trước
                 editors.push({
                     id: idCounter++,
                     username: brand.updatedBy.username || brand.updatedBy.email || 'Unknown',
@@ -129,7 +114,6 @@ export const BRAND_HELPERS = {
                     actionType: 'UPDATE'
                 });
 
-                // Nếu brand không active, thêm DEACTIVATE action
                 if (!brand.isActive) {
                     editors.push({
                         id: idCounter++,
@@ -144,11 +128,9 @@ export const BRAND_HELPERS = {
             }
         }
 
-        // Sắp xếp theo thời gian (cũ nhất trước)
         return editors.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
     },
 
-    // Helper để validate brand data
     validateBrandData: (brandData) => {
         const errors = [];
 
@@ -166,12 +148,10 @@ export const BRAND_HELPERS = {
         };
     },
 
-    // Helper để tạo unique ID cho editors (alternative approach)
     generateEditorId: (accountId, timestamp, actionType) => {
         return `${accountId}-${timestamp}-${actionType}`;
     },
 
-    // Helper để format action type thành text
     getActionText: (actionType) => {
         const actionMap = {
             'CREATE': 'Tạo thương hiệu',
@@ -182,9 +162,7 @@ export const BRAND_HELPERS = {
         return actionMap[actionType] || 'Hành động không xác định';
     },
 
-    // Helper để phân tích audit log từ API response (nếu backend cung cấp)
     parseAuditLog: (brand) => {
-        // Nếu API trả về auditLog array đầy đủ
         if (brand.auditLog && Array.isArray(brand.auditLog)) {
             return brand.auditLog.map(log => ({
                 id: log.id,
@@ -197,11 +175,9 @@ export const BRAND_HELPERS = {
             }));
         }
 
-        // Fallback về method cũ nếu không có auditLog
         return BRAND_HELPERS.getEditorsFromBrand(brand);
     },
 
-    // Helper để detect loại action dựa trên thay đổi
     detectActionType: (brand, previousBrand = null) => {
         if (!previousBrand) {
             return 'CREATE';
@@ -217,7 +193,7 @@ export const BRAND_HELPERS = {
             return 'UPDATE';
         }
 
-        return 'UPDATE'; // Default fallback
+        return 'UPDATE';
     }
 };
 

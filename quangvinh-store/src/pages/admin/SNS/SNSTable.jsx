@@ -1,8 +1,7 @@
-// src/pages/Admin/SNS/SNSTable.jsx
 import React, { useState } from 'react';
-import { Edit, Plus, Trash2, ExternalLink } from 'lucide-react'; // Thêm ExternalLink import
+import { Edit, Plus, Trash2, ExternalLink } from 'lucide-react';
 import DataTable from '../../../components/common/Admin/DataTable';
-import SNSModal from './SNSModal'; // Sửa đường dẫn import
+import SNSModal from './SNSModal';
 import Paginations from '../../../components/common/Admin/Paginations';
 import { SNS_HELPERS, SNS_DEFAULTS } from '../../../utils/constants/SNSConstants';
 

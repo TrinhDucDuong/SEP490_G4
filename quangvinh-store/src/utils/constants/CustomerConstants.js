@@ -1,4 +1,3 @@
-// Helper Functions
 export const CUSTOMER_HELPERS = {
     formatDate: (dateString) => {
         if (!dateString) return '';

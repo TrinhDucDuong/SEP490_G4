@@ -1,4 +1,3 @@
-// src/pages/Staff/Instruction/InstructionSearch.jsx
 import React from 'react';
 import SearchBar from '../../../components/common/admin/SearchBar';
 

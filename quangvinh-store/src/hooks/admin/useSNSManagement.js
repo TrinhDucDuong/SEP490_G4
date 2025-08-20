@@ -1,4 +1,3 @@
-// src/hooks/admin/useSNSManagement.js
 import { useState, useEffect } from 'react';
 import { getAllSNS, createSNS, updateSNS, deleteSNS } from '../../utils/api/Admin/SNSManagementAPI.js';
 import { SNS_HELPERS } from '../../utils/constants/SNSConstants';

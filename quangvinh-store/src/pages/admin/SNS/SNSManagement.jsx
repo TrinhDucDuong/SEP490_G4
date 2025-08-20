@@ -1,4 +1,3 @@
-// src/pages/admin/SNS/SNSManagement.jsx
 import React from 'react';
 import SNSSearch from './SNSSearch.jsx';
 import SNSFilter from './SNSFilter.jsx';

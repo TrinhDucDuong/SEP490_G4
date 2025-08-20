@@ -1,22 +1,20 @@
-// src/hooks/useCategoryManagement.js
 import { useState, useEffect } from 'react';
-// SỬA: Import từng function riêng lẻ để tránh lỗi export
 import { getAllCategories, createCategory, updateCategory, deleteCategory } from '../utils/api/Admin/CategoryManagementAPI.js';
 import { CATEGORY_HELPERS } from '../utils/constants/CategoryConstants';
 
 export const useCategoryManagement = () => {
-    // Data state - ĐỒNG NHẤT với Brand
+    // Data state
     const [categories, setCategories] = useState([]);
     const [filteredCategories, setFilteredCategories] = useState([]);
     const [parentCategories, setParentCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Pagination state - ĐỒNG NHẤT với Brand
+    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // Search, filter, Sort state - ĐỒNG NHẤT với Brand
+    // Search, filter, Sort state
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState({
         status: '',
@@ -27,13 +25,13 @@ export const useCategoryManagement = () => {
     });
     const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
 
-    // Fetch categories from API - SỬA: Gọi trực tiếp function
+    // Fetch categories from API
     const fetchCategories = async () => {
         setLoading(true);
         setError(null);
         try {
             console.log('Fetching categories...'); // Debug log
-            const result = await getAllCategories(); // SỬA: Bỏ CategoryManagementAPI.
+            const result = await getAllCategories();
 
             if (result.success) {
                 console.log('Categories fetched successfully:', result.data); // Debug log
@@ -56,14 +54,14 @@ export const useCategoryManagement = () => {
         }
     };
 
-    // Create category - SỬA: Gọi trực tiếp function
+    // Create category
     const createCategoryHandler = async (categoryData, categoryImage) => {
         setLoading(true);
         setError(null);
 
         try {
             console.log('Creating category:', categoryData, categoryImage?.name || 'No image'); // Debug log
-            const result = await createCategory(categoryData, categoryImage); // SỬA: Bỏ CategoryManagementAPI.
+            const result = await createCategory(categoryData, categoryImage);
 
             if (result.success) {
                 console.log('Category created successfully:', result.data);
@@ -81,14 +79,14 @@ export const useCategoryManagement = () => {
         }
     };
 
-    // Update category - SỬA: Gọi trực tiếp function
+    // Update category
     const updateCategoryHandler = async (categoryId, categoryData, categoryImage) => {
         setLoading(true);
         setError(null);
 
         try {
             console.log('Updating category:', categoryId, categoryData, categoryImage); // Debug log
-            const result = await updateCategory(categoryId, categoryData, categoryImage); // SỬA: Bỏ CategoryManagementAPI.
+            const result = await updateCategory(categoryId, categoryData, categoryImage);
 
             if (result.success) {
                 console.log('Category updated successfully:', result.data);
@@ -106,14 +104,14 @@ export const useCategoryManagement = () => {
         }
     };
 
-    // Delete category - SỬA: Gọi trực tiếp function
+    // Delete category
     const deleteCategoryHandler = async (categoryId) => {
         setLoading(true);
         setError(null);
 
         try {
             console.log('Changing category status:', categoryId); // Debug log
-            const result = await deleteCategory(categoryId); // SỬA: Bỏ CategoryManagementAPI.
+            const result = await deleteCategory(categoryId);
 
             if (result.success) {
                 console.log('Category status changed successfully:', result.data);
@@ -131,7 +129,7 @@ export const useCategoryManagement = () => {
         }
     };
 
-    // filter and search logic - ĐỒNG NHẤT với Brand structure
+    // filter and search logic
     useEffect(() => {
         console.log('Applying filters and search...'); // Debug log
         let result = [...categories];
@@ -228,7 +226,6 @@ export const useCategoryManagement = () => {
                 }
             });
         } else {
-            // ĐỒNG NHẤT: Mặc định sort theo ngày tạo mới nhất nếu không có sort config
             result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         }
 
@@ -237,7 +234,7 @@ export const useCategoryManagement = () => {
         setCurrentPage(1); // Reset to first page when filters change
     }, [categories, searchTerm, filters, sortConfig]);
 
-    // Clear all filters - ĐỒNG NHẤT với Brand
+    // Clear all filters
     const clearFilters = () => {
         setSearchTerm('');
         setFilters({
@@ -251,7 +248,7 @@ export const useCategoryManagement = () => {
         setCurrentPage(1);
     };
 
-    // Handle date preset changes - ĐỒNG NHẤT với Brand
+    // Handle date preset changes
     const handleDatePresetChange = (preset) => {
         const now = new Date();
         let startDate = '';
@@ -307,7 +304,7 @@ export const useCategoryManagement = () => {
         }));
     };
 
-    // Get statistics - ĐỒNG NHẤT với Brand
+    // Get statistics
     const getStatistics = () => {
         const totalCategories = categories.length;
         const activeCategories = categories.filter(cat => cat.isActive).length;
@@ -322,13 +319,13 @@ export const useCategoryManagement = () => {
         };
     };
 
-    // Get unique creators for filter options - THÊM giống Brand
+    // Get unique creators for filter options
     const getUniqueCreators = () => {
         const creators = categories.map(category => CATEGORY_HELPERS.getUsername(category.createdBy));
         return [...new Set(creators)].filter(creator => creator !== 'Unknown');
     };
 
-    // Initialize data on mount - ĐỒNG NHẤT với Brand
+    // Initialize data on mount
     useEffect(() => {
         console.log('useCategoryManagement hook initialized'); // Debug log
         fetchCategories();

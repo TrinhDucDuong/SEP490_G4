@@ -1,11 +1,9 @@
-const API_BASE_URL = 'http://localhost:9999';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`;
 
-// Hàm helper để lấy token từ localStorage hoặc sessionStorage
 const getAuthToken = () => {
     return localStorage.getItem('adminAuthToken') || sessionStorage.getItem('adminAuthToken');
 };
 
-// Hàm helper để tạo headers với Bearer token
 const getAuthHeaders = () => {
     const token = getAuthToken();
     return {
@@ -15,7 +13,6 @@ const getAuthHeaders = () => {
     };
 };
 
-// Hàm helper để xử lý response
 const handleResponse = async (response) => {
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -23,11 +20,10 @@ const handleResponse = async (response) => {
     }
     const data = await response.json();
 
-    // Ensure visibility status is properly tracked
     if (data.starRates) {
         data.starRates = data.starRates.map(rate => ({
             ...rate,
-            isVisible: rate.isVisible !== false // Default to true if not specified
+            isVisible: rate.isVisible !== false
         }));
     }
 
@@ -35,7 +31,6 @@ const handleResponse = async (response) => {
 };
 
 export const StarRateManagementAPI = {
-    // Lấy tất cả đánh giá
     getAllStarRates: async () => {
         try {
             const response = await fetch(`${API_BASE_URL}/staff/star-rate`, {
@@ -49,7 +44,6 @@ export const StarRateManagementAPI = {
         }
     },
 
-    // Lấy đánh giá theo ID
     getStarRateById: async (starRateId) => {
         try {
             const response = await fetch(`${API_BASE_URL}/staff/star-rate/${starRateId}`, {
@@ -63,7 +57,6 @@ export const StarRateManagementAPI = {
         }
     },
 
-    // Reply đánh giá
     replyStarRate: async (replyData) => {
         try {
             const response = await fetch(`${API_BASE_URL}/staff/star-rate`, {
@@ -78,7 +71,6 @@ export const StarRateManagementAPI = {
         }
     },
 
-    // Cập nhật reply
     updateReply: async (starRateId, updateData) => {
         try {
             const response = await fetch(`${API_BASE_URL}/staff/star-rate/${starRateId}`, {
@@ -93,7 +85,6 @@ export const StarRateManagementAPI = {
         }
     },
 
-    // Ẩn đánh giá
     hideStarRate: async (starRateId) => {
         try {
             const response = await fetch(`${API_BASE_URL}/staff/star-rate/${starRateId}`, {
@@ -107,7 +98,6 @@ export const StarRateManagementAPI = {
         }
     },
 
-    // Khôi phục đánh giá
     restoreStarRate: async (starRateId) => {
         try {
             const response = await fetch(`${API_BASE_URL}/staff/star-rate/${starRateId}`, {

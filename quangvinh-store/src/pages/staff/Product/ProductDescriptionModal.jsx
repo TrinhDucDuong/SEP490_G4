@@ -1,5 +1,3 @@
-// src/pages/staff/product/ProductDescriptionModal.jsx
-
 import React from 'react';
 import { X, FileText } from 'lucide-react';
 

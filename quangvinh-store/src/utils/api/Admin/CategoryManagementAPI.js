@@ -1,21 +1,17 @@
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/category`;
 
-// Hàm helper để lấy token từ localStorage hoặc sessionStorage
 const getAuthToken = () => {
     return localStorage.getItem('adminAuthToken') || sessionStorage.getItem('adminAuthToken');
 };
 
-// Hàm helper để tạo headers với Bearer token
 const getAuthHeaders = () => {
     const token = getAuthToken();
     return {
         'accept': '*/*',
-        // Không thêm Content-Type khi gửi multipart/form-data
         ...(token && { 'Authorization': `Bearer ${token}` })
     };
 };
 
-// Hàm helper để xử lý response
 const handleResponse = async (response) => {
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

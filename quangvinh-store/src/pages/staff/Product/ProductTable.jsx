@@ -1,4 +1,3 @@
-// src/pages/staff/product/ProductTable.jsx
 import React, { useState } from 'react';
 import { Edit, Trash2, Plus, Eye, Package, ImageIcon, AlertCircle, X, Power, PowerOff } from 'lucide-react';
 import Pagination from '../../../components/common/admin/Paginations';
