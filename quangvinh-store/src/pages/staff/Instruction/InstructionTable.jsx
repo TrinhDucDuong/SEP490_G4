@@ -1,4 +1,3 @@
-// src/pages/Staff/Instruction/InstructionTable.jsx
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Plus, FileText } from 'lucide-react';
 import DataTable from '../../../components/common/admin/DataTable';

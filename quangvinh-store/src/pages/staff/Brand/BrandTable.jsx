@@ -117,7 +117,6 @@ const BrandTable = ({
             return;
         }
 
-        // THÊM: Validation cho ảnh
         if (!newBrand.brandImage) {
             setImageValidation(prev => ({
                 ...prev,
@@ -126,7 +125,6 @@ const BrandTable = ({
             return;
         }
 
-        // Reset validation nếu có ảnh
         setImageValidation(prev => ({
             ...prev,
             create: { show: false, message: '' }
@@ -152,13 +150,10 @@ const BrandTable = ({
             return;
         }
 
-        // Xử lý logic ảnh
         let imageToSend = null;
 
         if (imageToDelete) {
-            // Người dùng muốn xóa ảnh hiện tại
             if (!updateBrandData.brandImage) {
-                // Không có ảnh mới để thay thế
                 setImageValidation(prev => ({
                     ...prev,
                     update: { show: true, message: 'Vui lòng tải lên ảnh thương hiệu' }
@@ -167,10 +162,8 @@ const BrandTable = ({
             }
             imageToSend = updateBrandData.brandImage;
         } else if (updateBrandData.brandImage) {
-            // Người dùng upload ảnh mới
             imageToSend = updateBrandData.brandImage;
         } else {
-            // Giữ nguyên ảnh cũ
             imageToSend = 'keep_existing';
         }
 
@@ -467,7 +460,7 @@ const BrandTable = ({
             >
                 {selectedBrand && (
                     <div>
-                        {/* Header chỉ có tên thương hiệu - BỎ ảnh */}
+                        {/* Header */}
                         <div className="mb-6 pb-4 border-b">
                             <h3 className="text-lg font-medium text-gray-900">{selectedBrand.brandName}</h3>
                         </div>
@@ -476,9 +469,9 @@ const BrandTable = ({
                             {BRAND_HELPERS.getEditorsFromBrand(selectedBrand).map((editor, index) => (
                                 <div key={editor.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                                     <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                    <span className="text-blue-600 font-medium text-sm">
-                      {editor.username?.charAt(0).toUpperCase()}
-                    </span>
+                                        <span className="text-blue-600 font-medium text-sm">
+                                          {editor.username?.charAt(0).toUpperCase()}
+                                        </span>
                                     </div>
                                     <div className="flex-1">
                                         <div className="font-medium text-gray-900">{editor.username}</div>

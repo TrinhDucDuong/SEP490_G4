@@ -1,4 +1,3 @@
-// src/pages/admin/store/StoreTable.jsx
 import React, { useState } from 'react';
 import { Edit, Plus, Eye } from 'lucide-react';
 import DataTable from '../../../components/common/admin/DataTable';

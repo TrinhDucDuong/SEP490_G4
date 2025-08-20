@@ -1,5 +1,3 @@
-// src/pages/staff/product/ProductImageModal.jsx
-
 import React, { useState } from 'react';
 import { X, ImageIcon, ZoomIn } from 'lucide-react';
 import { PRODUCT_HELPERS } from '../../../utils/constants/ProductConstants';

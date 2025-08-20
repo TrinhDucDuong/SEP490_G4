@@ -1,4 +1,3 @@
-// src/pages/staff/Category/CategorySort.jsx
 import React from 'react';
 import { ArrowUpDown } from 'lucide-react';
 

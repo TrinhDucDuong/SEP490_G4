@@ -1,4 +1,3 @@
-// src/pages/Admin/SNS/SNSModal.jsx
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 

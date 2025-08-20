@@ -1,4 +1,3 @@
-// src/pages/Staff/Order/OrderTable.jsx
 import React from 'react';
 import { Eye, Edit } from 'lucide-react';
 import DataTable from '../../../components/common/Admin/DataTable';
@@ -15,7 +14,6 @@ const OrderTable = ({
                         onEditOrder
                     }) => {
 
-    // Table columns configuration
     const columns = [
         {
             key: 'stt',

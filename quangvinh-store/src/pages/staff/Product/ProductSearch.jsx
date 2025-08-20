@@ -1,5 +1,3 @@
-// src/pages/staff/product/ProductSearch.jsx
-
 import React from 'react';
 import SearchBar from '../../../components/common/admin/SearchBar';
 

@@ -1,6 +1,3 @@
-// src/utils/constants/InstructionConstants.js
-
-// Instruction Sort Options
 export const INSTRUCTION_SORT_OPTIONS = [
     { key: 'instructionName', label: 'Tên hướng dẫn', type: 'string' },
     { key: 'instructionId', label: 'ID hướng dẫn', type: 'number' },

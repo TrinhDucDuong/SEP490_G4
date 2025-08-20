@@ -1,4 +1,3 @@
-// src/pages/staff/Banner/BannerManagement.jsx
 import React, { useState } from 'react';
 import { Save, RotateCcw, Upload, X } from 'lucide-react';
 import BannerCard from './BannerCard';

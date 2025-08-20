@@ -1,21 +1,17 @@
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/brand`;
 
-// Hàm helper để lấy token từ localStorage hoặc sessionStorage
 const getAuthToken = () => {
     return localStorage.getItem('adminAuthToken') || sessionStorage.getItem('adminAuthToken');
 };
 
-// Hàm helper để tạo headers với Bearer token
 const getAuthHeaders = () => {
     const token = getAuthToken();
     return {
         'accept': '*/*',
-        // Chỉ thêm Content-Type ở những request có JSON, không cần ở multipart/form-data
         ...(token && { 'Authorization': `Bearer ${token}` })
     };
 };
 
-// Hàm helper để xử lý response
 const handleResponse = async (response) => {
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -64,7 +60,6 @@ export const createBrand = async (brandData, brandImage) => {
         });
         formData.append('brandInputData', brandInputBlob);
 
-        // LUÔN LUÔN gửi brandImages field
         if (brandImage && brandImage instanceof File) {
             formData.append('brandImages', brandImage);
         } else {
@@ -72,7 +67,6 @@ export const createBrand = async (brandData, brandImage) => {
             formData.append('brandImages', emptyFile);
         }
 
-        // Chỉ truyền accept + Authorization, không truyền Content-Type với FormData
         const response = await fetch(API_BASE_URL, {
             method: 'POST',
             headers: getAuthHeaders(),
@@ -97,7 +91,6 @@ export const updateBrand = async (brandId, brandData, brandImage) => {
         });
         formData.append('brandInputData', brandInputBlob);
 
-        // LUÔN LUÔN gửi brandImages field với logic xử lý như cũ
         if (brandImage === null) {
             const emptyFile = new File([''], 'delete_image.txt', { type: 'text/plain', lastModified: Date.now() });
             formData.append('brandImages', emptyFile);

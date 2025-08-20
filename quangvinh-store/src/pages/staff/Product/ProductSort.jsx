@@ -1,5 +1,3 @@
-// src/pages/staff/product/ProductSort.jsx
-
 import React from 'react';
 import { ArrowUpDown } from 'lucide-react';
 

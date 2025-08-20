@@ -1,12 +1,9 @@
-// src/utils/api/admin/BannerManagementAPI.js
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/banner`;
 
-// Hàm helper để lấy token từ localStorage hoặc sessionStorage
 const getAuthToken = () => {
     return localStorage.getItem('adminAuthToken') || sessionStorage.getItem('adminAuthToken');
 };
 
-// Hàm helper để tạo headers với Bearer token
 const getAuthHeaders = () => {
     const token = getAuthToken();
     return {
@@ -16,7 +13,6 @@ const getAuthHeaders = () => {
     };
 };
 
-// Hàm helper để tạo headers cho multipart/form-data
 const getAuthHeadersMultipart = () => {
     const token = getAuthToken();
     return {
@@ -25,7 +21,6 @@ const getAuthHeadersMultipart = () => {
     };
 };
 
-// Hàm helper để xử lý response
 const handleResponse = async (response) => {
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -36,7 +31,7 @@ const handleResponse = async (response) => {
     return data;
 };
 
-// GET - Lấy tất cả banners
+// GET
 export const getAllBanners = async () => {
     try {
         const response = await fetch(API_BASE_URL, {

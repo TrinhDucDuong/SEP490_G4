@@ -1,4 +1,3 @@
-// src/pages/staff/Banner/BannerPagination.jsx
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 

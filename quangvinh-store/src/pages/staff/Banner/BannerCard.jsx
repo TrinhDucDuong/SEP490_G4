@@ -1,4 +1,3 @@
-// src/pages/staff/Banner/BannerCard.jsx
 import React from 'react';
 import { BANNER_HELPERS } from '../../../utils/constants/BannerConstants';
 
@@ -21,7 +20,7 @@ const BannerCard = ({ banner, onStatusToggle, disabled = false }) => {
                 />
             </div>
 
-            {/* Status Button - Ở góc phải trên - CẢ O VÀ X ĐỀU CÓ THỂ CLICK */}
+            {/* Status Button */}
             <button
                 onClick={handleStatusToggle}
                 disabled={disabled}
@@ -45,7 +44,7 @@ const BannerCard = ({ banner, onStatusToggle, disabled = false }) => {
                 {banner.isActive ? 'O' : 'X'}
             </button>
 
-            {/* Status Overlay khi banner bị tạm dừng */}
+            {/* Status Overlay */}
             {!banner.isActive && (
                 <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center pointer-events-none">
                     <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">

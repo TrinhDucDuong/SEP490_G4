@@ -1,5 +1,3 @@
-// src/utils/constants/BannerConstants.js
-// Banner Status Options
 export const BANNER_STATUS_OPTIONS = [
     { value: true, label: 'Đang hoạt động', color: 'green' },
     { value: false, label: 'Đã tạm dừng', color: 'red' },
@@ -40,14 +38,13 @@ export const BANNER_HELPERS = {
         });
     },
 
-    // Kiểm tra có thay đổi trạng thái không - FIXED logic
     hasStatusChanges: (activeIds, deActiveIds) => {
         const hasActiveChanges = activeIds && activeIds.length > 0 && !activeIds.every(id => id === 0);
         const hasDeActiveChanges = deActiveIds && deActiveIds.length > 0 && !deActiveIds.every(id => id === 0);
         return hasActiveChanges || hasDeActiveChanges;
     },
 
-    // Validate banner data - UPDATED cho 6 ảnh
+    // Validate banner data
     validateBannerImages: (images) => {
         const errors = [];
 
@@ -76,7 +73,7 @@ export const BANNER_HELPERS = {
     }
 };
 
-// Default values - UPDATED
+// Default values
 export const BANNER_DEFAULTS = {
     NEW_BANNER_IMAGES: [],
     ITEMS_PER_PAGE: 9,
@@ -118,14 +115,14 @@ export const MODAL_SIZES = {
     EXTRA_LARGE: 'xl'
 };
 
-// Validation Rules - UPDATED
+// Validation Rules
 export const BANNER_VALIDATION_RULES = {
     MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
     ALLOWED_TYPES: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
     MAX_FILES_PER_UPLOAD: 6 // UPDATED
 };
 
-// Error Messages - UPDATED
+// Error Messages
 export const BANNER_ERROR_MESSAGES = {
     NO_IMAGES_SELECTED: 'Vui lòng chọn ít nhất một ảnh banner',
     FILE_TOO_LARGE: 'Kích thước file quá lớn (tối đa 5MB)',
