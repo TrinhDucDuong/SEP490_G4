@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Eye, EyeOff, Lock, User, AlertCircle, AlertTriangle, Home } from 'lucide-react';
 import { useAuthForManager } from '../../context/AuthContextForManager';
-// Import logo
 import logoImage from '../../assets/images/logo_white.png';
 
 const LoginForManager = () => {
@@ -14,7 +13,7 @@ const LoginForManager = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const { login, isAuthenticated, loading: authLoading } = useAuthForManager();
+    const { login, isAuthenticated, loading: authLoading, isAdmin } = useAuthForManager();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -23,13 +22,21 @@ const LoginForManager = () => {
         console.log('Auth state:', { isAuthenticated, authLoading });
     }, [isAuthenticated, authLoading]);
 
+    const getDefaultRedirectPath = () => {
+        if (isAdmin()) {
+            return '/admin/dashboard'; // Admin
+        } else {
+            return '/staff/products-management';
+        }
+    };
+
     useEffect(() => {
         if (isAuthenticated && !authLoading) {
             console.log('User is authenticated, redirecting...');
-            const from = location.state?.from?.pathname || '/manager/dashboard';
+            const from = location.state?.from?.pathname || getDefaultRedirectPath();
             navigate(from, { replace: true });
         }
-    }, [isAuthenticated, authLoading, navigate, location]);
+    }, [isAuthenticated, authLoading, navigate, location, isAdmin]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -43,7 +50,6 @@ const LoginForManager = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validation
         if (!formData.username.trim() || !formData.password.trim()) {
             setError('Vui lòng nhập đầy đủ thông tin');
             return;
@@ -54,17 +60,13 @@ const LoginForManager = () => {
 
         try {
             console.log('Attempting login with:', { username: formData.username });
+            await login(formData.username, formData.password, false);
 
-            const result = await login(formData.username, formData.password, false);
-            console.log('login result:', result);
-
-            // Manual redirect if needed
-            const from = location.state?.from?.pathname || '/manager/dashboard';
+            const from = location.state?.from?.pathname || getDefaultRedirectPath();
             console.log('Redirecting to:', from);
             navigate(from, { replace: true });
-
         } catch (err) {
-            console.error('login error:', err);
+            console.error('Login error:', err);
             setError(err.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
         } finally {
             setLoading(false);

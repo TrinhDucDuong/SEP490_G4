@@ -16,101 +16,99 @@ const SidebarForAdmin = () => {
         setShowLogoutModal(false);
     };
 
-    // ✅ Định nghĩa menu items với roles
     const menuItems = [
         // Admin
         {
-            path: '/manager/dashboard',
+            path: '/admin/dashboard',
             label: 'Dashboard',
             icon: BarChart3,
             roles: ['ADMINISTRATOR']
         },
         // Common items - Both Admin & Staff
         {
-            path: '/manager/products-management',
+            path: '/staff/products-management',
             label: 'Quản lý sản phẩm',
             icon: Package,
             roles: ['ADMINISTRATOR', 'STAFF']
         },
         {
-            path: '/manager/category-management',
+            path: '/staff/category-management',
             label: 'Quản lý danh mục',
             icon: Tag,
             roles: ['ADMINISTRATOR', 'STAFF']
         },
         {
-            path: '/manager/brands-management',
+            path: '/staff/brands-management',
             label: 'Quản lý thương hiệu',
             icon: Award,
             roles: ['ADMINISTRATOR', 'STAFF']
         },
         {
-            path: '/manager/orders-management',
+            path: '/staff/orders-management',
             label: 'Quản lý đơn hàng',
             icon: Receipt,
             roles: ['ADMINISTRATOR', 'STAFF']
         },
         {
-            path: '/manager/banner-management',
+            path: '/staff/banner-management',
             label: 'Quản lý banner',
             icon: Megaphone,
             roles: ['ADMINISTRATOR', 'STAFF']
         },
         {
-            path: '/manager/star-rate-management',
+            path: '/staff/star-rate-management',
             label: 'Quản lý đánh giá',
             icon: MessageSquare,
             roles: ['ADMINISTRATOR', 'STAFF']
         },
         {
-            path: '/manager/instruction-management',
+            path: '/staff/instruction-management',
             label: 'Quản lý hướng dẫn',
             icon: FileText,
             roles: ['ADMINISTRATOR', 'STAFF']
         },
         {
-            path: '/manager/policies-management',
+            path: '/staff/policies-management',
             label: 'Quản lý chính sách',
             icon: Settings,
             roles: ['ADMINISTRATOR', 'STAFF']
         },
         {
-            path: '/manager/blogs',
+            path: '/staff/blogs',
             label: 'Quản lý blog',
             icon: FileText,
             roles: ['ADMINISTRATOR', 'STAFF']
         },
         // Admin only items
         {
-            path: '/manager/customers-management',
+            path: '/admin/customers-management',
             label: 'Quản lý khách hàng',
             icon: Users,
             roles: ['ADMINISTRATOR']
         },
         {
-            path: '/manager/employee-management',
+            path: '/admin/employee-management',
             label: 'Quản lý nhân viên',
             icon: UserPlus,
             roles: ['ADMINISTRATOR']
         },
         {
-            path: '/manager/store-management',
+            path: '/admin/store-management',
             label: 'Quản lý cửa hàng',
             icon: Store,
             roles: ['ADMINISTRATOR']
         },
         {
-            path: '/manager/sns-management',
+            path: '/admin/sns-management',
             label: 'Quản lý mạng xã hội',
             icon: MessageSquare,
             roles: ['ADMINISTRATOR']
         }
     ];
 
-    // ✅ Filter menu items dựa trên role
     const filteredMenuItems = menuItems.filter(item => {
-        if (isAdmin()) return true; // Admin xem được tất cả
-        return item.roles.includes('STAFF'); // Staff chỉ xem được items có role STAFF
+        if (isAdmin()) return true;
+        return item.roles.includes('STAFF');
     });
 
     return (
@@ -136,7 +134,7 @@ const SidebarForAdmin = () => {
                     </div>
                 </div>
 
-                {/* Navigation - ✅ Sử dụng filteredMenuItems */}
+                {/* Navigation */}
                 <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
                     {filteredMenuItems.map((item) => {
                         const Icon = item.icon;
