@@ -1,6 +1,11 @@
 package com.fourfingers.quangvinhstore.usecase.interactor.customer;
 
+import com.fourfingers.quangvinhstore.domain.model.Image;
+import com.fourfingers.quangvinhstore.domain.model.customer.Order;
+import com.fourfingers.quangvinhstore.domain.model.customer.OrderDetails;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.ImageMapper;
 import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.OrderMapper;
+import com.fourfingers.quangvinhstore.infrastructure.persistence.mapper.customer.ProductVariantMapper;
 import com.fourfingers.quangvinhstore.infrastructure.repository.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.*;
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ImageType;
@@ -37,16 +42,40 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
     private final AccountRepository accountRepository;
     private final ProductVariantRepository productVariantEntityRepository;
     private final ImageRepository imageRepository;
+    private final ProductVariantMapper productVariantMapper;
+    private final ImageMapper imageMapper;
 
     @Override
+    @Transactional
     public ListOrderOutputData getOrders(UserDetails userDetails) {
         AccountEntity accountEntity = (AccountEntity) userDetails;
         return customerOrderOutputBoundary.convertToListCustomerOrderOutputData(
                 orderRepository.findAllByOwnerAccountId(accountEntity.getAccountId())
                         .stream()
-                        .map(orderMapper::toModel)
+                        .map(this::getOrderInformation)
                         .toList()
         );
+    }
+
+    private Order getOrderInformation(OrderEntity orderEntity) {
+        Order order = orderMapper.toModel(orderEntity);
+        List<OrderDetails> orderDetailsList = orderEntity.getOrderDetails().stream()
+                .map(orderDetailsEntity -> {
+                    return OrderDetails.builder()
+                            .quantity(orderDetailsEntity.getQuantity())
+                            .unitPrice(orderDetailsEntity.getUnitPrice())
+                            .image(getOrderDetailsImage(orderDetailsEntity))
+                            .productVariant(productVariantMapper.toModel(orderDetailsEntity.getProductVariant()))
+                            .build();
+                })
+                .toList();
+        order.setOrderDetails(orderDetailsList);
+        return order;
+    }
+
+    private Image getOrderDetailsImage(OrderDetailsEntity orderDetailsEntity) {
+        Long productId = orderDetailsEntity.getProductVariant().getProduct().getProductId();
+        return imageMapper.toModel(imageRepository.findAllByReferenceIdAndImageType(productId, ImageType.PRODUCT).get(0));
     }
 
     @Override
