@@ -6,7 +6,7 @@ import ProductSearch from './ProductSearch';
 import ProductFilter from './ProductFilter';
 import ProductSort from './ProductSort';
 import ProductTable from './ProductTable';
-import { useProductManagement } from '../../../hooks/admin/useProductManagement.js';
+import { useProductManagement } from '../../../hooks/useProductManagement.js';
 
 const ProductManagement = () => {
     const {

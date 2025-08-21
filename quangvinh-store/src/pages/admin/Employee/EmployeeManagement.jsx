@@ -3,7 +3,7 @@ import EmployeeSearch from './EmployeeSearch';
 import EmployeeFilter from './EmployeeFilter';
 import EmployeeSort from './EmployeeSort';
 import EmployeeTable from './EmployeeTable.jsx';
-import { useEmployeeManagement } from '../../../hooks/admin/useEmployeeManagement.js';
+import { useEmployeeManagement } from '../../../hooks/useEmployeeManagement.js';
 
 const EmployeeManagement = () => {
     const {

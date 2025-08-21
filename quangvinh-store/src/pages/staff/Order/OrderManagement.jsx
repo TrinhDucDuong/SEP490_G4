@@ -4,7 +4,7 @@ import OrderSearch from './OrderSearch';
 import OrderFilter from './OrderFilter';
 import OrderSort from './OrderSort';
 import OrderTable from './OrderTable.jsx';
-import { useOrderManagement } from '../../../hooks/admin/useOrderManagement.js';
+import { useOrderManagement } from '../../../hooks/useOrderManagement.js';
 
 const OrderManagement = () => {
     const {

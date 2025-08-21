@@ -3,7 +3,7 @@ import BrandSearch from './BrandSearch';
 import BrandFilter from './BrandFilter';
 import BrandSort from './BrandSort';
 import BrandTable from './BrandTable.jsx';
-import { useBrandManagement } from '../../../hooks/admin/useBrandManagement.js';
+import { useBrandManagement } from '../../../hooks/useBrandManagement.js';
 
 const BrandManagement = () => {
     const {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { StarRateManagementAPI } from '../../utils/api/Admin/StarRateManagementAPI.js';
-import { STAR_RATE_CONSTANTS } from '../../utils/constants/StarRateConstants.js';
+import { StarRateManagementAPI } from '../utils/api/Admin/StarRateManagementAPI.js';
+import { STAR_RATE_CONSTANTS } from '../utils/constants/StarRateConstants.js';
 
 export const useStarRateManagement = () => {
     const [starRates, setStarRates] = useState([]);

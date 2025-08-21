@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { getAllPolicies, createPolicy, updatePolicy, deletePolicy } from '../../utils/api/Admin/PoliciesManagementAPI.js';
-import { POLICY_HELPERS } from '../../utils/constants/PoliciesConstants.js';
+import { getAllBrands, createBrand, updateBrand, deleteBrand } from '../utils/api/Admin/BrandManagementAPI.js';
+import { BRAND_HELPERS } from '../utils/constants/BrandConstants.js';
 
-export const usePoliciesManagement = () => {
+export const useBrandManagement = () => {
     // Data state
-    const [policies, setPolicies] = useState([]);
-    const [filteredPolicies, setFilteredPolicies] = useState([]);
+    const [brands, setBrands] = useState([]);
+    const [filteredBrands, setFilteredBrands] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -16,22 +16,23 @@ export const usePoliciesManagement = () => {
     // Search, filter, Sort state
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState({
+        status: '',
         startDate: '',
         endDate: '',
         datePreset: ''
     });
-
-    // Mặc định sort theo ngày tạo mới nhất
+    // UPDATED: Mặc định sort theo ngày tạo mới nhất để sản phẩm mới lên đầu
     const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
 
-    // Fetch policies from API
-    const fetchPolicies = async () => {
+    // Fetch brands from API
+    const fetchBrands = async () => {
         setLoading(true);
         setError(null);
+
         try {
-            const result = await getAllPolicies();
+            const result = await getAllBrands();
             if (result.success) {
-                setPolicies(result.data);
+                setBrands(result.data);
             } else {
                 setError(result.error);
             }
@@ -42,100 +43,114 @@ export const usePoliciesManagement = () => {
         }
     };
 
-    // Create policy
-    const createPolicyHandler = async (policyData) => {
+    // Create brand
+    const createBrandHandler = async (brandData, brandImage) => {
         setLoading(true);
         try {
-            const result = await createPolicy(policyData);
+            const result = await createBrand(brandData, brandImage);
             if (result.success) {
-                await fetchPolicies(); // Refresh data
+                await fetchBrands(); // Refresh data
                 return { success: true };
             } else {
                 return { success: false, error: result.error };
             }
         } catch (err) {
-            return { success: false, error: 'Có lỗi xảy ra khi tạo chính sách' };
+            return { success: false, error: 'Có lỗi xảy ra khi tạo thương hiệu' };
         } finally {
             setLoading(false);
         }
     };
 
-    // Update policy
-    const updatePolicyHandler = async (policyId, policyData) => {
+    // Update brand
+    const updateBrandHandler = async (brandId, brandData, brandImage) => {
         setLoading(true);
         try {
-            const result = await updatePolicy(policyId, policyData);
+            const result = await updateBrand(brandId, brandData, brandImage);
             if (result.success) {
-                await fetchPolicies(); // Refresh data
+                await fetchBrands(); // Refresh data
                 return { success: true };
             } else {
                 return { success: false, error: result.error };
             }
         } catch (err) {
-            return { success: false, error: 'Có lỗi xảy ra khi cập nhật chính sách' };
+            return { success: false, error: 'Có lỗi xảy ra khi cập nhật thương hiệu' };
         } finally {
             setLoading(false);
         }
     };
 
-    // Delete policy
-    const deletePolicyHandler = async (policyId) => {
+    // Delete brand
+    const deleteBrandHandler = async (brandId) => {
         setLoading(true);
         try {
-            const result = await deletePolicy(policyId);
+            const result = await deleteBrand(brandId);
             if (result.success) {
-                await fetchPolicies(); // Refresh data
+                await fetchBrands(); // Refresh data
                 return { success: true };
             } else {
                 return { success: false, error: result.error };
             }
         } catch (err) {
-            return { success: false, error: 'Có lỗi xảy ra khi xóa chính sách' };
+            return { success: false, error: 'Có lỗi xảy ra khi xóa thương hiệu' };
         } finally {
             setLoading(false);
         }
     };
 
-    // filter and search logic
+    // filter and search logic - UPDATED for new API structure
     useEffect(() => {
-        let result = [...policies];
+        let result = [...brands];
 
-        // Search
+        // Search - updated to handle nested objects
         if (searchTerm) {
-            result = result.filter(policy =>
-                policy.policyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                policy.policyId.toString().includes(searchTerm) ||
-                policy.policyDescription.toLowerCase().includes(searchTerm.toLowerCase())
+            result = result.filter(brand =>
+                brand.brandName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                brand.brandId.toString().includes(searchTerm) ||
+                BRAND_HELPERS.getUsername(brand.createdBy).toLowerCase().includes(searchTerm.toLowerCase())
             );
+        }
+
+        // filter by status
+        if (filters.status !== '') {
+            const isActive = filters.status === 'true';
+            result = result.filter(brand => brand.isActive === isActive);
         }
 
         // filter by date range
         if (filters.startDate && filters.endDate) {
             const startDate = new Date(filters.startDate);
             const endDate = new Date(filters.endDate);
-            result = result.filter(policy => {
-                const createdDate = new Date(policy.createdAt);
+            result = result.filter(brand => {
+                const createdDate = new Date(brand.createdAt);
                 return createdDate >= startDate && createdDate <= endDate;
             });
         }
 
-        // Sort
+        // Sort - UPDATED để mặc định sort theo ngày tạo mới nhất
         if (sortConfig.key) {
             result.sort((a, b) => {
                 let aValue, bValue;
 
                 switch (sortConfig.key) {
-                    case 'policyName':
-                        aValue = a.policyName.toLowerCase();
-                        bValue = b.policyName.toLowerCase();
+                    case 'brandName':
+                        aValue = a.brandName.toLowerCase();
+                        bValue = b.brandName.toLowerCase();
                         break;
-                    case 'policyId':
-                        aValue = a.policyId;
-                        bValue = b.policyId;
+                    case 'brandId':
+                        aValue = a.brandId;
+                        bValue = b.brandId;
                         break;
                     case 'createdAt':
                         aValue = new Date(a.createdAt);
                         bValue = new Date(b.createdAt);
+                        break;
+                    case 'updatedAt':
+                        aValue = new Date(a.updatedAt || a.createdAt);
+                        bValue = new Date(b.updatedAt || b.createdAt);
+                        break;
+                    case 'creator':
+                        aValue = BRAND_HELPERS.getUsername(a.createdBy).toLowerCase();
+                        bValue = BRAND_HELPERS.getUsername(b.createdBy).toLowerCase();
                         break;
                     default:
                         aValue = a[sortConfig.key];
@@ -149,18 +164,19 @@ export const usePoliciesManagement = () => {
                 }
             });
         } else {
-            // Mặc định sort theo ngày tạo mới nhất
+            // THÊM: Mặc định sort theo ngày tạo mới nhất nếu không có sort config
             result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         }
 
-        setFilteredPolicies(result);
+        setFilteredBrands(result);
         setCurrentPage(1);
-    }, [policies, searchTerm, filters, sortConfig]);
+    }, [brands, searchTerm, filters, sortConfig]);
 
     // Clear filters
     const clearFilters = () => {
         setSearchTerm('');
         setFilters({
+            status: '',
             startDate: '',
             endDate: '',
             datePreset: ''
@@ -218,24 +234,34 @@ export const usePoliciesManagement = () => {
 
     // Get statistics
     const getStatistics = () => {
-        const totalPolicies = policies.length;
-        const filteredCount = filteredPolicies.length;
+        const totalBrands = brands.length;
+        const activeBrands = brands.filter(brand => brand.isActive).length;
+        const inactiveBrands = brands.filter(brand => !brand.isActive).length;
+        const filteredCount = filteredBrands.length;
 
         return {
-            totalPolicies,
+            totalBrands,
+            activeBrands,
+            inactiveBrands,
             filteredCount
         };
     };
 
+    // Get unique creators for filter options
+    const getUniqueCreators = () => {
+        const creators = brands.map(brand => BRAND_HELPERS.getUsername(brand.createdBy));
+        return [...new Set(creators)].filter(creator => creator !== 'Unknown');
+    };
+
     // Load data on mount
     useEffect(() => {
-        fetchPolicies();
+        fetchBrands();
     }, []);
 
     return {
         // Data
-        policies,
-        filteredPolicies,
+        brands,
+        filteredBrands,
         loading,
         error,
 
@@ -253,14 +279,15 @@ export const usePoliciesManagement = () => {
         setSortConfig,
 
         // Actions
-        fetchPolicies,
-        createPolicy: createPolicyHandler,
-        updatePolicy: updatePolicyHandler,
-        deletePolicy: deletePolicyHandler,
+        fetchBrands,
+        createBrand: createBrandHandler,
+        updateBrand: updateBrandHandler,
+        deleteBrand: deleteBrandHandler,
 
         // Utilities
         clearFilters,
         handleDatePresetChange,
-        getStatistics
+        getStatistics,
+        getUniqueCreators
     };
 };
