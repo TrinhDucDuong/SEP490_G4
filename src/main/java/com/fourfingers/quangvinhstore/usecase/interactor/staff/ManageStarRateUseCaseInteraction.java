@@ -60,6 +60,7 @@ public class ManageStarRateUseCaseInteraction implements StarRateManagementInput
                 .createdAt(LocalDateTime.now())
                 .orderDetailsId(replyTo.getOrderDetailsId())
                 .replyTo(replyTo)
+                .starRate(replyTo.getStarRate())
                 .comment(replyStarRateInputData.getComment())
                 .build();
         starRateRepository.save(staffReplyStarRateEntity);

@@ -121,7 +121,6 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.PUT, "/staff/**").hasAuthority("STAFF");
                     auth.requestMatchers(HttpMethod.DELETE, "/staff/**").hasAuthority("STAFF");
                     auth.requestMatchers(HttpMethod.PATCH, "/staff/**").hasAuthority("STAFF");
-                    auth.requestMatchers("/admin/ai-assistant").hasAuthority("ADMINISTRATOR");
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session ->
