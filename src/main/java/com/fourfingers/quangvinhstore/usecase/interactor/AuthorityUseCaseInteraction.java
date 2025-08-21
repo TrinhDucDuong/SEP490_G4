@@ -2,14 +2,18 @@ package com.fourfingers.quangvinhstore.usecase.interactor;
 
 import com.fourfingers.quangvinhstore.infrastructure.repository.AccountRepository;
 import com.fourfingers.quangvinhstore.infrastructure.repository.AuthorityRepository;
+import com.fourfingers.quangvinhstore.infrastructure.repository.ProfileRepository;
 import com.fourfingers.quangvinhstore.infrastructure.schema.AccountEntity;
 import com.fourfingers.quangvinhstore.infrastructure.schema.AuthorityEntity;
+import com.fourfingers.quangvinhstore.infrastructure.schema.ProfileEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -21,8 +25,10 @@ public class AuthorityUseCaseInteraction implements CommandLineRunner {
     private final AccountRepository accountRepository;
 
     private final PasswordEncoder passwordEncoder;
+    private final ProfileRepository profileRepository;
 
     @Override
+    @Transactional
     public void run(String... args) {
         createRoleIfNotExists("CUSTOMER");
         createRoleIfNotExists("STAFF");
@@ -47,14 +53,28 @@ public class AuthorityUseCaseInteraction implements CommandLineRunner {
             admin.setUsername(adminUsername);
             admin.setPassword(passwordEncoder.encode(adminPassword)); // passwordEncoder là bean của Spring Security
             admin.setActive(true);
-//            admin.setEmail("");
 
             AuthorityEntity adminRole = authorityRepository.findById("ADMINISTRATOR")
                     .orElseThrow(() -> new RuntimeException("Role ADMINISTRATOR chưa tồn tại"));
 
-            admin.setAuthorities(List.of(adminRole));
+            AuthorityEntity staffRole = authorityRepository.findById("STAFF")
+                    .orElseThrow(() -> new RuntimeException("Role STAFF chưa tồn tại"));
 
-            accountRepository.save(admin);
+            AuthorityEntity customerRole = authorityRepository.findById("CUSTOMER")
+                    .orElseThrow(() -> new RuntimeException("Role CUSTOMER chưa tồn tại"));
+
+            admin.setAuthorities(List.of(adminRole, staffRole, customerRole));
+
+            AccountEntity accountAdmin = accountRepository.save(admin);
+
+            ProfileEntity needToCreateProfileEntity = ProfileEntity.builder()
+                    .account(accountAdmin)
+                    .firstName("Quang")
+                    .lastName("Vinh")
+                    .phoneNumber("0984073408")
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            profileRepository.save(needToCreateProfileEntity);
         }
     }
 }

@@ -56,4 +56,7 @@ public class ProductVariantEntity {
 
     @Column(name = "quantity")
     private Long quantity;
+
+    @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1")
+    private Boolean isActive;
 }
