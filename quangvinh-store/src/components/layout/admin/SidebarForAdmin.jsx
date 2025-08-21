@@ -75,7 +75,7 @@ const SidebarForAdmin = () => {
         },
         {
             path: '/staff/blogs',
-            label: 'Quản lý blog',
+            label: 'Quản lý bài viết',
             icon: FileText,
             roles: ['ADMINISTRATOR', 'STAFF']
         },
