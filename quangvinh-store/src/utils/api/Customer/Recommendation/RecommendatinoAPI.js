@@ -1,7 +1,7 @@
 export const RecommendationAPI = {
     getRecommendedProducts: async () => {
         try {
-            const response = await fetch('http://localhost:9999/recommendation/cache', {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/recommendation/cache`, {
                 method: 'POST',
                 headers: {
                     'Accept': '*/*'

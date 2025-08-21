@@ -1,4 +1,3 @@
-// src/pages/Staff/Order/OrderModal.jsx
 import React, { useState } from 'react';
 import Modals from '../../../components/common/Admin/Modals';
 import { ORDER_HELPERS, ORDER_STATUS_OPTIONS } from '../../../utils/constants/OrderConstants';
@@ -14,7 +13,6 @@ const OrderModal = ({
     const [selectedOrderStatus, setSelectedOrderStatus] = useState('');
     const [toast, setToast] = useState({ show: false, message: '', type: '' });
 
-    // Show toast function
     const showToast = (message, type = 'success') => {
         setToast({ show: true, message, type });
         setTimeout(() => {
@@ -22,7 +20,6 @@ const OrderModal = ({
         }, 3000);
     };
 
-    // Validate trạng thái transition
     const validateStatusTransition = (currentStatus, newStatus) => {
         const statusFlow = {
             'PROCESSING': ['SHIPPING', 'CANCELED'],
@@ -34,7 +31,6 @@ const OrderModal = ({
         return validTransitions.includes(newStatus);
     };
 
-    // Get validation message
     const getValidationMessage = (currentStatus, newStatus) => {
         const messages = {
             'PROCESSING_DELIVERED': 'Đơn hàng đang xử lý không thể chuyển thẳng thành đã giao. Vui lòng chuyển qua trạng thái đang giao hàng trước.',
@@ -53,17 +49,14 @@ const OrderModal = ({
         return 'Không thể thay đổi trạng thái này.';
     };
 
-    // Handle update status
     const handleUpdateStatus = async () => {
         if (!selectedOrder || !selectedOrderStatus) return;
 
-        // Kiểm tra nếu trạng thái không thay đổi
         if (selectedOrderStatus === selectedOrder.orderStatus) {
             showToast('Vui lòng chọn trạng thái khác để cập nhật.', 'error');
             return;
         }
 
-        // Validate trạng thái transition
         if (!validateStatusTransition(selectedOrder.orderStatus, selectedOrderStatus)) {
             const message = getValidationMessage(selectedOrder.orderStatus, selectedOrderStatus);
             showToast(message, 'error');
@@ -83,7 +76,6 @@ const OrderModal = ({
         }
     };
 
-    // Reset selected status khi mở modal
     React.useEffect(() => {
         if (showUpdateModal && selectedOrder) {
             setSelectedOrderStatus(selectedOrder.orderStatus);

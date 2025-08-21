@@ -1,6 +1,3 @@
-// src/utils/constants/index.js
-
-// Re-export trực tiếp cho convenience
 export * from './ProductConstants';
 export * from './BrandConstants';
 export * from './CategoryConstants';

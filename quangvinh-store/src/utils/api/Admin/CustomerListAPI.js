@@ -1,6 +1,5 @@
-const API_BASE_URL = 'http://localhost:9999/admin/customer-account';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/admin/customer-account`;
 
-// Function để lấy Bearer Token với nhiều key từ localStorage/sessionStorage
 const getAuthToken = () => {
     const token = localStorage.getItem('adminAuthToken') ||
         sessionStorage.getItem('adminAuthToken') ||
@@ -38,10 +37,9 @@ const createAuthHeaders = (additionalHeaders = {}) => {
     return headers;
 };
 
-// Function xử lý lỗi authentication
 const handleAuthError = (response) => {
     if (response.status === 401 || response.status === 403) {
-        console.error('🚫 Bearer Token expired or invalid');
+        console.error('Bearer Token expired or invalid');
         // Clear all possible token keys
         localStorage.removeItem('adminAuthToken');
         sessionStorage.removeItem('adminAuthToken');
@@ -57,12 +55,11 @@ const handleAuthError = (response) => {
     }
 };
 
-// GET - Lấy tất cả customers với Bearer Token
+// GET
 export const getAllCustomers = async () => {
     try {
         console.log('👥 Fetching all customers from:', API_BASE_URL);
 
-        // Tạo headers với Bearer Token
         const headers = createAuthHeaders();
 
         const response = await fetch(API_BASE_URL, {
@@ -94,7 +91,6 @@ export const getAllCustomers = async () => {
     }
 };
 
-// GET - Lấy customer theo ID với Bearer Token
 export const getCustomerById = async (customerId) => {
     try {
         console.log('🔍 Fetching customer by ID:', customerId);

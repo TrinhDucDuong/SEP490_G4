@@ -1,5 +1,3 @@
-// src/hooks/useOrderManagement.js
-
 import { useState, useEffect } from 'react';
 import { getAllOrders, updateOrderStatus, deleteOrder } from '../utils/api/Admin/OrderManagementAPI.js';
 import { ORDER_HELPERS } from '../utils/constants/OrderConstants';

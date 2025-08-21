@@ -1,4 +1,3 @@
-// src/components/common/MapSelector.jsx
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import { Search } from 'lucide-react';

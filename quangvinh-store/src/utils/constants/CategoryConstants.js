@@ -1,4 +1,3 @@
-// src/utils/constants/CategoryConstants.js
 export const CATEGORY_STATUS_OPTIONS = [
     { value: true, label: 'Đang bán', color: 'green' },
     { value: false, label: 'Ngừng bán', color: 'red' }

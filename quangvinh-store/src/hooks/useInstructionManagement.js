@@ -1,4 +1,3 @@
-// src/hooks/useInstructionManagement.js
 import { useState, useEffect } from 'react';
 import { getAllInstructions, createInstruction, updateInstruction, deleteInstruction } from '../utils/api/Admin/InstructionManagementAPI.js';
 import { INSTRUCTION_HELPERS } from '../utils/constants/InstructionConstants';
@@ -22,7 +21,6 @@ export const useInstructionManagement = () => {
         datePreset: ''
     });
 
-    // Mặc định sort theo ngày tạo mới nhất
     const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
 
     // Fetch instructions from API

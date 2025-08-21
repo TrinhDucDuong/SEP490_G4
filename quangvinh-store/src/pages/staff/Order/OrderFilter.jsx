@@ -1,4 +1,3 @@
-// src/pages/staff/order/OrderFilter.jsx
 import React from 'react';
 import { ChevronDown, X } from 'lucide-react';
 import DateRangePicker from '../../../components/common/admin/DateRangePicker';
@@ -76,7 +75,7 @@ const OrderFilter = ({ filters, onFilterChange, onClearFilters }) => {
                 {hasActiveFilters && (
                     <button
                         onClick={onClearFilters}
-                        className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 transition-colors"
+                        className="flex items-center space-x-1 px-2 py-2 text-sm font-medium text-red-600 "
                     >
                         <X size={14} />
                         <span>Xóa bộ lọc</span>

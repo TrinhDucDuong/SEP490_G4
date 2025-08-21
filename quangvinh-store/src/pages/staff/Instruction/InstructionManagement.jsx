@@ -1,4 +1,3 @@
-// src/pages/Staff/Instruction/InstructionManagement.jsx
 import React from 'react';
 import InstructionSearch from './InstructionSearch';
 import InstructionFilter from './InstructionFilter';

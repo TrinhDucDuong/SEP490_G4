@@ -112,7 +112,6 @@ const PoliciesTable = ({
         }
     };
 
-    // Table columns configuration - CẬP NHẬT CĂN GIỮA
     const columns = [
         {
             key: 'stt',

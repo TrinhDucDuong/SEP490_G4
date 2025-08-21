@@ -1,4 +1,3 @@
-// policy Sort Options
 export const POLICY_SORT_OPTIONS = [
     { key: 'policyName', label: 'Tên chính sách', type: 'string' },
     { key: 'policyId', label: 'ID chính sách', type: 'number' },

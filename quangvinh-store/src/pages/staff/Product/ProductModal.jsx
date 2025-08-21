@@ -1,4 +1,3 @@
-// src/pages/staff/product/ProductModal.jsx
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Trash2, Upload } from 'lucide-react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
@@ -22,19 +21,16 @@ const ProductModal = ({
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
-    // Hàm chuyển URL ảnh thành File (nếu backend chỉ nhận file)
     async function urlToFile(url, filename = 'image.jpg') {
         const response = await fetch(url);
         const blob = await response.blob();
         return new File([blob], filename, { type: blob.type });
     }
 
-    // FIXED: Initialize form data với xử lý màu sắc hiện tại và existing image URLs
     useEffect(() => {
         if (mode === 'edit' && initialData) {
-            console.log('🔧 Edit mode - Initial data:', initialData);
+            console.log('Edit mode - Initial data:', initialData);
 
-            // Xử lý brandId từ nested object hoặc trực tiếp
             let brandId = '';
             if (initialData.brandId) {
                 brandId = initialData.brandId;
@@ -42,7 +38,6 @@ const ProductModal = ({
                 brandId = initialData.brand.brandId;
             }
 
-            // Xử lý categoryId từ nested object hoặc trực tiếp
             let categoryId = '';
             if (initialData.categoryId) {
                 categoryId = initialData.categoryId;
@@ -50,7 +45,6 @@ const ProductModal = ({
                 categoryId = initialData.category.categoryId;
             }
 
-            // FIXED: Xử lý productVariants với màu sắc hiện tại
             let processedVariants = [];
             if (initialData.productVariants && initialData.productVariants.length > 0) {
                 processedVariants = initialData.productVariants.map(variant => {
@@ -81,7 +75,6 @@ const ProductModal = ({
                 productVariants: processedVariants
             });
 
-            // FIXED: Set existing images for preview và lưu URLs
             const newPreviewImages = [null, null, null, null, null, null];
             const imageUrls = [];
 
@@ -101,9 +94,8 @@ const ProductModal = ({
             setExistingImageUrls(imageUrls); // FIXED: Lưu existing URLs
             setProductImages([null, null, null, null, null, null]);
 
-            console.log('📷 Existing image URLs saved:', imageUrls);
+            console.log('Existing image URLs saved:', imageUrls);
         } else {
-            // Reset form cho CREATE mode
             setFormData(PRODUCT_DEFAULTS.NEW_PRODUCT);
             setPreviewImages([null, null, null, null, null, null]);
             setProductImages([null, null, null, null, null, null]);
@@ -198,7 +190,6 @@ const ProductModal = ({
         console.log('Mode:', mode);
         console.log('Raw form data:', formData);
 
-        // Parse và validate dữ liệu đúng cách cho cả CREATE và UPDATE
         const parsedFormData = {
             ...formData,
             unitPrice: PRODUCT_HELPERS.parsePrice(formData.unitPrice),
@@ -208,7 +199,7 @@ const ProductModal = ({
 
         console.log('Parsed form data for', mode, ':', parsedFormData);
 
-        // Validation tốt hơn
+        // Validation
         const validationErrors = {};
 
         if (!parsedFormData.productName?.trim()) {
@@ -252,7 +243,6 @@ const ProductModal = ({
 
         setLoading(true);
         try {
-            // Xử lý logic gửi ảnh: chỉ gửi khi có ảnh mới trong UPDATE, luôn gửi trong CREATE
 
             let shouldSendImages = false;
             let imagesToSend = [];
@@ -262,12 +252,8 @@ const ProductModal = ({
                 imagesToSend = productImages.filter(img => img instanceof File);
             } else {
                 if (hasNewImages) {
-                    // Có ảnh mới, gửi ảnh mới
                     imagesToSend = productImages.filter(img => img instanceof File);
                 } else {
-                    // Không có ảnh mới, gửi lại ảnh hiện tại
-                    // Nếu backend nhận URL: imagesToSend = existingImageUrls;
-                    // Nếu backend chỉ nhận file:
                     imagesToSend = await Promise.all(
                         existingImageUrls.map(async (url, idx) => await urlToFile(url, `old_${idx}.jpg`))
                     );

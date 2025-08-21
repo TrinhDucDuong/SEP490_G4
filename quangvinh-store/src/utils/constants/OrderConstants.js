@@ -1,6 +1,3 @@
-// src/utils/constants/OrderConstants.js
-
-// Order Status Options
 export const ORDER_STATUS_OPTIONS = [
     { value: '', label: 'Tất cả trạng thái' },
     { value: 'PROCESSING', label: 'Đang xử lý' },

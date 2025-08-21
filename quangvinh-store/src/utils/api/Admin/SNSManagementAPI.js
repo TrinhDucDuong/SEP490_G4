@@ -1,8 +1,5 @@
-// src/utils/api/Admin/SNSManagementAPI.js
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/admin/sns`;
 
-const API_BASE_URL = 'http://localhost:9999/admin/sns';
-
-// Function để lấy token xác thực (cập nhật theo pattern của employee management)
 const getAuthToken = () => {
     const token = localStorage.getItem('adminAuthToken') ||
         sessionStorage.getItem('adminAuthToken') ||
@@ -21,7 +18,6 @@ const getAuthToken = () => {
     return token;
 };
 
-// Function để tạo headers với Bearer Token
 const createAuthHeaders = (additionalHeaders = {}) => {
     const token = getAuthToken();
     const headers = {
@@ -40,11 +36,9 @@ const createAuthHeaders = (additionalHeaders = {}) => {
     return headers;
 };
 
-// Function xử lý lỗi authentication
 const handleAuthError = (response) => {
     if (response.status === 401 || response.status === 403) {
         console.error('Bearer Token expired or invalid');
-        // Clear all possible token keys
         localStorage.removeItem('adminAuthToken');
         sessionStorage.removeItem('adminAuthToken');
         localStorage.removeItem('authToken');
@@ -68,7 +62,6 @@ export const getAllSNS = async () => {
             headers: createAuthHeaders()
         });
 
-        // Xử lý lỗi authentication trước khi check response.ok
         handleAuthError(response);
 
         if (!response.ok) {
@@ -158,9 +151,8 @@ export const updateSNS = async (snsId, snsData) => {
     try {
         console.log(`Updating SNS ${snsId}:`, snsData);
 
-        // Sử dụng PUT method và thêm snsId vào URL thay vì body
         const response = await fetch(`${API_BASE_URL}/${snsId}`, {
-            method: 'PUT', // Đổi từ POST thành PUT
+            method: 'POST', // Đổi từ POST thành PUT
             headers: createAuthHeaders(),
             body: JSON.stringify({
                 snsName: snsData.snsName,

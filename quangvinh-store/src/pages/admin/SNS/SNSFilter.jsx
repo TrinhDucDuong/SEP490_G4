@@ -1,4 +1,3 @@
-// src/pages/admin/SNS/SNSFilter.jsx
 import React from 'react';
 import { ChevronDown, X } from 'lucide-react';
 import { SNS_STATUS_OPTIONS } from '../../../utils/constants/SNSConstants.js';

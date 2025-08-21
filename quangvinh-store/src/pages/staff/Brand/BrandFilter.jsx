@@ -15,7 +15,7 @@ const BrandFilter = ({ filters, onFilterChange, onClearFilters }) => {
     const hasActiveFilters = Object.values(filters).some(value => value !== '');
 
     return (
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+        <div className="mb-6 p-4 bg-white-50 rounded-lg">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-gray-700">Bộ lọc</h3>
                 {hasActiveFilters && (

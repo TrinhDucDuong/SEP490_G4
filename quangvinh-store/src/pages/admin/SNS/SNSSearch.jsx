@@ -1,4 +1,3 @@
-// src/pages/admin/SNS/SNSSearch.jsx
 import React from 'react';
 import SearchBar from '../../../components/common/admin/SearchBar.jsx';
 

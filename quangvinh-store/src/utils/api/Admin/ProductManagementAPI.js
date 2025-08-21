@@ -1,9 +1,6 @@
-// src/utils/api/ProductManagementAPI.js
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/product`;
+const COLOR_API_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/color`;
 
-const API_BASE_URL = 'http://localhost:9999/staff/product';
-const COLOR_API_URL = 'http://localhost:9999/staff/color';
-
-// Function để lấy Bearer Token với key đúng từ AuthContext
 const getAuthToken = () => {
     const token = localStorage.getItem('adminAuthToken') ||
         sessionStorage.getItem('adminAuthToken') ||
@@ -21,7 +18,6 @@ const getAuthToken = () => {
     return token;
 };
 
-// Function để tạo headers với Bearer Token
 const createAuthHeaders = (additionalHeaders = {}) => {
     const token = getAuthToken();
     const headers = {
@@ -39,7 +35,6 @@ const createAuthHeaders = (additionalHeaders = {}) => {
     return headers;
 };
 
-// Function xử lý lỗi authentication
 const handleAuthError = (response) => {
     if (response.status === 401) {
         console.error('Bearer Token expired or invalid');
@@ -57,7 +52,7 @@ const handleAuthError = (response) => {
     }
 };
 
-// GET - Lấy tất cả products với Bearer Token
+// GET
 export const getAllProducts = async () => {
     try {
         console.log('Fetching all products from:', API_BASE_URL);
@@ -93,7 +88,7 @@ export const getAllProducts = async () => {
     }
 };
 
-// GET - Lấy chi tiết sản phẩm theo ID với Bearer Token
+// GET
 export const getProductById = async (productId) => {
     try {
         console.log('Fetching product by ID:', productId);
@@ -116,12 +111,12 @@ export const getProductById = async (productId) => {
         console.log('product detail response:', data);
         return { success: true, data: data.product || data };
     } catch (error) {
-        console.error('💥 Error fetching product by ID:', error);
+        console.error('Error fetching product by ID:', error);
         return { success: false, error: error.message };
     }
 };
 
-// GET - Lấy tất cả colors với Bearer Token
+// GET
 export const getAllColors = async () => {
     try {
         console.log('Fetching all colors from:', COLOR_API_URL);
@@ -159,13 +154,12 @@ export const getAllColors = async () => {
     }
 };
 
-// POST - Tạo sản phẩm mới với Bearer Token
+// POST
 export const createProduct = async (productData, productImages) => {
     try {
         console.log('Creating product with data:', productData);
         console.log('Number of images:', productImages?.length || 0);
 
-        // Validation trước khi gửi
         if (!productData.brandId || !productData.categoryId) {
             return {
                 success: false,
@@ -213,7 +207,6 @@ export const createProduct = async (productData, productImages) => {
         });
         formData.append('productInputData', productInputBlob);
 
-        // Xử lý images cho CREATE - vẫn gửi empty file nếu không có ảnh
         if (productImages && productImages.length > 0) {
             productImages.forEach((image) => {
                 if (image instanceof File) {
@@ -255,14 +248,12 @@ export const createProduct = async (productData, productImages) => {
     }
 };
 
-// FIXED: PUT - Cập nhật sản phẩm với xử lý ảnh cũ thành File
 export const updateProduct = async (productId, productData, productImages, existingImages) => {
     try {
         console.log('Updating product:', productId, 'with data:', productData);
         console.log('Number of new images:', productImages?.length || 0);
         console.log('Existing images:', existingImages);
 
-        // Validation trước khi gửi
         if (!productData.brandId || !productData.categoryId) {
             return {
                 success: false,
@@ -270,7 +261,6 @@ export const updateProduct = async (productId, productData, productImages, exist
             };
         }
 
-        // Lấy Bearer Token
         const token = localStorage.getItem('adminAuthToken') ||
             sessionStorage.getItem('adminAuthToken') ||
             localStorage.getItem('authToken') ||
@@ -308,7 +298,6 @@ export const updateProduct = async (productId, productData, productImages, exist
         });
         formData.append('productInputData', productInputBlob);
 
-        // CHỈ gửi file nếu thực sự có file mới
         if (productImages && productImages.length > 0) {
             productImages.forEach((image) => {
                 if (image instanceof File) {
@@ -317,11 +306,9 @@ export const updateProduct = async (productId, productData, productImages, exist
             });
         }
 
-        // KHÔNG append file rỗng hoặc bất kỳ thứ gì nếu không có ảnh mới
         const headers = {
             'accept': '*/*',
             'Authorization': `Bearer ${getAuthToken()}`
-            // KHÔNG set Content-Type khi dùng FormData
         };
 
         const response = await fetch(`${API_BASE_URL}/${productId}`, {
@@ -357,7 +344,7 @@ export const updateProduct = async (productId, productData, productImages, exist
     }
 };
 
-// DELETE - Xóa sản phẩm với Bearer Token
+// DELETE
 export const deleteProduct = async (productId) => {
     try {
         console.log('Deleting product:', productId);

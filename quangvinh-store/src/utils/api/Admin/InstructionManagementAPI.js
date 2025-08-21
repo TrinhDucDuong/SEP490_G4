@@ -1,12 +1,9 @@
-// src/utils/api/Admin/InstructionManagementAPI.js
-const API_BASE_URL = 'http://localhost:9999/staff/instruction';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/instruction`;
 
-// Hàm helper để lấy token từ localStorage hoặc sessionStorage
 const getAuthToken = () => {
     return localStorage.getItem('adminAuthToken') || sessionStorage.getItem('adminAuthToken');
 };
 
-// Hàm helper để tạo headers với Bearer token
 const getAuthHeaders = () => {
     const token = getAuthToken();
     return {
@@ -16,7 +13,6 @@ const getAuthHeaders = () => {
     };
 };
 
-// Hàm helper để xử lý response
 const handleResponse = async (response) => {
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

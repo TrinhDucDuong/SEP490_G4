@@ -1,6 +1,3 @@
-// src/utils/constants/SNSConstants.js
-
-// SNS Status Options
 export const SNS_STATUS_OPTIONS = [
     { value: true, label: 'Đang hoạt động', color: 'green' },
     { value: false, label: 'Ngừng hoạt động', color: 'red' }
