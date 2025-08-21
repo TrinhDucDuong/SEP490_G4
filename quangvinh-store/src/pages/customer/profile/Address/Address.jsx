@@ -53,7 +53,7 @@ function Address() {
 
     const handleUpdate = async (updated) => {
         try {
-            const response = await fetch('http://localhost:9999/addresses', {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addresses`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ function Address() {
     const handleDeleteConfirmed = async () => {
         if (!confirmDelete) return;
         try {
-            const response = await fetch(`http://localhost:9999/addresses?shippingAddressId=${confirmDelete.shippingAddressId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addresses?shippingAddressId=${confirmDelete.shippingAddressId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -107,7 +107,7 @@ function Address() {
 
     const handleSetMain = async (addressId) => {
         try {
-            const response = await fetch(`http://localhost:9999/addresses?shippingAddressId=${addressId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addresses?shippingAddressId=${addressId}`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,

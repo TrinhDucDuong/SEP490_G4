@@ -8,10 +8,10 @@ import {
     updateProduct,
     deleteProduct,
     getProductById // Thêm import này
-} from '../utils/api/Admin/ProductManagementAPI';
-import { getAllBrands } from '../utils/api/Admin/BrandManagementAPI';
-import { getAllCategories } from '../utils/api/Admin/CategoryManagementAPI';
-import { PRODUCT_HELPERS } from '../utils/constants/ProductConstants';
+} from '../../utils/api/Admin/ProductManagementAPI.js';
+import { getAllBrands } from '../../utils/api/Admin/BrandManagementAPI.js';
+import { getAllCategories } from '../../utils/api/Admin/CategoryManagementAPI.js';
+import { PRODUCT_HELPERS } from '../../utils/constants/ProductConstants.js';
 
 export const useProductManagement = () => {
     // Data state

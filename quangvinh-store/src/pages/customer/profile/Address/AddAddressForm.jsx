@@ -34,7 +34,6 @@ function AddAddressForm({ onAdd, onCancel }) {
                 .then(setWards)
                 .catch(error => {
                     console.error('Lỗi khi tải danh sách xã:', error);
-                    toast.error('Không thể tải danh sách xã');
                 });
         } else {
             setWards([]);
@@ -83,44 +82,47 @@ function AddAddressForm({ onAdd, onCancel }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-5 bg-white p-6 rounded-xl shadow-sm w-full max-w-3xl mx-auto">
-            <h3 className="text-lg font-semibold text-gray-900">Thêm địa chỉ mới</h3>
+        <form
+            onSubmit={handleSubmit}
+            className="space-y-4 sm:space-y-5 bg-white p-4 sm:p-6 md:p-8 rounded-xl shadow-sm w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto"
+        >
+            <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">Thêm địa chỉ mới</h3>
 
             {/* Họ tên */}
             <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700 mb-1">Họ tên</label>
+                <label className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Họ tên</label>
                 <input
                     name="name"
                     value={form.name}
                     onChange={handleChange}
                     placeholder="Nhập họ tên"
-                    className="w-full border border-gray-300 rounded-full py-2 px-4 text-sm"
+                    className="w-full border border-gray-300 rounded-full py-2 px-3 sm:px-4 text-xs sm:text-sm"
                     required
                 />
             </div>
 
             {/* Số điện thoại */}
             <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+                <label className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
                 <input
                     name="phoneNumber"
                     value={form.phoneNumber}
                     onChange={handleChange}
                     placeholder="Nhập số điện thoại"
-                    className="w-full border border-gray-300 rounded-full py-2 px-4 text-sm"
+                    className="w-full border border-gray-300 rounded-full py-2 px-3 sm:px-4 text-xs sm:text-sm"
                     required
                 />
             </div>
 
             {/* Chọn tỉnh và xã */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700 mb-1">Tỉnh / Thành phố</label>
+                    <label className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Tỉnh / Thành phố</label>
                     <select
                         name="province"
                         value={form.province}
                         onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-full py-2 px-3 text-sm"
+                        className="w-full border border-gray-300 rounded-full py-2 px-3 sm:px-3 text-xs sm:text-sm"
                         required
                     >
                         <option value="">Chọn tỉnh</option>
@@ -131,12 +133,12 @@ function AddAddressForm({ onAdd, onCancel }) {
                 </div>
 
                 <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700 mb-1">Phường / Xã</label>
+                    <label className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Phường / Xã</label>
                     <select
                         name="ward"
                         value={form.ward}
                         onChange={handleChange}
-                        className="w-full border border-gray-300 rounded-full py-2 px-3 text-sm"
+                        className="w-full border border-gray-300 rounded-full py-2 px-3 sm:px-3 text-xs sm:text-sm"
                         required
                     >
                         <option value="">Chọn xã</option>
@@ -149,23 +151,23 @@ function AddAddressForm({ onAdd, onCancel }) {
 
             {/* Địa chỉ chi tiết */}
             <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700 mb-1">Địa chỉ chi tiết</label>
+                <label className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Địa chỉ chi tiết</label>
                 <input
                     name="exactAddress"
                     value={form.exactAddress}
                     onChange={handleChange}
                     placeholder="Số nhà, tên đường..."
-                    className="w-full border border-gray-300 rounded-full py-2 px-4 text-sm"
+                    className="w-full border border-gray-300 rounded-full py-2 px-3 sm:px-4 text-xs sm:text-sm"
                     required
                 />
             </div>
 
             {/* Loại địa chỉ */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Loại địa chỉ</label>
-                <div className="flex gap-6">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Loại địa chỉ</label>
+                <div className="flex flex-wrap gap-4 sm:gap-6">
                     {["Nhà riêng", "Văn phòng", "Khác"].map((type) => (
-                        <label key={type} className="flex items-center gap-2 text-sm">
+                        <label key={type} className="flex items-center gap-2 text-xs sm:text-sm">
                             <input
                                 type="radio"
                                 name="type"
@@ -181,7 +183,7 @@ function AddAddressForm({ onAdd, onCancel }) {
             </div>
 
             {/* Đặt làm địa chỉ chính */}
-            <label className="flex items-center gap-2 text-sm text-gray-700">
+            <label className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
                 <input
                     type="checkbox"
                     name="main"
@@ -193,17 +195,17 @@ function AddAddressForm({ onAdd, onCancel }) {
             </label>
 
             {/* Nút */}
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <button
                     type="submit"
-                    className="bg-green-300 text-green-800 px-6 py-1 rounded-full text-sm font-medium hover:bg-green-600 hover:text-white transition"
+                    className="bg-green-300 text-green-800 px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-green-600 hover:text-white transition w-full sm:w-auto"
                 >
                     Lưu
                 </button>
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="bg-red-300 text-red-800 px-6 py-1 rounded-full text-sm font-medium hover:bg-red-600 hover:text-white transition"
+                    className="bg-red-300 text-red-800 px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-red-600 hover:text-white transition w-full sm:w-auto"
                 >
                     Hủy
                 </button>

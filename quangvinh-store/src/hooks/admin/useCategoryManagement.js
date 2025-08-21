@@ -1,8 +1,8 @@
 // src/hooks/useCategoryManagement.js
 import { useState, useEffect } from 'react';
 // SỬA: Import từng function riêng lẻ để tránh lỗi export
-import { getAllCategories, createCategory, updateCategory, deleteCategory } from '../utils/api/Admin/CategoryManagementAPI.js';
-import { CATEGORY_HELPERS } from '../utils/constants/CategoryConstants';
+import { getAllCategories, createCategory, updateCategory, deleteCategory } from '../../utils/api/Admin/CategoryManagementAPI.js';
+import { CATEGORY_HELPERS } from '../../utils/constants/CategoryConstants.js';
 
 export const useCategoryManagement = () => {
     // Data state - ĐỒNG NHẤT với Brand

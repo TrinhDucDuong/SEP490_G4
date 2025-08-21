@@ -2,7 +2,7 @@ import React from 'react';
 import CustomerSearch from './CustomerSearch';
 import CustomerSort from './CustomerSort';
 import CustomerTable from './CustomerTable';
-import {useCustomerList} from '../../../hooks/useCustomerList';
+import {useCustomerList} from '../../../hooks/admin/useCustomerList.js';
 
 const CustomerList = () => {
     const {

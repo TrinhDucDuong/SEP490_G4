@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useStarRateManagement } from '../../../hooks/useStarRateManagement';
+import { useStarRateManagement } from '../../../hooks/admin/useStarRateManagement.js';
 import StarRateSearch from './StarRateSearch';
 import StarRateFilter from './StarRateFilter';
 import StarRateSort from './StarRateSort';

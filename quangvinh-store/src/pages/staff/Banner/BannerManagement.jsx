@@ -5,7 +5,7 @@ import BannerCard from './BannerCard';
 import BannerFilter from './BannerFilter';
 import BannerPagination from './BannerPagination';
 import Modals from '../../../components/common/admin/Modals';
-import { useBannerManagement } from '../../../hooks/useBannerManagement';
+import { useBannerManagement } from '../../../hooks/admin/useBannerManagement.js';
 import { BANNER_HELPERS, BANNER_SUCCESS_MESSAGES, BANNER_ERROR_MESSAGES, BANNER_DEFAULTS } from '../../../utils/constants/BannerConstants';
 import { toast } from "react-toastify";
 

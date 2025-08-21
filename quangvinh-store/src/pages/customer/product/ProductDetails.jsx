@@ -20,7 +20,6 @@ const ProductDetail = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Lấy productId từ location.state (khi navigate bằng state) hoặc từ sessionStorage (fallback khi reload)
     const stateProductId = location.state?.productId;
     const [productId, setProductId] = useState(() => {
         if (stateProductId) {
@@ -30,7 +29,6 @@ const ProductDetail = () => {
         return sessionStorage.getItem('productId');
     });
 
-    // Nếu location.state thay đổi (vd: navigate mới với state), cập nhật sessionStorage và state
     useEffect(() => {
         if (stateProductId && stateProductId !== productId) {
             try { sessionStorage.setItem('productId', stateProductId); } catch (e) { /* ignore */ }
@@ -319,9 +317,8 @@ const ProductDetail = () => {
 
                     <div className="text-sm text-gray-600 border-t pt-4 space-y-3">
                         <div className="flex items-start gap-2"><FontAwesomeIcon icon={faTruck} className="text-teal-500 mt-1" /><p>Miễn phí vận chuyển toàn quốc với đơn từ 500.000₫.</p></div>
-                        <div className="flex items-start gap-2"><FontAwesomeIcon icon={faBoxesPacking} className="text-teal-500 mt-1" /><p>Đổi trả dễ dàng trong vòng 7 ngày nếu sản phẩm lỗi.</p></div>
                         <div className="flex items-start gap-2"><FontAwesomeIcon icon={faThumbsUp} className="text-teal-500 mt-1" /><p>Cam kết 100% chính hãng và chất lượng cao.</p></div>
-                        <div className="flex items-start gap-2"><FontAwesomeIcon icon={faPhoneVolume} className="text-teal-500 mt-1" /><p>Hỗ trợ khách hàng 24/7 qua hotline: 1800 1234.</p></div>
+                        <div className="flex items-start gap-2"><FontAwesomeIcon icon={faPhoneVolume} className="text-teal-500 mt-1" /><p>Hỗ trợ khách hàng 24/7 qua hotline</p></div>
                     </div>
                 </div>
             </div>

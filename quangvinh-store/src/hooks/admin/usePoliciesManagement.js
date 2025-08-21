@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getAllPolicies, createPolicy, updatePolicy, deletePolicy } from '../utils/api/Admin/PoliciesManagementAPI.js';
-import { POLICY_HELPERS } from '../utils/constants/PoliciesConstants';
+import { getAllPolicies, createPolicy, updatePolicy, deletePolicy } from '../../utils/api/Admin/PoliciesManagementAPI.js';
+import { POLICY_HELPERS } from '../../utils/constants/PoliciesConstants.js';
 
 export const usePoliciesManagement = () => {
     // Data state

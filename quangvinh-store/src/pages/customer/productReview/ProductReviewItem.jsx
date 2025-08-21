@@ -32,11 +32,13 @@ const ProductReviewItem = ({ product, index, orderId }) => {
         }
     };
 
+    console.log(product);
+
     return (
         <div className="border rounded-lg p-4 shadow-sm bg-white">
             <h2 className="font-semibold mb-2">Sản phẩm {index}</h2>
             <div className="flex gap-4 items-start">
-                <img src={product.imageUrl || "/default.jpg"} alt={product.name} className="w-24 h-24 object-cover" />
+                <img src={product.images?.[0]   || "/default.jpg"} alt={product.name} className="w-24 h-24 object-cover" />
                 <div>
                     <p className="font-medium">{product.name}</p>
                     <p className="text-sm text-gray-500">{product.color} | {product.size} | x{product.quantity}</p>

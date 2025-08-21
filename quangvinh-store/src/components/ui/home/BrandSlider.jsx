@@ -35,7 +35,7 @@ const BrandSlider = ({ brands = [] }) => {
                 {brands.map((brand, idx) => (
                     <div key={brand.brandId || idx} className="px-2">
                         <Link
-                            to={`/products?brand=${encodeURIComponent(brand.brandName)}`}
+                            to={`/products?brandIds=${encodeURIComponent(brand.brandId)}`}
                             className="block transition-transform duration-300 hover:scale-105 rounded-xl"
                         >
                             <div className="bg-white rounded-xl flex justify-center items-center p-2 transition-colors duration-300">
