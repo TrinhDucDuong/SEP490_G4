@@ -1,5 +1,6 @@
 package com.fourfingers.quangvinhstore.domain.model.customer;
 
+import com.fourfingers.quangvinhstore.domain.model.Image;
 import com.fourfingers.quangvinhstore.domain.model.ProductVariant;
 import lombok.*;
 
@@ -14,4 +15,5 @@ public class OrderDetails {
     private ProductVariant productVariant;
     private Long quantity;
     private BigDecimal unitPrice;
+    private Image image;
 }
