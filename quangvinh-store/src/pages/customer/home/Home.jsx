@@ -36,6 +36,7 @@ function Home() {
                 <Carousel />
             </section>
             <section
+
                 className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 bg-black"
                 aria-label="Thương hiệu nổi bật"
             >
@@ -43,6 +44,7 @@ function Home() {
                     <p className="text-center text-white py-4 text-xs sm:text-sm md:text-base">Đang tải thương hiệu...</p>
                 ) : errorBrands ? (
                     <p className="text-center text-red-500 py-4 text-xs sm:text-sm md:text-base">Đã có lỗi xảy ra. Vui lòng thử lại sau.</p>
+
                 ) : (
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -54,6 +56,7 @@ function Home() {
                 )}
             </section>
             <section
+
                 className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20"
                 aria-label="Sản phẩm xu hướng"
             >
@@ -62,6 +65,7 @@ function Home() {
                     <Link
                         to="/products"
                         className="text-black hover:text-yellow-400 transition flex items-center text-xs sm:text-sm md:text-base p-2"
+
                         aria-label="Xem tất cả sản phẩm xu hướng"
                     >
                         Xem thêm <FontAwesomeIcon className="ml-2" icon={faArrowRight} />
@@ -71,13 +75,16 @@ function Home() {
                     <p className="text-center text-xs sm:text-sm md:text-base">Đang tải sản phẩm...</p>
                 ) : errorProducts ? (
                     <p className="text-center text-red-500 text-xs sm:text-sm md:text-base">Đã có lỗi xảy ra. Vui lòng thử lại sau.</p>
+
                 ) : (
                     <ProductScrollSlider products={trendingProducts} />
                 )}
             </section>
             {!loadingCategories && !errorCategories && categories.length > 0 && (
                 <section
+
                     className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 py-4 sm:py-6 md:py-8 flex flex-col gap-4 sm:gap-6 md:gap-8"
+
                     aria-label="Danh mục sản phẩm"
                 >
                     {categories.slice(0, 4).map((category) => (
@@ -85,6 +92,7 @@ function Home() {
                             key={category.categoryId}
                             to={`/products?brandIds=${category.categoryId}`}
                             className="w-full h-[150px] sm:h-[200px] md:h-[250px] lg:h-[300px] xl:h-[350px] overflow-hidden shadow-md rounded-lg group relative"
+
                             aria-label={`Xem sản phẩm trong danh mục ${category.categoryName}`}
                         >
                             <img
@@ -95,6 +103,7 @@ function Home() {
                             />
                             <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                                 <h2 className="text-white text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-center px-2">
+
                                     {category.categoryName}
                                 </h2>
                             </div>
