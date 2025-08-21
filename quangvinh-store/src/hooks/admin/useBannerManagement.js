@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getAllBanners, createBanner, updateBannerStatus } from '../utils/api/Admin/BannerManagementAPI.js';
-import { BANNER_HELPERS, BANNER_DEFAULTS } from '../utils/constants/BannerConstants';
+import { getAllBanners, createBanner, updateBannerStatus } from '../../utils/api/Admin/BannerManagementAPI.js';
+import { BANNER_HELPERS, BANNER_DEFAULTS } from '../../utils/constants/BannerConstants.js';
 
 export const useBannerManagement = () => {
     // Data state

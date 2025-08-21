@@ -14,11 +14,11 @@ function Footer() {
     const featuredInstructions = instructions.slice(0, 3);
 
     return (
-        <footer className="bg-black text-white pt-10 pb-6 px-4">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 border-b border-gray-700 pb-10">
-                <div className="space-y-4 text-center md:text-left">
-                    <h2 className="text-yellow-400 font-bold text-lg">Hệ Thống Cửa Hàng</h2>
-                    <address className="not-italic text-sm leading-relaxed space-y-2">
+        <footer className="bg-black text-white pt-8 pb-6 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 border-b border-gray-700 pb-8 sm:pb-10">
+                <div className="space-y-4 text-center sm:text-left">
+                    <h2 className="text-yellow-400 font-bold text-base sm:text-lg lg:text-xl">Hệ Thống Cửa Hàng</h2>
+                    <address className="not-italic text-xs sm:text-sm leading-relaxed space-y-2">
                         <div>
                             <span className="font-semibold">Địa chỉ:</span>
                             <ul className="ml-4 list-disc list-inside">
@@ -39,28 +39,28 @@ function Footer() {
                             </a>
                         </div>
                     </address>
-                    <div className="flex justify-center md:justify-start gap-4 mt-2">
-                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
-                            <FontAwesomeIcon icon={faFacebook} className="text-2xl text-blue-600 hover:text-blue-400 transition" />
+                    <div className="flex justify-center sm:justify-start gap-4 mt-2">
+                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="p-2">
+                            <FontAwesomeIcon icon={faFacebook} className="text-xl sm:text-2xl text-blue-600 hover:text-blue-400 transition" />
                         </a>
-                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
-                            <FontAwesomeIcon icon={faInstagram} className="text-2xl text-pink-600 hover:text-pink-400 transition" />
+                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="p-2">
+                            <FontAwesomeIcon icon={faInstagram} className="text-xl sm:text-2xl text-pink-600 hover:text-pink-400 transition" />
                         </a>
-                        <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
-                            <FontAwesomeIcon icon={faYoutube} className="text-2xl text-red-600 hover:text-red-400 transition" />
+                        <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="p-2">
+                            <FontAwesomeIcon icon={faYoutube} className="text-xl sm:text-2xl text-red-600 hover:text-red-400 transition" />
                         </a>
-                        <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer">
-                            <FontAwesomeIcon icon={faTiktok} className="text-2xl text-white hover:text-gray-400 transition" />
+                        <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" className="p-2">
+                            <FontAwesomeIcon icon={faTiktok} className="text-xl sm:text-2xl text-white hover:text-gray-400 transition" />
                         </a>
                     </div>
                 </div>
 
-                <nav className="space-y-4 text-center md:text-left">
-                    <h2 className="text-yellow-400 font-bold text-lg">Chính Sách Nổi Bật</h2>
+                <nav className="space-y-4 text-center sm:text-left">
+                    <h2 className="text-yellow-400 font-bold text-base sm:text-lg lg:text-xl">Chính Sách Nổi Bật</h2>
                     {loadingPolicy ? (
-                        <div className="text-sm text-gray-400">Đang tải chính sách...</div>
+                        <div className="text-xs sm:text-sm text-gray-400">Đang tải chính sách...</div>
                     ) : (
-                        <ul className="text-sm space-y-2 list-disc list-inside">
+                        <ul className="text-xs sm:text-sm space-y-2 list-disc list-inside">
                             {featuredPolicies.map((policy) => (
                                 <li key={policy.policyId}>
                                     <Link
@@ -73,17 +73,17 @@ function Footer() {
                             ))}
                         </ul>
                     )}
-                    <Link to="/policies" className="block mt-2 text-sm text-blue-400 hover:underline">
+                    <Link to="/policies" className="block mt-2 text-xs sm:text-sm text-blue-400 hover:underline">
                         Xem tất cả chính sách
                     </Link>
                 </nav>
 
-                <nav className="space-y-4 text-center md:text-left">
-                    <h2 className="text-yellow-400 font-bold text-lg">Hướng Dẫn Khách Hàng</h2>
+                <nav className="space-y-4 text-center sm:text-left">
+                    <h2 className="text-yellow-400 font-bold text-base sm:text-lg lg:text-xl">Hướng Dẫn Khách Hàng</h2>
                     {loadingInstruction ? (
-                        <div className="text-sm text-gray-400">Đang tải hướng dẫn...</div>
+                        <div className="text-xs sm:text-sm text-gray-400">Đang tải hướng dẫn...</div>
                     ) : (
-                        <ul className="text-sm space-y-2 list-disc list-inside">
+                        <ul className="text-xs sm:text-sm space-y-2 list-disc list-inside">
                             {featuredInstructions.map((instruction) => (
                                 <li key={instruction.instructionId}>
                                     <Link
@@ -96,18 +96,18 @@ function Footer() {
                             ))}
                         </ul>
                     )}
-                    <Link to="/instructions" className="block mt-2 text-sm text-blue-400 hover:underline">
+                    <Link to="/instructions" className="block mt-2 text-xs sm:text-sm text-blue-400 hover:underline">
                         Xem tất cả hướng dẫn
                     </Link>
-                    <div className="flex justify-center md:justify-start gap-4 mt-2">
-                        <FontAwesomeIcon icon={faUniversity} className="text-xl text-white" title="Chuyển khoản" />
-                        <FontAwesomeIcon icon={faCreditCard} className="text-xl text-white" title="Thẻ tín dụng" />
-                        <FontAwesomeIcon icon={faMoneyBill} className="text-xl text-white" title="Tiền mặt" />
+                    <div className="flex justify-center sm:justify-start gap-4 mt-2">
+                        <FontAwesomeIcon icon={faUniversity} className="text-lg sm:text-xl text-white" title="Chuyển khoản" />
+                        <FontAwesomeIcon icon={faCreditCard} className="text-lg sm:text-xl text-white" title="Thẻ tín dụng" />
+                        <FontAwesomeIcon icon={faMoneyBill} className="text-lg sm:text-xl text-white" title="Tiền mặt" />
                     </div>
                 </nav>
             </div>
 
-            <div className="max-w-7xl mx-auto text-center text-xs text-gray-400 pt-6">
+            <div className="max-w-7xl mx-auto text-center text-xs sm:text-sm text-gray-400 pt-6">
                 © {new Date().getFullYear()} Quang Vinh Store. All rights reserved.
             </div>
         </footer>

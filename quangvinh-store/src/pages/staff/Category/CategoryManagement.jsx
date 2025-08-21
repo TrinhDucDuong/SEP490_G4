@@ -3,7 +3,7 @@ import CategorySearch from './CategorySearch';
 import CategoryFilter from './CategoryFilter';
 import CategorySort from './CategorySort';
 import CategoryTable from './CategoryTable';
-import { useCategoryManagement } from '../../../hooks/useCategoryManagement';
+import { useCategoryManagement } from '../../../hooks/useCategoryManagement.js';
 
 const CategoryManagement = () => {
     const {

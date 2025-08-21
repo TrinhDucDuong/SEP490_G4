@@ -3,7 +3,7 @@ import PoliciesSearch from './PoliciesSearch';
 import PoliciesFilter from './PoliciesFilter';
 import PoliciesSort from './PoliciesSort';
 import PoliciesTable from './PoliciesTable';
-import { usePoliciesManagement } from '../../../hooks/usePoliciesManagement';
+import { usePoliciesManagement } from '../../../hooks/usePoliciesManagement.js';
 
 const PoliciesManagement = () => {
     const {

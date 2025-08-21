@@ -17,10 +17,10 @@ function MessengerChatBubble() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleOpenMessenger}
-            className="bg-[#0084FF] p-4 rounded-full shadow-lg text-white flex items-center justify-center"
+            className="bg-[#0084FF] p-3 sm:p-4 rounded-full shadow-lg text-white flex items-center justify-center"
             aria-label="Chat với chúng tôi trên Messenger"
         >
-            <FaFacebookMessenger size={22} />
+            <FaFacebookMessenger className="text-lg sm:text-xl md:text-2xl" />
         </motion.button>
     );
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAllEmployees, createEmployee, deleteEmployee, activateEmployee, getEmployeeById, resetEmployeePassword } from '../utils/api/Admin/EmployeeManagementAPI.js';
 import { getAllStores } from '../utils/api/Admin/StoreManagementAPI.js';
-import { EMPLOYEE_HELPERS } from '../utils/constants/EmployeeConstants';
+import { EMPLOYEE_HELPERS } from '../utils/constants/EmployeeConstants.js';
 
 export const useEmployeeManagement = () => {
     // Data state

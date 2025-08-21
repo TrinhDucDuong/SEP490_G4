@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getAllCustomers } from '../utils/api/Admin/CustomerListAPI.js';
-import { CUSTOMER_HELPERS } from '../utils/constants/CustomerConstants';
+import { getAllCustomers } from '../../utils/api/Admin/CustomerListAPI.js';
+import { CUSTOMER_HELPERS } from '../../utils/constants/CustomerConstants.js';
 
 export const useCustomerList = () => {
     // Data state
