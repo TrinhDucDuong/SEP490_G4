@@ -152,8 +152,18 @@ function Header() {
 
                             {isSearchOpen && searchResults.length > 0 && (
                                 <div className="fixed top-20 left-0 w-full bg-white border-t border-gray-300 shadow-lg z-[60]">
-                                    <div className="max-w-[1600px] mx-auto px-4 py-6">
-                                        <h3 className="text-lg font-semibold text-gray-700 mb-4">Kết quả tìm kiếm:</h3>
+                                    <div className="max-w-[1600px] mx-auto px-4 py-6 relative">
+                                        {/* Nút Close */}
+                                        <button
+                                            onClick={() => setSearchOpen(false)}
+                                            className="absolute top-2 right-4 text-gray-500 hover:text-red-500 transition"
+                                        >
+                                            ✕
+                                        </button>
+
+                                        <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                                            Kết quả tìm kiếm:
+                                        </h3>
                                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                                             {searchResults.map(product => (
                                                 <ProductCard
@@ -169,6 +179,7 @@ function Header() {
                                     </div>
                                 </div>
                             )}
+
 
                         </div>
 
