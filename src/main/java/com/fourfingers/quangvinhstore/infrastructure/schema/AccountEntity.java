@@ -29,7 +29,7 @@ public class AccountEntity implements UserDetails {
 
     @Column(name = "username", unique = true, nullable = false, columnDefinition = "CHAR(15)")
     @NotBlank(message = "Username cannot be blank")
-    @Size(min = 10, max = 15, message = "Username must be between 10 and 15 characters")
+    @Size(min = 5, max = 15, message = "Username must be between 10 and 15 characters")
     private String username;
 
     @Column(name = "email", unique = true)
