@@ -13,8 +13,6 @@ import java.util.List;
 @Builder
 public class Order {
     private Long orderId;
-    private String customerName;
-    private String customerPhoneNumber;
     private List<OrderDetails> orderDetails;
     private String orderStatus;
     private boolean paymentStatus;
