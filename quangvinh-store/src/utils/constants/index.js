@@ -1,6 +1,3 @@
-// src/utils/constants/index.js
-
-// Re-export trực tiếp cho convenience
 export * from './ProductConstants';
 export * from './BrandConstants';
 export * from './CategoryConstants';
@@ -13,6 +10,7 @@ export * from './OrderConstants.js';
 export * from './CustomerConstants.js';
 export * from './EmployeeConstants.js';
 export * from './BannerConstants.js';
+export * from './InstructionConstants.js';
 
 // Grouped exports cho organization
 import * as ProductConstants from './ProductConstants';
@@ -27,7 +25,7 @@ import * as OrderConstants from './OrderConstants';
 import * as CustomerConstants from './CustomerConstants';
 import * as EmployeeConstants from './EmployeeConstants';
 import * as BannerConstants from './BannerConstants';
-
+import * as InstructionConstants from './InstructionConstants';
 
 export const CONSTANTS = {
     PRODUCT: ProductConstants,
@@ -42,4 +40,5 @@ export const CONSTANTS = {
     Customer: CustomerConstants,
     Employee: EmployeeConstants,
     Banner: BannerConstants,
+    Instruction: InstructionConstants
 };

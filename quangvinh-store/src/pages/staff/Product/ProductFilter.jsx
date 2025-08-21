@@ -1,9 +1,7 @@
-// src/pages/staff/product/ProductFilter.jsx
-
 import React from 'react';
-import { ChevronDown, X, Calendar, Filter } from 'lucide-react';
+import {ChevronDown, X, Calendar, Filter} from 'lucide-react';
 import DateRangePicker from '../../../components/common/admin/DateRangePicker';
-import { PRODUCT_STATUS_OPTIONS } from '../../../utils/constants/ProductConstants';
+import {PRODUCT_STATUS_OPTIONS} from '../../../utils/constants/ProductConstants';
 
 const ProductFilter = ({
                            filters,
@@ -27,7 +25,7 @@ const ProductFilter = ({
                 <div className="px-6 py-4 border-b border-gray-200">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Filter className="w-5 h-5 text-gray-500" />
+                            <Filter className="w-5 h-5 text-gray-500"/>
                             <h3 className="text-lg font-medium text-gray-900">Bộ lọc sản phẩm</h3>
                         </div>
                         {hasActiveFilters && (
@@ -35,7 +33,7 @@ const ProductFilter = ({
                                 onClick={onClearFilters}
                                 className="flex items-center gap-2 px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
                             >
-                                <X className="w-4 h-4" />
+                                <X className="w-4 h-4"/>
                                 Xóa tất cả bộ lọc
                             </button>
                         )}
@@ -63,7 +61,8 @@ const ProductFilter = ({
                                         </option>
                                     ))}
                                 </select>
-                                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                <ChevronDown
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"/>
                             </div>
                             {filters.brand && (
                                 <div className="mt-1 text-xs text-blue-600">
@@ -90,11 +89,13 @@ const ProductFilter = ({
                                         </option>
                                     ))}
                                 </select>
-                                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                <ChevronDown
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"/>
                             </div>
                             {filters.category && (
                                 <div className="mt-1 text-xs text-blue-600">
-                                    Đã chọn: {categories.find(c => c.categoryId === parseInt(filters.category))?.categoryName}
+                                    Đã
+                                    chọn: {categories.find(c => c.categoryId === parseInt(filters.category))?.categoryName}
                                 </div>
                             )}
                         </div>
@@ -117,11 +118,13 @@ const ProductFilter = ({
                                         </option>
                                     ))}
                                 </select>
-                                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                <ChevronDown
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"/>
                             </div>
                             {filters.status !== '' && (
                                 <div className="mt-1 text-xs text-blue-600">
-                                    Đã chọn: {PRODUCT_STATUS_OPTIONS.find(s => s.value.toString() === filters.status)?.label}
+                                    Đã
+                                    chọn: {PRODUCT_STATUS_OPTIONS.find(s => s.value.toString() === filters.status)?.label}
                                 </div>
                             )}
                         </div>
@@ -129,7 +132,7 @@ const ProductFilter = ({
                         {/* Date filter */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                <Calendar className="w-4 h-4 inline mr-1" />
+                                <Calendar className="w-4 h-4 inline mr-1"/>
                                 Lọc theo ngày
                             </label>
                             <DateRangePicker
@@ -157,44 +160,48 @@ const ProductFilter = ({
                                 <span className="text-sm font-medium text-gray-700">Bộ lọc đang áp dụng:</span>
 
                                 {filters.brand && (
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    Thương hiệu: {brands.find(b => b.brandId === parseInt(filters.brand))?.brandName}
+                                    <span
+                                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        Thương hiệu: {brands.find(b => b.brandId === parseInt(filters.brand))?.brandName}
                                         <button
                                             onClick={() => onFilterChange('brand', '')}
                                             className="ml-1 text-blue-600 hover:text-blue-800"
                                         >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
+                                            <X className="w-3 h-3"/>
+                                        </button>
+                                    </span>
                                 )}
 
                                 {filters.category && (
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    Danh mục: {categories.find(c => c.categoryId === parseInt(filters.category))?.categoryName}
+                                    <span
+                                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    Danh mục: {categories.find(c => c.categoryId === parseInt(filters.category))?.categoryName}
                                         <button
                                             onClick={() => onFilterChange('category', '')}
                                             className="ml-1 text-green-600 hover:text-green-800"
                                         >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
+                                            <X className="w-3 h-3"/>
+                                        </button>
+                                    </span>
                                 )}
 
                                 {filters.status !== '' && (
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                    Trạng thái: {PRODUCT_STATUS_OPTIONS.find(s => s.value.toString() === filters.status)?.label}
-                                        <button
-                                            onClick={() => onFilterChange('status', '')}
-                                            className="ml-1 text-purple-600 hover:text-purple-800"
-                                        >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
+                                    <span
+                                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                            Trạng thái: {PRODUCT_STATUS_OPTIONS.find(s => s.value.toString() === filters.status)?.label}
+                                                <button
+                                                    onClick={() => onFilterChange('status', '')}
+                                                    className="ml-1 text-purple-600 hover:text-purple-800"
+                                                >
+                                                    <X className="w-3 h-3"/>
+                                                </button>
+                                  </span>
                                 )}
 
                                 {(filters.startDate && filters.endDate) && (
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                    Ngày: {new Date(filters.startDate).toLocaleDateString('vi-VN')} - {new Date(filters.endDate).toLocaleDateString('vi-VN')}
+                                    <span
+                                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                        Ngày: {new Date(filters.startDate).toLocaleDateString('vi-VN')} - {new Date(filters.endDate).toLocaleDateString('vi-VN')}
                                         <button
                                             onClick={() => {
                                                 onFilterChange('startDate', '');
@@ -203,9 +210,9 @@ const ProductFilter = ({
                                             }}
                                             className="ml-1 text-orange-600 hover:text-orange-800"
                                         >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
+                                      <X className="w-3 h-3"/>
+                                    </button>
+                                  </span>
                                 )}
                             </div>
                         </div>

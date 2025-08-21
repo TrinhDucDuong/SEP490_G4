@@ -21,7 +21,6 @@ export const usePoliciesManagement = () => {
         datePreset: ''
     });
 
-    // Mặc định sort theo ngày tạo mới nhất
     const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
 
     // Fetch policies from API
@@ -149,7 +148,6 @@ export const usePoliciesManagement = () => {
                 }
             });
         } else {
-            // Mặc định sort theo ngày tạo mới nhất
             result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         }
 

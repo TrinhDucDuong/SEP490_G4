@@ -19,7 +19,6 @@ export const useStarRateManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(STAR_RATE_CONSTANTS.ITEMS_PER_PAGE);
 
-    // Fetch tất cả đánh giá
     const fetchStarRates = useCallback(async () => {
         try {
             setLoading(true);
@@ -34,7 +33,6 @@ export const useStarRateManagement = () => {
         }
     }, []);
 
-    // Fetch đánh giá theo ID
     const fetchStarRateById = useCallback(async (starRateId) => {
         try {
             const response = await StarRateManagementAPI.getStarRateById(starRateId);
@@ -45,7 +43,6 @@ export const useStarRateManagement = () => {
         }
     }, []);
 
-    // Reply đánh giá
     const replyToStarRate = useCallback(async (replyData) => {
         try {
             const response = await StarRateManagementAPI.replyStarRate(replyData);
@@ -57,7 +54,6 @@ export const useStarRateManagement = () => {
         }
     }, [fetchStarRates]);
 
-    // Cập nhật reply
     const updateReply = useCallback(async (starRateId, updateData) => {
         try {
             const response = await StarRateManagementAPI.updateReply(starRateId, updateData);
@@ -69,7 +65,6 @@ export const useStarRateManagement = () => {
         }
     }, [fetchStarRates]);
 
-    // Ẩn/hiện đánh giá
     const toggleStarRateVisibility = useCallback(async (starRateId, isVisible) => {
         try {
             if (isVisible) {

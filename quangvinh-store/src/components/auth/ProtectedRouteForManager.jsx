@@ -14,7 +14,7 @@ const ProtectedRouteForManager = ({ children }) => {
         );
 
     if (!isAuthenticated)
-        return <Navigate to="/admin/login" state={{ from: location }} replace />;
+        return <Navigate to="/manager/login" state={{ from: location }} replace />;
 
     return children;
 };

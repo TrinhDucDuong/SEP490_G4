@@ -9,12 +9,10 @@ export const useAuthForManager = () => {
 };
 
 export const AuthProviderForManager = ({ children }) => {
-    /* ---------------- state ---------------- */
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    /* ---------------- helpers ---------------- */
     const KEY_TOKEN = 'adminAuthToken';
     const KEY_USER = 'adminUserInfo';
 
@@ -45,7 +43,13 @@ export const AuthProviderForManager = ({ children }) => {
         }
     };
 
-    /* ---------------- init ---------------- */
+    const hasRole = (role) => {
+        return user?.roles?.includes(role) || false;
+    };
+
+    const isAdmin = () => hasRole('ADMINISTRATOR');
+    const isStaff = () => hasRole('STAFF');
+
     useEffect(() => {
         const tk = readCredential();
         const info = localStorage.getItem(KEY_USER) || sessionStorage.getItem(KEY_USER);
@@ -56,12 +60,12 @@ export const AuthProviderForManager = ({ children }) => {
         } else {
             clearStorage();
         }
+
         setLoading(false);
     }, []);
 
-    /* ---------------- actions ---------------- */
     const login = async (username, password, remember = false) => {
-        const res = await fetch('http://localhost:9999/auth/login', {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -79,19 +83,23 @@ export const AuthProviderForManager = ({ children }) => {
         setUser(null);
         setToken(null);
         clearStorage();
-        window.location.href = '/admin/login';
+        window.location.href = '/manager/login';
     };
 
-    // ✅ QUAN TRỌNG: Đây là phần bị thiếu trong code cũ
     const contextValue = {
         user,
         token,
         loading,
         isAuthenticated: !!token && !!user,
         login,
-        logout, // ✅ Export logout function
+        logout,
         clearStorage,
-        tokenValid
+        tokenValid,
+        // Role helpers
+        hasRole,
+        isAdmin,
+        isStaff,
+        userRoles: user?.roles || []
     };
 
     return (

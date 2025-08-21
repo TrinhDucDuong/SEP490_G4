@@ -1,4 +1,3 @@
-// src/pages/staff/product/ProductViewModal.jsx
 import React, { useState } from 'react';
 import { X, Package, Calendar, User, Store, Clock, Phone, MapPin } from 'lucide-react';
 import { PRODUCT_HELPERS } from '../../../utils/constants/ProductConstants';

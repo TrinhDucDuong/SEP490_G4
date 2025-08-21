@@ -1,6 +1,5 @@
-const API_BASE_URL = 'http://localhost:9999/admin/staff';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/admin/staff`;
 
-// Function để lấy token xác thực
 const getAuthToken = () => {
     const token = localStorage.getItem('adminAuthToken') ||
         sessionStorage.getItem('adminAuthToken') ||
@@ -19,7 +18,6 @@ const getAuthToken = () => {
     return token;
 };
 
-// Function để tạo headers với Bearer Token
 const createAuthHeaders = (additionalHeaders = {}) => {
     const token = getAuthToken();
     const headers = {
@@ -38,7 +36,6 @@ const createAuthHeaders = (additionalHeaders = {}) => {
     return headers;
 };
 
-// Function xử lý lỗi authentication
 const handleAuthError = (response) => {
     if (response.status === 401 || response.status === 403) {
         console.error('Bearer Token expired or invalid');
@@ -57,7 +54,7 @@ const handleAuthError = (response) => {
     }
 };
 
-// GET - Lấy tất cả nhân viên
+// GET
 export const getAllEmployees = async (pageNumber = 0, pageSize = 100) => {
     try {
         const response = await fetch(`${API_BASE_URL}?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
@@ -79,7 +76,7 @@ export const getAllEmployees = async (pageNumber = 0, pageSize = 100) => {
     }
 };
 
-// GET - Lấy nhân viên theo ID
+// GET - ID
 export const getEmployeeById = async (employeeId) => {
     try {
         const response = await fetch(`${API_BASE_URL}/${employeeId}`, {
@@ -101,7 +98,7 @@ export const getEmployeeById = async (employeeId) => {
     }
 };
 
-// POST - Tạo nhân viên mới
+// POST
 export const createEmployee = async (employeeData) => {
     try {
         const response = await fetch(API_BASE_URL, {
@@ -137,7 +134,7 @@ export const createEmployee = async (employeeData) => {
     }
 };
 
-// DELETE - Xóa mềm nhân viên (chuyển trạng thái thành "Ngừng hoạt động")
+// DELETE
 export const deleteEmployee = async (employeeId) => {
     try {
         const response = await fetch(`${API_BASE_URL}/${employeeId}`, {
@@ -164,7 +161,7 @@ export const deleteEmployee = async (employeeId) => {
     }
 };
 
-// PATCH - Kích hoạt lại nhân viên
+// PATCH
 export const activateEmployee = async (employeeId) => {
     try {
         const response = await fetch(`${API_BASE_URL}/${employeeId}`, {
@@ -187,6 +184,38 @@ export const activateEmployee = async (employeeId) => {
         return { success: true, message: 'Nhân viên đã được kích hoạt lại' };
     } catch (error) {
         console.error('Error activating employee:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+// POST
+export const resetEmployeePassword = async (employeeId, passwordData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${employeeId}/reset-password`, {
+            method: 'POST',
+            headers: createAuthHeaders(),
+            body: JSON.stringify({
+                oldPassword: passwordData.oldPassword,
+                newPassword: passwordData.newPassword
+            })
+        });
+
+        handleAuthError(response);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Reset password error:', {
+                status: response.status,
+                statusText: response.statusText,
+                body: errorText
+            });
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        return { success: true, data };
+    } catch (error) {
+        console.error('Error resetting employee password:', error);
         return { success: false, error: error.message };
     }
 };

@@ -1,4 +1,3 @@
-// src/pages/staff/order/OrderSearch.jsx
 import React from 'react';
 import SearchBar from '../../../components/common/admin/SearchBar';
 

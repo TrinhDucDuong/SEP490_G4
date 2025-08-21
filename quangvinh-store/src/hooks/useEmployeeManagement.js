@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllEmployees, createEmployee, deleteEmployee, activateEmployee, getEmployeeById } from '../utils/api/Admin/EmployeeManagementAPI.js';
+import { getAllEmployees, createEmployee, deleteEmployee, activateEmployee, getEmployeeById, resetEmployeePassword } from '../utils/api/Admin/EmployeeManagementAPI.js';
 import { getAllStores } from '../utils/api/Admin/StoreManagementAPI.js';
 import { EMPLOYEE_HELPERS } from '../utils/constants/EmployeeConstants.js';
 
@@ -119,6 +119,23 @@ export const useEmployeeManagement = () => {
             }
         } catch (err) {
             return { success: false, error: 'Có lỗi xảy ra khi kích hoạt nhân viên' };
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Reset employee password
+    const resetEmployeePasswordHandler = async (employeeId, passwordData) => {
+        setLoading(true);
+        try {
+            const result = await resetEmployeePassword(employeeId, passwordData);
+            if (result.success) {
+                return { success: true };
+            } else {
+                return { success: false, error: result.error };
+            }
+        } catch (err) {
+            return { success: false, error: 'Có lỗi xảy ra khi cập nhật mật khẩu' };
         } finally {
             setLoading(false);
         }
@@ -254,6 +271,7 @@ export const useEmployeeManagement = () => {
         createEmployee: createEmployeeHandler,
         deleteEmployee: deleteEmployeeHandler,
         activateEmployee: activateEmployeeHandler,
+        resetEmployeePassword: resetEmployeePasswordHandler,
 
         // Utilities
         clearFilters,

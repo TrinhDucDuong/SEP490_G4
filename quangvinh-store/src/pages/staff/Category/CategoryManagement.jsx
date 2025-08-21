@@ -1,4 +1,3 @@
-// src/pages/staff/Category/CategoryManagement.jsx
 import React from 'react';
 import CategorySearch from './CategorySearch';
 import CategoryFilter from './CategoryFilter';
@@ -38,7 +37,7 @@ const CategoryManagement = () => {
         getStatistics
     } = useCategoryManagement();
 
-    // Handler functions - ĐỒNG NHẤT với Brand
+    // Handler functions
     const handleSearchChange = (value) => {
         setSearchTerm(value);
     };
@@ -60,7 +59,7 @@ const CategoryManagement = () => {
 
     const statistics = getStatistics();
 
-    // Error handling - ĐỒNG NHẤT với Brand
+    // Error handling
     if (error) {
         return (
                 <div className="p-6">
@@ -88,7 +87,7 @@ const CategoryManagement = () => {
                     </p>
                 </div>
 
-                {/* Statistics Cards - ĐỒNG NHẤT với Brand */}
+                {/* Statistics Cards*/}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="bg-white rounded-lg shadow p-6">
                         <div className="flex items-center">

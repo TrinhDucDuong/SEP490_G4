@@ -1,4 +1,3 @@
-// src/pages/staff/order/OrderSort.jsx
 import React from 'react';
 import { ArrowUpDown } from 'lucide-react';
 
@@ -7,8 +6,8 @@ const OrderSort = ({ sortConfig, onSort }) => {
         { key: 'orderId', label: 'Mã đơn hàng' },
         { key: 'orderDate', label: 'Ngày tạo đơn' },
         { key: 'totalPrice', label: 'Tổng giá tiền' },
-        { key: 'orderStatus', label: 'Trạng thái đơn hàng' }, // CẬP NHẬT label
-        { key: 'paymentStatus', label: 'Trạng thái thanh toán' } // MỚI THÊM
+        { key: 'orderStatus', label: 'Trạng thái đơn hàng' },
+        { key: 'paymentStatus', label: 'Trạng thái thanh toán' }
     ];
 
     const SortButton = ({ sortKey, label }) => (
@@ -30,7 +29,7 @@ const OrderSort = ({ sortConfig, onSort }) => {
     );
 
     return (
-        <div className="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-lg">
+        <div className="flex flex-wrap gap-2 p-4 bg-white-50 rounded-lg shadow-sm border border-gray-200">
             <span className="text-sm font-medium text-gray-700 self-center">Sắp xếp theo:</span>
             {sortOptions.map((option) => (
                 <SortButton

@@ -229,9 +229,9 @@ const AIVoiceAssistant = () => {
             wsRef.current.onopen = () => {
                 if (!componentMountedRef.current) return;
                 clearTimeout(connectionTimeout);
-                console.log('✅ WebSocket connected');
+                console.log('WebSocket connected');
 
-                console.group('🔌 WebSocket Connection Established');
+                console.group('WebSocket Connection Established');
                 console.log('URL:', wsRef.current.url);
                 console.log('Ready State:', wsRef.current.readyState);
                 console.log('Connected At:', new Date().toISOString());
@@ -472,7 +472,7 @@ const AIVoiceAssistant = () => {
     // Convert and Send Audio
     const convertAndSendAudio = async (audioBlob) => {
         try {
-            console.group('🎵 Audio Conversion Process');
+            console.group('Audio Conversion Process');
             console.log('Original audio size:', (audioBlob.size / 1024).toFixed(2) + ' KB');
 
             // WebSocket state checking

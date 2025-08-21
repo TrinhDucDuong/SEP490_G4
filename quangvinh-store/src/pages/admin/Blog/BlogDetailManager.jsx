@@ -17,7 +17,7 @@ function BlogDetailManager() {
         try {
             await BlogManagementAPI.delete(blog.blogId);
             toast.success("Đã xoá bài viết thành công!");
-            setTimeout(() => navigate('/admin/blogs'), 1500);
+            setTimeout(() => navigate('/staff/blogs'), 1500);
         } catch (e) {
             toast.error("Xoá bài viết thất bại!");
             console.error(e);
@@ -38,12 +38,12 @@ function BlogDetailManager() {
             />
 
             <div className="flex justify-between items-center mb-6">
-                <Link to="/admin/blogs" className="text-blue-600 hover:underline mb-4 inline-block">
+                <Link to="/staff/blogs" className="text-blue-600 hover:underline mb-4 inline-block">
                     ← Quay lại danh sách
                 </Link>
                 <div className="mt-6 flex gap-4">
                     <Link
-                        to={`/admin/blogs/${blog.blogId}/edit`}
+                        to={`/staff/blogs/${blog.blogId}/edit`}
                         className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                     >
                         Chỉnh sửa

@@ -1,4 +1,3 @@
-// src/pages/staff/Category/CategorySearch.jsx
 import React from 'react';
 import SearchBar from '../../../components/common/admin/SearchBar';
 

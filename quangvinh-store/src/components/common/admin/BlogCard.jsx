@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const BlogCard = ({ blog }) => {
     return (
-        <Link to={`/admin/blogs/${blog.blogId}`} key={blog.blogId}>
+        <Link to={`/staff/blogs/${blog.blogId}`} key={blog.blogId}>
             <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-4 flex flex-col cursor-pointer">
                 {blog.blogImages.length > 0 && (
                     <img

@@ -1,8 +1,5 @@
-// src/utils/api/admin/OrderManagementAPI.js
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/order`;
 
-const API_BASE_URL = 'http://localhost:9999/staff/order';
-
-// Function để lấy Bearer Token với key đúng từ AuthContext
 const getAuthToken = () => {
     const token = localStorage.getItem('adminAuthToken') ||
         sessionStorage.getItem('adminAuthToken') ||
@@ -20,7 +17,6 @@ const getAuthToken = () => {
     return token;
 };
 
-// Function để tạo headers với Bearer Token
 const createAuthHeaders = (additionalHeaders = {}) => {
     const token = getAuthToken();
     const headers = {
@@ -38,11 +34,9 @@ const createAuthHeaders = (additionalHeaders = {}) => {
     return headers;
 };
 
-// Function xử lý lỗi authentication
 const handleAuthError = (response) => {
     if (response.status === 401) {
         console.error('Bearer Token expired or invalid');
-        // Clear all possible token keys
         localStorage.removeItem('adminAuthToken');
         sessionStorage.removeItem('adminAuthToken');
         localStorage.removeItem('authToken');
@@ -57,7 +51,7 @@ const handleAuthError = (response) => {
     }
 };
 
-// GET - Lấy tất cả orders với Bearer Token
+// GET
 export const getAllOrders = async (params = {}) => {
     try {
         console.log('Fetching all orders from:', API_BASE_URL);
@@ -122,7 +116,7 @@ export const getAllOrders = async (params = {}) => {
     }
 };
 
-// GET - Lấy order theo ID với Bearer Token
+// GET - ID
 export const getOrderById = async (orderId) => {
     try {
         console.log('Fetching order by ID:', orderId);
@@ -150,7 +144,7 @@ export const getOrderById = async (orderId) => {
     }
 };
 
-// PUT - Cập nhật order status và payment status với Bearer Token (CẬP NHẬT)
+// PUT
 export const updateOrderStatus = async (orderId, updateData) => {
     try {
         console.log('Updating order:', orderId, 'with data:', updateData);
@@ -158,7 +152,6 @@ export const updateOrderStatus = async (orderId, updateData) => {
             'Content-Type': 'application/json'
         });
 
-        // Tạo request body với cả orderStatus và paymentStatus
         const requestBody = {};
         if (updateData.orderStatus !== undefined) {
             requestBody.orderStatus = updateData.orderStatus;
@@ -189,7 +182,7 @@ export const updateOrderStatus = async (orderId, updateData) => {
     }
 };
 
-// DELETE - Xóa order với Bearer Token
+// DELETE
 export const deleteOrder = async (orderId) => {
     try {
         console.log('Deleting order:', orderId);

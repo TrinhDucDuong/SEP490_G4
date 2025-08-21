@@ -12,6 +12,7 @@ import { AuthProviderForManager } from './context/AuthContextForManager.jsx';
 // Layouts
 import CustomerLayout from './layouts/CustomerLayout';
 import AdminLayout from './layouts/AdminLayout';
+import ManagerLayout from './layouts/ManagerLayout';
 
 // customer Pages
 import Home from './pages/customer/home/Home.jsx';
@@ -38,7 +39,8 @@ import BlogDetail from "./pages/customer/blog/BlogDetail.jsx";
 import BlogList from "./pages/customer/blog/BlogList.jsx";
 
 // admin Pages
-import InstructionManagement from './pages/staff/InstructionManagement';
+import RoleBasedRoute from "./components/auth/RoleBasedRoute.jsx";
+import InstructionManagement from './pages/staff/Instruction/InstructionManagement.jsx';
 import AboutUsManagement from './pages/staff/AboutUsManagement';
 import CustomerList from './pages/staff/Customer/CustomerList.jsx';
 import OrderManagement from './pages/staff/Order/OrderManagement';
@@ -115,7 +117,6 @@ function App() {
                                 </ProtectedRoute>
                             } />
 
-    
                             <Route path="profile" element={
                                 <ProtectedRoute>
                                     <ProfileLayout />
@@ -132,13 +133,31 @@ function App() {
                             <Route path="*" element={<NotFound />} />
                         </Route>
 
-                        {/* admin routes */}
-                        <Route path="/admin/login" element={<LoginForManager />} />
-                        <Route path="/admin" element={<Navigate to="/admin/category-management" replace />} />
+                        {/* Manager Login */}
+                        <Route path="/manager/login" element={<LoginForManager />} />
+
+                        {/* Admin Routes - ADMINISTRATOR */}
                         <Route path="/admin" element={
-                            <ProtectedRouteForManager>
+                            <RoleBasedRoute adminOnly={true}>
                                 <AdminLayout />
-                            </ProtectedRouteForManager>
+                            </RoleBasedRoute>
+                        }>
+                            <Route path="dashboard" element={<DashboardManagement />} />
+                            <Route path="customers-management" element={<CustomerList />} />
+                            <Route path="employee-management" element={<EmployeeManagement />} />
+                            <Route path="store-management" element={<StoreManagement />} />
+                            <Route path="sns-management" element={<SNSManagement />} />
+                            <Route path="about-us-management" element={<AboutUsManagement />} />
+
+                            {/* Default redirect */}
+                            <Route index element={<Navigate to="dashboard" replace />} />
+                        </Route>
+
+                        {/* Staff Routes - Common: ADMINISTRATOR & STAFF */}
+                        <Route path="/staff" element={
+                            <RoleBasedRoute allowedRoles={['ADMINISTRATOR', 'STAFF']}>
+                                <AdminLayout />
+                            </RoleBasedRoute>
                         }>
                             <Route path="blogs" element={<BlogManagement />} />
                             <Route path="blogs/:id" element={<BlogDetailManager />} />
@@ -147,21 +166,22 @@ function App() {
                             <Route path="category-management" element={<CategoryManagement />} />
                             <Route path="products-management" element={<ProductManagement />} />
                             <Route path="brands-management" element={<BrandManagement />} />
-                            <Route path="customers-management" element={<CustomerList />} />
                             <Route path="orders-management" element={<OrderManagement />} />
-                            <Route path="employee-management" element={<EmployeeManagement />} />
-                            <Route path="customer-list" element={<CustomerList />} />
-                            <Route path="order-management" element={<OrderManagement />} />
                             <Route path="instruction-management" element={<InstructionManagement />} />
                             <Route path="policies-management" element={<PoliciesManagement />} />
-                            <Route path="about-us-management" element={<AboutUsManagement />} />
-                            <Route path="star-rate-management" element={<StarRateManagement/>} />
-                            <Route path="dashboard" element={<DashboardManagement/>} />
-                            <Route path="banner-management" element={<BannerManagement/>} />
-                            <Route path="store-management" element={< StoreManagement/>} />
-                            <Route path="settings-management" element={<div className="p-6 bg-white rounded-lg shadow">Settings Management Page</div>} />
-                            <Route path="sns-management" element={< SNSManagement/>} />
+                            <Route path="star-rate-management" element={<StarRateManagement />} />
+                            <Route path="banner-management" element={<BannerManagement />} />
+
+                            {/* Default redirect */}
+                            <Route index element={<Navigate to="category-management" replace />} />
                         </Route>
+
+                        {/* Legacy redirects */}
+                        <Route path="/manager/*" element={<Navigate to="/staff" replace />} />
+
+                        {/* 404 Page */}
+                        <Route path="*" element={<NotFound />} />
+
                     </Routes>
                 </CartProviderWrapper>
             </AuthProviderForManager>

@@ -1,5 +1,3 @@
-// src/pages/staff/product/ProductManagement.jsx
-
 import React from 'react';
 import AdminLayout from '../../../layouts/AdminLayout';
 import ProductSearch from './ProductSearch';
@@ -151,7 +149,7 @@ const ProductManagement = () => {
                     onCreateProduct={createProduct}
                     onUpdateProduct={updateProduct}
                     onDeleteProduct={deleteProduct}
-                    onViewProduct={viewProduct} // THÊM prop này
+                    onViewProduct={viewProduct}
                     loading={loading}
                 />
             </div>

@@ -1,4 +1,3 @@
-// src/pages/staff/Category/CategoryTable.jsx
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Plus, Image, Users, Upload } from 'lucide-react';
 import DataTable from '../../../components/common/admin/DataTable';
@@ -17,7 +16,7 @@ const CategoryTable = ({
                            onDeleteCategory,
                            loading
                        }) => {
-    // Modal states - ĐỒNG NHẤT với Brand
+
     const [showImageModal, setShowImageModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -25,21 +24,17 @@ const CategoryTable = ({
     const [showEditorsModal, setShowEditorsModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
-    // Form states - ĐỒNG NHẤT với Brand
     const [newCategory, setNewCategory] = useState(CATEGORY_DEFAULTS.NEW_CATEGORY);
     const [updateCategoryData, setUpdateCategoryData] = useState(null);
 
-    // Image management states - ĐỒNG NHẤT với Brand
     const [currentImage, setCurrentImage] = useState(null);
     const [imageToDelete, setImageToDelete] = useState(false);
 
-    // Image validation states - ĐỒNG NHẤT với Brand
     const [imageValidation, setImageValidation] = useState({
         create: { show: false, message: '' },
         update: { show: false, message: '' }
     });
 
-    // File upload handlers - ĐỒNG NHẤT với Brand
     const handleFileUpload = (file, isUpdate = false) => {
         if (!file) return;
 
@@ -52,7 +47,6 @@ const CategoryTable = ({
         }
     };
 
-    // Modal handlers - ĐỒNG NHẤT với Brand
     const openCreateModal = () => {
         setNewCategory(CATEGORY_DEFAULTS.NEW_CATEGORY);
         setImageValidation({
@@ -95,14 +89,13 @@ const CategoryTable = ({
         setShowEditorsModal(true);
     };
 
-    // CRUD operations - ĐỒNG NHẤT với Brand
+    // CRUD operations
     const handleCreateCategory = async () => {
         if (!newCategory.categoryName.trim()) {
             alert('Vui lòng nhập tên danh mục');
             return;
         }
 
-        // THÊM: Validation cho ảnh giống Brand
         if (!newCategory.categoryImage) {
             setImageValidation(prev => ({
                 ...prev,
@@ -111,7 +104,6 @@ const CategoryTable = ({
             return;
         }
 
-        // Reset validation nếu có ảnh
         setImageValidation(prev => ({ ...prev, create: { show: false, message: '' } }));
 
         const result = await onCreateCategory(newCategory, newCategory.categoryImage);
@@ -131,12 +123,9 @@ const CategoryTable = ({
             return;
         }
 
-        // Xử lý logic ảnh - ĐỒNG NHẤT với Brand
         let imageToSend = null;
         if (imageToDelete) {
-            // Người dùng muốn xóa ảnh hiện tại
             if (!updateCategoryData.categoryImage) {
-                // Không có ảnh mới để thay thế
                 setImageValidation(prev => ({
                     ...prev,
                     update: { show: true, message: 'Vui lòng tải lên ảnh danh mục' }
@@ -145,14 +134,11 @@ const CategoryTable = ({
             }
             imageToSend = updateCategoryData.categoryImage;
         } else if (updateCategoryData.categoryImage) {
-            // Người dùng upload ảnh mới
             imageToSend = updateCategoryData.categoryImage;
         } else {
-            // Giữ nguyên ảnh cũ
             imageToSend = 'keep_existing';
         }
 
-        // Reset validation
         setImageValidation(prev => ({ ...prev, update: { show: false, message: '' } }));
 
         const result = await onUpdateCategory(
@@ -186,7 +172,6 @@ const CategoryTable = ({
         }
     };
 
-    // Table columns configuration - ĐỒNG NHẤT với Brand
     const columns = [
         {
             key: 'stt',
@@ -245,17 +230,6 @@ const CategoryTable = ({
             )
         },
         {
-            key: 'status',
-            header: 'Trạng thái',
-            headerAlign: 'text-center',
-            cellAlign: 'text-center',
-            render: (category) => (
-                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${CATEGORY_HELPERS.getStatusColorClass(category.isActive)}`}>
-                    {CATEGORY_HELPERS.getStatusText(category.isActive)}
-                </span>
-            )
-        },
-        {
             key: 'createdBy',
             header: 'Người tạo',
             render: (category) => (
@@ -270,19 +244,23 @@ const CategoryTable = ({
             )
         },
         {
+            key: 'status',
+            header: 'Trạng thái',
+            headerAlign: 'text-center',
+            cellAlign: 'text-center',
+            render: (category) => (
+                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${CATEGORY_HELPERS.getStatusColorClass(category.isActive)}`}>
+                    {CATEGORY_HELPERS.getStatusText(category.isActive)}
+                </span>
+            )
+        },
+        {
             key: 'actions',
             header: 'Thao tác',
             headerAlign: 'text-center',
             cellAlign: 'text-center',
             render: (category) => (
                 <div className="flex justify-center space-x-2">
-                    <button
-                        onClick={() => openImageModal(category)}
-                        className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Xem ảnh"
-                    >
-                        <Eye className="w-4 h-4" />
-                    </button>
                     <button
                         onClick={() => openUpdateModal(category)}
                         className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors"
@@ -297,19 +275,12 @@ const CategoryTable = ({
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
-                    <button
-                        onClick={() => openEditorsModal(category)}
-                        className="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-lg transition-colors"
-                        title="Lịch sử chỉnh sửa"
-                    >
-                        <Users className="w-4 h-4" />
-                    </button>
                 </div>
             )
         }
-    ];
+    ]
 
-    // Pagination - ĐỒNG NHẤT với Brand
+    // Pagination
     const totalPages = Math.ceil(categories.length / itemsPerPage);
     const currentCategories = categories.slice(
         (currentPage - 1) * itemsPerPage,
@@ -318,7 +289,7 @@ const CategoryTable = ({
 
     return (
         <div className="bg-white rounded-lg shadow">
-            {/* Header - ĐỒNG NHẤT với Brand */}
+            {/* Header */}
             <div className="p-6 border-b border-gray-200">
                 <div className="flex justify-between items-center">
                     <h2 className="text-lg font-medium text-gray-900">
@@ -354,7 +325,7 @@ const CategoryTable = ({
                 />
             </div>
 
-            {/* Image Modal - ĐỒNG NHẤT với Brand */}
+            {/* Image Modal */}
             <Modals
                 isOpen={showImageModal}
                 onClose={() => setShowImageModal(false)}
@@ -378,7 +349,7 @@ const CategoryTable = ({
                 )}
             </Modals>
 
-            {/* Create Modal - ĐỒNG NHẤT với Brand */}
+            {/* Create Modal */}
             <Modals
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
@@ -466,7 +437,7 @@ const CategoryTable = ({
                 </div>
             </Modals>
 
-            {/* Update Modal - ĐỒNG NHẤT với Brand */}
+            {/* Update Modal */}
             <Modals
                 isOpen={showUpdateModal}
                 onClose={() => setShowUpdateModal(false)}
@@ -514,7 +485,7 @@ const CategoryTable = ({
                                 Hình ảnh danh mục *
                             </label>
 
-                            {/* Current Image Display - ĐỒNG NHẤT với Brand */}
+                            {/* Current Image Display */}
                             {currentImage && !imageToDelete && (
                                 <div className="mb-4">
                                     <p className="text-sm text-gray-600 mb-2">Hình ảnh hiện tại</p>
@@ -591,7 +562,7 @@ const CategoryTable = ({
                 )}
             </Modals>
 
-            {/* Status Modal - ĐỒNG NHẤT với Brand */}
+            {/* Status Modal */}
             <Modals
                 isOpen={showStatusModal}
                 onClose={() => setShowStatusModal(false)}
@@ -623,7 +594,7 @@ const CategoryTable = ({
                 )}
             </Modals>
 
-            {/* Editors Modal - ĐỒNG NHẤT với Brand */}
+            {/* Editors Modal */}
             <Modals
                 isOpen={showEditorsModal}
                 onClose={() => setShowEditorsModal(false)}

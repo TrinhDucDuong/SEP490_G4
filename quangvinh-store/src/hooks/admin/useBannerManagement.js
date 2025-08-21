@@ -1,4 +1,3 @@
-// src/hooks/useBannerManagement.js
 import { useState, useEffect } from 'react';
 import { getAllBanners, createBanner, updateBannerStatus } from '../../utils/api/Admin/BannerManagementAPI.js';
 import { BANNER_HELPERS, BANNER_DEFAULTS } from '../../utils/constants/BannerConstants.js';
@@ -68,7 +67,7 @@ export const useBannerManagement = () => {
         }
     };
 
-    // Update banner status - FIXED để giữ nguyên trang
+    // Update banner status
     const updateBannerStatusHandler = async () => {
         setLoading(true);
         try {
@@ -80,7 +79,7 @@ export const useBannerManagement = () => {
 
             const result = await updateBannerStatus(requestBody);
             if (result.success) {
-                // Refresh data nhưng GIỮ NGUYÊN TRANG HIỆN TẠI
+                // Refresh data
                 await fetchBanners(true);
                 setStatusChanges({ activeIds: [], deActiveIds: [] }); // Reset changes
                 return { success: true };
@@ -94,7 +93,7 @@ export const useBannerManagement = () => {
         }
     };
 
-    // Toggle banner status - FIXED để không reset về trang 1
+    // Toggle banner status
     const toggleBannerStatus = (bannerId, currentStatus) => {
         // Update UI immediately với SẮP XẾP GIỐNG NHAU
         setBanners(prev => {
@@ -103,7 +102,6 @@ export const useBannerManagement = () => {
                     ? { ...banner, isActive: !currentStatus }
                     : banner
             );
-            // GIỮ NGUYÊN THỨ TỰ SẮP XẾP (theo imageId giảm dần)
             return updatedBanners.sort((a, b) => b.imageId - a.imageId);
         });
 
@@ -131,25 +129,21 @@ export const useBannerManagement = () => {
 
             return newChanges;
         });
-
-        // KHÔNG RESET VỀ TRANG 1 NỮA - bỏ dòng này: setCurrentPage(1);
     };
 
-    // Reset status changes - FIXED để giữ nguyên trang
+    // Reset status changes
     const resetStatusChanges = () => {
         setStatusChanges({ activeIds: [], deActiveIds: [] });
-        // Revert to original state với SẮP XẾP ĐÚNG
         const sortedOriginal = [...originalBanners].sort((a, b) => b.imageId - a.imageId);
         setBanners(sortedOriginal);
-        // KHÔNG RESET VỀ TRANG 1
     };
 
-    // Check if there are pending status changes - FIXED
+    // Check if there are pending status changes
     const hasPendingChanges = () => {
         return BANNER_HELPERS.hasStatusChanges(statusChanges.activeIds, statusChanges.deActiveIds);
     };
 
-    // filter banners - FIXED để không reset về trang 1 khi không cần thiết
+    // filter banners
     useEffect(() => {
         let result = [...banners];
 
@@ -161,7 +155,6 @@ export const useBannerManagement = () => {
 
         setFilteredBanners(result);
 
-        // CHỈ RESET VỀ TRANG 1 KHI THAY ĐỔI FILTER, KHÔNG PHẢI KHI CẬP NHẬT DATA
         const shouldResetPage = JSON.stringify(filters) !== JSON.stringify(BANNER_DEFAULTS.DEFAULT_FILTER);
         if (shouldResetPage) {
             setCurrentPage(1);
@@ -174,7 +167,6 @@ export const useBannerManagement = () => {
             ...prev,
             [key]: value
         }));
-        // Reset về trang 1 khi thay đổi filter
         setCurrentPage(1);
     };
 
