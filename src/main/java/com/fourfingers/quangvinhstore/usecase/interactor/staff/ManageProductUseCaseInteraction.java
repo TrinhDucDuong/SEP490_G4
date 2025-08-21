@@ -277,6 +277,12 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                 updatedList.add(newProductVariantEntity);
             }
 
+            List<ProductVariantEntity> needToDeleteVariants = currentVariants.values()
+                    .stream()
+                    .peek(productVariantEntity -> productVariantEntity.setIsActive(false))
+                    .toList();
+            productVariantRepository.saveAll(needToDeleteVariants);
+
             //Delete all variants that are no longer to save
             productVariantRepository.deleteAll(currentVariants.values());
         }
