@@ -218,7 +218,7 @@ const AIVoiceAssistant = () => {
             setConnectionStatus('Đang kết nối...');
             setError(null);
 
-            wsRef.current = new WebSocket('ws://localhost:9999/admin/ai-assistant');
+            wsRef.current = new WebSocket('wss://quangvinh.store/admin/ai-assistant');
 
             const connectionTimeout = setTimeout(() => {
                 if (wsRef.current && wsRef.current.readyState === WebSocket.CONNECTING) {

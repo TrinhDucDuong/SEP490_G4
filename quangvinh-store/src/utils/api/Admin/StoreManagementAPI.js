@@ -1,4 +1,4 @@
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/store`;
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_ADMIN}/staff/store`;
 
 const getAuthToken = () => {
     return localStorage.getItem('adminAuthToken') || sessionStorage.getItem('adminAuthToken');
