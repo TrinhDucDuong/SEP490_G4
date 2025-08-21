@@ -70,7 +70,7 @@ const InstructionPage = () => {
                                     {selectedInstruction.instructionName}
                                 </h1>
                                 <div className="leading-relaxed text-gray-700 text-lg whitespace-pre-line">
-                                    {selectedInstruction.instructionDescription}
+                                    dangerouslySetInnerHTML={{ __html: selectedInstruction.instructionDescription }}
                                 </div>
                             </>
                         ) : (
