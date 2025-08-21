@@ -1,6 +1,6 @@
 import { DASHBOARD_CONSTANTS } from '../../constants/DashboardConstants';
 
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`;
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_ADMIN}`;
 
 const getAuthToken = () => {
     return localStorage.getItem('adminAuthToken') || sessionStorage.getItem('adminAuthToken');
