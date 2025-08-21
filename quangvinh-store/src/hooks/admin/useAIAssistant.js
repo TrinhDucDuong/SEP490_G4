@@ -15,7 +15,7 @@ export const useAIAssistant = () => {
     // WebSocket connection logic
     const connectWebSocket = useCallback(() => {
         try {
-            wsRef.current = new WebSocket(`${import.meta.env.VITE_API_BASE_URL}/admin/ai-assistant`);
+            wsRef.current = new WebSocket('ws://localhost:9999/admin/ai-assistant');
 
             wsRef.current.onopen = () => {
                 setIsConnected(true);
