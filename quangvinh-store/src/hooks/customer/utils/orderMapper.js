@@ -26,7 +26,7 @@ export const mapSingleOrder = (order) => {
                     images: product.category.images || [],
                 }
                 : null,
-            images: product.images?.map(img => img.imageUrl) || [],
+            images: detail.image ? [detail.image.imageUrl] : [],
             starRateAvg: product.starRateAvg ?? null,
             totalSoldOut: product.totalSoldOut ?? null,
             totalQuantity: product.totalQuantity ?? null,
@@ -83,6 +83,6 @@ export const mapSingleOrder = (order) => {
         subtotal,
         shippingFee: order.shippingFee || 0,
         voucherDiscount: order.voucherDiscount || 0,
-        total: order.totalPrice || subtotal,
+        total: order.totalPrice ?? subtotal,
     };
 };

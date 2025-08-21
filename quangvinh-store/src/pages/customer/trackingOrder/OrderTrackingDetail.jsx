@@ -19,7 +19,7 @@ export default function OrderTrackingDetail() {
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const res = await fetch(`http://localhost:9999/order/tracking/${orderId}`);
+                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/order/tracking/${orderId}`);
                 if (!res.ok) throw new Error("order not found");
                 const data = await res.json();
                 setOrder(data.order);
@@ -91,7 +91,7 @@ export default function OrderTrackingDetail() {
                         >
                             <img
                                 src={
-                                    product.images?.[0]?.imageUrl ||
+                                    detail.image.imageUrl ||
                                     "https://via.placeholder.com/100"
                                 }
                                 alt={product.productName}
