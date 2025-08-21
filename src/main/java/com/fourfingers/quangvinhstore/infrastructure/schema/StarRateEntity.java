@@ -1,6 +1,9 @@
 package com.fourfingers.quangvinhstore.infrastructure.schema;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -24,6 +27,8 @@ public class StarRateEntity {
     private AccountEntity account;
 
     @Column(name = "star_rate", nullable = true, columnDefinition = "TINYINT CHECK (star_rate BETWEEN 1 AND 5)")
+    @Min(value = 1, message = "Star rate cannot be less than 1")
+    @Max(value = 5, message = "Star rate cannot be greater than 5")
     private Long starRate;
 
     @ManyToOne
@@ -31,6 +36,7 @@ public class StarRateEntity {
     private ProductVariantEntity productVariant;
 
     @Column(name = "comment", columnDefinition = "TEXT")
+    @NotBlank(message = "Comment cannot be blank")
     private String comment;
 
     @Column(name = "created_at", nullable = false)
@@ -55,4 +61,6 @@ public class StarRateEntity {
 
     @Column(name = "order_details_id", nullable = false)
     private Long orderDetailsId;
+
+
 }

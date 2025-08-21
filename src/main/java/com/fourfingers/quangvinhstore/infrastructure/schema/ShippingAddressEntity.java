@@ -2,6 +2,9 @@ package com.fourfingers.quangvinhstore.infrastructure.schema;
 
 import com.fourfingers.quangvinhstore.infrastructure.schema.enums.ShippingAddressType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,15 +24,21 @@ public class ShippingAddressEntity {
     private Long shippingAddressId;
 
     @Column(name = "address")
+    @NotBlank(message = "Address cannot be blank")
     private String address;
 
     @Column(name = "exact_address")
+    @NotBlank(message = "Exact address cannot be blank")
     private String exactAddress;
 
     @Column(name = "name")
+    @NotBlank(message = "Name cannot be blank")
     private String name;
 
     @Column(name = "phone_number")
+    @NotBlank(message = "Phone cannot be blank")
+    @Size(min = 10, max = 15, message = "Phone number must have between 10 and 15 digits")
+    @Pattern(regexp = "^[0-9]+$", message = "Phone number must contain only digits")
     private String phoneNumber;
 
     @Column(name = "is_main_address", columnDefinition = "BIT DEFAULT 0")

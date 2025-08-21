@@ -72,7 +72,7 @@ public class StarRateUseCaseInteraction implements StarRateInputBoundary {
         ProductVariantEntity productVariant = orderDetails.getProductVariant();
 
         StarRateEntity starRateEntity = StarRateEntity.builder()
-                .starRate(starRateInputData.getStarRate() > 5 || starRateInputData.getStarRate() < 1 ? 5 : starRateInputData.getStarRate() )
+                .starRate(starRateInputData.getStarRate())
                 .comment(starRateInputData.getComment())
                 .account(accountEntity)
                 .createdAt(LocalDateTime.now())

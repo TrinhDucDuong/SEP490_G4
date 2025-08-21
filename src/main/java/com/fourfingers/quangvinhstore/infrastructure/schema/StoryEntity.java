@@ -1,6 +1,8 @@
 package com.fourfingers.quangvinhstore.infrastructure.schema;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,10 +21,13 @@ public class StoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long storyId;
 
-    @Column(name = "title", columnDefinition = "NVARCHAR(50)", nullable = false)
+    @Column(name = "title", columnDefinition = "NVARCHAR(255)", nullable = false)
+    @NotBlank(message = "Title cannot be blank")
+    @Size(max = 255, message = "Title must be less than 255 characters")
     private String title;
 
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+    @NotBlank(message = "Content cannot be blank")
     private String content;
 
     @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1", nullable = false)

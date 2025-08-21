@@ -320,9 +320,9 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         imageRepository.deleteAll(imageEntities);
     }
 
-    private List<ProductVariant> getProductVariants(ProductEntity productEntity) {
-        return productEntity.getProductVariants().stream()
-                .map(productVariantMapper::toModel)
-                .toList();
-    }
+//    private List<ProductVariant> getProductVariants(ProductEntity productEntity) {
+//        return productEntity.getProductVariants().stream()
+//                .map(productVariantMapper::toModel)
+//                .toList();
+//    }
 }
