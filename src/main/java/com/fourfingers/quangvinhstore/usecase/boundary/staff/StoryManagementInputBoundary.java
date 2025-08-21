@@ -9,5 +9,5 @@ public interface StoryManagementInputBoundary {
     ListStoryOutputData getAllStory();
     StoryOutputData getStory(String id);
     StoryOutputData deleteStory(String id);
-    StoryOutputData saveStory(String id, StoryInputData inputData);
+    StoryOutputData saveStory(String id, StoryInputData inputData) throws RuntimeException;
 }

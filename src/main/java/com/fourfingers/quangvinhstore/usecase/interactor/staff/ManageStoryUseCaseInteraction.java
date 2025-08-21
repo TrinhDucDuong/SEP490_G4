@@ -60,12 +60,12 @@ public class ManageStoryUseCaseInteraction implements StoryManagementInputBounda
     }
 
     @Override
-    public StoryOutputData saveStory(String id, StoryInputData inputData) {
+    public StoryOutputData saveStory(String id, StoryInputData inputData) throws RuntimeException {
         if (id != null) {
             try {
                 Long storyId = Long.parseLong(id);
                 StoryEntity storyEntity = storyRepository.findByStoryIdAndIsActiveTrue(storyId)
-                        .orElseThrow(StoryNotFoundException::new);
+                        .orElseThrow(() -> new StoryNotFoundException("Story's not found"));
                 storyEntity.setTitle(inputData.getTitle());
                 storyEntity.setContent(inputData.getContent());
                 Story updatedStory = storyStaffMapper.toModel(storyRepository.save(storyEntity));

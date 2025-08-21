@@ -2,6 +2,9 @@ package com.fourfingers.quangvinhstore.infrastructure.schema;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,15 +28,20 @@ public class AccountEntity implements UserDetails {
     private Long accountId;
 
     @Column(name = "username", unique = true, nullable = false, columnDefinition = "CHAR(15)")
+    @NotBlank(message = "Username cannot be blank")
+    @Size(min = 10, max = 15, message = "Username must be between 10 and 15 characters")
     private String username;
 
     @Column(name = "email", unique = true)
+    @Email(message = "Invalid email format")
     private String email;
 
     @JoinColumn(name = "facebook_id", unique = true)
     private String facebookId;
 
     @Column(name = "password", nullable = false, length = 68)
+    @NotBlank(message = "Password cannot be blank")
+    @Size(min = 8, max = 68, message = "Password must be between 8 and 68 characters")
     private String password;
 
     @Column(name = "reset_token")
