@@ -21,7 +21,7 @@ public class ProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
-    @Column(name = "product_name", nullable = false, columnDefinition = "NVARCHAR(50)")
+    @Column(name = "product_name", nullable = false, columnDefinition = "TEXT")
     private String productName;
 
     @Column(name = "product_description", nullable = false, columnDefinition = "TEXT")

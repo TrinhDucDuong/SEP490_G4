@@ -22,7 +22,7 @@ public class InstructionEntity {
     @Column(name = "instruction_name", columnDefinition = "NVARCHAR(50)", nullable = false)
     private String instructionName;
 
-    @Column(name = "instruction_description", columnDefinition = "NVARCHAR(255)", nullable = false)
+    @Column(name = "instruction_description", columnDefinition = "TEXT", nullable = false)
     private String instructionDescription;
 
     @Column(name = "is_active", columnDefinition = "BIT DEFAULT 1", nullable = false)
