@@ -120,6 +120,7 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
 
         //Set variants
         List<ProductDetailsVariant> productVariants = productEntity.getProductVariants().stream()
+                .filter(ProductVariantEntity::getIsActive)
                 .map(productVariantEntity -> {
                     return ProductDetailsVariant.builder()
                             .productSize(productVariantEntity.getProductSize().toString())
@@ -148,6 +149,7 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
     */
     private List<String> getProductSizes(ProductEntity productEntity) {
         return productEntity.getProductVariants().stream()
+                .filter(ProductVariantEntity::getIsActive)
                 .map(productVariantEntity -> {
                     return productVariantEntity.getProductSize().toString();
                 })
@@ -159,6 +161,7 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
     */
     private List<Color> getProductColors(ProductEntity productEntity) {
         return productEntity.getProductVariants().stream()
+                .filter(ProductVariantEntity::getIsActive)
                 .map(productVariantEntity -> {
                     return Color.builder()
                             .colorHex(productVariantEntity.getColor().getColorHex())
