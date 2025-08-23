@@ -14,6 +14,7 @@ import com.fourfingers.quangvinhstore.infrastructure.schema.StoreEntity;
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.StaffAccountManagementInputBoundary;
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.StaffAccountManagementOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.admin.ListStaffAccountOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.admin.StaffAccountDetailsOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.admin.StaffAccountInputData;
 import com.fourfingers.quangvinhstore.usecase.data.admin.StaffAccountOutputData;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -97,14 +99,23 @@ public class ManageStaffAccountUseCaseInteraction implements StaffAccountManagem
     }
 
     @Override
-    public StaffAccountOutputData getById(String id) {
+    @Transactional
+    public StaffAccountDetailsOutputData getById(String id) {
         Long accountId = Long.parseLong(id);
         Pageable pageable = Pageable.ofSize(1).withPage(0);
-        List<StaffAccount> staffAccounts = getResult(
+        StaffAccount staffAccount = getResult(
                 accountRepository.getStaffAccountWithCondition(pageable, accountId).getContent()
-        );
-        if (!staffAccounts.isEmpty()) {
-            return staffAccountManagementOutputBoundary.convertToStaffAccountOutputData(staffAccounts.getFirst());
+        ).getFirst();
+        if (staffAccount != null) {
+            AccountEntity staffAccountEntity = accountRepository.findById(accountId).orElseThrow(
+                    () -> new EntityNotFoundException("Staff account not found")
+            );
+            return staffAccountManagementOutputBoundary.convertToStaffAccountDetailsOutputData(
+                    staffAccount.getAccountId(), staffAccount.getStaffName(),
+                    staffAccount.getTotalProcessedOrder(), staffAccount.getTotalRevenue(),
+                    staffAccountEntity.getWorkingAt().getStoreName(), staffAccountEntity.getProfile().getPhoneNumber(),
+                    staffAccountEntity.getUsername()
+            );
         } else {
             throw new EntityNotFoundException("Staff account not found");
         }

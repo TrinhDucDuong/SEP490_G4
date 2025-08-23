@@ -3,6 +3,7 @@ package com.fourfingers.quangvinhstore.presenter.admin;
 import com.fourfingers.quangvinhstore.domain.model.admin.StaffAccount;
 import com.fourfingers.quangvinhstore.usecase.boundary.admin.StaffAccountManagementOutputBoundary;
 import com.fourfingers.quangvinhstore.usecase.data.admin.ListStaffAccountOutputData;
+import com.fourfingers.quangvinhstore.usecase.data.admin.StaffAccountDetailsOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.admin.StaffAccountOutputData;
 import org.springframework.stereotype.Component;
 
@@ -18,5 +19,21 @@ public class StaffAccountPresenter implements StaffAccountManagementOutputBounda
     @Override
     public StaffAccountOutputData convertToStaffAccountOutputData(StaffAccount staffAccount) {
         return new StaffAccountOutputData(staffAccount);
+    }
+
+    @Override
+    public StaffAccountDetailsOutputData convertToStaffAccountDetailsOutputData(Long staffAccountId, String staffName,
+                                                                                Long totalProcessedOrder, Long totalRevenue,
+                                                                                String workingAt, String phoneNumber,
+                                                                                String username) {
+        return StaffAccountDetailsOutputData.builder()
+                .accountId(staffAccountId)
+                .staffName(staffName)
+                .totalProcessedOrder(totalProcessedOrder)
+                .totalRevenue(totalRevenue)
+                .workingAt(workingAt)
+                .phoneNumber(phoneNumber)
+                .username(username)
+                .build();
     }
 }
