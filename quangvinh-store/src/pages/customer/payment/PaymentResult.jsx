@@ -5,6 +5,8 @@ const PaymentResult = ({ result }) => {
     const order = result.orderOutputData.order;
     const paymentUrl = result.paymentUrl;
 
+    console.log(result);
+
     return (
         <div className="max-w-6xl mx-auto p-4 sm:p-8 space-y-8">
             {/* Title */}
@@ -52,10 +54,11 @@ const PaymentResult = ({ result }) => {
                     {order.orderDetails.map((detail, idx) => (
                         <div key={idx} className="flex flex-col sm:flex-row gap-4 py-4 border-b last:border-0">
                             <img
-                                src={detail.productVariant.product.images[0]?.imageUrl}
+                                src={detail.image?.imageUrl || detail.productVariant.product.images?.[0]?.imageUrl || "/fallback.png"}
                                 alt={detail.productVariant.product.productName}
                                 className="w-full sm:w-28 sm:h-28 object-cover rounded"
                             />
+
                             <div className="flex-1">
                                 <p className="font-medium text-base sm:text-lg">{detail.productVariant.product.productName}</p>
                                 <p>Kích cỡ: {detail.productVariant.productSize}</p>

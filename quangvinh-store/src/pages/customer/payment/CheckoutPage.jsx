@@ -142,6 +142,7 @@ function CheckoutPage() {
                 });
                 if (res.ok) {
                     const data = await res.json();
+                    console.log(data);
                     setResult(data);
                     const createdOrder = data.order;
                     setOrder(createdOrder);
