@@ -16,27 +16,15 @@ quangvinh-store/
 │   │   ├── layout/             # Layout components (Header, Footer, Sidebar)
 │   │   └── ui/                 # UI components (ProductCard, Carousel)
 │   ├── pages/                  # Page components
-│   │   ├── Home.jsx            # Homepage
-│   │   ├── ProductList.jsx     # Product listing page
-│   │   ├── ProductDetail.jsx   # Product detail page
-│   │   ├── Cart.jsx            # Shopping cart page
-│   │   ├── Checkout.jsx        # Checkout page
-│   │   ├── Login.jsx           # Login page
-│   │   ├── Register.jsx        # Registration page
-│   │   └── NotFound.jsx        # 404 page
+│   │   
 │   ├── hooks/                  # Custom hooks
-│   │   ├── useCart.js          # Cart management hook
-│   │   ├── useAuth.js          # Authentication hook
-│   │   └── useFetch.js         # API fetch hook
+│   │   
 │   ├── context/                # React context for state management
-│   │   ├── CartContext.js      # Cart context
-│   │   └── AuthContext.js      # Auth context
+│   │  
 │   ├── utils/                  # Utility functions
-│   │   ├── api.js              # API request functions
-│   │   ├── formatPrice.js      # Price formatting utility
-│   │   └── constants.js        # Constants (API endpoints, configs)
+│   │   
 │   ├── routes/                 # Route configuration
-│   │   └── index.js            # React Router routes
+│   │   
 │   ├── App.jsx                 # Main app component
 │   ├── main.jsx                # Entry point
 │   └── index.css               # Main CSS (Tailwind imports)

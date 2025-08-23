@@ -76,6 +76,8 @@ export const AuthProviderForManager = ({ children }) => {
         const data = await res.json();
         setToken(data.token);
         setUser(data.account);
+
+        console.log(data.token, data.account);
         saveCredential(data, remember);
     };
 

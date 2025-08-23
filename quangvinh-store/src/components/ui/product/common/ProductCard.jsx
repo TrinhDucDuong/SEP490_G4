@@ -35,6 +35,7 @@ const ProductCard = memo(function ProductCard({ product }) {
     const handleClick = () => {
         logAction('VIEW', product.productId);
         navigate("/products/detail", { state: { productId: product.productId } });
+        window.location.reload();
     };
 
 

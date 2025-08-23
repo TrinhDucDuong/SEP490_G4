@@ -8,18 +8,25 @@ import {
 import { fetchProductById } from '../utils/api/Customer/ProductAPI';
 import { toast } from 'react-toastify';
 
+// Tạo Context để quản lý giỏ hàng
 const CartContext = createContext();
 
+// Hook tiện lợi để các component khác có thể dùng giỏ hàng
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ accountId, token, children }) => {
+    // State lưu danh sách sản phẩm trong giỏ
     const [cartItems, setCartItems] = useState([]);
+    // State quản lý loading
     const [loading, setLoading] = useState(true);
+    // Ref dùng để kiểm tra đã đồng bộ giỏ hàng local với server chưa
     const syncedRef = useRef(false);
 
+    // Lấy giỏ hàng từ localStorage
     const getLocalCart = () => JSON.parse(localStorage.getItem('cart') || '[]');
     const saveLocalCart = (items) => localStorage.setItem('cart', JSON.stringify(items));
 
+    // Fetch giỏ hàng từ server và format lại dữ liệu
     const fetchAndFormatCartFromServer = async () => {
         const data = await fetchCartAPI(accountId, token);
         return data.cart.map((item) => ({
@@ -34,6 +41,7 @@ export const CartProvider = ({ accountId, token, children }) => {
         }));
     };
 
+    // Đồng bộ giỏ hàng local với server nếu người dùng đã login
     const syncLocalCartToServer = async () => {
         const localCart = getLocalCart();
         if (!accountId || localCart.length === 0 || syncedRef.current) return;
@@ -42,6 +50,7 @@ export const CartProvider = ({ accountId, token, children }) => {
             const serverData = await fetchCartAPI(accountId, token);
             const serverCart = serverData.cart || [];
 
+            // Lặp qua các item local, thêm vào server nếu chưa có
             await Promise.all(
                 localCart.map(async (localItem) => {
                     const matched = serverCart.find(
@@ -62,6 +71,7 @@ export const CartProvider = ({ accountId, token, children }) => {
                 })
             );
 
+            // Đánh dấu đã đồng bộ
             syncedRef.current = true;
             localStorage.removeItem('cart');
         } catch (err) {
@@ -70,6 +80,7 @@ export const CartProvider = ({ accountId, token, children }) => {
         }
     };
 
+    // Load giỏ hàng: nếu đã login thì lấy từ server, nếu chưa login lấy từ localStorage
     const loadCart = async () => {
         setLoading(true);
         try {
@@ -79,6 +90,7 @@ export const CartProvider = ({ accountId, token, children }) => {
                 setCartItems(formatted);
             } else {
                 const localCart = getLocalCart();
+                // Thêm thông tin sản phẩm đầy đủ nếu local cart thiếu dữ liệu
                 const enrichedCart = await Promise.all(
                     localCart.map(async (item) => {
                         if (!item.productImage || item.productImage === '/placeholder.png') {
@@ -107,10 +119,12 @@ export const CartProvider = ({ accountId, token, children }) => {
         }
     };
 
+    // useEffect để load giỏ hàng khi accountId hoặc token thay đổi
     useEffect(() => {
         loadCart();
     }, [accountId, token]);
 
+    // Thêm sản phẩm vào giỏ hàng
     const addToCart = async ({
                                  productId,
                                  colorHexCode,
@@ -122,17 +136,12 @@ export const CartProvider = ({ accountId, token, children }) => {
                              }) => {
         try {
             if (accountId) {
-                await addToCartAPI({
-                    accountId,
-                    productId,
-                    colorHexCode,
-                    sizeCode,
-                    quantity,
-                    token,
-                });
+                // Nếu login, thêm vào server
+                await addToCartAPI({ accountId, productId, colorHexCode, sizeCode, quantity, token });
                 const updated = await fetchAndFormatCartFromServer();
                 setCartItems(updated);
             } else {
+                // Nếu chưa login, lưu vào localStorage
                 const localCart = getLocalCart();
                 const existing = localCart.find(
                     (item) =>
@@ -143,6 +152,7 @@ export const CartProvider = ({ accountId, token, children }) => {
 
                 let updatedCart;
                 if (existing) {
+                    // Nếu đã tồn tại, tăng số lượng
                     updatedCart = localCart.map((item) =>
                         item.productId === productId &&
                         item.colorHexCode?.toLowerCase() === colorHexCode?.toLowerCase() &&
@@ -151,6 +161,7 @@ export const CartProvider = ({ accountId, token, children }) => {
                             : item
                     );
                 } else {
+                    // Nếu chưa tồn tại, thêm mới
                     const newItem = {
                         id: `local_${Date.now()}`,
                         productId,
@@ -173,6 +184,7 @@ export const CartProvider = ({ accountId, token, children }) => {
         }
     };
 
+    // Cập nhật số lượng sản phẩm trong giỏ
     const updateQuantity = async (id, newQuantity) => {
         try {
             if (accountId) {
@@ -183,32 +195,15 @@ export const CartProvider = ({ accountId, token, children }) => {
 
                 if (newQuantity > item.quantity) {
                     const delta = newQuantity - item.quantity;
-                    await addToCartAPI({
-                        accountId,
-                        productId: item.productId,
-                        colorHexCode: item.colorHexCode,
-                        sizeCode: item.sizeCode,
-                        quantity: delta,
-                        token,
-                    });
+                    await addToCartAPI({ accountId, productId: item.productId, colorHexCode: item.colorHexCode, sizeCode: item.sizeCode, quantity: delta, token });
                 } else {
-                    await updateCartQuantityAPI({
-                        cartDetailsId: id,
-                        accountId,
-                        productId: item.productId,
-                        colorHexCode: item.colorHexCode,
-                        sizeCode: item.sizeCode,
-                        quantity: item.quantity - newQuantity,
-                        token,
-                    });
+                    await updateCartQuantityAPI({ cartDetailsId: id, accountId, productId: item.productId, colorHexCode: item.colorHexCode, sizeCode: item.sizeCode, quantity: item.quantity - newQuantity, token });
                 }
 
                 const updated = await fetchAndFormatCartFromServer();
                 setCartItems(updated);
             } else {
-                const updated = getLocalCart().map((i) =>
-                    i.id === id ? { ...i, quantity: newQuantity } : i
-                );
+                const updated = getLocalCart().map((i) => i.id === id ? { ...i, quantity: newQuantity } : i);
                 setCartItems(updated);
                 saveLocalCart(updated);
             }
@@ -218,20 +213,13 @@ export const CartProvider = ({ accountId, token, children }) => {
         }
     };
 
+    // Xóa 1 sản phẩm khỏi giỏ
     const removeItem = async (id) => {
         try {
             if (accountId) {
                 const item = cartItems.find((i) => i.id === id);
                 if (!item) throw new Error('Không tìm thấy sản phẩm');
-                await updateCartQuantityAPI({
-                    cartDetailsId: id,
-                    accountId,
-                    productId: item.productId,
-                    colorHexCode: item.colorHexCode,
-                    sizeCode: item.sizeCode,
-                    quantity: item.quantity,
-                    token,
-                });
+                await updateCartQuantityAPI({ cartDetailsId: id, accountId, productId: item.productId, colorHexCode: item.colorHexCode, sizeCode: item.sizeCode, quantity: item.quantity, token });
                 const updated = await fetchAndFormatCartFromServer();
                 setCartItems(updated);
             } else {
@@ -245,6 +233,7 @@ export const CartProvider = ({ accountId, token, children }) => {
         }
     };
 
+    // Xóa toàn bộ giỏ hàng
     const clearCart = async () => {
         try {
             setCartItems([]);
@@ -252,9 +241,7 @@ export const CartProvider = ({ accountId, token, children }) => {
             if (accountId) {
                 const data = await fetchCartAPI(accountId, token);
                 await Promise.all(
-                    (data.cart || []).map((item) =>
-                        deleteCartItemAPI(item.cartDetailsId, token)
-                    )
+                    (data.cart || []).map((item) => deleteCartItemAPI(item.cartDetailsId, token))
                 );
             }
         } catch (err) {
@@ -262,6 +249,7 @@ export const CartProvider = ({ accountId, token, children }) => {
         }
     };
 
+    // Trả về Context Provider với các giá trị và hàm thao tác giỏ hàng
     return (
         <CartContext.Provider
             value={{ cartItems, loading, addToCart, updateQuantity, removeItem, clearCart }}

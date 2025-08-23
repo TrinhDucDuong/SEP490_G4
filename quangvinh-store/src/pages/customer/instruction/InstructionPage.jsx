@@ -69,9 +69,10 @@ const InstructionPage = () => {
                                 <h1 className="text-3xl font-extrabold mb-5 text-gray-900 leading-tight">
                                     {selectedInstruction.instructionName}
                                 </h1>
-                                <div className="leading-relaxed text-gray-700 text-lg whitespace-pre-line">
-                                    {selectedInstruction.instructionDescription}
-                                </div>
+                                <div
+                                    className="leading-relaxed text-gray-700 text-lg whitespace-pre-line"
+                                    dangerouslySetInnerHTML={{ __html: selectedInstruction.instructionDescription }}
+                                />
                             </>
                         ) : (
                             <p className="text-gray-500 text-lg py-12 text-center">

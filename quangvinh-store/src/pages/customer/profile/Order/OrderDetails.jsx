@@ -25,6 +25,8 @@ function OrderDetail() {
     if (error) return <p className="text-center text-red-500 text-lg">Lỗi: {error}</p>;
     if (!order) return <p className="text-center text-gray-600 text-lg">Không tìm thấy đơn hàng</p>;
 
+    console.log(order);
+
     return (
         <div className="mx-auto p-6 bg-white border border-gray-200 mt-6">
             {/* Header */}
@@ -78,7 +80,6 @@ function OrderDetail() {
                 <p><strong>Khu vực:</strong> {order.shippingAddress?.address}</p>
             </div>
 
-            {/* Items */}
             <div className="border-t border-gray-300">
                 {order.items.map((item, idx) => (
                     <div key={idx} className="flex items-center justify-between py-4 border-b border-gray-200 last:border-b-0">

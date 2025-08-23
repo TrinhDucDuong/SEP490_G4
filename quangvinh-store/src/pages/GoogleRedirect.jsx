@@ -13,7 +13,7 @@ const GoogleRedirect = () => {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:9999/auth/social/google?${searchParams.toString()}`,
+                    `${import.meta.env.VITE_API_BASE_URL}/auth/social/google?${searchParams.toString()}`,
                     {
                         credentials: 'include',
                     }

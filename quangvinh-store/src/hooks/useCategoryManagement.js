@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getAllCategories, createCategory, updateCategory, deleteCategory } from '../utils/api/Admin/CategoryManagementAPI.js';
-import { CATEGORY_HELPERS } from '../utils/constants/CategoryConstants';
+import { CATEGORY_HELPERS } from '../utils/constants/CategoryConstants.js';
 
 export const useCategoryManagement = () => {
     // Data state

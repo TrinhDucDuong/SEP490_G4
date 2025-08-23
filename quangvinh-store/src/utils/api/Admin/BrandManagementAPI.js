@@ -5,7 +5,9 @@ const getAuthToken = () => {
 };
 
 const getAuthHeaders = () => {
+
     const token = getAuthToken();
+    console.log(token);
     return {
         'accept': '*/*',
         ...(token && { 'Authorization': `Bearer ${token}` })

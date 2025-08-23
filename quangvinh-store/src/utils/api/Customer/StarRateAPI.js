@@ -1,5 +1,13 @@
 import axios from "axios";
 
+// Hàm tạo mới feedback (đánh giá sao) cho sản phẩm
+// - Tham số: data (object chứa thông tin đánh giá: productId, rating, comment, ...)
+// - Lấy token từ localStorage để xác thực người dùng
+// - Gửi request POST đến endpoint /star-rate với body = data
+// - Headers: Authorization (Bearer token), Content-Type: application/json
+// - Nếu thành công: trả về response.data (dữ liệu phản hồi từ server)
+// - Nếu thất bại: ném ra error.response.data (nếu server có trả về lỗi)
+//   hoặc object { message: "Đã có lỗi xảy ra" } nếu không có thông tin chi tiết
 export const createProductFeedback = async (data) => {
     const token = localStorage.getItem("token");
     try {
@@ -8,7 +16,7 @@ export const createProductFeedback = async (data) => {
             data,
             {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`, // xác thực bằng JWT token
                     "Content-Type": "application/json"
                 }
             }
