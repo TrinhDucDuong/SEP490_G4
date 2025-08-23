@@ -22,6 +22,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(aiAssistanceWebSocketHandler, "/admin/ai-assistant")
+                .addHandler(aiAssistanceWebSocketHandler, "/admin/ai-assistant/**")
                 .setAllowedOrigins("*");
     }
 

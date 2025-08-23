@@ -148,7 +148,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         AccountEntity accountEntity = (AccountEntity) userDetails;
         Optional<OrderEntity> orderEntity = orderRepository.findByOrderIdAndOwnerAccountId(orderId, accountEntity.getAccountId());
         if (orderEntity.isPresent()) {
-            return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(orderEntity.get()));
+            return customerOrderOutputBoundary.convertToCustomerOrderOutputData(getOrderInformation(orderEntity.get()));
         } else {
             throw new RuntimeException("Order not found");
         }

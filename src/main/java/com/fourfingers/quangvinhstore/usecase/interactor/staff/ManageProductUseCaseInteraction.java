@@ -19,6 +19,7 @@ import com.fourfingers.quangvinhstore.usecase.boundary.staff.ProductManagementOu
 import com.fourfingers.quangvinhstore.usecase.data.staff.ListProductOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.ProductInputData;
 import com.fourfingers.quangvinhstore.usecase.data.staff.ProductOutputData;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -254,9 +255,8 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                 ProductVariantEntity existingProductVariants = currentVariants.get(
                         productVariant.getProductVariantId()
                 );
-                ColorEntity colorEntity = colorStaffMapper.toEntity(
-                        productVariant.getColor()
-                );
+                ColorEntity colorEntity = colorRepository.findByColorHex(productVariant.getColor().getColorHex())
+                        .orElseThrow(() -> new EntityNotFoundException("Color not found"));
                 existingProductVariants.setColor(colorEntity);
                 existingProductVariants.setProductSize(ProductSize.valueOf(productVariant.getProductSize()));
                 existingProductVariants.setQuantity(productVariant.getQuantity());
@@ -282,9 +282,6 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                     .peek(productVariantEntity -> productVariantEntity.setIsActive(false))
                     .toList();
             productVariantRepository.saveAll(needToDeleteVariants);
-
-            //Delete all variants that are no longer to save
-            productVariantRepository.deleteAll(currentVariants.values());
         }
         //Update and return model
         List<ProductVariantEntity> savedProductVariants = productVariantRepository.saveAll(updatedList);

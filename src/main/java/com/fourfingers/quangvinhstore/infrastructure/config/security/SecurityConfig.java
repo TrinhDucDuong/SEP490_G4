@@ -111,6 +111,8 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.POST, "/action-log").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/feedback/**").permitAll();
+                    auth.requestMatchers("/admin/ai-assistant/**").permitAll();
+                    auth.requestMatchers("/admin/ai-assistant").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/admin/**").hasAuthority("ADMINISTRATOR");
                     auth.requestMatchers(HttpMethod.POST, "/admin/**").hasAuthority("ADMINISTRATOR");
                     auth.requestMatchers(HttpMethod.PUT, "/admin/**").hasAuthority("ADMINISTRATOR");
