@@ -59,6 +59,7 @@ const ProductModal = ({
                     }
 
                     return {
+                        productVariantId: variant.productVariantId,
                         color: colorHex,
                         productSize: variant.productSize || '',
                         quantity: variant.quantity || 0

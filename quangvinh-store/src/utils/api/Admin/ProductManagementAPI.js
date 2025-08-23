@@ -286,12 +286,21 @@ export const updateProduct = async (productId, productData, productImages, exist
             unitPrice: productData.unitPrice.toString(),
             brandId: productData.brandId.toString(),
             categoryId: productData.categoryId.toString(),
-            productVariants: productData.productVariants.map(variant => ({
-                productSize: variant.productSize?.trim() || '',
-                color: { colorHex: variant.color?.trim() || '#000000' },
-                quantity: parseInt(variant.quantity) || 0
-            }))
+            productVariants: productData.productVariants.map(variant => {
+                const variantObj = {
+                    productSize: variant.productSize?.trim() || '',
+                    color: { colorHex: variant.color?.trim() || '#000000' },
+                    quantity: parseInt(variant.quantity) || 0
+                };
+
+                if (variant.productVariantId) {
+                    variantObj.productVariantId = variant.productVariantId;
+                }
+
+                return variantObj;
+            })
         };
+
 
         const productInputBlob = new Blob([JSON.stringify(productInput)], {
             type: 'application/json'
