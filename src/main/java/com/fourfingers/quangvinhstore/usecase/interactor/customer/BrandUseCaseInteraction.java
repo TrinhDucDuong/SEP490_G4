@@ -29,7 +29,7 @@ public class BrandUseCaseInteraction implements BrandInputBoundary {
     @Override
     public ListBrandOutputData getAll() {
         return brandOutputBoundary.convertToListBrandOutputData(
-                brandRepository.findAll().stream()
+                brandRepository.findAllByIsActiveTrue().stream()
                         .map(brandEntity -> {
                              Brand brand = brandMapper.toModel(brandEntity);
                              brand.setImages(getBrandImages(brandEntity));

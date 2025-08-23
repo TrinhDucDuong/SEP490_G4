@@ -75,6 +75,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>,
                 AND (:colorHexes IS NULL OR FIND_IN_SET(pv.color_code, :colorHexes) > 0)
                 AND (:productSizes IS NULL OR FIND_IN_SET(pv.size_code, :productSizes) > 0)
                 AND (:searchText IS NULL OR p.product_name LIKE CONCAT('%', :searchText, '%'))
+                AND p.is_active = 1
             """,
             nativeQuery = true)
     Page<Object[]> searchProduct(
