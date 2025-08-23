@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/blog`;
+const BASE_URL = `${import.meta.env.VITE_API_BASE_STAFF}/staff/blog`;
 
 const getToken = () => {
     return localStorage.getItem("adminAuthToken") || sessionStorage.getItem("adminAuthToken") || "";
