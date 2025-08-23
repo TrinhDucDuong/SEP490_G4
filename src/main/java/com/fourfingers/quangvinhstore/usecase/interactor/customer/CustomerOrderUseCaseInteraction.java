@@ -251,10 +251,10 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         shippingAddress.setIsActive(true);
         shippingAddress.setAccount(null);
         shippingAddress.setAddress(shippingAddressInputData.getAddress());
+        shippingAddress.setExactAddress(shippingAddressInputData.getExactAddress());
         shippingAddress.setName(shippingAddressInputData.getName());
         shippingAddress.setPhoneNumber(shippingAddressInputData.getPhoneNumber());
         shippingAddress.setName(shippingAddressInputData.getName());
-        shippingAddressInputData.setExactAddress(shippingAddressInputData.getExactAddress());
         shippingAddress = shippingAddressRepository.save(shippingAddress);
 
         // Order
