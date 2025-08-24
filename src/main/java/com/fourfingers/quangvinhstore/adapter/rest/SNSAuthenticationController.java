@@ -42,12 +42,12 @@ public class SNSAuthenticationController {
         snsAuthInputData.setToken(token);
         AuthenticationOutputData authenticationOutputData = snsAuthInputBoundary
                 .performGoogleAuthentication(snsAuthInputData);
-        
+
         String jwtToken = authenticationOutputData.getToken();
         Long accountId = authenticationOutputData.getAccount().getAccountId();
         String username = authenticationOutputData.getAccount().getUsername();
 
-        String redirectUrl = "http://localhost:5173/oauth2/redirect" +
+        String redirectUrl = "https://quangvinh.store/oauth2/redirect" +
                 "?token=" + jwtToken +
                 "&accountId=" + accountId +
                 "&username=" + username;
@@ -77,7 +77,7 @@ public class SNSAuthenticationController {
      * @return Message confirming verification code delivery
      */
     @GetMapping("/forgot")
-    public String resetPassword(@RequestParam String contact) { 
+    public String resetPassword(@RequestParam String contact) {
         snsAuthInputBoundary.resetPassword(contact);
         return "Mã xác minh đã được gửi đến " + contact;
     }
@@ -90,7 +90,7 @@ public class SNSAuthenticationController {
      * @return Message confirming password reset completion
      */
     @GetMapping("/reset")
-    public String processResetPassword(@RequestParam String contact, String token) { 
+    public String processResetPassword(@RequestParam String contact, String token) {
         snsAuthInputBoundary.processResetPassword(contact, token);
         return "Mật khẩu mới đã được gửi đến " + contact;
     }

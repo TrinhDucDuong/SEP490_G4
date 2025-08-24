@@ -38,7 +38,7 @@ public class OrderEntity {
             // 2. Sequence 3 chữ số để tránh trùng trong cùng 1 giây
             int sequence = counter.getAndIncrement() % 1000;
 
-            // 3. Ghép lại: ORD-yyyyMMddHHmmssXXX
+            // 3. Ghép lại: yyyyMMddHHmmssXXX
             this.orderCode = String.format("%s%03d", timePart, sequence);
         }
     }
