@@ -117,7 +117,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         OrderEntity placedOrder = orderRepository.save(orderEntity);
         cartDetailsRepository.deleteByAccount_AccountId(accountEntity.getAccountId());
 
-        return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(placedOrder));
+        return customerOrderOutputBoundary.convertToCustomerOrderOutputData(getOrderInformation(placedOrder));
     }
 
     @Override
@@ -137,7 +137,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
             orderEntity.get().setOrderDate(LocalDateTime.now());
             orderEntity.get().setTotalPrice(calculateTotalOrderPrice(orderEntity.get().getOrderId()));
             OrderEntity placedOrder = orderRepository.save(orderEntity.get());
-            return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(placedOrder));
+            return customerOrderOutputBoundary.convertToCustomerOrderOutputData(getOrderInformation(placedOrder));
         } else {
             throw new RuntimeException("Order not found");
         }
@@ -178,7 +178,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
                 orderResponse = orderRepository.save(orderEntity.get());
             }
             if(orderResponse != null) {
-                return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(orderResponse));
+                return customerOrderOutputBoundary.convertToCustomerOrderOutputData(getOrderInformation(orderResponse));
             }
         }
         throw new RuntimeException("Order not found");
@@ -218,7 +218,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         orderEntity.setTotalPrice(orderDetailsEntity.getUnitPrice().multiply(BigDecimal.valueOf(orderDetailsEntity.getQuantity())));
         orderEntity.setOrderDetails(List.of(orderDetailsEntity));
         OrderEntity placedOrder = orderRepository.save(orderEntity);
-        return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(placedOrder));
+        return customerOrderOutputBoundary.convertToCustomerOrderOutputData(getOrderInformation(placedOrder));
     }
 
     @Override
@@ -241,12 +241,11 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         orderEntity.get().setShippingAddress(shippingAddress);
         orderEntity.get().setTotalPrice(calculateTotalOrderPrice(orderEntity.get().getOrderId()));
         OrderEntity placedOrder = orderRepository.save(orderEntity.get());
-        return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(placedOrder));
+        return customerOrderOutputBoundary.convertToCustomerOrderOutputData(getOrderInformation(placedOrder));
     }
 
     @Override
     public OrderOutputData orderByGuest(ShippingAddressInputData shippingAddressInputData, List<ProductVariantInputData> productVariantInputDataList, String paymentMethod) {
-        // Shipping address
         ShippingAddressEntity shippingAddress = new ShippingAddressEntity();
         shippingAddress.setIsActive(true);
         shippingAddress.setAccount(null);
@@ -292,7 +291,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
             }
         }
         orderEntity = orderRepository.save(orderEntity);
-        return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(orderEntity));
+        return customerOrderOutputBoundary.convertToCustomerOrderOutputData(getOrderInformation(orderEntity));
     }
 
     @Override
@@ -301,7 +300,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         if (orderEntity.isPresent()) {
             orderEntity.get().setOwner(null);
             orderEntity.get().setShippingAddress(null);
-            return customerOrderOutputBoundary.convertToCustomerOrderOutputData(orderMapper.toModel(orderEntity.get()));
+            return customerOrderOutputBoundary.convertToCustomerOrderOutputData(getOrderInformation(orderEntity.get()));
         } else {
             throw new RuntimeException("Order not found");
         }
