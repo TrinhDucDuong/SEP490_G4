@@ -194,7 +194,7 @@ const SNSManagement = () => {
                 </div>
 
                 {/* Table Section */}
-                <div className="bg-white rounded-lg shadow">
+                <div >
                     <SNSTable
                         snsList={filteredSNS}
                         currentPage={currentPage}
