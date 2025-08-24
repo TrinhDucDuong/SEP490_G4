@@ -6,6 +6,7 @@ import Paginations from '../../../components/common/admin/Paginations';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { BRAND_HELPERS, BRAND_DEFAULTS } from '../../../utils/constants/BrandConstants';
+import SingleImageUpload from '../../../components/common/admin/SingleImageUpload';
 
 const BrandTable = ({
                         brands,
@@ -30,44 +31,20 @@ const BrandTable = ({
     const [newBrand, setNewBrand] = useState(BRAND_DEFAULTS.NEW_BRAND);
     const [updateBrandData, setUpdateBrandData] = useState(null);
 
-    // Image management states
-    const [currentImage, setCurrentImage] = useState(null);
-    const [imageToDelete, setImageToDelete] = useState(false);
+    // States cho SingleImageUpload - Create Mode
+    const [createImageFile, setCreateImageFile] = useState(null);
+    const [createImageError, setCreateImageError] = useState('');
 
-    // NEW: Image validation states
-    const [imageValidation, setImageValidation] = useState({
-        create: { show: false, message: '' },
-        update: { show: false, message: '' }
-    });
-
-    // File upload handlers
-    const handleFileUpload = (file, isUpdate = false) => {
-        if (!file) return;
-
-        if (isUpdate) {
-            setUpdateBrandData(prev => ({ ...prev, brandImage: file }));
-            // Reset validation khi có file
-            setImageValidation(prev => ({
-                ...prev,
-                update: { show: false, message: '' }
-            }));
-        } else {
-            setNewBrand(prev => ({ ...prev, brandImage: file }));
-            // Reset validation khi có file
-            setImageValidation(prev => ({
-                ...prev,
-                create: { show: false, message: '' }
-            }));
-        }
-    };
+    // States cho SingleImageUpload - Update Mode
+    const [updateImageFile, setUpdateImageFile] = useState(null);
+    const [updateImageError, setUpdateImageError] = useState('');
+    const [currentImageUrl, setCurrentImageUrl] = useState(null);
 
     // Modal handlers
     const openCreateModal = () => {
         setNewBrand(BRAND_DEFAULTS.NEW_BRAND);
-        setImageValidation({
-            create: { show: false, message: '' },
-            update: { show: false, message: '' }
-        });
+        setCreateImageFile(null);
+        setCreateImageError('');
         setShowCreateModal(true);
     };
 
@@ -75,17 +52,14 @@ const BrandTable = ({
         setUpdateBrandData({
             brandId: brand.brandId,
             brandName: brand.brandName,
-            brandDescription: brand.brandDescription,
-            brandImage: null
+            brandDescription: brand.brandDescription
         });
 
-        // Set current image and reset delete flag
-        setCurrentImage(BRAND_HELPERS.hasImages(brand) ? BRAND_HELPERS.getFirstImageUrl(brand) : null);
-        setImageToDelete(false);
-        setImageValidation({
-            create: { show: false, message: '' },
-            update: { show: false, message: '' }
-        });
+        setCurrentImageUrl(BRAND_HELPERS.hasImages(brand) ? BRAND_HELPERS.getFirstImageUrl(brand) : null);
+
+        setUpdateImageFile(null);
+        setUpdateImageError('');
+
         setSelectedBrand(brand);
         setShowUpdateModal(true);
     };
@@ -117,27 +91,20 @@ const BrandTable = ({
             return;
         }
 
-        if (!newBrand.brandImage) {
-            setImageValidation(prev => ({
-                ...prev,
-                create: { show: true, message: 'Vui lòng tải lên ảnh thương hiệu' }
-            }));
+        if (!createImageFile) {
+            setCreateImageError('Vui lòng tải lên ảnh thương hiệu');
             return;
         }
 
-        setImageValidation(prev => ({
-            ...prev,
-            create: { show: false, message: '' }
-        }));
+        setCreateImageError('');
 
-        const result = await onCreateBrand(newBrand, newBrand.brandImage);
+        const result = await onCreateBrand(newBrand, createImageFile);
+
         if (result.success) {
             setShowCreateModal(false);
             setNewBrand(BRAND_DEFAULTS.NEW_BRAND);
-            setImageValidation(prev => ({
-                ...prev,
-                create: { show: false, message: '' }
-            }));
+            setCreateImageFile(null);
+            setCreateImageError('');
             alert('Tạo thương hiệu thành công!');
         } else {
             alert(`Lỗi: ${result.error}`);
@@ -152,26 +119,16 @@ const BrandTable = ({
 
         let imageToSend = null;
 
-        if (imageToDelete) {
-            if (!updateBrandData.brandImage) {
-                setImageValidation(prev => ({
-                    ...prev,
-                    update: { show: true, message: 'Vui lòng tải lên ảnh thương hiệu' }
-                }));
-                return;
-            }
-            imageToSend = updateBrandData.brandImage;
-        } else if (updateBrandData.brandImage) {
-            imageToSend = updateBrandData.brandImage;
-        } else {
+        if (updateImageFile) {
+            imageToSend = updateImageFile;
+        } else if (currentImageUrl) {
             imageToSend = 'keep_existing';
+        } else {
+            setUpdateImageError('Vui lòng tải lên ảnh thương hiệu');
+            return;
         }
 
-        // Reset validation
-        setImageValidation(prev => ({
-            ...prev,
-            update: { show: false, message: '' }
-        }));
+        setUpdateImageError('');
 
         const result = await onUpdateBrand(
             updateBrandData.brandId,
@@ -182,12 +139,9 @@ const BrandTable = ({
         if (result.success) {
             setShowUpdateModal(false);
             setUpdateBrandData(null);
-            setCurrentImage(null);
-            setImageToDelete(false);
-            setImageValidation(prev => ({
-                ...prev,
-                update: { show: false, message: '' }
-            }));
+            setCurrentImageUrl(null);
+            setUpdateImageFile(null);
+            setUpdateImageError('');
             alert('Cập nhật thương hiệu thành công!');
         } else {
             alert(`Lỗi: ${result.error}`);
@@ -292,7 +246,7 @@ const BrandTable = ({
         },
         {
             key: 'updater',
-            header: 'Lịch sử chỉnh sửa', // CHANGED from "Người chỉnh sửa"
+            header: 'Lịch sử chỉnh sửa',
             headerAlign: 'text-center',
             cellAlign: 'text-center',
             render: (brand) => {
@@ -498,29 +452,28 @@ const BrandTable = ({
                 )}
             </Modals>
 
-            {/* Create Modal - với validation message */}
+            {/* Create Modal - validation message */}
             <Modals
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
                 title="Thêm thương hiệu mới"
-                size="lg"
             >
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Tên thương hiệu *
                         </label>
                         <input
                             type="text"
                             value={newBrand.brandName}
                             onChange={(e) => setNewBrand(prev => ({ ...prev, brandName: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="Nhập tên thương hiệu"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Mô tả thương hiệu
                         </label>
                         <CKEditor
@@ -530,41 +483,31 @@ const BrandTable = ({
                                 const data = editor.getData();
                                 setNewBrand(prev => ({ ...prev, brandDescription: data }));
                             }}
-                            config={{
-                                toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo']
-                            }}
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-3">
                             Hình ảnh thương hiệu *
                         </label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleFileUpload(e.target.files[0], false)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        <SingleImageUpload
+                            imageFile={createImageFile}
+                            setImageFile={setCreateImageFile}
+                            error={createImageError}
+                            setError={setCreateImageError}
                         />
-
-                        {/* THÊM: Validation message */}
-                        {imageValidation.create.show && (
-                            <p className="text-red-600 text-sm mt-2">
-                                {imageValidation.create.message}
-                            </p>
-                        )}
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4">
                         <button
                             onClick={() => setShowCreateModal(false)}
-                            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                            className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                         >
                             Hủy
                         </button>
                         <button
                             onClick={handleCreateBrand}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                         >
                             Tạo thương hiệu
                         </button>
@@ -577,25 +520,24 @@ const BrandTable = ({
                 isOpen={showUpdateModal}
                 onClose={() => setShowUpdateModal(false)}
                 title="Cập nhật thương hiệu"
-                size="lg"
             >
                 {updateBrandData && (
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Tên thương hiệu *
                             </label>
                             <input
                                 type="text"
                                 value={updateBrandData.brandName}
                                 onChange={(e) => setUpdateBrandData(prev => ({ ...prev, brandName: e.target.value }))}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Nhập tên thương hiệu"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Mô tả thương hiệu
                             </label>
                             <CKEditor
@@ -605,116 +547,51 @@ const BrandTable = ({
                                     const data = editor.getData();
                                     setUpdateBrandData(prev => ({ ...prev, brandDescription: data }));
                                 }}
-                                config={{
-                                    toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo']
-                                }}
                             />
                         </div>
 
-                        {/* Enhanced Image Management Section */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Hình ảnh thương hiệu
+                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                                Hình ảnh thương hiệu *
                             </label>
 
-                            {/* Current Image Display */}
-                            {currentImage && !imageToDelete && (
-                                <div className="mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                                    <div className="flex items-start gap-4">
-                                        <img
-                                            src={currentImage}
-                                            alt={selectedBrand?.brandName}
-                                            className="w-20 h-20 object-cover rounded-lg border-2 border-gray-300"
-                                        />
-                                        <div className="flex-1">
-                                            <p className="text-sm text-gray-600 mb-2">Hình ảnh hiện tại</p>
-                                            <button
-                                                type="button"
-                                                onClick={() => setImageToDelete(true)}
-                                                className="flex items-center gap-2 px-3 py-1 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors text-sm"
-                                            >
-                                                <span className="text-lg">×</span>
-                                                Xóa ảnh này
-                                            </button>
-                                        </div>
-                                    </div>
+                            {currentImageUrl && !updateImageFile && (
+                                <div className="mb-3">
+                                    <p className="text-sm text-gray-600 mb-2">Ảnh hiện tại:</p>
+                                    <img
+                                        src={currentImageUrl}
+                                        alt="Ảnh hiện tại"
+                                        className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
+                                    />
                                 </div>
                             )}
 
-                            {/* Image Deleted State */}
-                            {imageToDelete && (
-                                <div className="mb-4 p-4 border border-red-200 rounded-lg bg-red-50">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-red-600"></span>
-                                            <span className="text-red-700 text-sm">Ảnh sẽ bị xóa khi cập nhật</span>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => setImageToDelete(false)}
-                                            className="text-blue-600 hover:text-blue-700 text-sm underline"
-                                        >
-                                            Hoàn tác
-                                        </button>
-                                    </div>
-                                </div>
+                            <SingleImageUpload
+                                imageFile={updateImageFile}
+                                setImageFile={setUpdateImageFile}
+                                error={updateImageError}
+                                setError={setUpdateImageError}
+                            />
+
+                            {currentImageUrl && (
+                                <p className="text-sm text-gray-500 mt-2">
+                                    {updateImageFile ? 'Ảnh mới sẽ thay thế ảnh hiện tại' : 'Chọn ảnh mới để thay thế ảnh hiện tại'}
+                                </p>
                             )}
-
-                            {/* New Image Upload */}
-                            <div className="space-y-2">
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => {
-                                        handleFileUpload(e.target.files[0], true);
-                                        if (e.target.files[0]) {
-                                            setImageToDelete(false); // Reset delete flag if new image selected
-                                        }
-                                    }}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                />
-
-                                {/* THÊM: Validation message */}
-                                {imageValidation.update.show && (
-                                    <p className="text-red-600 text-sm mt-2">
-                                        {imageValidation.update.message}
-                                    </p>
-                                )}
-
-                                {/* New Image Preview */}
-                                {updateBrandData.brandImage && (
-                                    <div className="mt-2 p-3 border border-green-200 rounded-lg bg-green-50">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-green-600">✓</span>
-                                            <span className="text-green-700 text-sm">
-                        Ảnh mới đã được chọn: {updateBrandData.brandImage.name}
-                      </span>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Help Text */}
-                            <p className="text-xs text-gray-500 mt-2">
-                                {currentImage && !imageToDelete
-                                    ? "Chọn ảnh mới để thay thế, hoặc nhấn 'Xóa ảnh này' để xóa ảnh hiện tại"
-                                    : "Chọn ảnh mới cho thương hiệu"
-                                }
-                            </p>
                         </div>
 
                         <div className="flex justify-end gap-3 pt-4">
                             <button
                                 onClick={() => setShowUpdateModal(false)}
-                                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                                className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                             >
                                 Hủy
                             </button>
                             <button
                                 onClick={handleUpdateBrand}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                             >
-                                Cập nhật
+                                Cập nhật thương hiệu
                             </button>
                         </div>
                     </div>

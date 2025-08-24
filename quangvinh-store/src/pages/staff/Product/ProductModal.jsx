@@ -371,11 +371,11 @@ const ProductModal = ({
                                         }`}
                                     >
                                         <option value="">Chọn thương hiệu</option>
-                                        {brands && brands.map(brand => (
-                                            <option key={brand.brandId} value={brand.brandId}>
-                                                {brand.brandName}
-                                            </option>
-                                        ))}
+                                        {brands && brands.filter(brand => brand.isActive).map(brand => (
+                                        <option key={brand.brandId} value={brand.brandId}>
+                                            {brand.brandName}
+                                        </option>
+                                    ))}
                                     </select>
                                     {errors.brandId && (
                                         <p className="text-red-500 text-sm mt-1">{errors.brandId}</p>
@@ -394,7 +394,7 @@ const ProductModal = ({
                                         }`}
                                     >
                                         <option value="">Chọn danh mục</option>
-                                        {categories && categories.map(category => (
+                                        {categories && categories.filter(category => category.isActive).map(category => (
                                             <option key={category.categoryId} value={category.categoryId}>
                                                 {category.categoryName}
                                             </option>

@@ -13,6 +13,8 @@ const ProductManagement = () => {
         colors,
         brands,
         categories,
+        activeBrands,
+        activeCategories,
         loading,
         error,
         // Pagination
@@ -126,8 +128,8 @@ const ProductManagement = () => {
                             filters={filters}
                             onFilterChange={handleFilterChange}
                             onClearFilters={handleClearFilters}
-                            brands={brands}
-                            categories={categories}
+                            brands={activeBrands}
+                            categories={activeCategories}
                         />
                     </div>
                 </div>
@@ -141,8 +143,8 @@ const ProductManagement = () => {
                 <ProductTable
                     products={filteredProducts}
                     colors={colors}
-                    brands={brands}
-                    categories={categories}
+                    brands={activeBrands}
+                    categories={activeCategories}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     itemsPerPage={itemsPerPage}

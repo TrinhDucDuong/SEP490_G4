@@ -4,6 +4,7 @@ import DataTable from '../../../components/common/admin/DataTable';
 import Modals from '../../../components/common/admin/Modals';
 import Paginations from '../../../components/common/admin/Paginations';
 import { CATEGORY_HELPERS, CATEGORY_DEFAULTS } from '../../../utils/constants/CategoryConstants';
+import SingleImageUpload from '../../../components/common/admin/SingleImageUpload';
 
 const CategoryTable = ({
                            categories,
@@ -27,32 +28,19 @@ const CategoryTable = ({
     const [newCategory, setNewCategory] = useState(CATEGORY_DEFAULTS.NEW_CATEGORY);
     const [updateCategoryData, setUpdateCategoryData] = useState(null);
 
-    const [currentImage, setCurrentImage] = useState(null);
-    const [imageToDelete, setImageToDelete] = useState(false);
+    // SingleImageUpload - Create Mode
+    const [createImageFile, setCreateImageFile] = useState(null);
+    const [createImageError, setCreateImageError] = useState('');
 
-    const [imageValidation, setImageValidation] = useState({
-        create: { show: false, message: '' },
-        update: { show: false, message: '' }
-    });
-
-    const handleFileUpload = (file, isUpdate = false) => {
-        if (!file) return;
-
-        if (isUpdate) {
-            setUpdateCategoryData(prev => ({ ...prev, categoryImage: file }));
-            setImageValidation(prev => ({ ...prev, update: { show: false, message: '' } }));
-        } else {
-            setNewCategory(prev => ({ ...prev, categoryImage: file }));
-            setImageValidation(prev => ({ ...prev, create: { show: false, message: '' } }));
-        }
-    };
+    // SingleImageUpload - Update Mode
+    const [updateImageFile, setUpdateImageFile] = useState(null);
+    const [updateImageError, setUpdateImageError] = useState('');
+    const [currentImageUrl, setCurrentImageUrl] = useState(null);
 
     const openCreateModal = () => {
         setNewCategory(CATEGORY_DEFAULTS.NEW_CATEGORY);
-        setImageValidation({
-            create: { show: false, message: '' },
-            update: { show: false, message: '' }
-        });
+        setCreateImageFile(null);
+        setCreateImageError('');
         setShowCreateModal(true);
     };
 
@@ -60,16 +48,14 @@ const CategoryTable = ({
         setUpdateCategoryData({
             categoryId: category.categoryId,
             categoryName: category.categoryName,
-            parentCategoryId: category.parentCategory?.categoryId || null,
-            categoryImage: null
+            parentCategoryId: category.parentCategory?.categoryId || null
         });
 
-        setCurrentImage(CATEGORY_HELPERS.hasImages(category) ? CATEGORY_HELPERS.getFirstImageUrl(category) : null);
-        setImageToDelete(false);
-        setImageValidation({
-            create: { show: false, message: '' },
-            update: { show: false, message: '' }
-        });
+        setCurrentImageUrl(CATEGORY_HELPERS.hasImages(category) ? CATEGORY_HELPERS.getFirstImageUrl(category) : null);
+
+        setUpdateImageFile(null);
+        setUpdateImageError('');
+
         setSelectedCategory(category);
         setShowUpdateModal(true);
     };
@@ -84,11 +70,6 @@ const CategoryTable = ({
         setShowStatusModal(true);
     };
 
-    const openEditorsModal = (category) => {
-        setSelectedCategory(category);
-        setShowEditorsModal(true);
-    };
-
     // CRUD operations
     const handleCreateCategory = async () => {
         if (!newCategory.categoryName.trim()) {
@@ -96,21 +77,20 @@ const CategoryTable = ({
             return;
         }
 
-        if (!newCategory.categoryImage) {
-            setImageValidation(prev => ({
-                ...prev,
-                create: { show: true, message: 'Vui lòng tải lên ảnh danh mục' }
-            }));
+        if (!createImageFile) {
+            setCreateImageError('Vui lòng tải lên ảnh danh mục');
             return;
         }
 
-        setImageValidation(prev => ({ ...prev, create: { show: false, message: '' } }));
+        setCreateImageError('');
 
-        const result = await onCreateCategory(newCategory, newCategory.categoryImage);
+        const result = await onCreateCategory(newCategory, createImageFile);
+
         if (result.success) {
             setShowCreateModal(false);
             setNewCategory(CATEGORY_DEFAULTS.NEW_CATEGORY);
-            setImageValidation(prev => ({ ...prev, create: { show: false, message: '' } }));
+            setCreateImageFile(null);
+            setCreateImageError('');
             alert('Tạo danh mục thành công!');
         } else {
             alert(`Lỗi: ${result.error}`);
@@ -124,22 +104,17 @@ const CategoryTable = ({
         }
 
         let imageToSend = null;
-        if (imageToDelete) {
-            if (!updateCategoryData.categoryImage) {
-                setImageValidation(prev => ({
-                    ...prev,
-                    update: { show: true, message: 'Vui lòng tải lên ảnh danh mục' }
-                }));
-                return;
-            }
-            imageToSend = updateCategoryData.categoryImage;
-        } else if (updateCategoryData.categoryImage) {
-            imageToSend = updateCategoryData.categoryImage;
-        } else {
+
+        if (updateImageFile) {
+            imageToSend = updateImageFile;
+        } else if (currentImageUrl) {
             imageToSend = 'keep_existing';
+        } else {
+            setUpdateImageError('Vui lòng tải lên ảnh danh mục');
+            return;
         }
 
-        setImageValidation(prev => ({ ...prev, update: { show: false, message: '' } }));
+        setUpdateImageError('');
 
         const result = await onUpdateCategory(
             updateCategoryData.categoryId,
@@ -150,9 +125,9 @@ const CategoryTable = ({
         if (result.success) {
             setShowUpdateModal(false);
             setUpdateCategoryData(null);
-            setCurrentImage(null);
-            setImageToDelete(false);
-            setImageValidation(prev => ({ ...prev, update: { show: false, message: '' } }));
+            setCurrentImageUrl(null);
+            setUpdateImageFile(null);
+            setUpdateImageError('');
             alert('Cập nhật danh mục thành công!');
         } else {
             alert(`Lỗi: ${result.error}`);
@@ -263,7 +238,7 @@ const CategoryTable = ({
                 <div className="flex justify-center space-x-2">
                     <button
                         onClick={() => openUpdateModal(category)}
-                        className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors"
+                        className="p-2 text-blue-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors"
                         title="Chỉnh sửa"
                     >
                         <Edit className="w-4 h-4" />
@@ -354,82 +329,68 @@ const CategoryTable = ({
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
                 title="Thêm danh mục mới"
-                size="lg"
             >
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Tên danh mục *
                         </label>
                         <input
                             type="text"
                             value={newCategory.categoryName}
                             onChange={(e) => setNewCategory(prev => ({ ...prev, categoryName: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="Nhập tên danh mục"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                             Danh mục cha
                         </label>
                         <select
                             value={newCategory.parentCategoryId || ''}
                             onChange={(e) => setNewCategory(prev => ({
                                 ...prev,
-                                parentCategoryId: e.target.value ? parseInt(e.target.value) : null
+                                parentCategoryId: e.target.value || null
                             }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                             <option value="">Tạo danh mục gốc</option>
-                            {parentCategories.map(category => (
-                                <option key={category.categoryId} value={category.categoryId}>
-                                    {category.categoryName}
+                            {parentCategories.filter(parent => parent.isActive).map(parent => (
+                                <option key={parent.categoryId} value={parent.categoryId}>
+                                    {parent.categoryName}
                                 </option>
                             ))}
                         </select>
-                        <p className="mt-1 text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 mt-1">
                             Nếu không chọn danh mục cha, danh mục này sẽ trở thành danh mục gốc
                         </p>
                     </div>
 
+                    {/* SingleImageUpload */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-3">
                             Hình ảnh danh mục *
                         </label>
-                        <div className="flex items-center justify-center w-full">
-                            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <Upload className="w-8 h-8 mb-4 text-gray-500" />
-                                    <p className="mb-2 text-sm text-gray-500">
-                                        <span className="font-semibold">Nhấp để tải lên</span> hoặc kéo thả
-                                    </p>
-                                    <p className="text-xs text-gray-500">PNG, JPG, GIF (MAX. 800x400px)</p>
-                                </div>
-                                <input
-                                    type="file"
-                                    className="hidden"
-                                    accept="image/*"
-                                    onChange={(e) => handleFileUpload(e.target.files[0], false)}
-                                />
-                            </label>
-                        </div>
-                        {imageValidation.create.show && (
-                            <p className="mt-1 text-sm text-red-600">{imageValidation.create.message}</p>
-                        )}
+                        <SingleImageUpload
+                            imageFile={createImageFile}
+                            setImageFile={setCreateImageFile}
+                            error={createImageError}
+                            setError={setCreateImageError}
+                        />
                     </div>
 
-                    <div className="flex justify-end space-x-3 pt-4">
+                    <div className="flex justify-end gap-3 pt-4">
                         <button
                             onClick={() => setShowCreateModal(false)}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                            className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                         >
                             Hủy
                         </button>
                         <button
                             onClick={handleCreateCategory}
-                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                         >
                             Tạo danh mục
                         </button>
@@ -442,120 +403,87 @@ const CategoryTable = ({
                 isOpen={showUpdateModal}
                 onClose={() => setShowUpdateModal(false)}
                 title="Cập nhật danh mục"
-                size="lg"
             >
                 {updateCategoryData && (
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Tên danh mục *
                             </label>
                             <input
                                 type="text"
                                 value={updateCategoryData.categoryName}
                                 onChange={(e) => setUpdateCategoryData(prev => ({ ...prev, categoryName: e.target.value }))}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Nhập tên danh mục"
                             />
                         </div>
 
+                        {/* Parent Category */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Danh mục cha
                             </label>
                             <select
                                 value={updateCategoryData.parentCategoryId || ''}
                                 onChange={(e) => setUpdateCategoryData(prev => ({
                                     ...prev,
-                                    parentCategoryId: e.target.value ? parseInt(e.target.value) : null
+                                    parentCategoryId: e.target.value || null
                                 }))}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             >
-                                <option value="">Danh mục gốc</option>
-                                {parentCategories.map(category => (
-                                    <option key={category.categoryId} value={category.categoryId}>
-                                        {category.categoryName}
+                                <option value="">Chọn danh mục cha</option>
+                                {parentCategories.filter(parent => parent.isActive).map(parent => (
+                                    <option key={parent.categoryId} value={parent.categoryId}>
+                                        {parent.categoryName}
                                     </option>
                                 ))}
                             </select>
                         </div>
 
+                        {/* Category Image */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-3">
                                 Hình ảnh danh mục *
                             </label>
 
-                            {/* Current Image Display */}
-                            {currentImage && !imageToDelete && (
-                                <div className="mb-4">
-                                    <p className="text-sm text-gray-600 mb-2">Hình ảnh hiện tại</p>
-                                    <div className="flex items-center space-x-4">
-                                        <img
-                                            src={currentImage}
-                                            alt="Current"
-                                            className="w-20 h-20 object-cover rounded-lg border"
-                                        />
-                                        <button
-                                            onClick={() => setImageToDelete(true)}
-                                            className="px-3 py-1 text-sm text-red-600 border border-red-300 rounded hover:bg-red-50"
-                                        >
-                                            Xóa ảnh này
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Validation Message */}
-                            {imageValidation.update.show && (
-                                <p className="mb-2 text-sm text-red-600">{imageValidation.update.message}</p>
-                            )}
-
-                            {/* New Image Preview */}
-                            {updateCategoryData.categoryImage && (
-                                <div className="mb-4">
-                                    <p className="text-sm text-gray-600 mb-2">Ảnh mới</p>
+                            {currentImageUrl && !updateImageFile && (
+                                <div className="mb-3">
+                                    <p className="text-sm text-gray-600 mb-2">Ảnh hiện tại:</p>
                                     <img
-                                        src={URL.createObjectURL(updateCategoryData.categoryImage)}
-                                        alt="New"
-                                        className="w-20 h-20 object-cover rounded-lg border"
+                                        src={currentImageUrl}
+                                        alt="Ảnh hiện tại"
+                                        className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
                                     />
                                 </div>
                             )}
 
-                            {/* File Upload */}
-                            <div className="flex items-center justify-center w-full">
-                                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                        <Upload className="w-8 h-8 mb-4 text-gray-500" />
-                                        <p className="mb-2 text-sm text-gray-500">
-                                            <span className="font-semibold">Nhấp để tải lên</span> hoặc kéo thả
-                                        </p>
-                                        <p className="text-xs text-gray-500">
-                                            {currentImage && !imageToDelete ? "Chọn ảnh mới để thay thế, hoặc nhấn 'Xóa ảnh này' để xóa ảnh hiện tại" : "Chọn ảnh mới cho danh mục"}
-                                        </p>
-                                    </div>
-                                    <input
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={(e) => handleFileUpload(e.target.files[0], true)}
-                                    />
-                                </label>
-                            </div>
+                            <SingleImageUpload
+                                imageFile={updateImageFile}
+                                setImageFile={setUpdateImageFile}
+                                error={updateImageError}
+                                setError={setUpdateImageError}
+                            />
+
+                            {currentImageUrl && (
+                                <p className="text-sm text-gray-500 mt-2">
+                                    {updateImageFile ? 'Ảnh mới sẽ thay thế ảnh hiện tại' : 'Chọn ảnh mới để thay thế ảnh hiện tại'}
+                                </p>
+                            )}
                         </div>
 
-                        <div className="flex justify-end space-x-3 pt-4">
+                        <div className="flex justify-end gap-3 pt-4">
                             <button
                                 onClick={() => setShowUpdateModal(false)}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                                className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                             >
                                 Hủy
                             </button>
                             <button
                                 onClick={handleUpdateCategory}
-                                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                             >
-                                Cập nhật
+                                Cập nhật danh mục
                             </button>
                         </div>
                     </div>
