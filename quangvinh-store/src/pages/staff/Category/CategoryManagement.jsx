@@ -10,6 +10,7 @@ const CategoryManagement = () => {
         // Data
         filteredCategories,
         parentCategories,
+        activeParentCategories,
         loading,
         error,
 
@@ -135,7 +136,7 @@ const CategoryManagement = () => {
                     filters={filters}
                     onFilterChange={handleFilterChange}
                     onClearFilters={handleClearFilters}
-                    parentCategories={parentCategories}
+                    parentCategories={activeParentCategories}
                 />
 
                 {/* Sort Component */}
@@ -147,7 +148,7 @@ const CategoryManagement = () => {
                 {/* Table Component */}
                 <CategoryTable
                     categories={filteredCategories}
-                    parentCategories={parentCategories}
+                    parentCategories={activeParentCategories}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     itemsPerPage={itemsPerPage}

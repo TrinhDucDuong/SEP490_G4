@@ -64,9 +64,9 @@ const CategoryFilter = ({ filters, onFilterChange, onClearFilters, parentCategor
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
                         >
                             <option value="">Tất cả danh mục cha</option>
-                            {parentCategories.map(category => (
-                                <option key={category.categoryId} value={category.categoryId}>
-                                    {category.categoryName}
+                            {parentCategories.filter(parent => parent.isActive).map(parent => (
+                                <option key={parent.categoryId} value={parent.categoryId}>
+                                    {parent.categoryName}
                                 </option>
                             ))}
                         </select>
