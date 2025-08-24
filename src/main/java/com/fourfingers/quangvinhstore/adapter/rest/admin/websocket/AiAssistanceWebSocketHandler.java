@@ -12,6 +12,8 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 /**
  * WebSocket handler for AI assistance functionality.
  * Manages WebSocket connections and message handling for AI voice assistant features.
+ *
+ * @author LongLTHE170099
  */
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})

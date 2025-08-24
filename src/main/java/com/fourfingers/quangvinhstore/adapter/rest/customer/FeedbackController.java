@@ -9,19 +9,37 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+/**
+ * REST controller handling feedback-related operations.
+ * Mapped to the "/feedback" endpoint.
+ *
+ * @author LongLTHE170099
+ */
 @RestController
 @RequestMapping("/feedback")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class FeedbackController {
     private final FeedbackInputBoundary feedbackInputBoundary;
 
+    /**
+     * Retrieves all feedback entries from the system.
+     *
+     * @return ResponseEntity containing a list of all feedback entries
+     */
     @GetMapping
-    private ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(feedbackInputBoundary.getAll());
     }
 
+    /**
+     * Retrieves a specific feedback entry by its ID.
+     *
+     * @param id The unique identifier of the feedback entry
+     * @return ResponseEntity containing the requested feedback entry
+     */
     @GetMapping("/{id}")
-    private ResponseEntity<?> getById(@PathVariable String id) {
+    public ResponseEntity<?> getById(@PathVariable String id) {
         return ResponseEntity.ok(feedbackInputBoundary.getById(id));
     }
 }

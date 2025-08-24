@@ -12,12 +12,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller handling action log-related operations.
+ * Mapped to the "/action-log" endpoint.
+ *
+ * @author LongLTHE170099
+ */
 @RestController
 @RequestMapping("/action-log")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ActionLogController {
     private final ActionLogInputBoundary actionLogInputBoundary;
 
+    /**
+     * Saves an action log entry for the authenticated user, used to recommend a product to the customer.
+     *
+     * @param userDetails        The authenticated user details
+     * @param actionLogInputData The action log data to be saved
+     * @return ResponseEntity with no content on successful save
+     */
     @PostMapping
     public ResponseEntity<?> saveActionLog(@AuthenticationPrincipal UserDetails userDetails,
                                            @RequestBody ActionLogInputData actionLogInputData) {

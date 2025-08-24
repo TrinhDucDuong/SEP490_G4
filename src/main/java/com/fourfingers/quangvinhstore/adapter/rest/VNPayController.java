@@ -5,11 +5,7 @@ import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputDat
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
@@ -19,6 +15,13 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * Controller handling VNPay payment integration operations.
+ * This class manages the creation and processing of VNPay payment requests.
+ * Mapped to the "/vnpay" endpoint.
+ *
+ * @author DuongTDHE171824
+ */
 @Controller
 @RequestMapping("/vnpay")
 public class VNPayController {
@@ -35,12 +38,15 @@ public class VNPayController {
     @Value("${vnpay.return-url}")
     private String vnp_ReturnUrl;
 
-
-//    @GetMapping
-//    public String showQRPage(@RequestParam BigDecimal amount
-////                             , Model model
-//                             , HttpServletRequest request
-//    ) throws UnsupportedEncodingException {
+    /**
+     * Generates a VNPay payment URL for a given order.
+     *
+     * @param orderOutputData            The order data containing payment details
+     * @param customerOrderInputBoundary The boundary interface for customer order operations
+     * @param request                    The HTTP request object containing client information
+     * @return The generated VNPay payment URL
+     * @throws UnsupportedEncodingException If encoding the URL parameters fails
+     */
     public String showQRPage(
                                 OrderOutputData orderOutputData,
                                 CustomerOrderInputBoundary customerOrderInputBoundary,
@@ -95,11 +101,17 @@ public class VNPayController {
         customerOrderInputBoundary.setSecureHash(orderOutputData.getOrder().getOrderId(), vnp_TxnRef);
 
         String paymentUrl = vnp_PayUrl + "?" + query.toString();
-
-//        return "redirect:" + paymentUrl;
+        
         return paymentUrl;
     }
 
+    /**
+     * Generates HMAC-SHA512 hash for VNPay secure hash generation.
+     *
+     * @param key  The secret key for HMAC generation
+     * @param data The data to be hashed
+     * @return The generated HMAC-SHA512 hash as a hexadecimal string
+     */
     private String hmacSHA512(String key, String data) {
         try {
             Mac hmac512 = Mac.getInstance("HmacSHA512");
@@ -112,6 +124,12 @@ public class VNPayController {
         }
     }
 
+    /**
+     * Converts a byte array to its hexadecimal string representation.
+     *
+     * @param bytes The byte array to convert
+     * @return The hexadecimal string representation of the byte array
+     */
     private String bytesToHex(byte[] bytes) {
         StringBuilder result = new StringBuilder();
         for (byte b : bytes) {

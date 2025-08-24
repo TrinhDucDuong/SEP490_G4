@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 /**
  * REST controller responsible for managing SNS (Social Networking Service) operations in the admin interface.
  * Provides endpoints for creating, retrieving, and deleting SNS entries.
+ *
+ * @author LongLTHE170099
  */
 @RestController
 @RequestMapping("/admin/sns")

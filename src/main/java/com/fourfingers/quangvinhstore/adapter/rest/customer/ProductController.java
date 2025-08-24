@@ -10,12 +10,34 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * REST controller handling product-related operations.
+ * Mapped to the "/product" endpoint.
+ *
+ * @author LongLTHE170099
+ */
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ProductController {
     private final ProductInputBoundary productInputBoundary;
 
+    /**
+     * Retrieves products based on specified filters and pagination parameters.
+     *
+     * @param categoryIds   List of category IDs to filter by
+     * @param brandIds      List of brand IDs to filter by
+     * @param colorHexes    List of color hexadecimal codes to filter by
+     * @param productSizes  List of product sizes to filter by
+     * @param maxPrice      Maximum price threshold
+     * @param minPrice      Minimum price threshold (defaults to 0)
+     * @param sortDirection Sort direction (defaults to "desc")
+     * @param sortBy        Field to sort by (defaults to "createdAt")
+     * @param pageNumber    Page number for pagination (defaults to "0")
+     * @param pageSize      Number of items per page (defaults to "20")
+     * @param searchText    Text to search for in product names
+     * @return ResponseEntity containing the filtered and paginated product list
+     */
     @GetMapping
     public ResponseEntity<?> getAllProducts(@RequestParam(required = false) List<String> categoryIds,
                                             @RequestParam(required = false) List<String> brandIds,
@@ -36,6 +58,12 @@ public class ProductController {
                 pageSize));
     }
 
+    /**
+     * Retrieves a specific product by its ID.
+     *
+     * @param id The unique identifier of the product
+     * @return ResponseEntity containing the requested product
+     */
     @GetMapping("/{id}")
     public ResponseEntity<?> getProduct(@PathVariable String id) {
         return ResponseEntity.ok(productInputBoundary.getProduct(id));
