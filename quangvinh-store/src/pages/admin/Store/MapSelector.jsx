@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaf
 import { Search } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { useToast } from '../../../context/ToastContext';
 
 // Fix Leaflet icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -11,6 +12,8 @@ L.Icon.Default.mergeOptions({
     iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
+
+
 
 const MapClickHandler = ({ onMapClick }) => {
     useMapEvents({
@@ -28,6 +31,7 @@ const MapSelector = ({
                          zoom = 13,
                          height = "300px"
                      }) => {
+    const {showError } = useToast();
     const [mapKey, setMapKey] = useState(0);
     const [mapCenter, setMapCenter] = useState(center);
     const [mapZoom, setMapZoom] = useState(zoom);
@@ -69,11 +73,11 @@ const MapSelector = ({
                 // Auto select this position
                 onPositionChange({ lat, lng });
             } else {
-                alert('Không tìm thấy địa điểm này. Vui lòng thử lại với từ khóa khác.');
+                showError('Không tìm thấy địa điểm này. Vui lòng thử lại với từ khóa khác.');
             }
         } catch (error) {
             console.error('Search error:', error);
-            alert('Có lỗi xảy ra khi tìm kiếm. Vui lòng thử lại.');
+            showError('Có lỗi xảy ra khi tìm kiếm. Vui lòng thử lại.');
         } finally {
             setIsSearching(false);
         }

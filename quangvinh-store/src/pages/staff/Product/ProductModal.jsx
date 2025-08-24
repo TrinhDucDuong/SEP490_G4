@@ -3,6 +3,7 @@ import { X, Plus, Trash2, Upload } from 'lucide-react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { PRODUCT_DEFAULTS, PRODUCT_SIZE_OPTIONS, PRODUCT_HELPERS } from '../../../utils/constants/ProductConstants';
+import { useToast } from '../../../context/ToastContext.jsx';
 
 const ProductModal = ({
                           isOpen,
@@ -14,6 +15,7 @@ const ProductModal = ({
                           mode = 'create',
                           initialData = null
                       }) => {
+    const { showSuccess, showError } = useToast();
     const [formData, setFormData] = useState(PRODUCT_DEFAULTS.NEW_PRODUCT);
     const [productImages, setProductImages] = useState([null, null, null, null, null, null]);
     const [previewImages, setPreviewImages] = useState([null, null, null, null, null, null]);
