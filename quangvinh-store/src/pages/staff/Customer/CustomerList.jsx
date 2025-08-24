@@ -93,12 +93,6 @@ const CustomerList = () => {
                         onSearchChange={handleSearchChange}
                         filteredCustomersCount={statistics.filteredCount}
                     />
-
-                    <CustomerSort
-                        sortConfig={sortConfig}
-                        onSort={handleSort}
-                    />
-
                     {(searchTerm) && (
                         <div className="mt-4">
                             <button
@@ -109,6 +103,12 @@ const CustomerList = () => {
                             </button>
                         </div>
                     )}
+                </div>
+                <div className="bg-white rounded-lg shadow mb-4 p-3">
+                    <CustomerSort
+                        sortConfig={sortConfig}
+                        onSort={handleSort}
+                    />
                 </div>
 
                 {/* customer table */}

@@ -39,55 +39,24 @@ export const useCustomerList = () => {
     useEffect(() => {
         let result = [...customers];
 
-        // Search
-        if (searchTerm) {
-            result = result.filter(customer =>
-                customer.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                customer.phoneNumber.includes(searchTerm) ||
-                customer.accountId.toString().includes(searchTerm)
-            );
-        }
+        if (searchTerm.trim()) {
+            const searchLower = searchTerm.toLowerCase();
+            result = result.filter(customer => {
+                // Safe null handling với optional chaining
+                const fullName = customer.fullName || '';
+                const email = customer.email || '';
+                const phoneNumber = customer.phoneNumber || '';
 
-        // Sort
-        if (sortConfig.key) {
-            result.sort((a, b) => {
-                let aValue, bValue;
-
-                switch (sortConfig.key) {
-                    case 'fullName':
-                        aValue = a.fullName.toLowerCase();
-                        bValue = b.fullName.toLowerCase();
-                        break;
-                    case 'accountId':
-                        aValue = a.accountId;
-                        bValue = b.accountId;
-                        break;
-                    case 'email':
-                        aValue = a.email.toLowerCase();
-                        bValue = b.email.toLowerCase();
-                        break;
-                    case 'phoneNumber':
-                        aValue = a.phoneNumber;
-                        bValue = b.phoneNumber;
-                        break;
-                    default:
-                        aValue = a[sortConfig.key];
-                        bValue = b[sortConfig.key];
-                }
-
-                if (sortConfig.direction === 'asc') {
-                    return aValue > bValue ? 1 : -1;
-                } else {
-                    return aValue < bValue ? 1 : -1;
-                }
+                return (
+                    fullName.toLowerCase().includes(searchLower) ||
+                    email.toLowerCase().includes(searchLower) ||
+                    phoneNumber.includes(searchTerm)
+                );
             });
         }
 
         setFilteredCustomers(result);
-        setCurrentPage(1);
-    }, [customers, searchTerm, sortConfig]);
-
+    }, [searchTerm, customers]);
     // Clear filters
     const clearFilters = () => {
         setSearchTerm('');

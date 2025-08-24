@@ -72,15 +72,9 @@ const CustomerTable = ({
             cellAlign: 'text-center',
             render: (customer) => (
                 <div className="flex items-center justify-center">
-                    <button
-                        onClick={() => openPhoneModal(customer)}
-                        className="flex items-center space-x-2 px-3 py-1 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
-                    >
-                        <Phone className="w-4 h-4 text-blue-600" />
-                        <span className="text-blue-600 font-medium">
+                        <span className="text-black-600 font-medium">
                             {CUSTOMER_HELPERS.formatPhone(customer.phoneNumber)}
                         </span>
-                    </button>
                 </div>
             )
         },
