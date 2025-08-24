@@ -101,7 +101,6 @@ const BannerManagement = () => {
             setShowCreateModal(false);
             setSelectedImages(Array(6).fill(null));
             setImageValidation({ show: false, message: '' });
-            // THÔNG BÁO VỀ BANNER MỚI Ở TRANG 1
             toast.success(`Tạo banner thành công`);
         } else {
             toast.error(`${result.error}`);
@@ -214,7 +213,6 @@ const BannerManagement = () => {
                     onCreateNew={() => setShowCreateModal(true)}
                 />
 
-                {/* HIỂN THỊ THÔNG TIN TRANG HIỆN TẠI */}
                 {totalPages > 1 && (
                     <div className="mb-4 text-sm text-gray-600">
                         Đang xem trang {currentPage} / {totalPages}
@@ -253,7 +251,7 @@ const BannerManagement = () => {
                             totalItems={statistics.filteredCount}
                         />
 
-                        {/* Save/Cancel buttons DƯỚI pagination - CHỈ HIỆN KHI CÓ THAY ĐỔI */}
+                        {/* Save/Cancel buttons */}
                         {hasPendingChanges && (
                             <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
                                 <button
@@ -349,7 +347,7 @@ const BannerManagement = () => {
 
                         {/* File Info */}
                         <div className="text-center text-sm text-gray-500">
-                            Hỗ trợ: JPG, PNG, GIF, WebP (Tối đa 5MB mỗi ảnh)
+                            Hỗ trợ: JPG, PNG, GIF, WebP (Tối đa 15MB mỗi ảnh)
                         </div>
 
                         {/* Validation Error */}

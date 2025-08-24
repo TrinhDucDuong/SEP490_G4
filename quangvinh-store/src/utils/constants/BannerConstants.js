@@ -61,8 +61,8 @@ export const BANNER_HELPERS = {
                 errors.push(`File thứ ${index + 1} không phải là ảnh`);
             }
 
-            if (image.size > 5 * 1024 * 1024) { // 5MB
-                errors.push(`Ảnh thứ ${index + 1} quá lớn (tối đa 5MB)`);
+            if (image.size > 15 * 1024 * 1024) {
+                errors.push(`Ảnh thứ ${index + 1} quá lớn (tối đa 15MB)`);
             }
         });
 
@@ -117,15 +117,15 @@ export const MODAL_SIZES = {
 
 // Validation Rules
 export const BANNER_VALIDATION_RULES = {
-    MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
+    MAX_FILE_SIZE: 15 * 1024 * 1024,
     ALLOWED_TYPES: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
-    MAX_FILES_PER_UPLOAD: 6 // UPDATED
+    MAX_FILES_PER_UPLOAD: 6
 };
 
 // Error Messages
 export const BANNER_ERROR_MESSAGES = {
     NO_IMAGES_SELECTED: 'Vui lòng chọn ít nhất một ảnh banner',
-    FILE_TOO_LARGE: 'Kích thước file quá lớn (tối đa 5MB)',
+    FILE_TOO_LARGE: 'Kích thước file quá lớn (tối đa 15MB)',
     INVALID_FILE_TYPE: 'Loại file không hợp lệ. Chỉ chấp nhận ảnh',
     NETWORK_ERROR: 'Có lỗi xảy ra khi kết nối với server',
     UNKNOWN_ERROR: 'Có lỗi không xác định xảy ra',

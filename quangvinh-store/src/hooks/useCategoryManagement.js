@@ -7,6 +7,7 @@ export const useCategoryManagement = () => {
     const [categories, setCategories] = useState([]);
     const [filteredCategories, setFilteredCategories] = useState([]);
     const [parentCategories, setParentCategories] = useState([]);
+    const [activeParentCategories, setActiveParentCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -40,6 +41,9 @@ export const useCategoryManagement = () => {
                 // Extract parent categories (categories without parentCategory)
                 const parentCats = result.data.filter(cat => !cat.parentCategory);
                 setParentCategories(parentCats);
+
+                const activeParentCats = parentCats.filter(cat => cat.isActive);
+                setActiveParentCategories(activeParentCats);
 
                 console.log('Parent categories:', parentCats); // Debug log
             } else {
@@ -337,6 +341,7 @@ export const useCategoryManagement = () => {
         categories,
         filteredCategories,
         parentCategories,
+        activeParentCategories,
         loading,
         error,
 
