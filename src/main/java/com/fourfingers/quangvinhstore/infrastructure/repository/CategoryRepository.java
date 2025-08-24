@@ -35,4 +35,6 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> 
     );
 
     boolean existsByCategoryName(String categoryName);
+
+    List<CategoryEntity> findAllByIsActiveTrue();
 }

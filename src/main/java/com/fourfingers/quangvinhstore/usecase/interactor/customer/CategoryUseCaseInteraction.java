@@ -24,7 +24,7 @@ public class CategoryUseCaseInteraction implements CategoryInputBoundary {
     @Override
     public ListCategoryOutputData getAll() {
         return categoryOutputBoundary.convertToListCategoryOutputData(
-            categoryRepository.findAll()
+            categoryRepository.findAllByIsActiveTrue()
                     .stream()
                     .map(categoryEntity -> {
                         Category category = categoryMapper.toModel(categoryEntity);

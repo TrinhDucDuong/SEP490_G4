@@ -324,9 +324,7 @@ public class ManageStaffAccountUseCaseInteractionTest {
         StaffAccountOutputData expectedOutput = new StaffAccountOutputData(expected);
         when(outputBoundary.convertToStaffAccountOutputData(any())).thenReturn(expectedOutput);
 
-        StaffAccountOutputData actualResult = useCase.getById("3");
-
-        assert actualResult.getStaffAccount().getAccountId() == 3L;
+        assert useCase.getById("3").getAccountId() == 3L;
     }
 
     @Test

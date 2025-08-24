@@ -195,6 +195,7 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                             .productSize(ProductSize.valueOf(productVariant.getProductSize()))
                             .product(productEntity)
                             .stores(List.of(storeEntity))
+                            .isActive(true)
                             .quantity(productVariant.getQuantity())
                             .build();
                 })
@@ -260,6 +261,7 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                 existingProductVariants.setColor(colorEntity);
                 existingProductVariants.setProductSize(ProductSize.valueOf(productVariant.getProductSize()));
                 existingProductVariants.setQuantity(productVariant.getQuantity());
+                existingProductVariants.setIsActive(true);
 
                 //Save the new product variants information into a list to update
                 updatedList.add(existingProductVariants);
@@ -273,6 +275,7 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
                         .product(productEntity)
                         .stores(List.of(performUpdatingAccount.getWorkingAt()))
                         .quantity(productVariant.getQuantity())
+                        .isActive(true)
                         .build();
                 updatedList.add(newProductVariantEntity);
             }
@@ -316,10 +319,4 @@ public class ManageProductUseCaseInteraction implements ProductManagementInputBo
         azureStorageBoundary.deleteFile(imageUrls);
         imageRepository.deleteAll(imageEntities);
     }
-
-//    private List<ProductVariant> getProductVariants(ProductEntity productEntity) {
-//        return productEntity.getProductVariants().stream()
-//                .map(productVariantMapper::toModel)
-//                .toList();
-//    }
 }

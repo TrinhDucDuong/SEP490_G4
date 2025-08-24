@@ -4,6 +4,7 @@ import com.fourfingers.quangvinhstore.infrastructure.schema.BrandEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,4 +12,5 @@ import java.util.UUID;
 public interface BrandRepository extends JpaRepository<BrandEntity, Long> {
     Optional<BrandEntity> findByBrandId(Long brandId);
     Optional<BrandEntity> findByBrandName(String brandName);
+    List<BrandEntity> findAllByIsActiveTrue();
 }

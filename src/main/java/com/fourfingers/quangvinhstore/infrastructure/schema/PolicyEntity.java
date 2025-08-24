@@ -19,7 +19,7 @@ public class PolicyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long policyId;
 
-    @Column(name = "policy_name", columnDefinition = "NVARCHAR(50)", nullable = false)
+    @Column(name = "policy_name", columnDefinition = "NVARCHAR(255)", nullable = false)
     private String policyName;
 
     @Column(name = "policy_description", columnDefinition = "TEXT", nullable = false)

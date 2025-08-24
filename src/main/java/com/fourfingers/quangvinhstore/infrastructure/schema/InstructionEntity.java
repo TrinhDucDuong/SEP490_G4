@@ -19,7 +19,7 @@ public class InstructionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long instructionId;
 
-    @Column(name = "instruction_name", columnDefinition = "NVARCHAR(50)", nullable = false)
+    @Column(name = "instruction_name", columnDefinition = "NVARCHAR(255)", nullable = false)
     private String instructionName;
 
     @Column(name = "instruction_description", columnDefinition = "TEXT", nullable = false)
