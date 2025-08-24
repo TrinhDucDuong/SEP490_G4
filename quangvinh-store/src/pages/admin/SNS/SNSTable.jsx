@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Edit, Plus, Trash2, ExternalLink } from 'lucide-react';
+import { useToast } from '../../../context/ToastContext';
 import DataTable from '../../../components/common/Admin/DataTable';
 import SNSModal from './SNSModal';
 import Paginations from '../../../components/common/Admin/Paginations';
@@ -16,6 +17,7 @@ const SNSTable = ({
                       loading
                   }) => {
     // Modal states
+    const { showSuccess, showError } = useToast();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -46,7 +48,7 @@ const SNSTable = ({
     const handleCreateSNS = async () => {
         const validation = SNS_HELPERS.validateSNSData(newSNS);
         if (!validation.isValid) {
-            alert(validation.errors.join('\n'));
+            showError(validation.errors.join('\n'));
             return;
         }
 
@@ -54,16 +56,16 @@ const SNSTable = ({
         if (result.success) {
             setShowCreateModal(false);
             setNewSNS(SNS_DEFAULTS.NEW_SNS);
-            alert('Tạo mạng xã hội thành công!');
+            showSuccess('Tạo mạng xã hội thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 
     const handleUpdateSNS = async () => {
         const validation = SNS_HELPERS.validateSNSData(updateSNSData);
         if (!validation.isValid) {
-            alert(validation.errors.join('\n'));
+            showError(validation.errors.join('\n'));
             return;
         }
 
@@ -71,9 +73,9 @@ const SNSTable = ({
         if (result.success) {
             setShowUpdateModal(false);
             setUpdateSNSData(null);
-            alert('Cập nhật mạng xã hội thành công!');
+            showSuccess('Cập nhật mạng xã hội thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 
@@ -84,9 +86,9 @@ const SNSTable = ({
         if (result.success) {
             setShowDeleteModal(false);
             setSelectedSNS(null);
-            alert('Xóa mạng xã hội thành công!');
+            showSuccess('Xóa mạng xã hội thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 

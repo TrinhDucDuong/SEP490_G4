@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Plus, Image, FileText, Users } from 'lucide-react';
+import { useToast } from '../../../context/ToastContext';
 import DataTable from '../../../components/common/admin/DataTable';
 import Modals from '../../../components/common/admin/Modals';
 import Paginations from '../../../components/common/admin/Paginations';
@@ -19,6 +20,7 @@ const BrandTable = ({
                         loading
                     }) => {
     // Modal states
+    const { showSuccess, showError } = useToast();
     const [showImageModal, setShowImageModal] = useState(false);
     const [showDescriptionModal, setShowDescriptionModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -87,12 +89,13 @@ const BrandTable = ({
     // CRUD operations
     const handleCreateBrand = async () => {
         if (!newBrand.brandName.trim()) {
-            alert('Vui lòng nhập tên thương hiệu');
+            showError('Vui lòng nhập tên thương hiệu');
             return;
         }
 
         if (!createImageFile) {
             setCreateImageError('Vui lòng tải lên ảnh thương hiệu');
+            showError('Vui lòng tải lên ảnh thương hiệu');
             return;
         }
 
@@ -105,15 +108,18 @@ const BrandTable = ({
             setNewBrand(BRAND_DEFAULTS.NEW_BRAND);
             setCreateImageFile(null);
             setCreateImageError('');
-            alert('Tạo thương hiệu thành công!');
+
+            // Show success toast
+            showSuccess('Tạo thương hiệu thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            // Show error toast
+            showError(result.error || 'Có lỗi xảy ra khi tạo thương hiệu');
         }
     };
 
     const handleUpdateBrand = async () => {
         if (!updateBrandData.brandName.trim()) {
-            alert('Vui lòng nhập tên thương hiệu');
+            showError('Vui lòng nhập tên thương hiệu');
             return;
         }
 
@@ -125,6 +131,7 @@ const BrandTable = ({
             imageToSend = 'keep_existing';
         } else {
             setUpdateImageError('Vui lòng tải lên ảnh thương hiệu');
+            showError('Vui lòng tải lên ảnh thương hiệu');
             return;
         }
 
@@ -142,9 +149,9 @@ const BrandTable = ({
             setCurrentImageUrl(null);
             setUpdateImageFile(null);
             setUpdateImageError('');
-            alert('Cập nhật thương hiệu thành công!');
+            showSuccess('Cập nhật thương hiệu thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(result.error || 'Có lỗi xảy ra khi cập nhật thương hiệu');
         }
     };
 
@@ -155,9 +162,10 @@ const BrandTable = ({
         if (result.success) {
             setShowStatusModal(false);
             setSelectedBrand(null);
-            alert('Thay đổi trạng thái thành công!');
+            const statusText = selectedBrand.isActive ? 'ngừng bán' : 'kích hoạt lại';
+            showSuccess(`Đã ${statusText} thương hiệu "${selectedBrand.brandName}" thành công!`);
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(result.error || 'Có lỗi xảy ra khi thay đổi trạng thái');
         }
     };
 

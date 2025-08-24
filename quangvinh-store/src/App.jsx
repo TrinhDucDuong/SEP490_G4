@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import { ToastProvider } from './context/ToastContext.jsx';
 
 import { AuthProvider, AuthContext } from './context/AuthContext.jsx';
 import { CartProvider } from './context/CartContext.jsx';
@@ -72,6 +73,7 @@ import BannerManagement from "./pages/staff/Banner/BannerManagement.jsx";
 
 function App() {
     return (
+        <ToastProvider>
         <AuthProvider>
             <AuthProviderForManager>
                 <CartProviderWrapper>
@@ -184,6 +186,7 @@ function App() {
                 </CartProviderWrapper>
             </AuthProviderForManager>
         </AuthProvider>
+        </ToastProvider>
     );
 }
 

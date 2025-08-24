@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Edit, Plus, Eye } from 'lucide-react';
+import { useToast } from '../../../context/ToastContext';
 import DataTable from '../../../components/common/admin/DataTable';
 import Paginations from '../../../components/common/admin/Paginations';
 import MapSelector from '../Store/MapSelector';
@@ -17,6 +18,7 @@ const StoreTable = ({
                         loading
                     }) => {
     // Modal states
+    const { showSuccess, showError } = useToast();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showStatusModal, setShowStatusModal] = useState(false);
@@ -89,7 +91,7 @@ const StoreTable = ({
     const handleCreateStore = async () => {
         const validation = STORE_HELPERS.validateStoreData(newStore);
         if (!validation.isValid) {
-            alert(validation.errors.join('\n'));
+            showError(validation.errors.join('\n'));
             return;
         }
 
@@ -98,16 +100,16 @@ const StoreTable = ({
             setShowCreateModal(false);
             setNewStore(STORE_DEFAULTS.NEW_STORE);
             setSelectedPosition(null);
-            alert('Tạo cửa hàng thành công!');
+            showSuccess('Tạo cửa hàng thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 
     const handleUpdateStore = async () => {
         const validation = STORE_HELPERS.validateStoreData(updateStoreData);
         if (!validation.isValid) {
-            alert(validation.errors.join('\n'));
+            showError(validation.errors.join('\n'));
             return;
         }
 
@@ -116,9 +118,9 @@ const StoreTable = ({
             setShowUpdateModal(false);
             setUpdateStoreData(null);
             setSelectedPosition(null);
-            alert('Cập nhật cửa hàng thành công!');
+            showSuccess('Cập nhật cửa hàng thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 
@@ -129,9 +131,9 @@ const StoreTable = ({
         if (result.success) {
             setShowStatusModal(false);
             setSelectedStore(null);
-            alert('Thay đổi trạng thái thành công!');
+            showSuccess('Thay đổi trạng thái thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 

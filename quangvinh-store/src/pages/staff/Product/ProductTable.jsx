@@ -6,6 +6,7 @@ import ProductViewModal from './ProductViewModal';
 import ProductImageModal from './ProductImageModal';
 import ProductDescriptionModal from './ProductDescriptionModal';
 import { PRODUCT_HELPERS } from '../../../utils/constants/ProductConstants';
+import { useToast } from '../../../context/ToastContext.jsx';
 
 const ProductTable = ({
                           products,
@@ -22,6 +23,7 @@ const ProductTable = ({
                           loading
                       }) => {
     // Modal states
+    const { showSuccess, showError } = useToast();
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -55,8 +57,7 @@ const ProductTable = ({
             setSelectedProduct(result.data);
             setIsEditModalOpen(true);
         } else {
-            alert(result.error || 'Không lấy được thông tin sản phẩm!');
-        }
+            showError(result.error || 'Không lấy được thông tin sản phẩm!');        }
     };
 
     const handleView = async (product) => {
@@ -67,11 +68,9 @@ const ProductTable = ({
                 setSelectedProduct(result.data);
                 setIsViewModalOpen(true);
             } else {
-                alert(result.error || 'Có lỗi xảy ra khi lấy thông tin sản phẩm');
-            }
+                showError(result.error || 'Có lỗi xảy ra khi lấy thông tin sản phẩm');            }
         } catch (error) {
-            alert('Có lỗi xảy ra khi lấy thông tin sản phẩm');
-        } finally {
+            showError('Có lỗi xảy ra khi lấy thông tin sản phẩm');        } finally {
             setViewLoading(false);
         }
     };
@@ -101,11 +100,18 @@ const ProductTable = ({
                 if (result.success) {
                     setIsStatusToggleDialogOpen(false);
                     setSelectedProduct(null);
+
+                    // Show success toast
+                    const statusText = selectedProduct.isActive ? 'ngừng bán' : 'kích hoạt bán';
+                    showSuccess(`Đã ${statusText} sản phẩm "${selectedProduct.productName}" thành công!`);
+
                 } else {
-                    alert(result.error || 'Có lỗi xảy ra khi thay đổi trạng thái sản phẩm');
+                    // Show error toast
+                    showError(result.error || 'Có lỗi xảy ra khi thay đổi trạng thái sản phẩm');
                 }
             } catch (error) {
-                alert('Có lỗi xảy ra khi thay đổi trạng thái sản phẩm');
+                // Show error toast
+                showError('Có lỗi xảy ra khi thay đổi trạng thái sản phẩm');
             } finally {
                 setToggleLoading(false);
             }

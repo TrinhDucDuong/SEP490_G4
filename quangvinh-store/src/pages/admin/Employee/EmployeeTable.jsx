@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, Edit, Plus, User, Phone, MapPin, Lock } from 'lucide-react';
+import { useToast } from '../../../context/ToastContext';
 import DataTable from '../../../components/common/admin/DataTable';
 import Modal from '../../../components/common/admin/Modals';
 import Pagination from '../../../components/common/admin/Paginations';
@@ -19,6 +20,7 @@ const EmployeeTable = ({
                            loading
                        }) => {
     // Modal states
+    const { showSuccess, showError } = useToast();
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -54,13 +56,13 @@ const EmployeeTable = ({
             } else {
                 console.error('Error fetching employee details:', result.error);
                 setSelectedEmployee(employee);
-                alert(`Không thể lấy thông tin chi tiết: ${result.error}`);
+                showError(`Không thể lấy thông tin chi tiết: ${result.error}`);
             }
 
         } catch (error) {
             console.error('Error in openDetailModal:', error);
             setSelectedEmployee(employee);
-            alert('Có lỗi xảy ra khi lấy thông tin chi tiết');
+            showError('Có lỗi xảy ra khi lấy thông tin chi tiết');
         }
     };
 
@@ -98,7 +100,7 @@ const EmployeeTable = ({
     const handleCreateEmployee = async () => {
         const validation = EMPLOYEE_HELPERS.validateEmployeeData(newEmployee);
         if (!validation.isValid) {
-            alert(validation.errors.join('\n'));
+            showError(validation.errors.join('\n'));
             return;
         }
 
@@ -106,9 +108,9 @@ const EmployeeTable = ({
         if (result.success) {
             setShowCreateModal(false);
             setNewEmployee(EMPLOYEE_DEFAULTS.NEW_EMPLOYEE);
-            alert('Tạo nhân viên thành công!');
+            showSuccess('Tạo nhân viên thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 
@@ -125,15 +127,15 @@ const EmployeeTable = ({
         if (result.success) {
             setShowStatusModal(false);
             setSelectedEmployee(null);
-            alert('Thay đổi trạng thái thành công!');
+            showSuccess('Thay đổi trạng thái thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 
     const handleResetPassword = async () => {
         if (!selectedEmployee || !resetPasswordData.oldPassword || !resetPasswordData.newPassword) {
-            alert('Vui lòng nhập đầy đủ mật khẩu cũ và mật khẩu mới');
+            showError('Vui lòng nhập đầy đủ mật khẩu cũ và mật khẩu mới');
             return;
         }
 
@@ -142,9 +144,9 @@ const EmployeeTable = ({
             setShowResetPasswordModal(false);
             setSelectedEmployee(null);
             setResetPasswordData({ oldPassword: '', newPassword: '' });
-            alert('Cập nhật mật khẩu thành công!');
+            showSuccess('Cập nhật mật khẩu thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Mật khẩu cũ không đúng`);
         }
     };
 
