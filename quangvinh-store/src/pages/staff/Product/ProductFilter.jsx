@@ -55,7 +55,7 @@ const ProductFilter = ({
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
                                 >
                                     <option value="">Tất cả thương hiệu</option>
-                                    {brands.map(brand => (
+                                    {brands && brands.filter(brand => brand.isActive).map(brand => (
                                         <option key={brand.brandId} value={brand.brandId}>
                                             {brand.brandName}
                                         </option>
@@ -83,7 +83,7 @@ const ProductFilter = ({
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
                                 >
                                     <option value="">Tất cả danh mục</option>
-                                    {categories.map(category => (
+                                    {categories && categories.filter(category => category.isActive).map(category => (
                                         <option key={category.categoryId} value={category.categoryId}>
                                             {category.categoryName}
                                         </option>

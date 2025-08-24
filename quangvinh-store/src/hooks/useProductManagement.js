@@ -18,6 +18,8 @@ export const useProductManagement = () => {
     const [colors, setColors] = useState([]);
     const [brands, setBrands] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [activeBrands, setActiveBrands] = useState([]);
+    const [activeCategories, setActiveCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -48,8 +50,19 @@ export const useProductManagement = () => {
             if (productsResult.success) setProducts(productsResult.data);
             else setError(productsResult.error);
             if (colorsResult.success) setColors(colorsResult.data);
-            if (brandsResult.success) setBrands(brandsResult.data);
-            if (categoriesResult.success) setCategories(categoriesResult.data);
+            if (brandsResult.success) {
+                setBrands(brandsResult.data);
+                const activeBrandsOnly = brandsResult.data.filter(brand => brand.isActive);
+                setActiveBrands(activeBrandsOnly);
+                console.log('Active brands:', activeBrandsOnly);
+            }
+
+            if (categoriesResult.success) {
+                setCategories(categoriesResult.data);
+                const activeCategoriesOnly = categoriesResult.data.filter(category => category.isActive);
+                setActiveCategories(activeCategoriesOnly);
+                console.log('Active categories:', activeCategoriesOnly);
+            }
         } catch (err) {
             setError('Có lỗi xảy ra khi tải dữ liệu');
         } finally {
@@ -203,6 +216,8 @@ export const useProductManagement = () => {
         colors,
         brands,
         categories,
+        activeBrands,
+        activeCategories,
         loading,
         error,
         searchTerm,
