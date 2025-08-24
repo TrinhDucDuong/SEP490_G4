@@ -1,7 +1,27 @@
+/**
+ * Copyright (c) 2025 ngothangwork
+ * Author: ngothangwork
+ *
+ * Component AddressCard: Hiển thị thông tin một địa chỉ giao hàng,
+ * bao gồm họ tên, số điện thoại, địa chỉ chi tiết, loại địa chỉ
+ * và các nút chức năng (chỉnh sửa, xóa, đặt mặc định).
+ */
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-
+/**
+ * AddressCard Component
+ * @param {Object} props
+ * @param {Object} props.item - Đối tượng địa chỉ (chứa name, phoneNumber, exactAddress, address, type, isMain)
+ * @param {Function} props.onEdit - Callback khi nhấn nút "Chỉnh sửa"
+ * @param {Function} props.onSetMain - Callback khi đặt địa chỉ làm mặc định
+ * @param {Function} props.onDelete - Callback khi xóa địa chỉ
+ * @param {boolean} [props.readonly=false] - Nếu true thì ẩn các nút chỉnh sửa/xóa/đặt mặc định
+ *
+ * Copyright (c) 2025 ngothangwork
+ * Author: ngothangwork
+ */
 function AddressCard({ item, onEdit, onSetMain, onDelete, readonly = false }) {
     const typeDisplayMap = {
         HOME: "Nhà riêng",

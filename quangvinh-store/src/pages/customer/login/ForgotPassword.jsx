@@ -1,13 +1,40 @@
+/**
+ * @file ForgotPassword.jsx
+ * @description Component trang khôi phục mật khẩu, hỗ trợ gửi yêu cầu qua email hoặc số điện thoại.
+ * @author ngothangwork
+ * @copyright 2025 ngothangwork
+ */
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/images/logo_black.png";
 
+/**
+ * Component ForgotPassword
+ * Hiển thị form yêu cầu lấy lại mật khẩu và các lợi ích khi khôi phục tài khoản.
+ *
+ * @component
+ * @example
+ * return (
+ *   <ForgotPassword />
+ * )
+ */
 function ForgotPassword() {
+    /** @type {[string, Function]} contact - Email hoặc số điện thoại của người dùng */
     const [contact, setContact] = useState("");
+    /** @type {[string, Function]} message - Thông báo thành công */
     const [message, setMessage] = useState("");
+    /** @type {[string, Function]} error - Thông báo lỗi */
     const [error, setError] = useState("");
+    /** @type {[boolean, Function]} loading - Trạng thái đang gửi yêu cầu */
     const [loading, setLoading] = useState(false);
 
+    /**
+     * Xử lý submit form yêu cầu khôi phục mật khẩu
+     *
+     * @param {React.FormEvent<HTMLFormElement>} e - Sự kiện submit form
+     * @returns {Promise<void>}
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage("");

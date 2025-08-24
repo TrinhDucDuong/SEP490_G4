@@ -1,5 +1,20 @@
 import { Link } from "react-router-dom";
 
+/**
+ * Component RecentBlogsSidebar hiển thị danh sách các bài viết gần đây.
+ *
+ * @author ngothangwork
+ * @component
+ *
+ * @param {Object} props - Props truyền vào component
+ * @param {Array<Object>} props.blogs - Danh sách bài viết gần đây
+ * @param {number|string} props.blogs[].blogId - ID của bài viết
+ * @param {string} props.blogs[].blogTitle - Tiêu đề bài viết
+ * @param {string} props.blogs[].createdAt - Ngày tạo bài viết (ISO string)
+ *
+ * @returns {JSX.Element} Giao diện danh sách bài viết gần đây
+ */
+
 function RecentBlogsSidebar({ blogs }) {
     return (
         <div>

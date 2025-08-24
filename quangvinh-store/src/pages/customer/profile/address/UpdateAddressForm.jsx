@@ -1,3 +1,20 @@
+/**
+ * UpdateAddressForm.jsx
+ *
+ * Copyright (c) 2025 ngothangwork
+ * Author: ngothangwork
+ *
+ * Description:
+ *   Component React cho phép người dùng cập nhật địa chỉ giao hàng.
+ *   Bao gồm các trường: họ tên, số điện thoại, tỉnh/thành phố, phường/xã,
+ *   địa chỉ chi tiết, loại địa chỉ, và tuỳ chọn đặt làm địa chỉ chính.
+ *
+ * Dependencies:
+ *   - React (useState, useEffect) để quản lý state và lifecycle
+ *   - react-toastify (toast) để hiển thị thông báo lỗi/thành công
+ *   - API provinces.open-api.vn để lấy danh sách tỉnh và phường/xã
+ */
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 

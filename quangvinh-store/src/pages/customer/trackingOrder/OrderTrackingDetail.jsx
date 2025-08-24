@@ -1,6 +1,20 @@
+/**
+ * @file OrderTrackingDetail.jsx
+ * @description Component hiển thị chi tiết đơn hàng để người dùng theo dõi trạng thái, sản phẩm và địa chỉ giao hàng.
+ * @author
+ *  - ngothangwork
+ * @copyright 2025
+ */
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+/**
+ * @function getStatusLabel
+ * @description Chuyển trạng thái đơn hàng từ enum sang label tiếng Việt.
+ * @param {string} status - Trạng thái đơn hàng (PROCESSING, SHIPPING, DELIVERED, CANCELED).
+ * @returns {string} Nhãn tiếng Việt tương ứng.
+ */
 const getStatusLabel = (status) => {
     switch (status) {
         case "PROCESSING": return "Đang xử lý";
@@ -11,11 +25,23 @@ const getStatusLabel = (status) => {
     }
 };
 
+/**
+ * @component OrderTrackingDetail
+ * @description Component lấy dữ liệu từ backend (theo orderId) và render giao diện chi tiết đơn hàng.
+ *
+ * @implements useParams - Hook từ react-router-dom để lấy orderId từ URL.
+ * @implements useState - Hook React để quản lý state (order, error).
+ * @implements useEffect - Hook React để fetch dữ liệu đơn hàng khi orderId thay đổi.
+ */
 export default function OrderTrackingDetail() {
-    const { orderId } = useParams();
-    const [order, setOrder] = useState(null);
-    const [error, setError] = useState(null);
+    const { orderId } = useParams(); // Lấy orderId từ URL
+    const [order, setOrder] = useState(null); // State chứa thông tin đơn hàng
+    const [error, setError] = useState(null); // State chứa lỗi
 
+    /**
+     * @effect Fetch dữ liệu đơn hàng theo orderId.
+     * @async
+     */
     useEffect(() => {
         const fetchOrder = async () => {
             try {
@@ -30,11 +56,18 @@ export default function OrderTrackingDetail() {
         fetchOrder();
     }, [orderId]);
 
+    /**
+     * @function formatDate
+     * @description Định dạng ngày tháng từ ISO string sang dạng tiếng Việt.
+     * @param {string} dateString - Chuỗi ngày theo ISO.
+     * @returns {string} Ngày định dạng (VD: 24/08/2025, 14:35:00).
+     */
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleString("vi-VN");
     };
 
+    // Render khi có lỗi
     if (error) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -43,6 +76,7 @@ export default function OrderTrackingDetail() {
         );
     }
 
+    // Render khi dữ liệu chưa tải
     if (!order) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -51,9 +85,12 @@ export default function OrderTrackingDetail() {
         );
     }
 
+    // Render chi tiết đơn hàng
     return (
         <div className="max-w-4xl mx-auto p-6 bg-white shadow rounded">
             <h2 className="text-2xl font-bold mb-4">Chi tiết đơn hàng #{order.orderId}</h2>
+
+            {/* Trạng thái đơn hàng + thanh toán */}
             <div className="flex items-center gap-4 mb-4">
                 <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -66,6 +103,7 @@ export default function OrderTrackingDetail() {
                 >
                     {getStatusLabel(order.orderStatus)}
                 </span>
+
                 <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${
                         order.paymentStatus
@@ -81,6 +119,7 @@ export default function OrderTrackingDetail() {
                 Ngày đặt: {formatDate(order.orderDate)}
             </p>
 
+            {/* Danh sách sản phẩm */}
             <div className="space-y-4">
                 {order.orderDetails.map((detail, index) => {
                     const product = detail.productVariant.product;
@@ -127,11 +166,13 @@ export default function OrderTrackingDetail() {
                 })}
             </div>
 
+            {/* Tổng tiền */}
             <div className="mt-6 flex justify-between font-semibold text-lg">
                 <span>Tổng tiền:</span>
                 <span>{order.totalPrice.toLocaleString("vi-VN")} ₫</span>
             </div>
 
+            {/* Địa chỉ giao hàng */}
             <div className="mt-6">
                 <h4 className="font-semibold mb-2">Địa chỉ giao hàng</h4>
                 <p className="text-gray-600">

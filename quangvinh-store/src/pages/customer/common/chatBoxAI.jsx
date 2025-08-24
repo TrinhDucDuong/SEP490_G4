@@ -1,3 +1,17 @@
+/**
+ * @file ChatBoxAI.jsx
+ * @description Component ChatBox AI tương tác với người dùng, gửi và nhận tin nhắn từ bot AI.
+ * Bao gồm:
+ * - Nút mở chat
+ * - Giao diện chat với danh sách tin nhắn
+ * - Input nhập tin nhắn và nút gửi
+ * - Hiển thị trạng thái loading khi bot trả lời
+ * - Sử dụng hook custom `useFetchChatBoxAPI` để gọi API AI
+ * - Hiệu ứng animation với Framer Motion
+ * @author ngothangwork
+ * @copyright 2025 ngothangwork
+ */
+
 import { useState } from "react";
 import { FaRobot } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";

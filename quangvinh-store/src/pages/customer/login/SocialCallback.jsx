@@ -1,7 +1,26 @@
+/**
+ * SocialCallback Component
+ *
+ * Xử lý callback từ Google/Facebook sau khi đăng nhập OAuth2.
+ * Lấy token và account từ URL, lưu thông tin vào localStorage và context,
+ * sau đó điều hướng người dùng về trang chủ.
+ *
+ * @author ngothangwork
+ * @copyright 2025
+ */
+
 import React, { useEffect, useContext } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import {AuthContext} from "../../../context/AuthContext.jsx";
+import { AuthContext } from "../../../context/AuthContext.jsx";
 
+/**
+ * Component xử lý callback sau khi đăng nhập bằng Google/Facebook.
+ *
+ * @component
+ * @example
+ * // Được dùng trong route callback của OAuth2:
+ * <Route path="/auth/callback" element={<SocialCallback />} />
+ */
 const SocialCallback = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();

@@ -1,3 +1,16 @@
+/**
+ * @file Cart.jsx
+ * @description Component hiển thị giỏ hàng dạng slide-in từ bên phải màn hình.
+ * - Sử dụng context `useCart` để quản lý trạng thái giỏ hàng (cartItems, loading, removeItem, updateQuantity).
+ * - Hiển thị danh sách sản phẩm trong giỏ bằng `ProductInCartCard`.
+ * - Cho phép tăng/giảm số lượng, xóa sản phẩm, và tính tổng tiền.
+ * - Nếu giỏ trống thì hiển thị trạng thái rỗng kèm biểu tượng.
+ * - Có nút để đi đến trang thanh toán (`/checkout`).
+ * - Đóng/mở giỏ thông qua props `isOpen` và `onClose`.
+ * @author ngothangwork
+ * @copyright 2025 ngothangwork
+ */
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

@@ -1,6 +1,65 @@
+/**
+ * @file PaymentResult.jsx
+ * @description Hiển thị kết quả thanh toán thành công, bao gồm thông tin đơn hàng, người nhận, địa chỉ giao hàng và chi tiết sản phẩm.
+ * @author
+ *   Tác giả: ngothangwork
+ * @copyright
+ *  2025 ngothangwork.
+ */
+
 import React from "react";
 import { Link } from "react-router-dom";
 
+/**
+ * Component hiển thị kết quả sau khi đặt hàng thành công.
+ *
+ * @component
+ * @param {Object} props - Thuộc tính của component.
+ * @param {Object} props.result - Kết quả thanh toán từ backend.
+ * @param {Object} props.result.orderOutputData - Dữ liệu đầu ra của đơn hàng.
+ * @param {Object} props.result.orderOutputData.order - Thông tin đơn hàng.
+ * @param {string} props.result.orderOutputData.order.orderCode - Mã đơn hàng.
+ * @param {Date|string} props.result.orderOutputData.order.orderDate - Ngày đặt hàng.
+ * @param {string} props.result.orderOutputData.order.orderStatus - Trạng thái đơn hàng (ví dụ: "PAID", "PENDING").
+ * @param {number} props.result.orderOutputData.order.totalPrice - Tổng tiền của đơn hàng.
+ * @param {Object} props.result.orderOutputData.order.shippingAddress - Thông tin địa chỉ giao hàng.
+ * @param {string} props.result.orderOutputData.order.shippingAddress.name - Tên người nhận.
+ * @param {string} props.result.orderOutputData.order.shippingAddress.phoneNumber - Số điện thoại người nhận.
+ * @param {string} props.result.orderOutputData.order.shippingAddress.address - Địa chỉ giao hàng chi tiết.
+ * @param {Array} props.result.orderOutputData.order.orderDetails - Danh sách chi tiết sản phẩm trong đơn hàng.
+ * @param {string} [props.result.paymentUrl] - Đường dẫn thanh toán (nếu có).
+ *
+ * @example
+ * const result = {
+ *   orderOutputData: {
+ *     order: {
+ *       orderCode: "ORD123456",
+ *       orderDate: "2025-08-24T12:34:56Z",
+ *       orderStatus: "PAID",
+ *       totalPrice: 200000,
+ *       shippingAddress: {
+ *         name: "Nguyễn Văn A",
+ *         phoneNumber: "0123456789",
+ *         address: "123 Đường ABC, Quận 1, TP.HCM"
+ *       },
+ *       orderDetails: [
+ *         {
+ *           quantity: 2,
+ *           unitPrice: 100000,
+ *           productVariant: {
+ *             productSize: "L",
+ *             color: { colorHex: "#000000" },
+ *             product: { productName: "Áo Thun", images: [{ imageUrl: "/shirt.png" }] }
+ *           }
+ *         }
+ *       ]
+ *     }
+ *   },
+ *   paymentUrl: "https://vnpay.vn/payment/..."
+ * };
+ *
+ * <PaymentResult result={result} />
+ */
 const PaymentResult = ({ result }) => {
     const order = result.orderOutputData.order;
     const paymentUrl = result.paymentUrl;
@@ -19,9 +78,9 @@ const PaymentResult = ({ result }) => {
                 </p>
             </div>
 
-            {/* Order + Product Info */}
+            {/* order + Product Info */}
             <div className="flex flex-col lg:flex-row gap-6">
-                {/* Order Info */}
+                {/* order Info */}
                 <div className="border border-gray-200 rounded-lg p-4 sm:p-6 space-y-3 flex-1">
                     <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 border-b pb-2">
                         Thông tin đơn hàng
@@ -54,7 +113,7 @@ const PaymentResult = ({ result }) => {
                     {order.orderDetails.map((detail, idx) => (
                         <div key={idx} className="flex flex-col sm:flex-row gap-4 py-4 border-b last:border-0">
                             <img
-                                src={detail.image?.imageUrl || detail.productVariant.product.images?.[0]?.imageUrl || "/fallback.png"}
+                                src={detail.image.imageUrl || "/fallback.png"}
                                 alt={detail.productVariant.product.productName}
                                 className="w-full sm:w-28 sm:h-28 object-cover rounded"
                             />

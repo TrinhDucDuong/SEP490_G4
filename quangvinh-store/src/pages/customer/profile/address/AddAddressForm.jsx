@@ -1,6 +1,21 @@
+/**
+ * Copyright (c) 2025 ngothangwork
+ * Author: ngothangwork
+ *
+ * Component AddAddressForm: Form thêm mới địa chỉ giao hàng cho khách hàng.
+ * Bao gồm nhập họ tên, số điện thoại, tỉnh/thành phố, phường/xã, địa chỉ chi tiết,
+ * loại địa chỉ (nhà riêng, văn phòng, khác) và tùy chọn đặt làm địa chỉ chính.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-
+/**
+ * Component AddAddressForm
+ * @param {Function} onAdd - Hàm callback khi thêm địa chỉ mới
+ * @param {Function} onCancel - Hàm callback khi hủy thêm địa chỉ
+ * Copyright (c) 2025 ngothangwork
+ * Author: ngothangwork
+ */
 function AddAddressForm({ onAdd, onCancel }) {
     const [form, setForm] = useState({
         name: '',
@@ -15,7 +30,11 @@ function AddAddressForm({ onAdd, onCancel }) {
     const [provinces, setProvinces] = useState([]);
     const [wards, setWards] = useState([]);
 
-    // Lấy danh sách tỉnh
+    /**
+     * useEffect: Lấy danh sách tỉnh từ API khi component mount
+     * Copyright (c) 2025 ngothangwork
+     * Author: ngothangwork
+     */
     useEffect(() => {
         fetch('https://provinces.open-api.vn/api/v2/p/')
             .then(res => res.json())
@@ -26,7 +45,12 @@ function AddAddressForm({ onAdd, onCancel }) {
             });
     }, []);
 
-    // Lấy danh sách xã khi chọn tỉnh
+    /**
+     * useEffect: Lấy danh sách xã theo tỉnh đã chọn
+     * Tự động reset khi province thay đổi
+     * Copyright (c) 2025 ngothangwork
+     * Author: ngothangwork
+     */
     useEffect(() => {
         if (form.province) {
             fetch(`https://provinces.open-api.vn/api/v2/w/?province_code=${form.province}`)
@@ -40,6 +64,13 @@ function AddAddressForm({ onAdd, onCancel }) {
         }
     }, [form.province]);
 
+    /**
+     * Xử lý thay đổi dữ liệu trong form
+     * @param {Event} e - Sự kiện onChange
+     * Copyright (c) 2025 ngothangwork
+     * Author: ngothangwork
+     */
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setForm(prev => ({
@@ -48,6 +79,13 @@ function AddAddressForm({ onAdd, onCancel }) {
         }));
     };
 
+
+    /**
+     * Xử lý submit form: tạo object địa chỉ và gọi callback onAdd
+     * @param {Event} e - Sự kiện submit
+     * Copyright (c) 2025 ngothangwork
+     * Author: ngothangwork
+     */
     const handleSubmit = (e) => {
         e.preventDefault();
 

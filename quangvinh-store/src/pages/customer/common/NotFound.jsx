@@ -1,5 +1,25 @@
+/**
+ * @file NotFound.jsx
+ * @description Component hiển thị trang 404 khi người dùng truy cập vào đường dẫn không tồn tại.
+ * Bao gồm:
+ * - Mã lỗi 404
+ * - Thông báo không tìm thấy trang
+ * - Nút quay về trang chủ
+ * @author ngothangwork
+ * @copyright 2025 ngothangwork
+ */
+
 import { Link } from "react-router-dom";
 
+/**
+ * Component NotFound
+ *
+ * @component
+ * @example
+ * return (
+ *   <NotFound />
+ * )
+ */
 function NotFound() {
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center py-16">

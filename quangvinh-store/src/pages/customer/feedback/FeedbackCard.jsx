@@ -1,6 +1,32 @@
+/**
+ * @file FeedbackCard.jsx
+ * @description Component hiển thị thẻ phản hồi/feedback với tiêu đề, nội dung và carousel hình ảnh khi hover.
+ * @author ngothangwork
+ * @copyright 2025 ngothangwork
+ */
+
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import defaultImage from "../../../assets/images/404.jpg";
 
+/**
+ * Component FeedbackCard
+ * Hiển thị một thẻ feedback với:
+ * - Tiêu đề
+ * - Carousel hình ảnh tự động thay đổi khi hover
+ *
+ * @component
+ * @param {Object} props - Props component
+ * @param {string} props.title - Tiêu đề feedback
+ * @param {Array<{ imageUrl: string }>} [props.images] - Danh sách hình ảnh feedback
+ * @example
+ * return (
+ *   <FeedbackCard
+ *     title="Phản hồi từ khách hàng"
+ *     content="Sản phẩm rất tốt!"
+ *     images={[{ imageUrl: 'url1' }, { imageUrl: 'url2' }]}
+ *   />
+ * )
+ */
 const FeedbackCard = ({ title, content, images = [] }) => {
     const [hovered, setHovered] = useState(false);
     const [imageIndex, setImageIndex] = useState(0);

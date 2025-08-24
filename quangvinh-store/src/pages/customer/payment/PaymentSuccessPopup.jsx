@@ -1,6 +1,57 @@
 import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
 
+/**
+ * Popup hiển thị thông tin khi thanh toán thành công.
+ * @author ngothangwork
+ * @copyright 2025
+ *
+ * @component
+ * @param {Object} props
+ * @param {Object} props.order - Thông tin chi tiết về đơn hàng.
+ * @param {number} props.order.orderId - Mã đơn hàng.
+ * @param {string|Date} props.order.orderDate - Ngày thanh toán.
+ * @param {Object} props.order.owner - Thông tin người đặt hàng.
+ * @param {string} [props.order.owner.username] - Tên người đặt hàng.
+ * @param {number} props.order.totalPrice - Tổng giá trị đơn hàng.
+ * @param {Array<Object>} props.order.orderDetails - Danh sách chi tiết sản phẩm trong đơn hàng.
+ * @param {Object} props.order.orderDetails[].productVariant - Biến thể sản phẩm.
+ * @param {Object} props.order.orderDetails[].productVariant.product - Thông tin sản phẩm gốc.
+ * @param {string} props.order.orderDetails[].productVariant.product.productName - Tên sản phẩm.
+ * @param {string} props.order.orderDetails[].productVariant.productSize - Kích thước sản phẩm (ví dụ: "SIZE_M").
+ * @param {Object} [props.order.orderDetails[].productVariant.color] - Màu sắc sản phẩm.
+ * @param {string} [props.order.orderDetails[].productVariant.color.colorHex] - Mã màu HEX.
+ * @param {number} props.order.orderDetails[].quantity - Số lượng sản phẩm.
+ * @param {number} props.order.orderDetails[].unitPrice - Giá mỗi đơn vị sản phẩm.
+ * @param {Object} [props.order.shippingAddress] - Địa chỉ giao hàng.
+ * @param {string} props.order.shippingAddress.exactAddress - Địa chỉ cụ thể.
+ * @param {string} props.order.shippingAddress.address - Địa chỉ (phường/xã, quận/huyện, tỉnh/thành phố).
+ *
+ * @example
+ * const order = {
+ *   orderId: 123,
+ *   orderDate: "2025-08-24T14:30:00",
+ *   owner: { username: "nguyenvana" },
+ *   totalPrice: 2500000,
+ *   orderDetails: [
+ *     {
+ *       productVariant: {
+ *         product: { productName: "Áo thun nam" },
+ *         productSize: "SIZE_L",
+ *         color: { colorHex: "#000000" }
+ *       },
+ *       quantity: 2,
+ *       unitPrice: 300000
+ *     }
+ *   ],
+ *   shippingAddress: {
+ *     exactAddress: "123 Nguyễn Huệ",
+ *     address: "Quận 1, TP.HCM"
+ *   }
+ * };
+ *
+ * return <PaymentSuccessPopup order={order} />;
+ */
 const PaymentSuccessPopup = ({ order }) => {
     if (!order) {
         return null;
@@ -39,7 +90,7 @@ const PaymentSuccessPopup = ({ order }) => {
                 </div>
                 <div className="flex justify-between">
                     <span>Số tham chiếu:</span>
-                    <span>`REF-${orderId.toString().padStart(6, "0")}`</span>
+                    <span>{`REF-${orderId.toString().padStart(6, "0")}`}</span>
                 </div>
                 <div className="flex justify-between">
                     <span>Phương thức thanh toán:</span>

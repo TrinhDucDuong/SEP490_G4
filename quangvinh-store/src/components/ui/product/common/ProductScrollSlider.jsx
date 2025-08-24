@@ -1,6 +1,25 @@
-import { Link } from "react-router-dom";
+
 import ProductCard from "./ProductCard.jsx";
 import React from "react";
+
+
+/**
+ * Component hiển thị danh sách sản phẩm dạng **scroll ngang** (slider).
+ *
+ * Chức năng:
+ * - Hiển thị nhiều `ProductCard` trong một hàng ngang.
+ * - Cho phép scroll ngang mượt mà (`scroll-smooth`, `snap-x`).
+ * - Khi không có sản phẩm → hiển thị thông báo "Không có sản phẩm".
+ *
+ * @author ngothangwork
+ * @component
+ *
+ * @param {Object} props - Props của component
+ * @param {Array<Object>} [props.products=[]] - Danh sách sản phẩm để hiển thị
+ * @param {string} [props.className=""] - ClassName tuỳ chỉnh để thêm vào container
+ *
+ * @returns {JSX.Element} Slider hiển thị danh sách sản phẩm
+ */
 
 const ProductScrollSlider = React.memo(function ProductScrollSlider({ products = [], className = "" }) {
     return (

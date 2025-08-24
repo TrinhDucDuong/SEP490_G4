@@ -33,3 +33,19 @@ export const createAddress = async (newAddress, token) => {
     );
     return response.data;
 };
+
+// Hàm cập nhật thông tin một địa chỉ
+// - Tham số: updatedAddress (địa chỉ đã chỉnh sửa), token (dùng để xác thực)
+// - Gửi request POST đến API /addresses với body là updatedAddress
+// - Trả về dữ liệu từ response (thông tin địa chỉ sau khi cập nhật)
+export const updateAddress = async (updatedAddress, token) => {
+    const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/addresses`,
+        updatedAddress,
+        authHeader(token)
+    );
+    return response.data;
+};
+
+
+

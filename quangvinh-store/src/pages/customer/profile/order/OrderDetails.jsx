@@ -1,12 +1,35 @@
+/**
+ * OrderDetail.jsx
+ *
+ * @Copyright (c) 2025 by ngothangwork
+ * @Author: ngothangwork
+ *
+ * @Description:
+ *  - Component OrderDetail hiển thị chi tiết một đơn hàng của người dùng.
+ *  - Bao gồm thông tin: mã đơn, trạng thái, ngày đặt, thanh toán, địa chỉ giao hàng,
+ *    sản phẩm trong đơn, tổng tiền, và nút thanh toán nếu đơn chưa được thanh toán.
+ */
+
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useFetchOrderById } from '../../../../hooks/customer/order/useFetchOrderById';
+import { useParams, useNavigate } from 'react-router-dom'; // Hook để lấy params từ URL và điều hướng
+import { useFetchOrderById } from '../../../../hooks/customer/order/useFetchOrderById'; // Custom hook gọi API lấy chi tiết đơn hàng theo orderId
 
+/**
+ * Component OrderDetail
+ * - Lấy orderId từ URL params
+ * - Gọi API để lấy thông tin đơn hàng bằng custom hook `useFetchOrderById`
+ * - Hiển thị chi tiết đơn hàng: chủ sở hữu, trạng thái, ngày tháng, sản phẩm, địa chỉ giao hàng, thanh toán
+ */
 function OrderDetail() {
-    const { orderId } = useParams();
-    const navigate = useNavigate();
-    const { order, loading, error } = useFetchOrderById(orderId);
+    const { orderId } = useParams(); // Lấy orderId từ URL
+    const navigate = useNavigate(); // Dùng để điều hướng sang trang thanh toán
+    const { order, loading, error } = useFetchOrderById(orderId); // Gọi API lấy dữ liệu đơn hàng
 
+    /**
+     * Hàm getStatusLabel
+     * @param {string} status - trạng thái đơn hàng từ backend
+     * @returns {string} nhãn tiếng Việt tương ứng
+     */
     const getStatusLabel = (status) => {
         switch (status) {
             case "PROCESSING": return "Đang xử lý";
@@ -17,19 +40,25 @@ function OrderDetail() {
         }
     };
 
+    /**
+     * Hàm handleGoToPayment
+     * - Điều hướng sang trang chọn phương thức thanh toán
+     * - Truyền state chứa dữ liệu đơn hàng sang trang Payment
+     */
     const handleGoToPayment = () => {
         navigate(`/payment-method`, { state: { order } });
     };
 
+    // Trạng thái tải dữ liệu
     if (loading) return <p className="text-center text-gray-600 text-lg">Đang tải...</p>;
     if (error) return <p className="text-center text-red-500 text-lg">Lỗi: {error}</p>;
     if (!order) return <p className="text-center text-gray-600 text-lg">Không tìm thấy đơn hàng</p>;
 
-    console.log(order);
+    console.log(order); // Debug dữ liệu đơn hàng
 
     return (
         <div className="mx-auto p-6 bg-white border border-gray-200 mt-6">
-            {/* Header */}
+            {/* Header: thông tin cơ bản */}
             <div className="flex justify-between items-center border-b border-gray-200 pb-4 mb-4">
                 <h2 className="text-xl font-bold text-black">
                     Chi tiết đơn hàng
@@ -39,7 +68,7 @@ function OrderDetail() {
                 </p>
             </div>
 
-            {/* Owner info */}
+            {/* Thông tin người đặt */}
             {order.owner && (
                 <div className="mb-6 p-4 border border-gray-300 bg-white">
                     <h4 className="font-semibold text-black mb-2">👤 Thông tin người đặt</h4>
@@ -48,7 +77,7 @@ function OrderDetail() {
                 </div>
             )}
 
-            {/* Status */}
+            {/* Trạng thái đơn hàng */}
             <div className="mb-6 text-sm text-gray-700 space-y-1">
                 <p>Trạng thái:
                     <strong className={
@@ -70,7 +99,7 @@ function OrderDetail() {
                 </p>
             </div>
 
-            {/* Shipping Address */}
+            {/* Địa chỉ giao hàng */}
             <div className="mb-6 p-4 border border-gray-300 bg-white">
                 <h4 className="font-semibold text-black mb-2">📦 Địa chỉ giao hàng</h4>
                 <p><strong>Người nhận:</strong> {order.shippingAddress?.name}</p>
@@ -80,6 +109,7 @@ function OrderDetail() {
                 <p><strong>Khu vực:</strong> {order.shippingAddress?.address}</p>
             </div>
 
+            {/* Danh sách sản phẩm trong đơn */}
             <div className="border-t border-gray-300">
                 {order.items.map((item, idx) => (
                     <div key={idx} className="flex items-center justify-between py-4 border-b border-gray-200 last:border-b-0">
@@ -107,7 +137,7 @@ function OrderDetail() {
                 ))}
             </div>
 
-            {/* Summary */}
+            {/* Tóm tắt thanh toán */}
             <div className="mt-6 text-sm text-gray-700 space-y-2 border-t border-gray-300 pt-4">
                 <div className="flex justify-between">
                     <span>Tổng tiền hàng</span>
@@ -131,7 +161,7 @@ function OrderDetail() {
                 </div>
             </div>
 
-            {/* Payment Button */}
+            {/* Nút thanh toán nếu đơn chưa thanh toán */}
             {
                 (order.orderStatus === "PROCESSING" || order.orderStatus == null) &&
                 !order.paymentStatus && (

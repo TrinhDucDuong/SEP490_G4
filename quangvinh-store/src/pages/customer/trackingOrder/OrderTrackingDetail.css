@@ -1,4 +1,12 @@
-/* OrderTrackingDetail.css */
+/**
+ * @file OrderTrackingDetail.css
+ * @description CSS cho component OrderTrackingDetail, bao gồm style trạng thái đơn hàng, danh sách sản phẩm, tổng tiền và địa chỉ giao hàng.
+ * @author
+ *  - ngothangwork
+ * @copyright 2025
+ */
+
+/* Container chính của trang chi tiết đơn hàng */
 .order-tracking {
     max-width: 800px;
     margin: auto;
@@ -9,31 +17,36 @@
     font-family: sans-serif;
 }
 
+/* Trạng thái đơn hàng */
 .order-status {
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
 }
 
+/* Badge hiển thị trạng thái */
 .status-badge {
     padding: 5px 10px;
     border-radius: 5px;
     color: white;
 }
-.status-badge.delivered { background-color: green; }
-.status-badge.pending { background-color: orange; }
-.status-badge.cancelled { background-color: red; }
+.status-badge.delivered { background-color: green; }   /* Đã giao */
+.status-badge.pending { background-color: orange; }    /* Đang xử lý */
+.status-badge.cancelled { background-color: red; }     /* Đã hủy */
 
+/* Trạng thái thanh toán */
 .payment-status {
     font-weight: bold;
 }
 
+/* Danh sách sản phẩm */
 .order-items {
     border-top: 1px solid #ddd;
     margin-top: 15px;
     padding-top: 15px;
 }
 
+/* Từng sản phẩm trong đơn */
 .order-item {
     display: flex;
     align-items: center;
@@ -41,28 +54,33 @@
     padding: 10px 0;
 }
 
+/* Ảnh sản phẩm */
 .item-image img {
     width: 80px;
     height: 80px;
     object-fit: cover;
 }
 
+/* Thông tin sản phẩm */
 .item-info {
     flex: 1;
     margin-left: 15px;
 }
 
+/* Giá sản phẩm */
 .item-price {
     font-weight: bold;
     color: #d33;
 }
 
+/* Tổng tiền đơn hàng */
 .order-total {
     margin-top: 20px;
     font-size: 18px;
     text-align: right;
 }
 
+/* Địa chỉ giao hàng */
 .shipping-info {
     margin-top: 20px;
 }

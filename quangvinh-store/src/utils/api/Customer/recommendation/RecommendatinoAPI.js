@@ -1,5 +1,5 @@
 export const RecommendationAPI = {
-    // Hàm lấy danh sách sản phẩm gợi ý (Recommendation)
+    // Hàm lấy danh sách sản phẩm gợi ý (recommendation)
     // - Gửi request POST đến endpoint /recommendation/cache
     // - Headers:
     //    + Accept: '*/*' (chấp nhận mọi loại dữ liệu trả về)

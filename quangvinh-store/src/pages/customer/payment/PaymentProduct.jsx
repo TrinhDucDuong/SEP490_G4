@@ -1,10 +1,34 @@
+/**
+ * @fileoverview Component hiển thị tóm tắt đơn hàng và chi tiết sản phẩm trong giỏ hàng để thanh toán.
+ * @author
+ *   ngothangwork
+ * @copyright
+ *   © 2025 ngothangwork. All rights reserved.
+ */
+
 import ProductInCartCard from "../../../components/ui/product/cart/productInCartCard.jsx";
 import { toast } from "react-toastify";
 import React, { useState } from "react";
 
+/**
+ * Component `PaymentProduct`
+ *
+ * Hiển thị phần tóm tắt đơn hàng (tổng số lượng sản phẩm, tổng tiền, mã khuyến mãi)
+ * và danh sách chi tiết sản phẩm trong giỏ hàng.
+ *
+ * @component
+ * @param {Object} props - Props được truyền vào component.
+ * @param {Array} props.cartItems - Danh sách sản phẩm trong giỏ hàng.
+ * @param {Array<string>} props.promoList - Danh sách mã khuyến mãi khả dụng.
+ * @param {Function} props.removeItem - Hàm xoá sản phẩm khỏi giỏ hàng theo id.
+ * @param {Function} props.updateQuantity - Hàm cập nhật số lượng sản phẩm trong giỏ hàng.
+ *
+ * @returns {JSX.Element} Giao diện hiển thị phần tóm tắt và chi tiết giỏ hàng.
+ */
 function PaymentProduct({ cartItems, promoList, removeItem, updateQuantity }) {
     const [selectedPromo, setSelectedPromo] = useState('');
 
+    // Tính tổng tiền
     const totalPrice = cartItems.reduce((sum, item) => {
         const price = item.productVariant?.product?.unitPrice || item.price || 0;
         return sum + price * item.quantity;
@@ -12,6 +36,7 @@ function PaymentProduct({ cartItems, promoList, removeItem, updateQuantity }) {
 
     return (
         <>
+            {/* Tóm tắt đơn hàng */}
             <div className='rounded-lg shadow-md p-4 mb-6 bg-white'>
                 <h2 className='text-xl font-bold mb-4 text-black'>Tóm Tắt Đơn Hàng</h2>
 
@@ -26,6 +51,7 @@ function PaymentProduct({ cartItems, promoList, removeItem, updateQuantity }) {
                     </div>
                 </div>
 
+                {/* Chọn mã khuyến mãi */}
                 {promoList && promoList.length > 0 && (
                     <div className='flex flex-col gap-2 mb-4'>
                         <label className='text-sm text-black'>Chọn mã khuyến mãi</label>
@@ -45,6 +71,7 @@ function PaymentProduct({ cartItems, promoList, removeItem, updateQuantity }) {
                 )}
             </div>
 
+            {/* Chi tiết đơn hàng */}
             <div className='rounded-lg shadow-md mt-6 p-4 bg-white'>
                 <h3 className='font-semibold mb-2 text-black'>
                     Chi tiết đơn hàng ({cartItems.length})

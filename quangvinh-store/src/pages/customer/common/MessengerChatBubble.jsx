@@ -1,3 +1,13 @@
+/**
+ * @file MessengerChatBubble.jsx
+ * @description Component nút chat Messenger nổi (bubble) ở góc màn hình, mở trang Messenger trong tab mới khi nhấn.
+ * Bao gồm:
+ * - Hiệu ứng animation khi xuất hiện, hover và tap với Framer Motion
+ * - Sử dụng icon FaFacebookMessenger
+ * @author ngothangwork
+ * @copyright 2025 ngothangwork
+ */
+
 import React from "react";
 import { motion } from "framer-motion";
 import { FaFacebookMessenger } from "react-icons/fa";

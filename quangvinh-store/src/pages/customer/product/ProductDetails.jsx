@@ -1,3 +1,10 @@
+/**
+ * @file ProductDetail.jsx
+ * @description Trang chi tiết sản phẩm: hiển thị thông tin sản phẩm, hình ảnh, lựa chọn màu/size, giỏ hàng, đánh giá và sản phẩm liên quan.
+ * @author ngothangwork
+ * @copyright 2025
+ */
+
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Zoom from 'react-medium-image-zoom';
@@ -11,15 +18,55 @@ import { toast } from 'react-toastify';
 import Breadcrumb from "../../../components/common/customer/Breadcrumb.jsx";
 import { useFetchStarRate } from "../../../hooks/customer/useFetchStarRate";
 import { useCart } from "../../../context/CartContext.jsx";
-import { useActionLogger } from "../../../utils/api/Customer/Log/useActionLogger.js";
+import { useActionLogger } from "../../../utils/api/Customer/log/useActionLogger.js";
 import parse from 'html-react-parser';
 import { useFetchRelatedProducts } from "../../../hooks/customer/useFetchRelatedProducts.js";
 import ProductScrollSlider from "../../../components/ui/product/common/ProductScrollSlider.jsx";
 
+/**
+ * Hàm format lại tên size từ enum backend sang chữ dễ đọc
+ * @param {string} size - Mã size từ backend (VD: SIZE_39, M, L, XL)
+ * @returns {string} Chuỗi size hiển thị (VD: "39", "M", "XL")
+ */
+const formatProductSize = (size) => {
+    const mapping = {
+        XS: "XS",
+        S: "S",
+        M: "M",
+        L: "L",
+        XL: "XL",
+        XXL: "XXL",
+        SIZE_35: "35",
+        SIZE_36: "36",
+        SIZE_37: "37",
+        SIZE_38: "38",
+        SIZE_39: "39",
+        SIZE_40: "40",
+        SIZE_41: "41",
+        SIZE_42: "42",
+        SIZE_43: "43",
+        SIZE_44: "44",
+        SIZE_45: "45",
+    };
+    return mapping[size] || size;
+};
+
+/**
+ * Component ProductDetail
+ *
+ * @component
+ * @returns {JSX.Element} Giao diện chi tiết sản phẩm bao gồm: hình ảnh, mô tả, đánh giá, thêm vào giỏ hàng, sản phẩm liên quan.
+ *
+ * @example
+ * return (
+ *   <ProductDetail />
+ * )
+ */
 const ProductDetail = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
+    // Lấy productId từ location state hoặc sessionStorage
     const stateProductId = location.state?.productId;
     const [productId, setProductId] = useState(() => {
         if (stateProductId) {
@@ -29,6 +76,7 @@ const ProductDetail = () => {
         return sessionStorage.getItem('productId');
     });
 
+    // Cập nhật productId khi điều hướng giữa các sản phẩm
     useEffect(() => {
         if (stateProductId && stateProductId !== productId) {
             try { sessionStorage.setItem('productId', stateProductId); } catch (e) { /* ignore */ }
@@ -36,6 +84,7 @@ const ProductDetail = () => {
         }
     }, [stateProductId, productId]);
 
+    // State quản lý chi tiết sản phẩm
     const [product, setProduct] = useState(null);
     const [productSizes, setProductSizes] = useState([]);
     const [productColors, setProductColors] = useState([]);
@@ -49,31 +98,10 @@ const ProductDetail = () => {
     const { logAction } = useActionLogger();
     const { addToCart } = useCart();
 
-    const formatProductSize = (size) => {
-        const mapping = {
-            XS: "XS",
-            S: "S",
-            M: "M",
-            L: "L",
-            XL: "XL",
-            XXL: "XXL",
-            SIZE_35: "35",
-            SIZE_36: "36",
-            SIZE_37: "37",
-            SIZE_38: "38",
-            SIZE_39: "39",
-            SIZE_40: "40",
-            SIZE_41: "41",
-            SIZE_42: "42",
-            SIZE_43: "43",
-            SIZE_44: "44",
-            SIZE_45: "45",
-        };
-        return mapping[size] || size;
-    };
-
+    /** Hook lấy danh sách đánh giá theo productId */
     const { starRates, totalCount, loading: starRateLoading } = useFetchStarRate(product?.productId, filterStar, pageNumber, 3);
 
+    /** Fetch chi tiết sản phẩm */
     useEffect(() => {
         window.scrollTo(0, 0);
 
@@ -87,6 +115,7 @@ const ProductDetail = () => {
                 const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/product/${productId}`);
                 if (!res.ok) throw new Error('Lỗi tải sản phẩm');
                 const data = await res.json();
+
                 const uniqueSizes = Array.from(new Set(data.productSizes || []));
                 const seenColors = new Set();
                 const uniqueColors = (data.productColors || []).filter(color => {
@@ -107,21 +136,24 @@ const ProductDetail = () => {
         fetchProduct();
     }, [productId, navigate]);
 
+    /** Biến lưu variant hiện tại dựa trên màu + size được chọn */
     const currentVariant = product?.productVariants?.find(
         v => v.colorHex === selectedColor && v.productSize === selectedSize
     );
 
+    /**
+     * Xử lý khi user nhấn "Mua ngay"
+     * @async
+     */
     const handleBuyNow = async () => {
         if (!selectedColor || !selectedSize) {
             toast.error("Vui lòng chọn màu sắc và kích thước");
             return;
         }
-
         if (!currentVariant) {
             toast.error("Sản phẩm với màu và kích thước này hiện không có trong kho");
             return;
         }
-
         if (quantity > currentVariant.quantity) {
             toast.error("Số lượng vượt quá số lượng tồn kho!");
             return;
@@ -138,24 +170,25 @@ const ProductDetail = () => {
                 productImage: selectedImage || product.images?.[0]?.imageUrl || '',
             });
             await logAction('ADD_TO_CART', currentVariant?.productVariantId);
-            console.log('ADD_TO_CART', currentVariant?.productVariantId);
             navigate('/checkout');
         } catch (error) {
             toast.error(error.message || 'Lỗi khi thêm vào giỏ hàng');
         }
     };
 
+    /**
+     * Xử lý khi user nhấn "Thêm vào giỏ hàng"
+     * @async
+     */
     const handleAddToCart = async () => {
         if (!selectedColor || !selectedSize) {
             toast.error("Vui lòng chọn màu sắc và kích thước");
             return;
         }
-
         if (!currentVariant) {
             toast.error("Sản phẩm với màu và kích thước này hiện không có trong kho");
             return;
         }
-
         if (quantity > currentVariant.quantity) {
             toast.error("Số lượng vượt quá số lượng tồn kho!");
             return;
@@ -178,13 +211,17 @@ const ProductDetail = () => {
         }
     };
 
+    /** Danh sách ảnh sản phẩm */
     const images = (product?.images || []).map(img => img.imageUrl);
+
+    /** Breadcrumb cho trang sản phẩm */
     const breadcrumbItems = [
         { label: 'Trang chủ', to: '/' },
         { label: 'Sản phẩm', to: '/products' },
         { label: product?.productName || 'Chi tiết sản phẩm' },
     ];
 
+    /** Hook lấy danh sách sản phẩm liên quan */
     const { relatedProducts, loading: relatedLoading } = useFetchRelatedProducts({
         categoryId: product?.category?.categoryId,
         brandId: product?.brand?.brandId,
