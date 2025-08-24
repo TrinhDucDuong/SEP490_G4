@@ -15,6 +15,7 @@ const EmployeeTable = ({
                            onDeleteEmployee,
                            onActivateEmployee,
                            onResetEmployeePassword,
+                           onGetEmployeeDetails,
                            loading
                        }) => {
     // Modal states
@@ -31,9 +32,36 @@ const EmployeeTable = ({
     const [updateEmployee, setUpdateEmployee] = useState(null);
 
     // Modal handlers
-    const openDetailModal = (employee) => {
-        setSelectedEmployee(employee);
-        setShowDetailModal(true);
+    const openDetailModal = async (employee) => {
+        try {
+            setShowDetailModal(true);
+            setSelectedEmployee(null);
+
+            const result = await onGetEmployeeDetails(employee.accountId);
+
+            if (result.success) {
+                console.log('Employee details received:', result.data);
+
+                const detailedEmployee = {
+                    isActive: employee.isActive,
+                    createdAt: employee.createdAt,
+
+                    ...result.data
+                };
+
+                setSelectedEmployee(detailedEmployee);
+
+            } else {
+                console.error('Error fetching employee details:', result.error);
+                setSelectedEmployee(employee);
+                alert(`Không thể lấy thông tin chi tiết: ${result.error}`);
+            }
+
+        } catch (error) {
+            console.error('Error in openDetailModal:', error);
+            setSelectedEmployee(employee);
+            alert('Có lỗi xảy ra khi lấy thông tin chi tiết');
+        }
     };
 
     const openCreateModal = () => {
@@ -273,80 +301,88 @@ const EmployeeTable = ({
             <Modal
                 isOpen={showDetailModal}
                 onClose={() => setShowDetailModal(false)}
-                title={`Thông tin chi tiết nhân viên ${selectedEmployee?.staffName}`}
-                size="md"
+                title="Chi tiết nhân viên"
+                size="lg"
             >
-                {selectedEmployee && (
-                    <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">ID</label>
-                                <div className="text-sm text-gray-900 font-mono bg-gray-50 px-3 py-2 rounded">
-                                    NV{String(selectedEmployee.accountId).padStart(3, '0')}
+                {selectedEmployee ? (
+                    <div className="space-y-6">
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                            <h4 className="text-lg font-semibold text-gray-800 mb-3">Thông tin cơ bản</h4>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">ID nhân viên</label>
+                                    <p className="mt-1 text-sm text-gray-900 font-semibold">
+                                        NV{String(selectedEmployee.accountId).padStart(3, '0')}
+                                    </p>
                                 </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    <User className="inline w-4 h-4 mr-1" />
-                                    Tên nhân viên
-                                </label>
-                                <div className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded">
-                                    {selectedEmployee.staffName}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Tên nhân viên</label>
+                                    <p className="mt-1 text-sm text-gray-900 font-semibold">
+                                        {selectedEmployee.staffName}
+                                    </p>
                                 </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    <Phone className="inline w-4 h-4 mr-1" />
-                                    Số điện thoại
-                                </label>
-                                <div className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded">
-                                    {selectedEmployee.phoneNumber || 'Chưa cập nhật'}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Tên tài khoản</label>
+                                    <p className="mt-1 text-sm text-gray-900">
+                                        {selectedEmployee.username || 'Không có thông tin'}
+                                    </p>
                                 </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    <MapPin className="inline w-4 h-4 mr-1" />
-                                    Địa chỉ làm việc
-                                </label>
-                                <div className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded">
-                                    {selectedEmployee.workingAtStoreId || 'Chưa cập nhật'}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Số điện thoại</label>
+                                    <p className="mt-1 text-sm text-gray-900">
+                                        {selectedEmployee.phoneNumber || 'Không có thông tin'}
+                                    </p>
                                 </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Tên tài khoản</label>
-                                <div className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded">
-                                    {selectedEmployee.username || 'Chưa cập nhật'}
+                                <div className="col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700">Địa chỉ làm việc</label>
+                                    <p className="mt-1 text-sm text-gray-900">
+                                        {selectedEmployee.workingAt || 'Không có thông tin'}
+                                    </p>
                                 </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    <Lock className="inline w-4 h-4 mr-1" />
-                                    Mật khẩu
-                                </label>
-                                <div className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded">
-                                    ********
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Trạng thái</label>
+                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${EMPLOYEE_HELPERS.getStatusColorClass(selectedEmployee.isActive)}`}>
+                                      {EMPLOYEE_HELPERS.getStatusText(selectedEmployee.isActive)}
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Đơn hàng đã xử lý</label>
-                                <div className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded">
-                                    {selectedEmployee.totalProcessedOrder || 0}
+
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                            <h4 className="text-lg font-semibold text-gray-800 mb-3">Thống kê công việc</h4>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Tổng đơn xử lý</label>
+                                    <p className="mt-1 text-lg font-bold text-blue-600">
+                                        {selectedEmployee.totalProcessedOrder || 0} đơn
+                                    </p>
                                 </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Tổng doanh thu</label>
-                                <div className="text-sm text-green-600 font-semibold bg-gray-50 px-3 py-2 rounded">
-                                    {EMPLOYEE_HELPERS.formatCurrency(selectedEmployee.totalRevenue || 0)}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Tổng doanh thu</label>
+                                    <p className="mt-1 text-lg font-bold text-green-600">
+                                        {EMPLOYEE_HELPERS.formatCurrency(selectedEmployee.totalRevenue || 0)}
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Trạng thái</label>
-                            <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${EMPLOYEE_HELPERS.getStatusColorClass(selectedEmployee.isActive)}`}>
-                                {EMPLOYEE_HELPERS.getStatusText(selectedEmployee.isActive)}
+
+                        {selectedEmployee.createdAt && (
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                                <h4 className="text-lg font-semibold text-gray-800 mb-3">Thông tin thời gian</h4>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Ngày tạo</label>
+                                    <p className="mt-1 text-sm text-gray-900">
+                                        {EMPLOYEE_HELPERS.formatDate(selectedEmployee.createdAt)}
+                                    </p>
+                                </div>
                             </div>
+                        )}
+                    </div>
+                ) : (
+                    <div className="flex justify-center items-center py-12">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                            <p className="mt-2 text-gray-500">Đang tải thông tin chi tiết...</p>
                         </div>
                     </div>
                 )}

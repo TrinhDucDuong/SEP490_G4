@@ -3,16 +3,16 @@ import SearchBar from '../../../components/common/admin/SearchBar.jsx';
 
 const SNSSearch = ({ searchTerm, onSearchChange, filteredSNSCount }) => {
     return (
-        <div className="space-y-4">
+        <div>
             <SearchBar
-                searchTerm={searchTerm}
-                onSearchChange={onSearchChange}
-                placeholder="Tìm kiếm theo tên mạng xã hội hoặc ID..."
+                value={searchTerm}
+                onChange={onSearchChange}
+                placeholder="Tìm kiếm mạng xã hội..."
             />
             {searchTerm && (
-                <div className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 mt-2">
                     Tìm thấy {filteredSNSCount} mạng xã hội cho từ khóa "{searchTerm}"
-                </div>
+                </p>
             )}
         </div>
     );

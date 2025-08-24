@@ -97,16 +97,20 @@ const StoreManagement = () => {
                             filteredStoresCount={statistics.filteredCount}
                         />
                     </div>
-                    <div className="flex gap-4">
-                        <StoreFilter
-                            filters={filters}
-                            onFilterChange={handleFilterChange}
-                            onClearFilters={handleClearFilters}
-                        />
-                        <StoreSort
-                            sortConfig={sortConfig}
-                            onSort={handleSort}
-                        />
+                </div>
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 flex items-center">
+                    <div className="w-full">
+                        <div className="flex gap-4">
+                            <StoreFilter
+                                filters={filters}
+                                onFilterChange={handleFilterChange}
+                                onClearFilters={handleClearFilters}
+                            />
+                            <StoreSort
+                                sortConfig={sortConfig}
+                                onSort={handleSort}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

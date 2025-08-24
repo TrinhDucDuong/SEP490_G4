@@ -141,6 +141,19 @@ export const useEmployeeManagement = () => {
         }
     };
 
+    const getEmployeeDetailsHandler = async (employeeId) => {
+        try {
+            const result = await getEmployeeById(employeeId);
+            if (result.success) {
+                return { success: true, data: result.data };
+            } else {
+                return { success: false, error: result.error };
+            }
+        } catch (err) {
+            return { success: false, error: 'Có lỗi xảy ra khi lấy thông tin nhân viên' };
+        }
+    };
+
     // filter and search logic
     useEffect(() => {
         let result = [...employees];
@@ -272,6 +285,7 @@ export const useEmployeeManagement = () => {
         deleteEmployee: deleteEmployeeHandler,
         activateEmployee: activateEmployeeHandler,
         resetEmployeePassword: resetEmployeePasswordHandler,
+        getEmployeeDetails: getEmployeeDetailsHandler,
 
         // Utilities
         clearFilters,
