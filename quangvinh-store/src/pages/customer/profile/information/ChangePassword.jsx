@@ -1,4 +1,26 @@
+/**
+ * @file ChangePassword.jsx
+ * @description Component cho phép người dùng thay đổi mật khẩu đăng nhập.
+ *
+ * @author ngothangwork
+ * @copyright 2025 ngothangwork
+ */
+
 import React, { useState } from 'react';
+
+
+/**
+ * ChangePassword Component
+ * -------------------------
+ * Cho phép người dùng nhập mật khẩu hiện tại, mật khẩu mới
+ * và xác nhận mật khẩu mới để thay đổi mật khẩu.
+ *
+ * @component
+ * @example
+ * return (
+ *   <ChangePassword />
+ * )
+ */
 
 function ChangePassword() {
     const [currentPassword, setCurrentPassword] = useState('');

@@ -1,8 +1,28 @@
+/**
+ * BuyNow.jsx
+ *
+ * Trang "Mua Ngay" cho phép khách hàng mua 1 sản phẩm trực tiếp mà không cần qua giỏ hàng.
+ * Lưu tạm dữ liệu sản phẩm trong sessionStorage, đồng thời lưu form vào localStorage để người dùng không bị mất dữ liệu khi refresh.
+ *
+ * @author ngothangwork
+ * @copyright 2025
+ */
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Component BuyNow
+ *
+ * - Hiển thị form thông tin khách hàng (tên, số điện thoại, email, địa chỉ, phương thức thanh toán)
+ * - Lấy sản phẩm từ sessionStorage (`buyNowItem`)
+ * - Gửi dữ liệu đặt hàng trực tiếp đến API `/order/guest`
+ *
+ * @component
+ * @returns {JSX.Element} Giao diện trang Mua Ngay
+ */
 const BuyNow = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -16,6 +36,7 @@ const BuyNow = () => {
 
     const [buyNowItem, setBuyNowItem] = useState(null);
 
+    // Load dữ liệu sản phẩm từ sessionStorage & form từ localStorage
     useEffect(() => {
         const item = sessionStorage.getItem("buyNowItem");
         if (item) {
@@ -31,15 +52,31 @@ const BuyNow = () => {
         }
     }, [navigate]);
 
+    // Lưu dữ liệu form vào localStorage khi thay đổi
     useEffect(() => {
         localStorage.setItem("buyNowFormData", JSON.stringify(formData));
     }, [formData]);
 
+    /**
+     * Cập nhật state form khi thay đổi input.
+     *
+     * @param {React.ChangeEvent<HTMLInputElement | HTMLSelectElement>} e - Sự kiện thay đổi input
+     */
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    /**
+     * Submit form "Mua ngay".
+     *
+     * - Validate dữ liệu cơ bản (số điện thoại, email, sản phẩm)
+     * - Gửi payload đến API `/order/guest`
+     * - Nếu thành công: xóa dữ liệu trong sessionStorage, điều hướng đến trang Thank You
+     *
+     * @async
+     * @param {React.FormEvent<HTMLFormElement>} e - Sự kiện submit form
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
 

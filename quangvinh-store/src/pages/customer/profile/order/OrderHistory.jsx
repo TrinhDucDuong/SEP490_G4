@@ -1,28 +1,55 @@
+/**
+ * OrderHistory.jsx
+ *
+ * Copyright (c) 2025 by ngothangwork
+ * Author: ngothangwork
+ *
+ * Mô tả:
+ *  - Component OrderHistory hiển thị danh sách lịch sử đơn hàng của người dùng.
+ *  - Cho phép lọc đơn hàng theo trạng thái và theo khoảng ngày (từ ngày - đến ngày).
+ *  - Sử dụng custom hook `useFetchOrders` để gọi API lấy toàn bộ đơn hàng.
+ */
+
 import React, { useState } from "react";
-import { useFetchOrders } from "../../../../hooks/customer/order/useFetchOrders.js";
-import OrderItem from "./OrderItem.jsx";
+import { useFetchOrders } from "../../../../hooks/customer/order/useFetchOrders.js"; // Hook custom để lấy danh sách đơn hàng
+import OrderItem from "./OrderItem.jsx"; // Component hiển thị chi tiết từng đơn hàng trong danh sách
 
+/**
+ * Component OrderHistory
+ * - Quản lý danh sách đơn hàng và các bộ lọc.
+ * - Cho phép người dùng xem, lọc, và sắp xếp đơn hàng theo ngày.
+ */
 function OrderHistory() {
-    const { orders, loading, error } = useFetchOrders();
+    const { orders, loading, error } = useFetchOrders(); // Lấy danh sách đơn hàng từ backend
 
-    console.log(orders);
+    console.log(orders); // Debug dữ liệu đơn hàng
 
-    const [filterStatus, setFilterStatus] = useState("ALL");
-    const [fromDate, setFromDate] = useState("");
-    const [toDate, setToDate] = useState("");
+    // State quản lý bộ lọc
+    const [filterStatus, setFilterStatus] = useState("ALL"); // Trạng thái đơn hàng: ALL, PROCESSING, SHIPPING, DELIVERED, CANCELED
+    const [fromDate, setFromDate] = useState(""); // Ngày bắt đầu lọc
+    const [toDate, setToDate] = useState(""); // Ngày kết thúc lọc
 
+    /**
+     * Lọc và sắp xếp danh sách đơn hàng
+     * - Lọc theo trạng thái nếu filterStatus khác "ALL"
+     * - Lọc theo khoảng thời gian nếu có fromDate và toDate
+     * - Sắp xếp danh sách theo ngày đặt (mới nhất trước)
+     */
     const filteredOrders = orders
         .filter(order => {
+            // Lọc theo trạng thái
             if (filterStatus !== "ALL" && order.orderStatus !== filterStatus) return false;
 
+            // Lọc theo khoảng ngày
             const orderDate = new Date(order.orderDate);
             if (fromDate && new Date(fromDate) > orderDate) return false;
             if (toDate && new Date(toDate) < orderDate) return false;
 
             return true;
         })
-        .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+        .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate)); // Sắp xếp theo ngày đặt (giảm dần)
 
+    // Xử lý trạng thái tải dữ liệu
     if (loading) return <p className="text-center text-gray-600 text-lg">Đang tải đơn hàng...</p>;
     if (error) return <p className="text-center text-red-500 text-lg">Lỗi: {error}</p>;
 
@@ -30,8 +57,9 @@ function OrderHistory() {
         <div className="p-4 bg-white">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Lịch sử đơn hàng</h2>
 
-            {/* filter section */}
+            {/* Bộ lọc đơn hàng */}
             <div className="flex flex-wrap items-center gap-4 mb-4">
+                {/* Bộ lọc trạng thái */}
                 <select
                     className="border px-3 py-1 rounded text-sm"
                     value={filterStatus}
@@ -44,6 +72,7 @@ function OrderHistory() {
                     <option value="CANCELED">Đã hủy</option>
                 </select>
 
+                {/* Bộ lọc theo ngày */}
                 <div className="text-sm flex items-center gap-2">
                     <label>Từ:</label>
                     <input
@@ -64,7 +93,7 @@ function OrderHistory() {
                 </div>
             </div>
 
-            {/* order list */}
+            {/* Danh sách đơn hàng */}
             {filteredOrders.length > 0 ? (
                 <div className="space-y-4">
                     {filteredOrders.map(order => (

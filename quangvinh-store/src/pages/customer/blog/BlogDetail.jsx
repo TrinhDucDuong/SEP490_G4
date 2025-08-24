@@ -7,6 +7,21 @@ import RecentBlogsSidebar from "./RecentBlogsSidebar.jsx";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../../context/CartContext.jsx";
 
+
+/**
+ * Component BlogDetail hiển thị chi tiết một bài viết.
+ *
+ * Tính năng chính:
+ * - Lấy dữ liệu blog theo blogId từ API
+ * - Hiển thị tiêu đề, ngày đăng, ảnh và nội dung blog
+ * - Hiển thị danh sách bài viết gần đây (ngoại trừ bài hiện tại)
+ * - Hiển thị danh sách sản phẩm liên quan trong blog
+ * - Cho phép thêm sản phẩm liên quan vào giỏ hàng
+ *
+ * @author ngothangwork
+ * @component
+ * @returns {JSX.Element} Giao diện chi tiết bài viết
+ */
 function BlogDetail() {
     const { blogId } = useParams();
     const [blog, setBlog] = useState(null);

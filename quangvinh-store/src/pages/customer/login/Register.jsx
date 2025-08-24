@@ -1,21 +1,51 @@
-import React, {useEffect, useState} from 'react';
-import {Link, useLocation, useNavigate} from 'react-router-dom';
+/**
+ * @file Register.jsx
+ * @description Component trang đăng ký tài khoản cho người dùng.
+ * @author ngothangwork
+ * @copyright 2025 ngothangwork
+ */
 
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
+/**
+ * Component Register
+ * Hiển thị form đăng ký tài khoản và thông tin ưu đãi dành cho thành viên mới.
+ *
+ * @component
+ * @example
+ * return (
+ *   <Register />
+ * )
+ */
 const Register = () => {
+    /** @type {[string, Function]} username - Tên đăng nhập */
     const [username, setUsername] = useState('');
+    /** @type {[string, Function]} password - Mật khẩu */
     const [password, setPassword] = useState('');
+    /** @type {[string, Function]} confirmPassword - Nhập lại mật khẩu */
     const [confirmPassword, setConfirmPassword] = useState('');
+    /** @type {[string, Function]} error - Thông báo lỗi */
     const [error, setError] = useState('');
+    /** @type {[boolean, Function]} loading - Trạng thái đang xử lý */
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
+    const navigate = useNavigate();
     const location = useLocation();
 
+    /**
+     * Scroll lên đầu trang mỗi khi pathname thay đổi
+     */
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
+    /**
+     * Xử lý submit form đăng ký
+     *
+     * @param {React.FormEvent<HTMLFormElement>} e - Sự kiện submit form
+     * @returns {Promise<void>}
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -55,7 +85,6 @@ const Register = () => {
             setLoading(false);
         }
     };
-
 
     return (
         <div className="flex flex-col md:flex-row items-center justify-center my-20 bg-white">

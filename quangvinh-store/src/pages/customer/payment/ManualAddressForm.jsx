@@ -1,6 +1,37 @@
+/**
+ * @file ManualAddressForm.jsx
+ * @description Form nhập địa chỉ thủ công (tỉnh/thành phố, phường/xã, đường phố).
+ * Sử dụng API `https://provinces.open-api.vn` để lấy dữ liệu địa phương.
+ *
+ * @module ManualAddressForm
+ * @author ngothangwork
+ * @copyright Copyright (c) 2025 ngothangwork
+ */
+
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
+/**
+ * Component nhập địa chỉ thủ công khi người dùng chưa có địa chỉ trong tài khoản.
+ *
+ * @component
+ * @param {Object} props - Props của component
+ * @param {Object} props.value - Giá trị hiện tại của form địa chỉ
+ * @param {string} props.value.province - Mã tỉnh/thành phố
+ * @param {string} props.value.ward - Mã phường/xã
+ * @param {string} props.value.street - Địa chỉ chi tiết (số nhà, tên đường)
+ * @param {function} props.onChange - Callback khi giá trị form thay đổi
+ *
+ * @example
+ * const [address, setAddress] = useState({ province: '', ward: '', street: '' });
+ *
+ * <ManualAddressForm
+ *   value={address}
+ *   onChange={setAddress}
+ * />
+ *
+ * @returns {JSX.Element} Form nhập địa chỉ thủ công
+ */
 function ManualAddressForm({ value, onChange }) {
     const [provinces, setProvinces] = useState([]);
     const [wards, setWards] = useState([]);
@@ -30,6 +61,11 @@ function ManualAddressForm({ value, onChange }) {
         }
     }, [value.province]);
 
+    /**
+     * Xử lý thay đổi input và gọi hàm onChange từ parent.
+     *
+     * @param {React.ChangeEvent<HTMLInputElement | HTMLSelectElement>} e - Sự kiện thay đổi input
+     */
     const handleChange = (e) => {
         const { name, value: val } = e.target;
         onChange({ ...value, [name]: val });

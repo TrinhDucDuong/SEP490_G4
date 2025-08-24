@@ -1,28 +1,46 @@
+/**
+ * @file Payment.jsx
+ * @description Component trang thanh toán (Payment Page) của hệ thống thương mại điện tử.
+ * Quản lý luồng chọn địa chỉ, hiển thị giỏ hàng, và gửi yêu cầu tạo đơn hàng mới.
+ *
+ * @module Payment
+ * @author ngothangwork
+ * @copyright Copyright (c) 2025 ngothangwork
+ */
+
 import { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from "../../../context/AuthContext.jsx";
 import useFetchAddress from "../../../hooks/customer/useFetchAddress.js";
 import { toast } from "react-toastify";
 import Breadcrumb from "../../../components/common/customer/Breadcrumb.jsx";
-import AddressCard from "../profile/Address/AddressCard.jsx";
+import AddressCard from "../profile/address/AddressCard.jsx";
 import ManualAddressForm from "./ManualAddressForm.jsx";
 import PaymentProduct from "./PaymentProduct.jsx";
 import Modal from "../../../components/common/customer/Modal.jsx";
-import AddAddressForm from "../profile/Address/AddAddressForm.jsx";
-import UpdateAddressForm from "../profile/Address/UpdateAddressForm.jsx";
+import AddAddressForm from "../profile/address/AddAddressForm.jsx";
+import UpdateAddressForm from "../profile/address/UpdateAddressForm.jsx";
 import AddressSelectModal from "./AddressSelectModal.jsx";
 import { createAddress } from "../../../utils/api/Customer/AddressAPI.js";
-import {useCart} from "../../../context/CartContext.jsx";
-import { useNavigate } from 'react-router-dom';
+import { useCart } from "../../../context/CartContext.jsx";
 import RecommendedProductList from "../common/RecommendedProducts.jsx";
 
-
+/**
+ * Component chính hiển thị trang Thanh toán.
+ *
+ * - Hiển thị thông tin người dùng (nếu đã đăng nhập)
+ * - Quản lý danh sách địa chỉ giao hàng
+ * - Hiển thị sản phẩm trong giỏ hàng và mã khuyến mãi
+ * - Gửi yêu cầu tạo đơn hàng mới
+ *
+ * @function Payment
+ * @returns {JSX.Element} Giao diện trang thanh toán
+ */
 function Payment() {
     const { user } = useContext(AuthContext);
     const profile = user?.profile;
-    const accountId = localStorage.getItem('accountId');
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
 
@@ -46,6 +64,13 @@ function Payment() {
         }
     }, [addresses]);
 
+    /**
+     * Gửi yêu cầu tạo đơn hàng mới.
+     *
+     * @async
+     * @param {Event} e - Sự kiện submit form
+     * @returns {Promise<void>}
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -66,12 +91,10 @@ function Payment() {
                 },
                 body: JSON.stringify(formData),
             });
-            console.log(token);
-            console.log(formData);
+
             if (res.ok) {
                 const data = await res.json();
                 const createdOrder = data.order;
-                console.log(createdOrder);
                 localStorage.setItem("currentOrder", JSON.stringify(createdOrder));
                 toast.success('Đơn hàng đã được thêm vào thành công, bạn hãy tiếp tục tiến hành thanh toán!');
                 navigate('/payment-method', { state: { order: createdOrder } });
@@ -83,6 +106,13 @@ function Payment() {
         }
     };
 
+    /**
+     * Xử lý thêm địa chỉ mới.
+     *
+     * @async
+     * @param {Object} newAddress - Địa chỉ mới từ form
+     * @returns {Promise<void>}
+     */
     const handleAddAddress = async (newAddress) => {
         try {
             await createAddress(newAddress, token);
@@ -94,8 +124,15 @@ function Payment() {
         }
     };
 
+    /**
+     * Xử lý cập nhật địa chỉ (chưa implement).
+     *
+     * @async
+     * @param {Object} updated - Địa chỉ đã chỉnh sửa
+     * @returns {Promise<void>}
+     */
     const handleUpdateAddress = async (updated) => {
-
+        // TODO: implement update address API call
     };
 
     return (

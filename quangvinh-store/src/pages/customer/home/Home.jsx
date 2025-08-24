@@ -1,3 +1,9 @@
+/**
+ * @file Home.jsx
+ * @description Trang chủ của khách hàng, hiển thị carousel, thương hiệu nổi bật, sản phẩm xu hướng, sản phẩm hot, danh mục sản phẩm, tin tức nổi bật và các công cụ chat AI/Messenger.
+ * @author ngothangwork
+ * @copyright 2025 ngothangwork
+ */
 import React, { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +21,24 @@ import ProductScrollSlider from "../../../components/ui/product/common/ProductSc
 import NewsHome from "../../../components/ui/home/NewsHome.jsx";
 import ChatBoxAI from "../common/ChatBoxAI.jsx";
 import MessengerChatBubble from "../common/MessengerChatBubble.jsx";
+
+/**
+ * Component Home
+ * Hiển thị toàn bộ nội dung trang chủ:
+ * - Carousel quảng cáo
+ * - Thương hiệu nổi bật
+ * - Sản phẩm xu hướng
+ * - Danh mục sản phẩm
+ * - Sản phẩm hot
+ * - Tin tức nổi bật
+ * - Chatbox AI và Messenger
+ *
+ * @component
+ * @example
+ * return (
+ *   <Home />
+ * )
+ */
 
 function Home() {
     const { products = [], loading: loadingProducts, error: errorProducts } = useFetchProducts({ limit: 10 });

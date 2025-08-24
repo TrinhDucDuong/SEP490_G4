@@ -17,7 +17,7 @@ const LoginForManager = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Debug: Log auth state
+    // Debug: log auth state
     useEffect(() => {
         console.log('Auth state:', { isAuthenticated, authLoading });
     }, [isAuthenticated, authLoading]);
@@ -266,14 +266,14 @@ const LoginForManager = () => {
                                 </button>
                             </form>
 
-                            {/* Account Information Section */}
+                            {/* Account information Section */}
                             <div className="mt-8 space-y-4">
                                 {/* Bạn chưa có tài khoản? */}
                                 <div className="text-center">
                                     <p className="text-sm text-gray-600 font-medium">Bạn chưa có tài khoản?</p>
                                 </div>
 
-                                {/* staff Information */}
+                                {/* staff information */}
                                 <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg">
                                     <div className="flex items-start">
                                         <User className="w-5 h-5 text-slate-600 mt-0.5 mr-3 flex-shrink-0" />

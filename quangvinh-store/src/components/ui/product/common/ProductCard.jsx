@@ -4,7 +4,34 @@ import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import productPicture from "../../../../assets/images/ao.png";
 import { useNavigate } from "react-router-dom";
-import {useActionLogger} from "../../../../utils/api/Customer/Log/useActionLogger.js";
+import {useActionLogger} from "../../../../utils/api/Customer/log/useActionLogger.js";
+
+
+/**
+ * Component hiển thị thẻ sản phẩm (ProductCard).
+ *
+ * Chức năng:
+ * - Hiển thị ảnh sản phẩm (tự động xoay ảnh khi hover nếu có nhiều ảnh).
+ * - Hiển thị giá sản phẩm, tên sản phẩm.
+ * - Hiển thị đánh giá trung bình bằng sao (star rating).
+ * - Khi click vào card sẽ:
+ *   - Ghi lại hành động "VIEW" bằng `useActionLogger`.
+ *   - Điều hướng đến trang chi tiết sản phẩm.
+ *   - Reload lại trang để cập nhật thông tin.
+ *
+ * @author ngothangwork
+ * @component
+ *
+ * @param {Object} props - Props của component
+ * @param {Object} props.product - Dữ liệu sản phẩm
+ * @param {number|string} props.product.productId - ID sản phẩm
+ * @param {string} props.product.productName - Tên sản phẩm
+ * @param {number} [props.product.unitPrice] - Giá sản phẩm (VND)
+ * @param {Array<{imageUrl: string}>} [props.product.images] - Danh sách ảnh sản phẩm
+ * @param {number} [props.product.starRateAvg] - Điểm đánh giá trung bình (0-5)
+ *
+ * @returns {JSX.Element} Thẻ hiển thị thông tin sản phẩm
+ */
 
 const ProductCard = memo(function ProductCard({ product }) {
     const [imageIndex, setImageIndex] = useState(0);

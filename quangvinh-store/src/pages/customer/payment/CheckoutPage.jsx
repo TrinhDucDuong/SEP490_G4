@@ -1,3 +1,14 @@
+/**
+ * CheckoutPage.jsx
+ *
+ * Trang Checkout cho người dùng (đăng nhập hoặc khách).
+ * Bao gồm nhập/hiển thị địa chỉ giao hàng, chọn phương thức thanh toán,
+ * và xử lý quá trình đặt hàng & thanh toán.
+ *
+ * @author ngothangwork
+ * @copyright 2025
+ */
+
 import {useContext, useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -6,17 +17,24 @@ import {AuthContext} from "../../../context/AuthContext.jsx";
 import useFetchAddress from "../../../hooks/customer/useFetchAddress.js";
 import {toast} from "react-toastify";
 import Breadcrumb from "../../../components/common/customer/Breadcrumb.jsx";
-import AddressCard from "../profile/Address/AddressCard.jsx";
+import AddressCard from "../profile/address/AddressCard.jsx";
 import PaymentProduct from "./PaymentProduct.jsx";
 import Modal from "../../../components/common/customer/Modal.jsx";
-import AddAddressForm from "../profile/Address/AddAddressForm.jsx";
-import UpdateAddressForm from "../profile/Address/UpdateAddressForm.jsx";
+import AddAddressForm from "../profile/address/AddAddressForm.jsx";
+import UpdateAddressForm from "../profile/address/UpdateAddressForm.jsx";
 import AddressSelectModal from "./AddressSelectModal.jsx";
-import {createAddress} from "../../../utils/api/Customer/AddressAPI.js";
+import {createAddress, updateAddress} from "../../../utils/api/Customer/AddressAPI.js";
 import RecommendedProductList from "../common/RecommendedProducts.jsx";
 import PaymentResult from "./PaymentResult.jsx";
 import {useCart} from "../../../context/CartContext.jsx";
 
+
+/**
+ * Component chính cho trang Checkout.
+ *
+ * @component
+ * @returns {JSX.Element} Giao diện Checkout
+ */
 function CheckoutPage() {
     const {user} = useContext(AuthContext);
     const profile = user?.profile;
@@ -84,6 +102,12 @@ function CheckoutPage() {
         }
     }, [guestForm.province]);
 
+    /**
+     * Validate form khi người dùng checkout với tư cách khách.
+     *
+     * @returns {boolean} True nếu hợp lệ, ngược lại false
+     */
+
     const validateGuestForm = () => {
         let newErrors = {};
         if (!guestForm.firstname.trim()) newErrors.firstname = "Tên đệm là bắt buộc";
@@ -113,6 +137,12 @@ function CheckoutPage() {
         }
     }, [addresses]);
 
+    /**
+     * Tạo địa chỉ mới cho user đã đăng nhập.
+     *
+     * @async
+     * @param {Object} newAddress - Dữ liệu địa chỉ mới
+     */
     const handleAddAddress = async (newAddress) => {
         try {
             await createAddress(newAddress, token);
@@ -123,6 +153,30 @@ function CheckoutPage() {
             toast.error("Lỗi khi thêm địa chỉ");
         }
     };
+
+    /**
+     * Cập nhật địa chỉ cho user đã đăng nhập.
+     *
+     * @async
+     * @param {Object} updatedAddress - Dữ liệu địa chỉ đã cập nhật
+     */
+    const handleUpdateAddress = async (updatedAddress) => {
+        try {
+            await updateAddress(updatedAddress, token);
+            toast.success("Sửa địa chỉ thành công!");
+            setEditingAddress(null);
+            refetch();
+        } catch (err) {
+            toast.error("Lỗi khi sửa địa chỉ");
+        }
+    };
+
+    /**
+     * Tạo đơn hàng mới (cho user hoặc guest).
+     *
+     * @async
+     * @returns {Promise<Object|null>} Đơn hàng vừa tạo hoặc null nếu lỗi
+     */
 
     const createOrder = async () => {
         if (user) {
@@ -215,6 +269,13 @@ function CheckoutPage() {
         }
     };
 
+    /**
+     * Thực hiện chọn phương thức thanh toán và xử lý kết quả.
+     *
+     * @async
+     * @param {Object} orderData - Dữ liệu đơn hàng
+     */
+
     const handlePayment = async (orderData) => {
         if (!selectedMethod) {
             toast.warning("Vui lòng chọn phương thức thanh toán.");
@@ -256,6 +317,13 @@ function CheckoutPage() {
         }
     };
 
+    /**
+     * Bắt đầu quy trình checkout:
+     * - Nếu chưa có đơn hàng thì tạo mới
+     * - Sau đó gọi thanh toán
+     *
+     * @async
+     */
     const handleCheckout = async () => {
         let currentOrder = order;
         if (!currentOrder) {
@@ -265,8 +333,6 @@ function CheckoutPage() {
             await handlePayment(currentOrder);
         }
     };
-
-    console.log(result);
 
     return (
         <div className="max-w-full md:max-w-[1400px] mx-auto">
@@ -484,8 +550,7 @@ function CheckoutPage() {
                 {editingAddress && (
                     <UpdateAddressForm
                         currentAddress={editingAddress}
-                        onUpdate={() => {
-                        }}
+                        onUpdate={handleUpdateAddress}
                         onCancel={() => setEditingAddress(null)}
                     />
                 )}

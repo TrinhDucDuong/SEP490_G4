@@ -301,7 +301,7 @@ export const BRAND_ERROR_MESSAGES = {
     UNKNOWN_ERROR: 'Có lỗi không xác định xảy ra'
 };
 
-// Audit Log Configuration
+// Audit log Configuration
 export const AUDIT_LOG_CONFIG = {
     MAX_ENTRIES_DISPLAY: 10,
     DATE_FORMAT: 'vi-VN',

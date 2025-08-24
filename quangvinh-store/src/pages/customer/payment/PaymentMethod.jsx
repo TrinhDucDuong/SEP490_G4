@@ -1,18 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import Breadcrumb from "../../../components/common/customer/Breadcrumb.jsx";
-import PaymentSuccessPopup from "./PaymentSuccessPopup.jsx";
+/**
+ * @file PaymentMethod.jsx
+ * @description Component cho phép người dùng chọn phương thức thanh toán (COD, MOMO, VNPAY).
+ * Xử lý logic gọi API để xác nhận thanh toán và hiển thị popup thành công.
+ *
+ * @copyright 2025 ngothangwork
+ * @author ngothang
+ */
 
+import React, { useState, useEffect } from "react"; // React core + hooks
+import { useLocation, useNavigate } from "react-router-dom"; // Router hooks
+import { toast } from "react-toastify"; // Thư viện toast hiển thị thông báo
+import Breadcrumb from "../../../components/common/customer/Breadcrumb.jsx"; // Component breadcrumb tái sử dụng
+import PaymentSuccessPopup from "./PaymentSuccessPopup.jsx"; // Popup hiển thị khi thanh toán thành công
 
+/**
+ * PaymentMethod Component
+ * @component
+ * @returns {JSX.Element} Giao diện chọn phương thức thanh toán và xử lý thanh toán
+ */
 const PaymentMethod = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const [order, setOrder] = useState(location.state?.order || null);
-    const [selectedMethod, setSelectedMethod] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
+    const location = useLocation(); // Lấy state từ router (order truyền từ trang trước)
+    const navigate = useNavigate(); // Dùng để điều hướng
+    const [order, setOrder] = useState(location.state?.order || null); // State lưu đơn hàng
+    const [selectedMethod, setSelectedMethod] = useState(""); // State lưu phương thức thanh toán người dùng chọn
+    const [loading, setLoading] = useState(false); // Trạng thái loading khi gọi API
+    const [isSuccess, setIsSuccess] = useState(false); // Trạng thái popup thành công
 
+    /**
+     * useEffect: Kiểm tra và load lại đơn hàng nếu không có trong state
+     * - Scroll lên đầu trang khi vào component
+     * - Nếu không tìm thấy order trong location thì lấy từ localStorage
+     * - Nếu không có cả 2 → điều hướng về trang orders
+     */
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
         if (!order) {
@@ -28,6 +47,17 @@ const PaymentMethod = () => {
         }
     }, [order]);
 
+    /**
+     * Xử lý thanh toán
+     * - Kiểm tra phương thức đã chọn
+     * - Gửi request tới backend /order/purchase
+     * - Nếu thành công: điều hướng tới VNPAY (nếu chọn), hoặc hiển thị popup
+     * - Nếu thất bại: hiển thị toast lỗi
+     *
+     * @async
+     * @function handlePayment
+     * @returns {Promise<void>}
+     */
     const handlePayment = async () => {
         if (!selectedMethod) {
             toast.warning("Vui lòng chọn phương thức thanh toán.");
@@ -51,15 +81,13 @@ const PaymentMethod = () => {
 
             if (res.ok) {
                 const result = await res.json();
-                console.log(result);
                 const paymentUrl = result.paymentUrl;
 
                 toast.success("Chọn phương thức thanh toán thành công!");
-
                 localStorage.removeItem("currentOrder");
 
                 if (selectedMethod === "VNPAY" && paymentUrl) {
-                    window.location.href = paymentUrl;
+                    window.location.href = paymentUrl; // Redirect tới VNPay
                     return;
                 }
                 setIsSuccess(true);
@@ -74,10 +102,10 @@ const PaymentMethod = () => {
         }
     };
 
-
     if (loading) return <div className="text-center mt-10">Đang tải đơn hàng...</div>;
     if (!order) return <div className="text-center text-red-500 mt-10">Không tìm thấy đơn hàng.</div>;
 
+    // Các giá trị đơn hàng
     const shipping = order.shippingAddress || {};
     const totalPrice = order.totalPrice || 0;
     const shippingFee = order.shippingFee || 0;
@@ -86,6 +114,7 @@ const PaymentMethod = () => {
 
     return (
         <div>
+            {/* Breadcrumb */}
             <div className="breadcrumb mt-4">
                 <Breadcrumb
                     items={[
@@ -98,6 +127,7 @@ const PaymentMethod = () => {
             </div>
 
             {isSuccess ? (
+                // Hiển thị popup thanh toán thành công
                 <div className="flex justify-center mt-10">
                     <PaymentSuccessPopup
                         orderId={order?.orderId}
@@ -110,6 +140,7 @@ const PaymentMethod = () => {
                     />
                 </div>
             ) : (
+                // Giao diện chọn phương thức thanh toán
                 <div className="flex flex-row mx-12">
                     <div className="w-full md:w-2/3 p-6 bg-white rounded-md">
                         <h2 className="text-2xl font-semibold mb-4">Chọn phương thức thanh toán</h2>
@@ -131,6 +162,7 @@ const PaymentMethod = () => {
                             ))}
                         </div>
 
+                        {/* Địa chỉ giao hàng */}
                         <h2 className="text-xl font-semibold mt-6 mb-2">Địa chỉ nhận hàng</h2>
                         <div className="border-2 border-gray-300 p-4 rounded-xl mb-6">
                             <div>Họ và tên: {shipping.name || "Chưa có"}</div>
@@ -146,6 +178,7 @@ const PaymentMethod = () => {
                         </button>
                     </div>
 
+                    {/* Tóm tắt đơn hàng */}
                     <div className="w-full md:w-1/3 p-6 bg-white rounded-md">
                         <div className="border border-gray-400 m-2 p-4 border-solid rounded-xl">
                             <h2 className="font-bold mb-4">Tóm Tắt Đơn Hàng</h2>

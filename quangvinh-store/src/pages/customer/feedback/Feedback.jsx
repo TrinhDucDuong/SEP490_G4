@@ -1,8 +1,29 @@
+/**
+ * @file Feedback.jsx
+ * @description Component hiển thị danh sách phản hồi khách hàng và gợi ý sản phẩm liên quan.
+ * @author ngothangwork
+ * @copyright 2025 ngothangwork
+ */
+
 import React from "react";
 import useFetchFeedback from "../../../hooks/customer/useFetchFeedback.js";
 import FeedbackCard from "./FeedbackCard.jsx";
 import RecommendedProducts from "../common/RecommendedProducts.jsx";
 
+/**
+ * Component Feedback
+ * Hiển thị:
+ * - Tiêu đề Feedback Khách Hàng
+ * - Mô tả ngắn về tinh thần khách hàng
+ * - Danh sách FeedbackCard (hình ảnh + tiêu đề)
+ * - Gợi ý sản phẩm dành riêng cho người dùng
+ *
+ * @component
+ * @example
+ * return (
+ *   <Feedback />
+ * )
+ */
 const Feedback = () => {
     const { feedbacks, loading } = useFetchFeedback();
 

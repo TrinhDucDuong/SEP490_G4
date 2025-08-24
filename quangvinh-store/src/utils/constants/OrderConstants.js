@@ -12,7 +12,7 @@ export const PAYMENT_STATUS_OPTIONS = [
     { value: 'false', label: 'Chưa thanh toán' }
 ];
 
-// Helper functions cho Order
+// Helper functions cho order
 export const ORDER_HELPERS = {
     getStatusText: (status) => {
         const statusMap = {

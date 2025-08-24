@@ -1,6 +1,30 @@
+/**
+ * Info.jsx
+ *
+ * Copyright (c) 2025 ngothangwork
+ * Author: ngothangwork
+ *
+ * Description:
+ *   Component React cho phép người dùng xem và cập nhật hồ sơ cá nhân (profile).
+ *   Bao gồm cập nhật họ tên, email, số điện thoại, giới tính, ngày sinh và ảnh đại diện.
+ *
+ * Dependencies:
+ *   - React (useState, useEffect, useContext)
+ *   - react-toastify (toast) để hiển thị thông báo
+ *   - AuthContext để lấy thông tin user và token
+ */
+
 import {useContext, useEffect, useState} from "react";
 import { toast } from "react-toastify";
 import {AuthContext} from "../../../../context/AuthContext.jsx";
+
+/**
+ * Component Info
+ *
+ * Hiển thị form thông tin cá nhân và cho phép chỉnh sửa.
+ *
+ * @returns {JSX.Element} Giao diện hồ sơ người dùng
+ */
 
 function Info() {
     const { user, token, login } = useContext(AuthContext);
@@ -43,10 +67,21 @@ function Info() {
         }
     }, [formData.avatarFile]);
 
+    /**
+     * Xử lý thay đổi input text
+     * @param {string} field - tên field cần thay đổi
+     * @param {string} value - giá trị mới
+     */
+
     const handleChange = (field, value) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
+    /**
+     * Xử lý thay đổi ngày sinh
+     * @param {"year"|"month"|"day"} part - phần ngày/tháng/năm
+     * @param {string} value - giá trị mới
+     */
     const handleDobChange = (part, value) => {
         setFormData((prev) => ({
             ...prev,
@@ -54,6 +89,10 @@ function Info() {
         }));
     };
 
+    /**
+     * Xử lý chọn file ảnh đại diện
+     * @param {Event} e - sự kiện input file
+     */
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -61,6 +100,10 @@ function Info() {
         }
     };
 
+    /**
+     * Submit form cập nhật hồ sơ
+     * @param {Event} e - sự kiện submit
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -182,6 +225,17 @@ function Info() {
     );
 }
 
+/**
+ * Input component - render input text có label
+ *
+ * @param {Object} props
+ * @param {string} props.label - Nhãn input
+ * @param {string} props.id - Id input
+ * @param {string} props.value - Giá trị hiện tại
+ * @param {function} props.onChange - Xử lý thay đổi
+ * @param {boolean} [props.readOnly=false] - Chế độ chỉ đọc
+ */
+
 function Input({ label, id, value, onChange, readOnly = false }) {
     return (
         <div className="form-group">
@@ -200,6 +254,14 @@ function Input({ label, id, value, onChange, readOnly = false }) {
     );
 }
 
+/**
+ * Select component - render dropdown select
+ *
+ * @param {Object} props
+ * @param {Array<string|number>} props.options - Danh sách option
+ * @param {string|number} props.value - Giá trị đang chọn
+ * @param {function} props.onChange - Xử lý thay đổi
+ */
 
 function Select({ options, value, onChange }) {
     return (

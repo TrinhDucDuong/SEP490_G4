@@ -3,6 +3,33 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useFetchProductById } from "../../../../hooks/customer/useFetchProducts.js";
 
+/**
+ * Component hiển thị sản phẩm trong giỏ hàng.
+ *
+ * Chức năng:
+ * - Hiển thị ảnh, tên sản phẩm, màu sắc, kích thước
+ * - Cho phép tăng/giảm số lượng
+ * - Hiển thị tổng giá = đơn giá * số lượng
+ * - Cho phép xóa sản phẩm khỏi giỏ hàng
+ * - Nhấn vào ảnh để chuyển sang trang chi tiết sản phẩm
+ *
+ * @author ngothangwork
+ * @component
+ *
+ * @param {Object} props - Props của component
+ * @param {Object} props.item - Thông tin sản phẩm trong giỏ hàng
+ * @param {number|string} props.item.productId - ID sản phẩm
+ * @param {string} props.item.productName - Tên sản phẩm
+ * @param {string} props.item.colorHexCode - Mã màu (hex)
+ * @param {string} props.item.sizeCode - Size sản phẩm
+ * @param {number} props.item.quantity - Số lượng trong giỏ hàng
+ * @param {number} props.item.price - Giá sản phẩm
+ * @param {Function} props.onRemove - Hàm callback khi xóa sản phẩm
+ * @param {Function} props.onUpdateQuantity - Hàm callback khi cập nhật số lượng (+1 hoặc -1)
+ *
+ * @returns {JSX.Element} Giao diện sản phẩm trong giỏ hàng
+ */
+
 function ProductInCartCard({ item, onRemove, onUpdateQuantity }) {
     const navigate = useNavigate();
 

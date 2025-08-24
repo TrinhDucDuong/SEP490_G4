@@ -1,28 +1,63 @@
+/**
+ * @file InstructionPage.jsx
+ * @description Trang hướng dẫn cho khách hàng, hiển thị danh sách hướng dẫn và chi tiết từng hướng dẫn khi được chọn.
+ * @author ngothangwork
+ * @copyright 2025 ngothangwork
+ */
+
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useFetchInstruction } from "../../../hooks/customer/useFetchInstruction.js";
 import Breadcrumb from "../../../components/common/customer/Breadcrumb.jsx";
 
+/**
+ * Component InstructionPage
+ * Hiển thị:
+ * - Danh sách các hướng dẫn ở sidebar
+ * - Chi tiết hướng dẫn được chọn
+ * - Breadcrumb dẫn đường
+ *
+ * @component
+ * @example
+ * return (
+ *   <InstructionPage />
+ * )
+ */
 const InstructionPage = () => {
+    /** @type {{instructions: Array, loading: boolean, error: string}} Sử dụng hook để lấy danh sách hướng dẫn */
     const { instructions, loading, error } = useFetchInstruction();
+    /** @type {{id: string}} Lấy id hướng dẫn từ URL */
     const { id } = useParams();
     const navigate = useNavigate();
 
+    /** @type {[number|null, Function]} selectedId - ID hướng dẫn đang được chọn */
     const [selectedId, setSelectedId] = useState(parseInt(id) || null);
 
+    /**
+     * Cập nhật selectedId khi param id thay đổi
+     */
     useEffect(() => {
         if (id) setSelectedId(parseInt(id));
     }, [id]);
 
+    /**
+     * Scroll lên đầu trang khi selectedId thay đổi
+     */
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, [selectedId]);
 
+    /**
+     * Xử lý khi người dùng chọn một hướng dẫn
+     *
+     * @param {number} id - ID hướng dẫn được chọn
+     */
     const handleSelect = (id) => {
         setSelectedId(id);
         navigate(`/instructions/${id}`);
     };
 
+    /** Hướng dẫn đang được chọn */
     const selectedInstruction = instructions.find(i => i.instructionId === selectedId);
 
     if (loading) return <div className="text-center py-12 text-gray-600 text-lg">Loading instructions...</div>;

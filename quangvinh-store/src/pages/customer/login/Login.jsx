@@ -1,23 +1,56 @@
-import React, {useState, useContext, useEffect} from 'react';
-import {useNavigate, Link, useLocation} from 'react-router-dom';
+/**
+ * @file Login.jsx
+ * @description Component trang đăng nhập cho người dùng, hỗ trợ đăng nhập bằng tài khoản nội bộ, Google và Facebook.
+ * @author ngothangwork
+ * @copyright 2025 ngothangwork
+ */
+
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext.jsx';
 import { FcGoogle } from 'react-icons/fc';
 import logo from "../../../assets/images/logo_black.png";
 
+/**
+ * Component Login
+ * Hiển thị form đăng nhập, bao gồm:
+ * - Nhập username và password
+ * - Đăng nhập bằng Google / Facebook
+ * - Liên kết đến đăng ký, quên mật khẩu
+ *
+ * @component
+ * @example
+ * return (
+ *   <Login />
+ * )
+ */
 const Login = () => {
+    /** @type {[string, Function]} identifier - Tên đăng nhập hoặc email */
     const [identifier, setIdentifier] = useState('');
+    /** @type {[string, Function]} password - Mật khẩu */
     const [password, setPassword] = useState('');
+    /** @type {[string, Function]} error - Thông báo lỗi */
     const [error, setError] = useState('');
+    /** @type {[boolean, Function]} loading - Trạng thái đang xử lý */
     const [loading, setLoading] = useState(false);
+
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
-
     const location = useLocation();
 
+    /**
+     * Scroll lên đầu trang mỗi khi pathname thay đổi
+     */
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
+    /**
+     * Xử lý submit form đăng nhập
+     *
+     * @param {React.FormEvent<HTMLFormElement>} e - Sự kiện submit form
+     * @returns {Promise<void>}
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -53,7 +86,9 @@ const Login = () => {
         }
     };
 
-
+    /**
+     * Chuyển hướng đến OAuth2 Google
+     */
     const handleSubmitGoogle = () => {
         window.location.href = `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`;
     };
@@ -68,7 +103,7 @@ const Login = () => {
                     </h1>
                     <div className="flex flex-col gap-3">
                         <button
-                            onClick={() => handleSubmitGoogle()}
+                            onClick={handleSubmitGoogle}
                             className="flex items-center justify-center gap-2 px-3 py-3 border border-gray-300 rounded-xl shadow-sm hover:bg-gray-100 transition w-full"
                             disabled={loading}
                         >

@@ -1,3 +1,12 @@
+/**
+ * @file StoreAddress.jsx
+ * @description Trang hiển thị danh sách cửa hàng và bản đồ tương tác bằng React Leaflet.
+ * Cho phép khách hàng chọn cửa hàng từ danh sách, đồng thời map sẽ tự động zoom đến vị trí cửa hàng đó.
+ * @author
+ *   - ngothangwork
+ * @license MIT
+ */
+
 import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -17,13 +26,17 @@ L.Icon.Default.mergeOptions({
     shadowUrl: markerShadow,
 });
 
+/**
+ * Component phụ: FlyToStore
+ *  Khi selectedStore thay đổi, bản đồ sẽ tự động "bay" (flyTo) tới vị trí cửa hàng đó.
+ */
 function FlyToStore({ store }) {
     const map = useMap();
 
     useEffect(() => {
         if (store) {
             map.flyTo([store.location.lat, store.location.lng], 16, {
-                duration: 1.5
+                duration: 1.5 // thời gian animation (giây)
             });
         }
     }, [store, map]);
@@ -31,10 +44,19 @@ function FlyToStore({ store }) {
     return null;
 }
 
+/**
+ * StoreAddress Component
+ *
+ * Chức năng:
+ * - Hiển thị danh sách cửa hàng (bên trái).
+ * - Hiển thị bản đồ Leaflet với marker cho từng cửa hàng (bên phải).
+ * - Khi chọn cửa hàng trong danh sách => bản đồ sẽ zoom tới cửa hàng đó.
+ */
 const StoreAddress = () => {
     const { stores, loading, error } = useFetchStores();
     const [selectedStore, setSelectedStore] = useState(null);
 
+    // Khi dữ liệu stores load xong => tự động chọn cửa hàng đầu tiên
     useEffect(() => {
         if (!loading && stores.length > 0) {
             setSelectedStore(stores[0]);
@@ -43,12 +65,13 @@ const StoreAddress = () => {
 
     return (
         <div className="flex flex-col lg:flex-row gap-6 p-6">
-
+            {/* Sidebar: Danh sách cửa hàng */}
             <div className="w-full lg:w-1/3 mt-2">
                 <h2 className="text-2xl font-bold">Danh sách cửa hàng</h2>
                 {loading && <p>Đang tải cửa hàng...</p>}
                 {error && <p className="text-red-500">{error}</p>}
                 {!loading && stores.length === 0 && <p>Không có cửa hàng nào.</p>}
+
                 {stores.map(store => (
                     <Card
                         key={store.id}
@@ -61,17 +84,20 @@ const StoreAddress = () => {
                         <p className="text-sm">{store.address}</p>
                         <div className="flex flex-row">
                             <p className="mr-2">{store.city}</p>,
-                            <p> {store.district}</p>
+                            <p>{store.district}</p>
                         </div>
                         <p className="text-sm text-gray-500">{store.phone}</p>
-                        <p className="text-green-600 font-medium">Giờ mở cửa: {store.openingHours}</p>
+                        <p className="text-green-600 font-medium">
+                            Giờ mở cửa: {store.openingHours}
+                        </p>
                     </Card>
                 ))}
             </div>
 
+            {/* Bản đồ Leaflet */}
             <div className="w-full lg:w-2/3 h-[600px]">
                 <MapContainer
-                    center={[10.762622, 106.660172]}
+                    center={[10.762622, 106.660172]} // toạ độ mặc định (TP.HCM)
                     zoom={6}
                     className="w-full h-full rounded-lg shadow z-0"
                 >
@@ -80,6 +106,7 @@ const StoreAddress = () => {
                         attribution="&copy; Google"
                     />
 
+                    {/* Marker cho từng cửa hàng */}
                     {stores.map(store => (
                         <Marker
                             key={store.id}
@@ -92,6 +119,8 @@ const StoreAddress = () => {
                             </Popup>
                         </Marker>
                     ))}
+
+                    {/* Auto zoom tới cửa hàng được chọn */}
                     <FlyToStore store={selectedStore} />
                 </MapContainer>
             </div>

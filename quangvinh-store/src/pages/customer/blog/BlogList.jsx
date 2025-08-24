@@ -3,6 +3,17 @@ import { useFetchBlogs } from "../../../hooks/customer/useFetchBlog.js";
 import NewsCard from "../../../components/ui/home/NewsCard.jsx";
 import Breadcrumb from "../../../components/common/customer/Breadcrumb.jsx";
 
+/**
+ * Component BlogList hiển thị danh sách bài viết.
+ *
+ * Cho phép người dùng:
+ * - Tìm kiếm theo tiêu đề
+ * - Lọc theo: tất cả, mới nhất, cũ nhất, trong 7 ngày gần đây
+ *
+ * @author ngothangwork
+ * @component
+ * @returns {JSX.Element} Giao diện danh sách bài viết
+ */
 function BlogList() {
     const { blogs, loading, error } = useFetchBlogs();
 

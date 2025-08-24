@@ -1,3 +1,12 @@
+/**
+ * Copyright (c) 2025 ngothangwork
+ * Author: ngothangwork
+ *
+ * Component hiển thị & quản lý các địa chỉ giao hàng của khách hàng
+ * gồm: thêm, sửa, xoá, đặt địa chỉ chính.
+ */
+
+
 import React, { useContext, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -10,6 +19,12 @@ import { AuthContext } from '../../../../context/AuthContext';
 import AddAddressForm from "./AddAddressForm.jsx";
 import UpdateAddressForm from "./UpdateAddressForm.jsx";
 
+
+/**
+ * Component chính quản lý danh sách địa chỉ giao hàng.
+ * Copyright (c) 2025 ngothangwork
+ * Author: ngothangwork
+ */
 function Address() {
     const { token } = useContext(AuthContext);
     const { addresses, loading, error, refetch } = useFetchAddress();
@@ -24,6 +39,14 @@ function Address() {
             setAddress(addresses);
         }
     }, [addresses, loading]);
+
+    /**
+     * Thêm địa chỉ mới vào hệ thống.
+     * @param {Object} newAddress - Địa chỉ mới
+     * @returns {Promise<void>}
+     * Copyright (c) 2025 ngothangwork
+     * Author: ngothangwork
+     */
 
     const handleAdd = async (newAddress) => {
         try {
@@ -51,6 +74,13 @@ function Address() {
         }
     };
 
+    /**
+     * Cập nhật thông tin địa chỉ.
+     * @param {Object} updated - Địa chỉ đã chỉnh sửa
+     * @returns {Promise<void>}
+     * Copyright (c) 2025 ngothangwork
+     * Author: ngothangwork
+     */
     const handleUpdate = async (updated) => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addresses`, {
@@ -81,7 +111,12 @@ function Address() {
         }
     };
 
-
+    /**
+     * Xoá địa chỉ sau khi người dùng xác nhận.
+     * @returns {Promise<void>}
+     * Copyright (c) 2025 ngothangwork
+     * Author: ngothangwork
+     */
     const handleDeleteConfirmed = async () => {
         if (!confirmDelete) return;
         try {
@@ -105,6 +140,13 @@ function Address() {
         setConfirmDelete(null);
     };
 
+    /**
+     * Đặt địa chỉ được chọn làm địa chỉ chính.
+     * @param {number} addressId - ID của địa chỉ
+     * @returns {Promise<void>}
+     * Copyright (c) 2025 ngothangwork
+     * Author: ngothangwork
+     */
     const handleSetMain = async (addressId) => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/addresses?shippingAddressId=${addressId}`, {
