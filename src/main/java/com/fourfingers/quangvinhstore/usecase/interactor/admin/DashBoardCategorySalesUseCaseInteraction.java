@@ -12,12 +12,26 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Use case interaction class for handling dashboard category sales operations.
+ * This class implements the DashBoardCategorySalesInputBoundary interface to process
+ * category sales data for the dashboard.
+ *
+ * @author LongLTHE170099
+ */
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class DashBoardCategorySalesUseCaseInteraction implements DashBoardCategorySalesInputBoundary {
     private final CategoryRepository categoryRepository;
     private final DashBoardCategorySalesOutputBoundary dashBoardCategorySalesOutputBoundary;
 
+    /**
+     * Retrieves category sales data based on the provided input parameters.
+     *
+     * @param dashBoardCategorySalesInputData input data containing start and end time for the report
+     * @return DashBoardCategorySalesOutputData containing the processed category sales data
+     * @throws IllegalArgumentException if start time is after end time
+     */
     @Override
     public DashBoardCategorySalesOutputData getCategorySales(DashBoardCategorySalesInputData
                                                                          dashBoardCategorySalesInputData) {

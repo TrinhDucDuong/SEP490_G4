@@ -28,6 +28,11 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Product use case interaction implementation that handles product-related business logic
+ *
+ * @author LongLTHE170099
+ */
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ProductUseCaseInteraction implements ProductInputBoundary {
@@ -40,6 +45,16 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
     private final CategoryMapper categoryMapper;
     private final ProductVariantMapper productVariantMapper;
 
+    /**
+     * Search for products based on given criteria
+     *
+     * @param searchProductInputData Contains search criteria like price range, categories, brands etc
+     * @param sortDirection          The direction to sort results (asc/desc)
+     * @param sortBy                 The field to sort results by
+     * @param pageNumber             The page number for pagination
+     * @param pageSize               The number of items per page
+     * @return ListProductOutputData containing the search results
+     */
     @Override
     @Transactional
     public ListProductOutputData search(SearchProductInputData searchProductInputData,
@@ -79,6 +94,13 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
         return productOutputBoundary.convertToListProductOutputData(products);
     }
 
+    /**
+     * Get detailed information for a specific product
+     *
+     * @param id The product ID
+     * @return ProductDetailsOutputData containing complete product details
+     * @throws RuntimeException if product is not found
+     */
     @Override
     @Transactional
     public ProductDetailsOutputData getProduct(String id) {
@@ -91,9 +113,13 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 getProductSizes(productEntity),
                 getProductColors(productEntity));
     }
-    /*
-    *   Get total sold out of a product
-    */
+
+    /**
+     * Converts a product entity to product model with all related information
+     *
+     * @param productEntity The product entity to convert
+     * @return Product model with complete information including ratings, images etc
+     */
     private Product getProductInformation(ProductEntity productEntity) {
         Product product = productMapper.toModel(productEntity);
         Double starRateAvg = productEntity.getProductVariants().stream()
@@ -134,8 +160,12 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
         return product;
     }
 
-
-    //Get the number of products sold out
+    /**
+     * Calculate total number of units sold for a product
+     *
+     * @param productEntity The product entity to calculate sales for
+     * @return Total number of units sold
+     */
     private Long numberOfSoldOut(ProductEntity productEntity) {
         return productEntity.getProductVariants()
                 .stream()
@@ -144,9 +174,12 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 .sum();
     }
 
-    /*
-    * Get product size
-    */
+    /**
+     * Get all available sizes for a product
+     *
+     * @param productEntity The product entity to get sizes from
+     * @return List of available size strings
+     */
     private List<String> getProductSizes(ProductEntity productEntity) {
         return productEntity.getProductVariants().stream()
                 .filter(ProductVariantEntity::getIsActive)
@@ -156,9 +189,12 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 .toList();
     }
 
-    /*
-    * Get product colors
-    */
+    /**
+     * Get all available colors for a product
+     *
+     * @param productEntity The product entity to get colors from
+     * @return List of available colors
+     */
     private List<Color> getProductColors(ProductEntity productEntity) {
         return productEntity.getProductVariants().stream()
                 .filter(ProductVariantEntity::getIsActive)
@@ -170,6 +206,12 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 .toList();
     }
 
+    /**
+     * Convert database search results to product models
+     *
+     * @param result List of Object arrays containing product data
+     * @return List of Product models
+     */
     private List<Product> getSearchResult(List<Object[]> result) {
         return result.stream()
                 .map(row -> {
@@ -195,7 +237,12 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 ).toList();
     }
 
-    //Get category image
+    /**
+     * Get all images associated with a category
+     *
+     * @param categoryEntity The category entity to get images for
+     * @return List of category images
+     */
     private List<Image> getCategoryImage(CategoryEntity categoryEntity) {
         return imageRepository.findAllByReferenceIdAndImageType(categoryEntity.getCategoryId(), ImageType.CATEGORY)
                 .stream()
@@ -203,7 +250,12 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 .toList();
     }
 
-    //Get brand image
+    /**
+     * Get all images associated with a brand
+     *
+     * @param brandEntity The brand entity to get images for
+     * @return List of brand images
+     */
     private List<Image> getBrandImage(BrandEntity brandEntity) {
         return imageRepository.findAllByReferenceIdAndImageType(brandEntity.getBrandId(), ImageType.BRAND)
                 .stream()
@@ -211,6 +263,13 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
                 .toList();
     }
 
+    /**
+     * Get category information for a product
+     *
+     * @param productId The ID of the product
+     * @return Category model for the product
+     * @throws RuntimeException if product is not found
+     */
     private Category getProductCategory(Long productId) {
         ProductEntity productEntity = productRepository.findById(productId).orElseThrow(
                 () -> new RuntimeException("Product not found")
@@ -218,6 +277,13 @@ public class ProductUseCaseInteraction implements ProductInputBoundary {
         return categoryMapper.toModel(productEntity.getCategory());
     }
 
+    /**
+     * Get brand information for a product
+     *
+     * @param productId The ID of the product
+     * @return Brand model for the product
+     * @throws RuntimeException if product is not found
+     */
     private Brand getProductBrand(Long productId) {
         ProductEntity productEntity = productRepository.findById(productId).orElseThrow(
                 () -> new RuntimeException("Product not found")

@@ -30,6 +30,12 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Implementation of staff account management use case interactions.
+ * Handles CRUD operations for staff accounts including search, create, get details, delete and undelete.
+ *
+ * @author LongLTHE170099
+ */
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ManageStaffAccountUseCaseInteraction implements StaffAccountManagementInputBoundary {
@@ -41,6 +47,14 @@ public class ManageStaffAccountUseCaseInteraction implements StaffAccountManagem
     private final AuthorityRepository authorityRepository;
     private final StoreRepository storeRepository;
 
+    /**
+     * Searches for staff accounts with pagination.
+     *
+     * @param pageNumber The page number to retrieve
+     * @param pageSize   The number of items per page
+     * @return ListStaffAccountOutputData containing the paginated staff accounts
+     * @author LongLTHE170099
+     */
     @Override
     public ListStaffAccountOutputData search(int pageNumber, int pageSize) {
         Pageable pageable = Pageable.ofSize(pageSize).withPage(pageNumber);
@@ -50,6 +64,15 @@ public class ManageStaffAccountUseCaseInteraction implements StaffAccountManagem
         return staffAccountManagementOutputBoundary.convertToListStaffAccountOutputData(staffAccounts);
     }
 
+    /**
+     * Creates a new staff account.
+     *
+     * @param staffAccountInputData The staff account data to create
+     * @param userDetails           The user details of the creator
+     * @return StaffAccountOutputData containing the created staff account information
+     * @throws RuntimeException if username or phone number already exists
+     * @author LongLTHE170099
+     */
     @Override
     public StaffAccountOutputData create(StaffAccountInputData staffAccountInputData, UserDetails userDetails) {
         if (!checkExistingPhoneNumber(staffAccountInputData.getPhoneNumber()) &&
@@ -98,6 +121,14 @@ public class ManageStaffAccountUseCaseInteraction implements StaffAccountManagem
         }
     }
 
+    /**
+     * Retrieves detailed information of a staff account by ID.
+     *
+     * @param id The ID of the staff account to retrieve
+     * @return StaffAccountDetailsOutputData containing the staff account details
+     * @throws EntityNotFoundException if staff account is not found
+     * @author LongLTHE170099
+     */
     @Override
     @Transactional
     public StaffAccountDetailsOutputData getById(String id) {
@@ -121,6 +152,14 @@ public class ManageStaffAccountUseCaseInteraction implements StaffAccountManagem
         }
     }
 
+    /**
+     * Soft deletes a staff account by setting active status to false.
+     *
+     * @param id          The ID of the staff account to delete
+     * @param userDetails The user details of the person performing the deletion
+     * @throws EntityNotFoundException if staff account is not found
+     * @author LongLTHE170099
+     */
     @Override
     public void delete(String id, UserDetails userDetails) {
         AccountEntity accountEntity = accountRepository.findById(Long.parseLong(id)).orElseThrow(
@@ -133,6 +172,14 @@ public class ManageStaffAccountUseCaseInteraction implements StaffAccountManagem
         accountRepository.save(accountEntity);
     }
 
+    /**
+     * Restores a previously deleted staff account by setting active status to true.
+     *
+     * @param id          The ID of the staff account to restore
+     * @param userDetails The user details of the person performing the restoration
+     * @throws EntityNotFoundException if staff account is not found
+     * @author LongLTHE170099
+     */
     @Override
     public void unDelete(String id, UserDetails userDetails) {
         AccountEntity accountEntity = accountRepository.findById(Long.parseLong(id)).orElseThrow(
@@ -145,6 +192,13 @@ public class ManageStaffAccountUseCaseInteraction implements StaffAccountManagem
         accountRepository.save(accountEntity);
     }
 
+    /**
+     * Converts database result objects to StaffAccount domain objects.
+     *
+     * @param result List of Object arrays containing staff account data
+     * @return List of StaffAccount objects
+     * @author LongLTHE170099
+     */
     private List<StaffAccount> getResult(List<Object[]> result) {
         return result.stream()
                 .map(row -> {
@@ -187,10 +241,24 @@ public class ManageStaffAccountUseCaseInteraction implements StaffAccountManagem
                 .toList();
     }
 
+    /**
+     * Checks if a username already exists in the system.
+     *
+     * @param username The username to check
+     * @return true if username exists, false otherwise
+     * @author LongLTHE170099
+     */
     private boolean checkExistingUsername(String username) {
         return accountRepository.existsByUsername(username);
     }
 
+    /**
+     * Checks if a phone number already exists in the system.
+     *
+     * @param phoneNumber The phone number to check
+     * @return true if phone number exists, false otherwise
+     * @author LongLTHE170099
+     */
     private boolean checkExistingPhoneNumber(String phoneNumber) {
         return profileRepository.existsByPhoneNumber(phoneNumber);
     }
