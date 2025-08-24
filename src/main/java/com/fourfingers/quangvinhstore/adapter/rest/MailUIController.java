@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller handling email-related operations for the UI.
+ * Mapped to the "/emailUI" endpoint.
+ *
+ * @author DuongTDHE171824
+ */
 @RestController
 @RequestMapping("/emailUI")
 public class MailUIController {
@@ -73,6 +79,12 @@ public class MailUIController {
     @Autowired
     private JavaMailSender mailSender;
 
+    /**
+     * Sends a loyalty program registration confirmation email to the specified email address.
+     *
+     * @param toEmail The recipient's email address
+     * @return A message indicating the success or failure of the email sending operation
+     */
     @GetMapping
     public String sendLoyaltyEmail(@RequestParam String toEmail) {
         try {

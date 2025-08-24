@@ -17,6 +17,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * REST controller handling Momo payment integration operations.
+ * Provides endpoints for creating payments, handling notifications, and processing returns.
+ *
+ * @author DuongTDHE171824
+ */
 @RestController
 @RequestMapping("/momo")
 public class MomoController {
@@ -41,8 +47,13 @@ public class MomoController {
 
     private static final Map<String, String> paymentStatusStore = new HashMap<>();
 
-//    @GetMapping
-//    public ResponseEntity<Void> createMomoPayment(@RequestParam BigDecimal amount) throws Exception {
+    /**
+     * Creates a new Momo payment request with the specified amount.
+     *
+     * @param amount the payment amount
+     * @return ResponseEntity containing the redirect URL to Momo payment gateway
+     * @throws Exception if there is an error during payment creation
+     */
     public ResponseEntity<?> createMomoPayment(BigDecimal amount) throws Exception {
         String orderId = UUID.randomUUID().toString();
         String requestId = UUID.randomUUID().toString();
@@ -91,6 +102,12 @@ public class MomoController {
         return ResponseEntity.status(302).header("Location", payUrl).build();
     }
 
+    /**
+     * Handles Instant Payment Notification (IPN) from Momo payment gateway.
+     *
+     * @param data the payment notification data from Momo
+     * @return ResponseEntity containing acknowledgment message
+     */
     @PostMapping("/momo-ipn")
     public ResponseEntity<String> handleMomoIpn(@RequestBody Map<String, Object> data) {
         String orderId = (String) data.get("orderId");
@@ -108,6 +125,12 @@ public class MomoController {
     }
 
 
+    /**
+     * Handles the return from Momo payment gateway and checks payment status.
+     *
+     * @param orderId the ID of the order to check
+     * @return String containing the payment status message
+     */
     @GetMapping("/momo-return")
     public String handleMomoReturn(@RequestParam String orderId) {
         String status = paymentStatusStore.getOrDefault(orderId, "UNKNOWN");
@@ -120,6 +143,14 @@ public class MomoController {
         };
     }
 
+    /**
+     * Generates HMAC-SHA256 signature for Momo payment request.
+     *
+     * @param key  the secret key for generating signature
+     * @param data the data to be signed
+     * @return String containing the generated signature
+     * @throws Exception if there is an error during signature generation
+     */
     private String hmacSHA256(String key, String data) throws Exception {
         Mac hmacSha256 = Mac.getInstance("HmacSHA256");
         SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256");

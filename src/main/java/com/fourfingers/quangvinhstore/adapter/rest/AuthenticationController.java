@@ -19,6 +19,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller handling authentication-related operations.
+ * Mapped to the "/auth" endpoint.
+ *
+ * @author LongLTHE170099
+ * @author DuongTDHE171824
+ */
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -27,6 +34,12 @@ public class AuthenticationController {
     private final AuthenticationInputBoundary authenticationInputBoundary;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Authenticates a user and generates a JWT token.
+     *
+     * @param authenticationInputData The user credentials for authentication
+     * @return ResponseEntity containing the authentication result with JWT token
+     */
     @Operation(
             summary = "Authenticate user",
             description = "Authenticates user credentials and returns JWT token"
@@ -57,6 +70,12 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationOutputData);
     }
 
+    /**
+     * Registers a new user account.
+     *
+     * @param authenticationInputData The user registration details
+     * @return ResponseEntity containing the registration result
+     */
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody AuthenticationInputData authenticationInputData) {
         CustomerRegistedAccountOutputData customerRegistedAccountOutputData = authenticationInputBoundary

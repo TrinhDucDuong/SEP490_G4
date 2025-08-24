@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 /**
  * REST controller responsible for managing staff account operations in the admin interface.
  * Provides endpoints for CRUD operations on staff accounts and password reset functionality.
+ *
+ * @author LongLTHE170099
  */
 @RestController
 @RequestMapping("/admin/staff")

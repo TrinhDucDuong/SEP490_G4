@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
  * REST controller handling administrative dashboard operations.
  * Provides endpoints for retrieving dashboard summary, revenue graphs,
  * and category sales data.
+ *
+ * @author LongLTHE170099
  */
 @RestController
 @RequestMapping("/admin/dashboard")
