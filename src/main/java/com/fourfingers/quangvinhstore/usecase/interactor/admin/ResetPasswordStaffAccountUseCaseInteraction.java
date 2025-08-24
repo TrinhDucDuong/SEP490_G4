@@ -12,12 +12,27 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+/**
+ * Use case interaction class for handling staff account password reset operations
+ *
+ * @author LongLTHE170099
+ */
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ResetPasswordStaffAccountUseCaseInteraction implements ResetPasswordStaffAccountInputBoundary {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Resets the password for a staff account
+     *
+     * @param id                                 The ID of the staff account to reset password
+     * @param resetPasswordStaffAccountInputData Data object containing old and new password information
+     * @param userDetails                        Details of the user performing the password reset
+     * @return true if password reset was successful
+     * @throws RuntimeException if account not found or password doesn't match
+     * @author LongLTHE170099
+     */
     @Override
     public boolean resetPassword(Long id,
                                  ResetPasswordStaffAccountInputData resetPasswordStaffAccountInputData,

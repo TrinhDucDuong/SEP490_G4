@@ -21,6 +21,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Implementation of BlogInputBoundary for handling blog-related use cases
+ *
+ * @author LongLTHE170099
+ */
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class BlogUseCaseInteraction implements BlogInputBoundary {
@@ -30,6 +35,13 @@ public class BlogUseCaseInteraction implements BlogInputBoundary {
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
 
+    /**
+     * Retrieves all active blogs, optionally filtered by tag
+     *
+     * @param blogTag Optional tag to filter blogs
+     * @return ListBlogOutputData containing all matching blogs
+     * @author LongLTHE170099
+     */
     @Override
     public ListBlogOutputData getAll(String blogTag) {
         List<BlogEntity> blogEntities;
@@ -52,6 +64,14 @@ public class BlogUseCaseInteraction implements BlogInputBoundary {
         );
     }
 
+    /**
+     * Retrieves a specific blog by its ID
+     *
+     * @param id The ID of the blog to retrieve
+     * @return BlogOutputData containing the blog details
+     * @throws EntityNotFoundException if blog is not found
+     * @author LongLTHE170099
+     */
     @Override
     public BlogOutputData getById(String id) {
         Long blogId = Long.valueOf(id);
@@ -65,6 +85,13 @@ public class BlogUseCaseInteraction implements BlogInputBoundary {
         return blogOutputBoundary.convertToBlogOutputData(blog);
     }
 
+    /**
+     * Retrieves all images associated with a blog
+     *
+     * @param blogEntity The blog entity to get images for
+     * @return List of Image objects associated with the blog
+     * @author LongLTHE170099
+     */
     private List<Image> getBlogImages(BlogEntity blogEntity) {
         return imageRepository.findAllByReferenceIdAndImageType(blogEntity.getBlogId(),
                         ImageType.BLOG)
@@ -73,6 +100,13 @@ public class BlogUseCaseInteraction implements BlogInputBoundary {
                 .toList();
     }
 
+    /**
+     * Retrieves IDs of products related to a blog
+     *
+     * @param blogEntity The blog entity to get related product IDs for
+     * @return List of product IDs related to the blog
+     * @author LongLTHE170099
+     */
     private List<Long> getRelatedProductIds(BlogEntity blogEntity) {
         return blogEntity.getRelatedProducts().stream()
                 .map(ProductEntity::getProductId)

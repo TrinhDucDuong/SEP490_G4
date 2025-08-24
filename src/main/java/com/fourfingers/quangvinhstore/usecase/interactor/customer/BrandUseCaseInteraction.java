@@ -17,6 +17,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Implementation of BrandInputBoundary that handles brand-related business logic
+ *
+ * @author LongLTHE170099
+ */
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class BrandUseCaseInteraction implements BrandInputBoundary {
@@ -26,6 +31,12 @@ public class BrandUseCaseInteraction implements BrandInputBoundary {
     private final ImageMapper imageMapper;
     private final ImageRepository imageRepository;
 
+    /**
+     * Retrieves all active brands with their associated images
+     *
+     * @return ListBrandOutputData containing all active brands
+     * @author LongLTHE170099
+     */
     @Override
     public ListBrandOutputData getAll() {
         return brandOutputBoundary.convertToListBrandOutputData(
@@ -39,6 +50,13 @@ public class BrandUseCaseInteraction implements BrandInputBoundary {
         );
     }
 
+    /**
+     * Retrieves all images associated with a specific brand
+     *
+     * @param brandEntity The brand entity to get images for
+     * @return List of Image objects associated with the brand
+     * @author LongLTHE170099
+     */
     private List<Image> getBrandImages(BrandEntity brandEntity) {
         return imageRepository.findAllByReferenceIdAndImageType(brandEntity.getBrandId(), ImageType.BRAND)
                 .stream()

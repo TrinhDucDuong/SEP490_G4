@@ -27,6 +27,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * Implementation of ProfileInputBoundary for handling profile-related use cases
+ *
+ * @author LongLTHE170099
+ * @author DuongTDHE171824
+ */
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ProfileUseCaseInteraction implements ProfileInputBoundary {
@@ -38,6 +44,14 @@ public class ProfileUseCaseInteraction implements ProfileInputBoundary {
     private final AzureStorageBoundary azureStorageBoundary;
     private final AccountRepository accountRepository;
 
+    /**
+     * Retrieves the profile information for a given user
+     *
+     * @param userDetails The user details of the authenticated user
+     * @return ProfileOutputData containing the user's profile information
+     * @author LongLTHE170099
+     * @author DuongTDHE171824
+     */
     @Override
     public ProfileOutputData getProfile(UserDetails userDetails) {
         AccountEntity accountEntity = (AccountEntity) userDetails;
@@ -57,6 +71,17 @@ public class ProfileUseCaseInteraction implements ProfileInputBoundary {
         return profileOutputBoundary.convertToProfileOutputData(profile);
     }
 
+    /**
+     * Updates a user's profile information and profile image
+     *
+     * @param profileInputData The profile data to be updated
+     * @param profileImage     The new profile image file
+     * @param userDetails      The user details of the authenticated user
+     * @return ProfileOutputData containing the updated profile information
+     * @throws Exception If there's an error during profile update
+     * @author LongLTHE170099
+     * @author DuongTDHE171824
+     */
     @Override
     @Transactional
     public ProfileOutputData update(ProfileInputData profileInputData,
@@ -95,6 +120,15 @@ public class ProfileUseCaseInteraction implements ProfileInputBoundary {
         return profileOutputBoundary.convertToProfileOutputData(profile);
     }
 
+    /**
+     * Saves a profile image to storage and database
+     *
+     * @param profileEntity The profile entity associated with the image
+     * @param profileImage  The image file to be saved
+     * @return Image model containing the saved image information
+     * @throws Exception If there's an error during image saving
+     * @author LongLTHE170099
+     */
     private Image saveImage(ProfileEntity profileEntity, MultipartFile profileImage) throws Exception {
         String imageUrl = azureStorageBoundary.uploadSingle(profileImage);
         return imageMapper.toModel(imageRepository.save(
@@ -107,6 +141,14 @@ public class ProfileUseCaseInteraction implements ProfileInputBoundary {
         ));
     }
 
+    /**
+     * Deletes the previous profile image associated with the profile
+     *
+     * @param profileEntity The profile entity whose image needs to be deleted
+     * @throws RuntimeException If there's an error during image deletion
+     * @author LongLTHE170099
+     * @author DuongTDHE171824
+     */
     private void deletePrevImage(ProfileEntity profileEntity) {
         try {
             imageRepository.findByReferenceIdAndImageType(profileEntity.getProfileId(),

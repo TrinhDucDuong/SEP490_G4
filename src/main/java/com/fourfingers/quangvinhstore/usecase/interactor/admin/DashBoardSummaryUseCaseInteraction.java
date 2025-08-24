@@ -20,6 +20,11 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implementation of DashBoardSummaryInputBoundary for handling dashboard summary data
+ *
+ * @author LongLTHE170099
+ */
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class DashBoardSummaryUseCaseInteraction implements DashBoardSummaryInputBoundary {
@@ -27,6 +32,12 @@ public class DashBoardSummaryUseCaseInteraction implements DashBoardSummaryInput
     private final OrderRepository orderRepository;
     private final DashBoardSummaryOutputBoundary dashBoardSummaryOutputBoundary;
 
+    /**
+     * Gets dashboard summary data based on input parameters
+     *
+     * @param dashBoardSummaryInputData Input data containing filter parameters
+     * @return Dashboard summary output data
+     */
     @Override
     public DashBoardSummaryOutputData getDashBoardSummary(DashBoardSummaryInputData dashBoardSummaryInputData) {
         OrderSummary orderSummary = getOrderSummary(dashBoardSummaryInputData.getFilterBy());
@@ -38,6 +49,12 @@ public class DashBoardSummaryUseCaseInteraction implements DashBoardSummaryInput
         );
     }
 
+    /**
+     * Retrieves order summary based on time filter
+     *
+     * @param filterBy Time filter parameter (week/month/year)
+     * @return OrderSummary containing order statistics
+     */
     private OrderSummary getOrderSummary(String filterBy) {
         Map<String, LocalDateTime> timeRange = getTimeRange(filterBy);
         Long totalOrderCurrent = orderRepository.countByOrderDateBetween(timeRange.get("start"), timeRange.get("now"));
@@ -50,6 +67,13 @@ public class DashBoardSummaryUseCaseInteraction implements DashBoardSummaryInput
         return new OrderSummary(totalOrderCurrent, orderGrowthRate, notProcessedOrder, processedOrder);
     }
 
+    /**
+     * Calculates order growth rate between two periods
+     *
+     * @param current Current period order count
+     * @param last    Last period order count
+     * @return Growth rate as percentage
+     */
     private Double getOrderGrowthRate(Long current, Long last) {
         if (last == 0) {
             if (current == 0) {
@@ -60,6 +84,12 @@ public class DashBoardSummaryUseCaseInteraction implements DashBoardSummaryInput
         return (double) ((current - last) / last * 100);
     }
 
+    /**
+     * Retrieves customer summary based on time filter
+     *
+     * @param filterBy Time filter parameter (week/month/year)
+     * @return CustomerSummary containing customer statistics
+     */
     private CustomerSummary getCustomerSummary(String filterBy) {
         Map<String, LocalDateTime> timeRange = getTimeRange(filterBy);
         Long totalOrderedCustomerCurrent = orderRepository.countBuyingCustomers(
@@ -72,6 +102,13 @@ public class DashBoardSummaryUseCaseInteraction implements DashBoardSummaryInput
         return new CustomerSummary(totalOrderedCustomerCurrent, customerGrowthRate);
     }
 
+    /**
+     * Calculates customer growth rate between two periods
+     *
+     * @param current Current period customer count
+     * @param last    Last period customer count
+     * @return Growth rate as percentage
+     */
     private Double getCustomerGrowthRate(Long current, Long last) {
         if (last == 0) {
             if (current == 0) {
@@ -82,6 +119,12 @@ public class DashBoardSummaryUseCaseInteraction implements DashBoardSummaryInput
         return (double) ((current - last) / last * 100);
     }
 
+    /**
+     * Retrieves revenue summary based on time filter
+     *
+     * @param filterBy Time filter parameter (week/month/year)
+     * @return RevenueSummary containing revenue statistics
+     */
     private RevenueSummary getRevenueSummary(String filterBy) {
         Map<String, LocalDateTime> timeRange = getTimeRange(filterBy);
 
@@ -102,6 +145,13 @@ public class DashBoardSummaryUseCaseInteraction implements DashBoardSummaryInput
         return new RevenueSummary(totalRevenueCurrent, revenueGrowthRate);
     }
 
+    /**
+     * Calculates revenue growth rate between two periods
+     *
+     * @param current Current period revenue
+     * @param last    Last period revenue
+     * @return Growth rate as percentage
+     */
     private Double getRevenueGrowthRate(BigDecimal current, BigDecimal last) {
         if (last.compareTo(BigDecimal.ZERO) == 0) {
             if (current.compareTo(BigDecimal.ZERO) == 0) {
@@ -119,7 +169,12 @@ public class DashBoardSummaryUseCaseInteraction implements DashBoardSummaryInput
     }
 
 
-
+    /**
+     * Generates time range map based on filter parameter
+     *
+     * @param filterBy Time filter parameter (week/month/year)
+     * @return Map containing start and end dates for current and previous periods
+     */
     private Map<String, LocalDateTime> getTimeRange(String filterBy) {
         Map<String, LocalDateTime> timeRange = new HashMap<>();
         switch (filterBy) {

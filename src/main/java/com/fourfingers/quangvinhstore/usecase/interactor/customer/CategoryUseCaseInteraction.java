@@ -13,6 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * This class handles the business logic for Category-related operations
+ * implementing the CategoryInputBoundary interface.
+ *
+ * @author LongLTHE170099
+ */
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class CategoryUseCaseInteraction implements CategoryInputBoundary {
@@ -21,6 +27,13 @@ public class CategoryUseCaseInteraction implements CategoryInputBoundary {
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
     private final CategoryOutputBoundary categoryOutputBoundary;
+
+    /**
+     * Retrieves all active categories with their associated images.
+     *
+     * @return ListCategoryOutputData containing all active categories
+     * @author LongLTHE170099
+     */
     @Override
     public ListCategoryOutputData getAll() {
         return categoryOutputBoundary.convertToListCategoryOutputData(
