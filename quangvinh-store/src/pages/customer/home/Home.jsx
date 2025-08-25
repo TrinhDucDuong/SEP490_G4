@@ -114,7 +114,7 @@ function Home() {
                     {categories.slice(0, 4).map((category) => (
                         <Link
                             key={category.categoryId}
-                            to={`/products?brandIds=${category.categoryId}`}
+                            to={`/products?categoryIds=${category.categoryId}`}
                             className="w-full h-[150px] sm:h-[200px] md:h-[250px] lg:h-[300px] xl:h-[350px] overflow-hidden shadow-md rounded-lg group relative"
 
                             aria-label={`Xem sản phẩm trong danh mục ${category.categoryName}`}

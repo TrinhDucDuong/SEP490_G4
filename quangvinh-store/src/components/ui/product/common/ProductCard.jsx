@@ -98,7 +98,7 @@ const ProductCard = memo(function ProductCard({ product }) {
                     ? product.unitPrice.toLocaleString() + '₫'
                     : 'Liên hệ'}
             </p>
-            <h3 className="text-gray-800 text-base font-bold mb-1 truncate">{product.productName}</h3>
+            <h3 className="block w-full min-w-[220px] text-gray-800 text-base font-bold mb-1 truncate">{product.productName}</h3>
  {/*           <h3 className="text-gray-800 text-base font-bold mb-1 truncate">{product.brand.brandName}</h3>*/}
             <div className="flex items-center py-1 gap-1 text-yellow-400 text-base">
                 {[...Array(5)].map((_, i) => (

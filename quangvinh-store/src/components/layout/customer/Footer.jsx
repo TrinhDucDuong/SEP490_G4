@@ -40,7 +40,7 @@ function Footer() {
                         </div>
                     </address>
                     <div className="flex justify-center sm:justify-start gap-4 mt-2">
-                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="p-2">
+                        <a href="https://www.facebook.com/QuangVinhauth" target="_blank" rel="noopener noreferrer" className="p-2">
                             <FontAwesomeIcon icon={faFacebook} className="text-xl sm:text-2xl text-blue-600 hover:text-blue-400 transition" />
                         </a>
                         <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="p-2">
@@ -49,7 +49,7 @@ function Footer() {
                         <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="p-2">
                             <FontAwesomeIcon icon={faYoutube} className="text-xl sm:text-2xl text-red-600 hover:text-red-400 transition" />
                         </a>
-                        <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" className="p-2">
+                        <a href="https://www.tiktok.com/@quangvinh_authentic" target="_blank" rel="noopener noreferrer" className="p-2">
                             <FontAwesomeIcon icon={faTiktok} className="text-xl sm:text-2xl text-white hover:text-gray-400 transition" />
                         </a>
                     </div>
