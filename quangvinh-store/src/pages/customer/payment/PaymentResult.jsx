@@ -8,7 +8,7 @@
  */
 
 import React from "react";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
 /**
  * Component hiển thị kết quả sau khi đặt hàng thành công.
@@ -60,9 +60,18 @@ import { Link } from "react-router-dom";
  *
  * <PaymentResult result={result} />
  */
-const PaymentResult = ({ result }) => {
+const PaymentResult = ({result}) => {
     const order = result.orderOutputData.order;
     const paymentUrl = result.paymentUrl;
+
+    const statusMap = {
+        PAID: "Đã thanh toán",
+        PROCESSING: "Đang xử lý",
+        SHIPPING: "Đang giao hàng",
+        DELIVERED: "Đã giao",
+        CANCELED: "Đã hủy",
+        PENDING: "Chờ thanh toán"
+    };
 
     console.log(result);
 
@@ -91,10 +100,14 @@ const PaymentResult = ({ result }) => {
                         <span className="font-semibold">Trạng thái:</span>{" "}
                         <span
                             className={`px-3 py-1 rounded text-white text-sm ${
-                                order.orderStatus === "PAID" ? "bg-green-500" : "bg-yellow-500"
+                                order.orderStatus === "PAID"
+                                    ? "bg-green-500"
+                                    : order.orderStatus === "CANCELED"
+                                        ? "bg-red-500"
+                                        : "bg-yellow-500"
                             }`}
                         >
-                            {order.orderStatus}
+                            {statusMap[order.orderStatus] || order.orderStatus}
                         </span>
                     </p>
                     <p className="text-lg font-semibold text-red-500">
@@ -125,7 +138,7 @@ const PaymentResult = ({ result }) => {
                                     Màu:
                                     <span
                                         className="inline-block w-4 h-4 rounded-full ml-2 border"
-                                        style={{ backgroundColor: detail.productVariant.color?.colorHex || "#ccc" }}
+                                        style={{backgroundColor: detail.productVariant.color?.colorHex || "#ccc"}}
                                     ></span>
                                 </p>
                                 <p>Số lượng: {detail.quantity}</p>

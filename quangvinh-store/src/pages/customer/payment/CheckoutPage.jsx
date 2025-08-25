@@ -496,7 +496,7 @@ function CheckoutPage() {
 
                         <h2 className="text-2xl font-semibold mt-8 mb-4">Chọn phương thức thanh toán</h2>
                         <div className="space-y-3 mb-6">
-                            {["COD", "MOMO", "VNPAY"].map((method) => (
+                            {["COD", "VNPAY"].map((method) => (
                                 <label key={method} className="flex items-center gap-2">
                                     <input
                                         type="radio"
@@ -506,7 +506,6 @@ function CheckoutPage() {
                                         onChange={() => setSelectedMethod(method)}
                                     />
                                     {method === "COD" && "Thanh toán khi nhận hàng (COD)"}
-                                    {method === "MOMO" && "Thanh toán qua ví MoMo"}
                                     {method === "VNPAY" && "Thanh toán qua VNPay"}
                                 </label>
                             ))}

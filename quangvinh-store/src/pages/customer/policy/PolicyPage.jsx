@@ -74,7 +74,7 @@ const PolicyPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 bg-white shadow-sm rounded-lg overflow-hidden">
                     {/* Sidebar - Danh sách policies */}
                     <aside className="md:col-span-1 p-6 border-r border-gray-100">
-                        <h2 className="text-2xl font-semibold mb-6 text-gray-900">Policy List</h2>
+                        <h2 className="text-2xl font-semibold mb-6 text-gray-900">DANH SÁCH CHÍNH SÁCH</h2>
                         <ul className="space-y-2">
                             {policies.map((policy) => (
                                 <li key={policy.policyId}>

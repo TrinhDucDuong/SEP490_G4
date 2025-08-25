@@ -169,7 +169,6 @@ const ProductDetail = () => {
                 productName: product.productName,
                 productImage: selectedImage || product.images?.[0]?.imageUrl || '',
             });
-            await logAction('ADD_TO_CART', currentVariant?.productVariantId);
             navigate('/checkout');
         } catch (error) {
             toast.error(error.message || 'Lỗi khi thêm vào giỏ hàng');
@@ -204,7 +203,6 @@ const ProductDetail = () => {
                 productName: product.productName,
                 productImage: selectedImage || product.images?.[0]?.imageUrl || '',
             });
-            await logAction('ADD_TO_CART', currentVariant?.productVariantId);
             toast.success("Đã thêm sản phẩm vào giỏ hàng");
         } catch (error) {
             toast.error(error.message || 'Lỗi khi thêm vào giỏ hàng');

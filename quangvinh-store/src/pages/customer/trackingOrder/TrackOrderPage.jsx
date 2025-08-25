@@ -23,6 +23,15 @@ export default function TrackOrderPage() {
     const [order, setOrder] = useState(null);         // Thông tin đơn hàng trả về từ backend
     const [error, setError] = useState(null);         // Thông báo lỗi nếu có
 
+    const statusMap = {
+        PAID: "Đã thanh toán",
+        PROCESSING: "Đang xử lý",
+        SHIPPING: "Đang giao hàng",
+        DELIVERED: "Đã giao",
+        CANCELED: "Đã hủy",
+        PENDING: "Chờ thanh toán"
+    };
+
     const location = useLocation();
 
     /**
@@ -121,7 +130,23 @@ export default function TrackOrderPage() {
                             <h2 className="text-lg font-bold">Thông tin đơn hàng</h2>
                             <p><strong>Mã đơn:</strong> {order.orderCode}</p>
                             <p><strong>Ngày đặt:</strong> {new Date(order.orderDate).toLocaleString()}</p>
-                            <p><strong>Trạng thái:</strong> {order.orderStatus}</p>
+                            <p>
+                                <strong>Trạng thái:</strong>{" "}
+                                <span
+                                    className={`px-3 py-1 rounded text-white text-sm ${
+                                        order.orderStatus === "PAID"
+                                            ? "bg-green-500"
+                                            : order.orderStatus === "CANCELED"
+                                                ? "bg-red-500"
+                                                : order.orderStatus === "DELIVERED"
+                                                    ? "bg-blue-500"
+                                                    : "bg-yellow-500"
+                                    }`}
+                                >
+                                    {statusMap[order.orderStatus] || order.orderStatus}
+                                </span>
+                            </p>
+
                             <p><strong>Thanh toán:</strong> {order.paymentStatus ? "Đã thanh toán" : "Chưa thanh toán"}</p>
                         </div>
 
