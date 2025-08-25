@@ -151,10 +151,11 @@ export const updateSNS = async (snsId, snsData) => {
     try {
         console.log(`Updating SNS ${snsId}:`, snsData);
 
-        const response = await fetch(`${API_BASE_URL}/${snsId}`, {
-            method: 'POST', // Đổi từ POST thành PUT
+        const response = await fetch(API_BASE_URL, {
+            method: 'POST',
             headers: createAuthHeaders(),
             body: JSON.stringify({
+                snsId: parseInt(snsId),
                 snsName: snsData.snsName,
                 snsUrl: snsData.snsUrl,
                 snsChatUrl: snsData.snsChatUrl

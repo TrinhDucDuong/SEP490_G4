@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Plus, Image, Users, Upload } from 'lucide-react';
+import { useToast } from '../../../context/ToastContext';
 import DataTable from '../../../components/common/admin/DataTable';
 import Modals from '../../../components/common/admin/Modals';
 import Paginations from '../../../components/common/admin/Paginations';
@@ -17,7 +18,7 @@ const CategoryTable = ({
                            onDeleteCategory,
                            loading
                        }) => {
-
+    const { showSuccess, showError } = useToast();
     const [showImageModal, setShowImageModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -73,7 +74,7 @@ const CategoryTable = ({
     // CRUD operations
     const handleCreateCategory = async () => {
         if (!newCategory.categoryName.trim()) {
-            alert('Vui lòng nhập tên danh mục');
+            showError('Vui lòng nhập tên danh mục');
             return;
         }
 
@@ -91,15 +92,15 @@ const CategoryTable = ({
             setNewCategory(CATEGORY_DEFAULTS.NEW_CATEGORY);
             setCreateImageFile(null);
             setCreateImageError('');
-            alert('Tạo danh mục thành công!');
+            showSuccess('Tạo danh mục thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 
     const handleUpdateCategory = async () => {
         if (!updateCategoryData.categoryName.trim()) {
-            alert('Vui lòng nhập tên danh mục');
+            showError('Vui lòng nhập tên danh mục');
             return;
         }
 
@@ -128,9 +129,9 @@ const CategoryTable = ({
             setCurrentImageUrl(null);
             setUpdateImageFile(null);
             setUpdateImageError('');
-            alert('Cập nhật danh mục thành công!');
+            showSuccess('Cập nhật danh mục thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 
@@ -141,9 +142,9 @@ const CategoryTable = ({
         if (result.success) {
             setShowStatusModal(false);
             setSelectedCategory(null);
-            alert('Thay đổi trạng thái thành công!');
+            showSuccess('Thay đổi trạng thái thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 

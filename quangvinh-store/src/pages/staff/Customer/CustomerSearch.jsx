@@ -3,12 +3,13 @@ import SearchBar from '../../../components/common/admin/SearchBar';
 
 const CustomerSearch = ({ searchTerm, onSearchChange, filteredCustomersCount }) => {
     return (
-        <div className="mb-6">
+        <div>
             <SearchBar
-                placeholder="Tìm kiếm theo tên, email, số điện thoại..."
                 value={searchTerm}
                 onChange={onSearchChange}
+                placeholder="Tìm kiếm khách hàng theo tên, email, số điện thoại..."
             />
+
             {searchTerm && (
                 <p className="text-sm text-gray-600 mt-2">
                     Tìm thấy {filteredCustomersCount} khách hàng cho từ khóa "{searchTerm}"

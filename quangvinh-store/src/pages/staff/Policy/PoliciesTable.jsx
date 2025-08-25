@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Plus, FileText } from 'lucide-react';
+import { useToast } from '../../../context/ToastContext';
 import DataTable from '../../../components/common/admin/DataTable';
 import Modals from '../../../components/common/admin/Modals';
 import Paginations from '../../../components/common/admin/Paginations';
@@ -20,6 +21,7 @@ const PoliciesTable = ({
                            loading
                        }) => {
     // Modal states
+    const { showSuccess, showError } = useToast();
     const [showDescriptionModal, setShowDescriptionModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -59,12 +61,12 @@ const PoliciesTable = ({
     // CRUD operations
     const handleCreatePolicy = async () => {
         if (!newPolicy.policyName.trim()) {
-            alert('Vui lòng nhập tên chính sách');
+            showError('Vui lòng nhập tên chính sách');
             return;
         }
 
         if (!newPolicy.policyDescription.trim()) {
-            alert('Vui lòng nhập mô tả chính sách');
+            showError('Vui lòng nhập mô tả chính sách');
             return;
         }
 
@@ -72,20 +74,20 @@ const PoliciesTable = ({
         if (result.success) {
             setShowCreateModal(false);
             setNewPolicy(POLICY_DEFAULTS.NEW_POLICY);
-            alert('Tạo chính sách thành công!');
+            showSuccess('Tạo chính sách thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 
     const handleUpdatePolicy = async () => {
         if (!updatePolicyData.policyName.trim()) {
-            alert('Vui lòng nhập tên chính sách');
+            showError('Vui lòng nhập tên chính sách');
             return;
         }
 
         if (!updatePolicyData.policyDescription.trim()) {
-            alert('Vui lòng nhập mô tả chính sách');
+            showError('Vui lòng nhập mô tả chính sách');
             return;
         }
 
@@ -93,9 +95,9 @@ const PoliciesTable = ({
         if (result.success) {
             setShowUpdateModal(false);
             setUpdatePolicyData(null);
-            alert('Cập nhật chính sách thành công!');
+            showSuccess('Cập nhật chính sách thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 
@@ -106,9 +108,9 @@ const PoliciesTable = ({
         if (result.success) {
             setShowDeleteModal(false);
             setSelectedPolicy(null);
-            alert('Xóa chính sách thành công!');
+            showSuccess('Xóa chính sách thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 

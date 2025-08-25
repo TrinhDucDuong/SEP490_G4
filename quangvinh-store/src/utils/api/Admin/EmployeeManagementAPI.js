@@ -79,6 +79,8 @@ export const getAllEmployees = async (pageNumber = 0, pageSize = 100) => {
 // GET - ID
 export const getEmployeeById = async (employeeId) => {
     try {
+        console.log('Calling API for employee ID:', employeeId); // Debug log
+
         const response = await fetch(`${API_BASE_URL}/${employeeId}`, {
             method: 'GET',
             headers: createAuthHeaders()
@@ -91,7 +93,11 @@ export const getEmployeeById = async (employeeId) => {
         }
 
         const data = await response.json();
-        return { success: true, data: data.staffAccount };
+        console.log('API Response data:', data); // Debug log
+
+        // API GET by id trả về object trực tiếp, KHÔNG phải data.staffAccount
+        return { success: true, data }; // Đây là sự khác biệt chính
+
     } catch (error) {
         console.error('Error fetching employee:', error);
         return { success: false, error: error.message };

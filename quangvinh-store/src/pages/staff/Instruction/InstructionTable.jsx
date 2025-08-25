@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, Edit, Trash2, Plus, FileText } from 'lucide-react';
+import { useToast } from '../../../context/ToastContext';
 import DataTable from '../../../components/common/admin/DataTable';
 import Modals from '../../../components/common/admin/Modals';
 import Paginations from '../../../components/common/admin/Paginations';
@@ -20,6 +21,7 @@ const InstructionTable = ({
                               loading
                           }) => {
     // Modal states
+    const { showSuccess, showError } = useToast();
     const [showDescriptionModal, setShowDescriptionModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -59,12 +61,12 @@ const InstructionTable = ({
     // CRUD operations
     const handleCreateInstruction = async () => {
         if (!newInstruction.instructionName.trim()) {
-            alert('Vui lòng nhập tên hướng dẫn');
+            showError('Vui lòng nhập tên hướng dẫn');
             return;
         }
 
         if (!newInstruction.instructionDescription.trim()) {
-            alert('Vui lòng nhập mô tả hướng dẫn');
+            showError('Vui lòng nhập mô tả hướng dẫn');
             return;
         }
 
@@ -72,20 +74,20 @@ const InstructionTable = ({
         if (result.success) {
             setShowCreateModal(false);
             setNewInstruction(INSTRUCTION_DEFAULTS.NEW_INSTRUCTION);
-            alert('Tạo hướng dẫn thành công!');
+            showSuccess('Tạo hướng dẫn thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 
     const handleUpdateInstruction = async () => {
         if (!updateInstructionData.instructionName.trim()) {
-            alert('Vui lòng nhập tên hướng dẫn');
+            showError('Vui lòng nhập tên hướng dẫn');
             return;
         }
 
         if (!updateInstructionData.instructionDescription.trim()) {
-            alert('Vui lòng nhập mô tả hướng dẫn');
+            showError('Vui lòng nhập mô tả hướng dẫn');
             return;
         }
 
@@ -93,9 +95,9 @@ const InstructionTable = ({
         if (result.success) {
             setShowUpdateModal(false);
             setUpdateInstructionData(null);
-            alert('Cập nhật hướng dẫn thành công!');
+            showSuccess('Cập nhật hướng dẫn thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 
@@ -106,9 +108,9 @@ const InstructionTable = ({
         if (result.success) {
             setShowDeleteModal(false);
             setSelectedInstruction(null);
-            alert('Xóa hướng dẫn thành công!');
+            showSuccess('Xóa hướng dẫn thành công!');
         } else {
-            alert(`Lỗi: ${result.error}`);
+            showError(`Lỗi: ${result.error}`);
         }
     };
 

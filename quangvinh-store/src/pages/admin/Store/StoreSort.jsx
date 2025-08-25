@@ -27,16 +27,18 @@ const StoreSort = ({ sortConfig, onSort }) => {
     );
 
     return (
-        <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-700">Sắp xếp theo:</span>
-            <div className="flex space-x-2">
-                {sortOptions.map((option) => (
-                    <SortButton
-                        key={option.key}
-                        sortKey={option.key}
-                        label={option.label}
-                    />
-                ))}
+        <div>
+            <div className="flex items-center space-x-2">
+                <span className="text-sm font-medium text-gray-700">Sắp xếp theo:</span>
+                <div className="flex space-x-2">
+                    {sortOptions.map((option) => (
+                        <SortButton
+                            key={option.key}
+                            sortKey={option.key}
+                            label={option.label}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );
