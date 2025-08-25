@@ -58,7 +58,7 @@ export default function TrackOrderPage() {
             return;
         }
         try {
-            const res = await fetch(`http://localhost:9999/order/tracking/${searchCode}`);
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/order/tracking/${searchCode}`);
             if (!res.ok) throw new Error("order not found");
             const data = await res.json();
             setOrder(data.order);
