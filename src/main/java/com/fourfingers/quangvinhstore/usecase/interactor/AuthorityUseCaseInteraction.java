@@ -47,11 +47,13 @@ public class AuthorityUseCaseInteraction implements CommandLineRunner {
     private void createAdminAccountIfNotExists() {
         String adminUsername = "admin";
         String adminPassword = "123456";
+        String adminEmail = "quangvinhvu919@gmail.com";
 
         if (!accountRepository.existsByUsername(adminUsername)) {
             AccountEntity admin = new AccountEntity();
             admin.setUsername(adminUsername);
-            admin.setPassword(passwordEncoder.encode(adminPassword)); // passwordEncoder là bean của Spring Security
+            admin.setPassword(passwordEncoder.encode(adminPassword));
+            admin.setEmail(adminEmail);
             admin.setActive(true);
 
             AuthorityEntity adminRole = authorityRepository.findById("ADMINISTRATOR")

@@ -17,6 +17,8 @@ import com.fourfingers.quangvinhstore.usecase.data.customer.*;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.ListOrderOutputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderInputData;
 import com.fourfingers.quangvinhstore.usecase.data.customer.order.OrderOutputData;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,6 +46,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
     private final ImageRepository imageRepository;
     private final ProductVariantMapper productVariantMapper;
     private final ImageMapper imageMapper;
+    private final EntityManager entityManager;
 
     @Override
     @Transactional
@@ -120,12 +123,32 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         return customerOrderOutputBoundary.convertToCustomerOrderOutputData(getOrderInformation(placedOrder));
     }
 
+    @Transactional
+    public void reduceStock(Long productVariantId, Long quantity) {
+        ProductVariantEntity productVariant = entityManager.find(
+                ProductVariantEntity.class,
+                productVariantId,
+                LockModeType.PESSIMISTIC_WRITE
+        );
+
+        if (productVariant.getQuantity() < quantity) {
+            throw new RuntimeException(productVariant.getProduct().getProductName() + " is out of stock");
+        }
+
+        productVariant.setQuantity(productVariant.getQuantity() - quantity);
+    }
+
     @Override
+    @Transactional
     public OrderOutputData placeOrderPayLater(UserDetails userDetails, PurchaseInputData purchaseInputData) {
         AccountEntity accountEntity = (AccountEntity) userDetails;
         Optional<OrderEntity> orderEntity = orderRepository.findByOrderIdAndOwnerAccountId(purchaseInputData.getOrderId(),
                 accountEntity.getAccountId());
         if (orderEntity.isPresent()) {
+            // permission lock
+            for(OrderDetailsEntity orderDetailsEntity : orderEntity.get().getOrderDetails()) {
+                reduceStock(orderDetailsEntity.getProductVariant().getProductVariantId(), orderDetailsEntity.getQuantity());
+            }
             if (orderEntity.get().getPaymentStatus() != null) {
                 throw new RuntimeException("Order has been paid already");
             }
@@ -245,6 +268,7 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
     }
 
     @Override
+    @Transactional
     public OrderOutputData orderByGuest(ShippingAddressInputData shippingAddressInputData, List<ProductVariantInputData> productVariantInputDataList, String paymentMethod) {
         ShippingAddressEntity shippingAddress = new ShippingAddressEntity();
         shippingAddress.setIsActive(true);
@@ -271,6 +295,9 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
                                                                             ProductSize.valueOf(productVariantInputData.getSizeCode())
                                                                     );
             if (productVariantEntity.isPresent()) {
+                // permission lock
+                reduceStock(productVariantEntity.get().getProductVariantId(), Long.valueOf(productVariantInputData.getQuantity()));
+
                 OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity();
                 orderDetailsEntity.setOrder(orderEntity);
                 orderDetailsEntity.setProductVariant(productVariantEntity.get());
@@ -306,6 +333,16 @@ public class CustomerOrderUseCaseInteraction implements CustomerOrderInputBounda
         }
     }
 
+    @Override
+    @Transactional
+    public boolean handleStock(Long orderId) {
+        orderRepository.findById(orderId).ifPresent(order -> {
+            for(OrderDetailsEntity orderDetailsEntity : order.getOrderDetails()) {
+                reduceStock(orderDetailsEntity.getProductVariant().getProductVariantId(), orderDetailsEntity.getQuantity());
+            }
+        });
+        return true;
+    }
 
     private List<OrderDetailsEntity> mapCartDetailsEntityToOrderDetailsEntity(List<CartDetailsEntity> cartDetailsList, OrderEntity order) {
         return cartDetailsList.stream()

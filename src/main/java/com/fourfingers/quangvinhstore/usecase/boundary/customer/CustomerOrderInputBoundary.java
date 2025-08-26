@@ -29,5 +29,7 @@ public interface CustomerOrderInputBoundary {
     OrderOutputData orderByGuest(ShippingAddressInputData shippingAddressInputData, List<ProductVariantInputData> productVariantInputDataList, String paymentMethod);
 
     OrderOutputData trackingOrder(String orderCode);
+
+    boolean handleStock(Long orderId);
 }
 

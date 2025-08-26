@@ -92,7 +92,7 @@ public class OrderController {
         } else {
             OrderOutputData orderOutputData = customerOrderInputBoundary
                     .getOrder(purchaseInputData.getOrderId(), userDetails);
-            if(orderOutputData.getOrder().getPaymentStatus() != null){
+            if(orderOutputData.getOrder().getPaymentStatus() != null && customerOrderInputBoundary.handleStock(orderOutputData.getOrder().getOrderId())){
                 throw new RuntimeException("Order has been paid already");
             }
             if (paymentMethod.equalsIgnoreCase("VNPay")) {
