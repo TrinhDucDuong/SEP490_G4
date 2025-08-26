@@ -28,7 +28,7 @@ export const useAIAssistant = () => {
     const lastDetectionTimeRef = useRef(0);
 
     const RECORDING_CONFIG = {
-        SILENCE_THRESHOLD: 0.02,
+        SILENCE_THRESHOLD: 0.2,
         SILENCE_DURATION: 3000,
         MAX_RECORDING_TIME: 20000,
         SAMPLE_RATE: 16000,
