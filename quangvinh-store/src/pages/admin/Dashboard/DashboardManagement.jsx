@@ -7,9 +7,11 @@ import CategorySalesChart from './components/CategorySalesChart';
 import DateRangeSection from './components/DateRangeSection';
 import AIVoiceAssistant from './components/AIVoiceAssistant';
 import { LogOut } from 'lucide-react';
+import {FaCommentDots, FaRobot} from "react-icons/fa";
 
 const DashboardManagement = () => {
     const [currentDateRange, setCurrentDateRange] = useState(null);
+    const [showAIChat, setShowAIChat] = useState(false);
     const { user, logout } = useAuthForManager();
     const {
         summaryData,
@@ -48,28 +50,8 @@ const DashboardManagement = () => {
                                 Tổng quan về hoạt động kinh doanh
                             </p>
                         </div>
-
-                        {/* AI Voice Assistant - Positioned on the right */}
-                        <div className="flex items-center space-x-4">
-                            <div className="relative">
-                                <AIVoiceAssistant />
-                            </div>
-
-                        </div>
                     </div>
                 </div>
-
-                {/* Error Messages */}
-                {/*{(error.summary || error.revenueGraph || error.categoriesSales) && (*/}
-                {/*    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">*/}
-                {/*        <h3 className="text-red-800 font-medium mb-2">Có lỗi xảy ra:</h3>*/}
-                {/*        <ul className="text-red-600 text-sm space-y-1">*/}
-                {/*            {error.summary && <li>• Lỗi tải thống kê tổng quan: {error.summary}</li>}*/}
-                {/*            {error.revenueGraph && <li>• Lỗi tải biểu đồ doanh thu: {error.revenueGraph}</li>}*/}
-                {/*            {error.categoriesSales && <li>• Lỗi tải thống kê danh mục: {error.categoriesSales}</li>}*/}
-                {/*        </ul>*/}
-                {/*    </div>*/}
-                {/*)}*/}
 
                     {/* Summary Section */}
                     <div className="mb-8">
@@ -112,6 +94,26 @@ const DashboardManagement = () => {
                     </div>
                 </DateRangeSection>
             </div>
+
+            {/* FAB BUTTONS */}
+            <div className="fixed bottom-6 right-6 flex flex-col space-y-3 z-50">
+                <button
+                    onClick={() => setShowAIChat(true)}
+                    className="bg-gray-700 hover:bg-gray-800 text-white p-4 rounded-full shadow-lg transition-all hover:scale-105"
+                    title="Trợ lý AI"
+                >
+                    <FaRobot size={20} />
+                </button>
+            </div>
+
+            {/* AI Chat Modal */}
+            {showAIChat && (
+                <AIVoiceAssistant
+                    isOpen={showAIChat}
+                    onClose={() => setShowAIChat(false)}
+                />
+            )}
+
         </div>
     );
 };
