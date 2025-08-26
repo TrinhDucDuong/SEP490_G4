@@ -3,23 +3,33 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthForManager } from '../../context/AuthContextForManager';
 
 const RoleBasedRoute = ({ children, allowedRoles = [], adminOnly = false }) => {
-    const { isAuthenticated, loading, userRoles, isAdmin } = useAuthForManager();
+    const { isAuthenticated, loading, userRoles, isAdmin, token, user } = useAuthForManager();
     const location = useLocation();
 
-    if (loading) return children;
+    // Debug logging
+    console.log('RoleBasedRoute check:', {
+        loading,
+        isAuthenticated,
+        hasToken: !!token,
+        hasUser: !!user,
+        path: location.pathname
+    });
 
     if (!isAuthenticated) {
+        console.log('Not authenticated, redirecting to login');
         return <Navigate to="/manager/login" state={{ from: location }} replace />;
     }
 
     if (adminOnly && !isAdmin()) {
-        return <Navigate to="/manager/category-management" replace />;
+        console.log('Admin required but user is not admin');
+        return <Navigate to="/manager/login" replace />;
     }
 
     if (allowedRoles.length > 0) {
         const hasPermission = allowedRoles.some(role => userRoles.includes(role));
         if (!hasPermission) {
-            return <Navigate to="/manager/category-management" replace />;
+            console.log('Insufficient permissions');
+            return <Navigate to="/manager/login" replace />;
         }
     }
 

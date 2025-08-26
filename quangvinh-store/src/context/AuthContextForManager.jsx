@@ -54,11 +54,21 @@ export const AuthProviderForManager = ({ children }) => {
         const tk = readCredential();
         const info = localStorage.getItem(KEY_USER) || sessionStorage.getItem(KEY_USER);
 
+        console.log('Auth initialization:', {
+            hasToken: !!tk,
+            hasUser: !!info,
+            tokenValid: tk ? tokenValid() : false
+        });
+
         if (tk && info && tokenValid()) {
-            setToken(tk);
+            console.log('Restoring auth state...');
             setUser(JSON.parse(info));
+            setToken(tk);
         } else {
+            console.log('No valid auth state found');
             clearStorage();
+            setUser(null);
+            setToken(null);
         }
 
         setLoading(false);
