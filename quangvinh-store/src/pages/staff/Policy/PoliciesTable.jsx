@@ -223,15 +223,14 @@ const PoliciesTable = ({
             />
 
             {/* Pagination */}
-            <div className="p-6 border-t border-gray-200">
-                <Paginations
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                    itemsPerPage={itemsPerPage}
-                    totalItems={totalItems}
-                />
-            </div>
+            <Paginations
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                itemsPerPage={itemsPerPage}
+                onPageChange={setCurrentPage}
+                itemName="chính sách"
+            />
 
             {/* Description Modal */}
             <Modals

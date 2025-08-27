@@ -1,3 +1,5 @@
+import { apiManager } from './apiForManager';
+
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/product`;
 const COLOR_API_URL = `${import.meta.env.VITE_API_BASE_URL}/staff/color`;
 

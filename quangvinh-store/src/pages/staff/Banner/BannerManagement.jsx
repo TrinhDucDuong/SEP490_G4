@@ -165,9 +165,6 @@ const BannerManagement = () => {
                                 <p className="text-sm font-medium text-gray-600">Tổng Banner</p>
                                 <p className="text-2xl font-bold text-gray-900">{statistics.totalBanners}</p>
                             </div>
-                            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <div className="h-6 w-6 bg-blue-600 rounded-sm"></div>
-                            </div>
                         </div>
                     </div>
 
@@ -177,9 +174,6 @@ const BannerManagement = () => {
                                 <p className="text-sm font-medium text-gray-600">Đang hoạt động</p>
                                 <p className="text-2xl font-bold text-green-600">{statistics.activeBanners}</p>
                             </div>
-                            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white text-xs font-bold">O</div>
-                            </div>
                         </div>
                     </div>
 
@@ -188,9 +182,6 @@ const BannerManagement = () => {
                             <div>
                                 <p className="text-sm font-medium text-gray-600">Đã tạm dừng</p>
                                 <p className="text-2xl font-bold text-red-600">{statistics.inactiveBanners}</p>
-                            </div>
-                            <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                                <div className="w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold">X</div>
                             </div>
                         </div>
                     </div>

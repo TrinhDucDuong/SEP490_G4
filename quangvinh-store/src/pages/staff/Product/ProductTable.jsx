@@ -37,8 +37,8 @@ const ProductTable = ({
     // Calculate pagination
     const safeProducts = Array.isArray(products) ? products : [];
     const safeItemsPerPage = Number(itemsPerPage) || 10;
-    const safeCurrentPage = Number(currentPage) || 1;
-    const totalPages = Math.ceil(safeProducts.length / safeItemsPerPage);
+    const safeCurrentPage = Math.max(1, Number(currentPage) || 1);
+    const totalPages = Math.max(1, Math.ceil(safeProducts.length / safeItemsPerPage));
     const startIndex = (safeCurrentPage - 1) * safeItemsPerPage;
     const endIndex = Math.min(startIndex + safeItemsPerPage, safeProducts.length);
     const currentProducts = safeProducts.slice(startIndex, endIndex);
@@ -314,15 +314,14 @@ const ProductTable = ({
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="px-6 py-4 border-t border-gray-200">
-                    <Pagination
-                        currentPage={safeCurrentPage}
-                        totalPages={totalPages}
-                        onPageChange={setCurrentPage}
-                    />
-                </div>
-            )}
+            <Pagination
+                currentPage={safeCurrentPage}
+                totalPages={totalPages}
+                totalItems={safeProducts.length}
+                itemsPerPage={safeItemsPerPage}
+                onPageChange={setCurrentPage}
+                itemName="sản phẩm"
+            />
 
             {/* Modals */}
             <ProductModal
