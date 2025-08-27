@@ -3,16 +3,17 @@ import SearchBar from '../../../components/common/admin/SearchBar';
 
 const PoliciesSearch = ({ searchTerm, onSearchChange, filteredPoliciesCount }) => {
     return (
-        <div className="mb-6">
+        <div className="flex flex-col gap-4 mb-6">
             <SearchBar
-                searchTerm={searchTerm}
-                onSearchChange={onSearchChange}
+                value={searchTerm}
+                onChange={onSearchChange}
                 placeholder="Tìm kiếm chính sách..."
+                className="w-full"
             />
 
             {searchTerm && (
-                <div className="mt-2 text-sm text-gray-600">
-                    Tìm thấy {filteredPoliciesCount} chính sách cho từ khóa "{searchTerm}"
+                <div className="text-sm text-gray-600">
+                    Tìm thấy {filteredPoliciesCount} kết quả cho "{searchTerm}"
                 </div>
             )}
         </div>
